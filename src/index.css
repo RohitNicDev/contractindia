@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+    --color-primary: var(--primary-color);
+    --color-secondary: var(--secondary-color);
+    --color-accent: var(--accent-color);
+    --color-cta: var(--cta-color);
+    --font-sans: var(--font-family);
+    --radius-xl: var(--border-radius);
+}
+
+/* ============================================
+   🎨 CHANGE YOUR ENTIRE SITE THEME FROM HERE
+   ============================================ */
+:root {
+    --primary-color: #162646;
+    /* Main brand color (navbar, buttons, headings) */
+    --secondary-color: #1e3a5f;
+    /* Secondary brand color */
+    --accent-color: #6366f1;
+    /* Accent/highlight color (links, hover, badges) */
+    --cta-color: #f59e0b;
+    /* Call-to-action color (CTA buttons, alerts) */
+    --font-family: 'Open Sans', sans-serif;
+    --border-radius: 12px;
+}

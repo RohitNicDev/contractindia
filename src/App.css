@@ -1,0 +1,84 @@
+/* menu color  css */
+ .ant-menu-light .ant-menu-item:hover {
+  color: #006f87;
+}
+
+.ant-menu-light .ant-menu-item-selected {
+  color: #fff !important;
+  background: linear-gradient(to right, #00465c, #006f87) !important;
+}
+.btn-gradient {
+  background-color: #00465c !important;
+  color: #ffffff !important;
+  border: none !important;
+  transition: all 0.3s ease;
+}
+
+
+.btn-gradient:hover {
+background-color: #006f87 !important;
+  color: #ffffff !important;
+}
+
+
+ /* Active Tabe CSS */
+
+ /* Inactive tab */
+.custom-purple-tabs .ant-tabs-tab {
+  background: #f5f5f5 !important;
+  color: #333 !important;
+  border-radius: 10px 10px 0 0;
+  border: 1px solid #e5e5e5 !important;
+}
+
+/* Hover (inactive) */
+.custom-purple-tabs .ant-tabs-tab:hover {
+  color: #00465c !important;
+}
+
+/* 🔴 ACTIVE TAB background */
+.custom-purple-tabs .ant-tabs-tab.ant-tabs-tab-active {
+  background: #00465c !important;
+  border-color: #00465c !important;
+}
+
+/* 🔴 ACTIVE TAB text */
+.custom-purple-tabs
+  .ant-tabs-tab.ant-tabs-tab-active
+  .ant-tabs-tab-btn {
+  color: #ffffff !important;
+  font-weight: 600;
+}
+
+/* Remove blue underline bar */
+.custom-purple-tabs .ant-tabs-ink-bar {
+  display: none !important;
+}
+
+
+
+
+
+
+/* Tabs and Item Gap css */
+
+
+/* 🔴 Tabs header (nav) ke niche ka gap hatao */
+.custom-purple-tabs .ant-tabs-nav {
+  margin-bottom: 0 !important;
+}
+
+/* 🔴 Tab content ke upar ka padding hatao */
+.custom-purple-tabs .ant-tabs-content-holder {
+  padding-top: 0 !important;
+}
+
+/* 🔴 Individual tab pane ke upar ka gap */
+.custom-purple-tabs .ant-tabs-tabpane {
+  padding-top: 0 !important;
+}
+
+/* 🔴 Card type extra spacing */
+.custom-purple-tabs.ant-tabs-card > .ant-tabs-nav {
+  margin-bottom: 0 !important;
+}
