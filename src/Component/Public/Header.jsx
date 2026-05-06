@@ -17,7 +17,7 @@ import {
   Building2,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, Link } from "react-router-dom";
 import { Button, Badge, Drawer, Collapse } from "antd";
 import logo from "../../assets/IMG/logo_con1.png";
 const { Panel } = Collapse;
@@ -31,66 +31,55 @@ const NAV_ITEMS = [
     mega: true,
     columns: [
       {
-        title: "Paints / Waterproofing",
+        title: "Consulting Services",
         icon: <Brush size={15} className="text-blue-500" />,
         color: "blue",
-        items: [
-          "Adhesives / Glue",
-          "Asphalt / Bitumen",
-          "Construction Chemicals",
-          "Industrial Coatings",
-          "Landscape & Horticulture",
-        ],
+        path: "/services/consulting",
       },
       {
-        title: "Consultants",
+        title: "Contractor Services",
         icon: <Users size={15} className="text-purple-500" />,
         color: "purple",
-        items: [
-          "Architectural Consultants",
-          "Structural Consultants",
-          "MEP Consultants",
-          "Project Management",
-        ],
+        path: "/services/contractor",
       },
       {
-        title: "Contractors",
+        title: "Tender Services",
         icon: <Building2 size={15} className="text-orange-500" />,
         color: "orange",
-        items: [
-          "Civil Contractors",
-          "Interior Contractors",
-          "Electrical Contractors",
-          "Plumbing Contractors",
-        ],
+        path: "/services/tender",
       },
       {
-        title: "Safety / Security & Fire",
+        title: "Assets Management",
         icon: <Shield size={15} className="text-red-500" />,
         color: "red",
-        items: [
-          "CCTV & Surveillance",
-          "Fire Detection Systems",
-          "Access Control",
-          "Safety Equipment",
-        ],
+        path: "/services/assets-management",
       },
       {
-        title: "Automation",
+        title: "Legal Contracts Services",
         icon: <Zap size={15} className="text-yellow-500" />,
         color: "yellow",
+        path: "/services/legal-contracts",
+      },
+      {
+        title: "Procurement Services",
+        icon: <Wrench size={15} className="text-green-500" />,
+        color: "green",
         items: [
-          "Banking Automation",
-          "Commercial Automation",
-          "Home Automation",
-          "Industrial Automation",
+          { name: "Material Manufacturing", path: "/services/material-manufacturing" },
+          { name: "Material Supply & trades", path: "/services/material-supply" }
         ],
       },
       {
-        title: "Special Services",
+        title: "Brand Development Management",
         icon: <Wrench size={15} className="text-green-500" />,
         color: "green",
-        items: ["Waterproofing", "Façade Works", "Flooring", "Landscaping"],
+        path: "/services/brand-development",
+      },
+      {
+        title: "Marketing Management",
+        icon: <Wrench size={15} className="text-green-500" />,
+        color: "green",
+        path: "/services/marketing",
       },
     ],
   },
@@ -111,30 +100,31 @@ const DropdownMenu = ({ columns, visible }) => (
         key={col.title}
         className="relative group/item"
       >
-        <div className="flex items-center justify-between px-4 py-2.5 cursor-pointer transition-colors hover:bg-blue-50 group-hover/item:bg-blue-50">
+        <Link to={col.path || '#'} className="flex items-center justify-between px-4 py-2.5 cursor-pointer transition-colors hover:bg-blue-50 group-hover/item:bg-blue-50 no-underline">
           <span className="text-[13px] font-bold tracking-wide uppercase text-gray-700 group-hover/item:text-blue-600">
             {col.title}
           </span>
-          <ChevronRight size={14} className="text-gray-400 group-hover/item:text-blue-600" />
-        </div>
+          {col.items && col.items.length > 0 && <ChevronRight size={14} className="text-gray-400 group-hover/item:text-blue-600" />}
+        </Link>
 
         {/* Sub-menu */}
-        <div
-          className="absolute left-[calc(100%-8px)] top-0 pl-2 opacity-0 invisible group-hover/item:opacity-100 group-hover/item:visible transition-all duration-200 z-50 w-64 pointer-events-none group-hover/item:pointer-events-auto"
-        >
-          <div className="bg-white shadow-xl border border-gray-100 rounded-md py-2 w-full">
-            {col.items.map((item) => (
-              <a
-                key={item}
-                href="#"
-                className="block px-4 py-2 text-[13px] font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600 no-underline transition-colors"
-                onClick={(e) => e.preventDefault()}
-              >
-                {item}
-              </a>
-            ))}
+        {col.items && col.items.length > 0 && (
+          <div
+            className="absolute left-[calc(100%-8px)] top-0 pl-2 opacity-0 invisible group-hover/item:opacity-100 group-hover/item:visible transition-all duration-200 z-50 w-64 pointer-events-none group-hover/item:pointer-events-auto"
+          >
+            <div className="bg-white shadow-xl border border-gray-100 rounded-md py-2 w-full">
+              {col.items.map((item) => (
+                <Link
+                  key={typeof item === 'string' ? item : item.name}
+                  to={typeof item === 'string' ? '#' : item.path}
+                  className="block px-4 py-2 text-[13px] font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600 no-underline transition-colors"
+                >
+                  {typeof item === 'string' ? item : item.name}
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     ))}
   </div>
@@ -420,24 +410,37 @@ const Header = () => {
                         {item.columns.map((col) => (
                           <div key={col.title} className="mb-2 ml-1">
                             {/* Section Title */}
-                            <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wide mb-1 pl-2">
-                              {col.title}
-                            </p>
+                            {col.items && col.items.length > 0 ? (
+                              <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wide mb-1 pl-2">
+                                {col.title}
+                              </p>
+                            ) : (
+                              <NavLink
+                                to={col.path || '#'}
+                                className="block text-[12px] sm:text-[13px] font-bold text-gray-700 uppercase tracking-wide mb-1 pl-2 hover:text-blue-600 transition"
+                                onClick={() => setIsDrawerOpen(false)}
+                              >
+                                {col.title}
+                              </NavLink>
+                            )}
 
                             {/* Items */}
-                            <div className="flex flex-col gap-0.5 border-l border-gray-100 pl-3">
-                              {col.items.map((sub) => (
-                                <div
-                                  key={sub}
-                                  className="py-1 text-[12px] sm:text-[13px] text-gray-600 font-medium 
-                                   active:text-blue-600 cursor-pointer 
-                                   hover:text-blue-600 transition"
-                                  onClick={() => setIsDrawerOpen(false)}
-                                >
-                                  {sub}
-                                </div>
-                              ))}
-                            </div>
+                            {col.items && col.items.length > 0 && (
+                              <div className="flex flex-col gap-0.5 border-l border-gray-100 pl-3">
+                                {col.items.map((sub) => (
+                                  <NavLink
+                                    key={typeof sub === 'string' ? sub : sub.name}
+                                    to={typeof sub === 'string' ? '#' : sub.path}
+                                    className="py-1 text-[12px] sm:text-[13px] text-gray-600 font-medium 
+                                     active:text-blue-600 cursor-pointer 
+                                     hover:text-blue-600 transition block no-underline"
+                                    onClick={() => setIsDrawerOpen(false)}
+                                  >
+                                    {typeof sub === 'string' ? sub : sub.name}
+                                  </NavLink>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         ))}
                       </Panel>

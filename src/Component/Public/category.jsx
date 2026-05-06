@@ -19,37 +19,38 @@ const cats = [
   },
   { 
     name: "Contractor  Services", 
-    image: "https://amazingarchitecture.com/storage/6540/skecth-drawing-architecture-copy.jpg", 
+    image: "https://5.imimg.com/data5/SELLER/Default/2024/7/433106499/MX/HO/RU/57976404/civil-construction-contractor-service.jpg", 
     count: "1,230 Firms" 
   },
   { 
     name: "Tender Services", 
-    image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=600", 
+    image: "https://5.imimg.com/data5/SELLER/Default/2026/3/588860952/XX/AP/XV/257074973/civil-engineering-services-500x500.jpg", 
     count: "4,200 Designers" 
   }, 
+
   { 
     name: "Assets Management", 
-    image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&q=80&w=600", 
+    image: "https://www.ice.org.uk/media/4uqp5eho/guiding-principles-of-asset-management-realising-a-world-class-infrastructure.jpg", 
     count: "2,600 Firms" 
   },
   { 
     name: "Legal Contracts Services", 
-    image: "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=600", 
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxKIwcO2VCrmiZ-GbLOYc8OwDjYe_y5DEugA&s", 
     count: "1,900 Projects" 
   },
   { 
     name: "Procurement Services", 
-    image: "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=80&w=600", 
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbIAl1Kayn3rgdtNTg3qsEXS8JGKFqGVIr6w&s", 
     count: "980 Providers" 
   },
   { 
     name: "Brand Development Management ", 
-    image: "https://mgcs.net.in/wp-content/uploads/2023/03/hvac_services.jpg", 
+    image: "https://cdn.thebrandingjournal.com/wp-content/uploads/2024/02/Branding-Process-The-Branding-Journal-1024x704.png", 
     count: "2,200 Vendors" 
   },
   { 
     name: "Marketing Management", 
-    image: "https://prosoftnet.com/cdn/shop/articles/6-ways-land-surveying-shapes-infrastructure-planning.jpg?v=1705445625", 
+    image: "https://media.geeksforgeeks.org/wp-content/uploads/20240222165724/marketing-management-copy.webp", 
     count: "620 Experts" 
   },
   { 

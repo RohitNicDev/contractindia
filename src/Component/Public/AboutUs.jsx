@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Target, Eye, CheckCircle2, Award } from "lucide-react";
+import Founder from "../../assets/IMG/gupta.jpeg";
 
 const AboutUs = () => {
   const fadeUp = {
@@ -8,25 +9,26 @@ const AboutUs = () => {
     show: { opacity: 1, y: 0, transition: { duration: 0.6 } },
   };
   const team = [
-    {
-      name: "Prasann Tamrkar",
-      role: "Full Stack Developer",
-      img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
+     {
+      name: "Vikash Gupta",
+      role: "Finance Head ",
+      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToK4qEfbnd-RN82wdL2awn_PMviy_pelocqQ&s",
     },
+  
     {
       name: "Pankaj Gupta",
-      role: "UI/UX Designer",
-      img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
+      role: "Project Engineer",
+      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToK4qEfbnd-RN82wdL2awn_PMviy_pelocqQ&s",
     },
-    {
-      name: "Vikash Gupta",
-      role: "Backend Architect",
-      img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e",
+     {
+      name: "Prasann Tamrkar",
+      role: "Digital Head",
+      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToK4qEfbnd-RN82wdL2awn_PMviy_pelocqQ&s",
     },
     {
       name: "S. P. Singh",
-      role: "Project Manager",
-      img: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7",
+      role: "Chartered Accountant",
+      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToK4qEfbnd-RN82wdL2awn_PMviy_pelocqQ&s",
     },
   ];
   return (
@@ -35,7 +37,7 @@ const AboutUs = () => {
       <section className="relative h-[50vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab"
+            src="https://thumbs.dreamstime.com/b/wide-high-detailed-banner-illustration-silhouette-buildings-under-construction-process-wide-high-detailed-banner-100333894.jpg"
             className="w-full h-full object-cover scale-110"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#162646]/95 via-[#162646]/80 to-[#162646]/40"></div>
@@ -82,7 +84,7 @@ const AboutUs = () => {
             <div className="relative group">
               <div className="overflow-hidden rounded-[2rem] shadow-xl border-4 border-white">
                 <img
-                  src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab"
+                  src="https://www.autodesk.com/blogs/construction/wp-content/uploads/2024/04/construction-phase-what-is-it.jpg"
                   className="w-full h-auto max-h-[500px] object-cover group-hover:scale-105 transition duration-700"
                   alt="ContractsIndia"
                 />
@@ -232,7 +234,7 @@ It provides verified information and profiles to help organizations choose the b
 
                   <div className="absolute inset-0 overflow-hidden rounded-2xl border-4 border-white shadow-xl">
                     <img
-                      src="https://images.unsplash.com/photo-1560250097-0b93528c311a"
+                      src={Founder}
                       className="w-full h-full object-cover"
                       alt="Founder"
                     />
@@ -300,29 +302,30 @@ It provides verified information and profiles to help organizations choose the b
               </div>
 
               {/* TEAM GRID */}
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6 md:gap-8">
-                {team.map((member, i) => (
-                  <div key={i} className="text-center group">
-                    {/* IMAGE */}
-                    <div className="overflow-hidden rounded-xl shadow-md mb-3">
-                      <img
-                        src={member.img}
-                        className="w-full h-32 sm:h-40 md:h-44 object-cover group-hover:scale-105 transition duration-500"
-                        alt={member.name}
-                      />
-                    </div>
+     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
+  {team.map((member, i) => (
+    <div key={i} className="text-center group flex flex-col items-center">
 
-                    {/* DETAILS */}
-                    <h4 className="text-sm sm:text-base font-semibold text-slate-800">
-                      {member.name}
-                    </h4>
+      {/* IMAGE */}
+      <div className="w-full max-w-[140px] sm:max-w-[150px] overflow-hidden rounded-xl shadow mb-2">
+        <img
+          src={member.img}
+          className="w-full h-32 sm:h-40 md:h-44 object-cover object-top group-hover:scale-105 transition duration-300"
+          alt={member.name}
+        />
+      </div>
 
-                    <p className="text-[10px] sm:text-xs text-blue-500 uppercase tracking-widest mt-1">
-                      {member.role}
-                    </p>
-                  </div>
-                ))}
-              </div>
+      {/* DETAILS */}
+      <h4 className="text-xs sm:text-sm font-semibold text-slate-800 leading-tight">
+        {member.name}
+      </h4>
+
+      <p className="text-[9px] sm:text-[10px] text-blue-500 uppercase tracking-wide mt-0.5">
+        {member.role}
+      </p>
+    </div>
+  ))}
+</div>
             </div>
           </div>
         </motion.div>
