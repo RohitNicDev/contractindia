@@ -152,7 +152,7 @@ const Footer = () => {
               © 2026 ContractsIndia™ Technologies Pvt. Ltd.
             </p>
             <p className="text-[10px] text-slate-600 uppercase tracking-tighter">
-              Crafted for the future of Indian Infrastructure.
+              Crafted for the future of India's Infrastructure.
             </p>
           </div>
 

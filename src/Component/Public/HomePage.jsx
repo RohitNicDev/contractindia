@@ -20,9 +20,9 @@ const HomePage = () => {
       <Categories />
       {/* <Tenders /> */}
       <Companies />
-      <Materials />
-      <HowItWorks />
+      {/* <Materials /> */}
       <HomePageLogocarasole/>
+      <HowItWorks />
       <Testimonials />
       <Test />
       <Footer />

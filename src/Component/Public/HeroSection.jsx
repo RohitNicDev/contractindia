@@ -141,7 +141,7 @@ const HeroSection = () => {
 
         {/* 🔷 HEADING */}
         <h2 className="text-4xl md:text-6xl font-extrabold leading-tight">
-         Indian Largest  {" "}
+         India's Largest  {" "}
           <span className="bg-gradient-to-r from-cta to-amber-300 text-transparent bg-clip-text">
             Construction Market Place
           </span>
