@@ -9,7 +9,7 @@ import {
   ShieldCheck,
   Award,
   Globe,
-  ArrowRight
+  ArrowRight    
 } from "lucide-react";
 import logo from "../../assets/IMG/logo_con1.png";
 

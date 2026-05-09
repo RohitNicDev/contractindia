@@ -141,9 +141,9 @@ const HeroSection = () => {
 
         {/* 🔷 HEADING */}
         <h2 className="text-4xl md:text-6xl font-extrabold leading-tight">
-          Integrated Solution for{" "}
+         Indian Largest  {" "}
           <span className="bg-gradient-to-r from-cta to-amber-300 text-transparent bg-clip-text">
-            Construction & Infrastructure
+            Construction Market Place
           </span>
         </h2>
 

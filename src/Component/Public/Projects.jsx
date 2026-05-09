@@ -7,28 +7,28 @@ const projects = [
     title: "Metro Station Construction",
     category: "Infrastructure",
     icon: <Building2 size={20} />,
-    image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?q=80&w=1200",
+    image: "https://themetrorailguy.com/wp-content/uploads/2015/07/N3.jpg",
     desc: `Executed large-scale metro station construction with advanced engineering techniques. Managed timelines efficiently with zero compromise on quality.`,
   },
   {
     title: "Commercial Building Project",
     category: "Construction",
     icon: <HardHat size={20} />,
-    image: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1200",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_gKn2T1IDqhIfY-NKy3ZZNrA6YrFWEQgXXA&s",
     desc: `Developed high-rise commercial infrastructure with modern architecture and energy-efficient systems.`,
   },
   {
-    title: "Electrical & HVAC Work",
-    category: "MEP Services",
+    title: "Housing Board Project",
+     category: "Construction",
     icon: <Zap size={20} />,
-    image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=1200",
+    image: "https://oshb.org/wp-content/uploads/2021/11/Multi-Storied-Apartment-Complex.jpg",
     desc: `Installed advanced electrical and HVAC systems for large facilities, following strict compliance.`,
   },
   {
-    title: "Fire Fighting System",
-    category: "Safety",
+    title: "Interior Design Project",
+ category: "Construction",
     icon: <ShieldCheck size={20} />,
-    image: "https://images.unsplash.com/photo-1621905251918-48416bd8575a?q=80&w=1200",
+    image: "https://www.civilly.eu/content/Chto-takoe-dizajn-proekt-Lazurnyj-Bereg/dizajn-proekt-interjera-na-lazurnom-beregu.jpg",
     desc: `Designed and implemented fire safety systems across buildings including detection and suppression.`,
   },
 ];
@@ -41,33 +41,39 @@ const Projects = () => {
   const filteredProjects = activeFilter === "All" 
     ? projects 
     : projects.filter(p => p.category === activeFilter);
+      
+  const fadeUp = {
+    hidden: { opacity: 0, y: 40 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+  };
 
   return (
     <div className="min-h-screen bg-[#F1F5F9] text-slate-800 font-sans">
       
       {/* 🏙️ HERO SECTION */}
-      <section className="relative h-[45vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070"
-            className="w-full h-full object-cover scale-105"
-            alt="hero"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#162646]/95 to-[#162646]/80"></div>
-        </div>
-
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative z-10 text-center"
-        >
-          <span className="text-blue-400 font-bold uppercase tracking-[0.3em] text-xs mb-4 block">Portfolio</span>
-          <h1 className="text-5xl md:text-7xl font-black text-white tracking-tight">
-            Our <span className="text-blue-400">Projects</span>
-          </h1>
-          <div className="w-24 h-1.5 bg-blue-500 mx-auto mt-6 rounded-full"></div>
-        </motion.div>
-      </section>
+       <section className="relative h-[50vh] flex items-center justify-center overflow-hidden">
+            <div className="absolute inset-0">
+              <img
+                src="https://thumbs.dreamstime.com/b/wide-high-detailed-banner-illustration-silhouette-buildings-under-construction-process-wide-high-detailed-banner-100333894.jpg"
+                className="w-full h-full object-cover scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#162646]/95 via-[#162646]/80 to-[#162646]/40"></div>
+            </div>
+    
+            <motion.div
+              initial="hidden"
+              animate="show"
+              variants={fadeUp}
+              className="relative z-10 text-center px-4"
+            >
+              <h1 className="text-5xl md:text-6xl font-black text-white tracking-tight">
+                Our <span className="text-[#fbb820]">Projects</span>
+              </h1>
+              {/* <p className="text-slate-300 mt-3 text-sm md:text-base">
+                Building Infrastructure That Powers India
+              </p> */}
+            </motion.div>
+          </section>  
 
       {/* ⚡ FILTER CONTROLS */}
       <section className="container mx-auto px-6 -mt-8 relative z-30">

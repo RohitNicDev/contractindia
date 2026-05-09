@@ -27,7 +27,7 @@ const NAV_ITEMS = [
   { name: "Home", path: "/" },
   { name: "About", path: "/about" },
   {
-    name: "Services",
+    name: " Our Services",
     mega: true,
     columns: [
       {
@@ -218,7 +218,8 @@ const Header = () => {
             />
             <div className="leading-tight">
               <h1 className="text-lg sm:text-xl font-black text-[#162646] tracking-tight">
-                CONTRACTS<span className="text-blue-600">INDIA</span>
+               ContractsIndia™
+                {/* CONTRACTS<span className="text-blue-600">INDIA</span> */}
               </h1>
               <p className="hidden sm:block text-[8px] text-gray-400 font-bold uppercase tracking-wider">
                 Integrated Solution For Construction &amp; Infrastructure
