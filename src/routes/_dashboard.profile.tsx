@@ -9,11 +9,13 @@ export const Route = createFileRoute("/_dashboard/profile")({
   component: ProfilePage,
 });
 
-const fadeUp = (i: number) => ({
-  initial: { opacity: 0, y: 16 },
+const fu = (i: number) => ({
+  initial: { opacity: 0, y: 18 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.35, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] },
+  transition: { duration: 0.4, delay: i * 0.08, ease: "easeOut" as const },
 });
+
+const glassCard = "rounded-2xl bg-white/70 backdrop-blur-xl border border-white/80 shadow-[0_4px_24px_rgba(99,102,241,0.08)] transition-all duration-300";
 
 export default function ProfilePage() {
   const user = JSON.parse(localStorage.getItem("registration_form_v1") || "{}");
@@ -38,47 +40,65 @@ export default function ProfilePage() {
 
   return (
     <div className="p-6 space-y-6 max-w-4xl">
-      <motion.div {...fadeUp(0)}>
+      <motion.div {...fu(0)}>
         <h1 className="text-2xl font-black text-slate-900">My Profile</h1>
-        <p className="mt-1 text-sm text-slate-500">Manage your personal and business information.</p>
+        <p className="mt-1 text-sm text-slate-600">Manage your personal and business information.</p>
       </motion.div>
 
       {/* Profile card */}
-      <motion.div {...fadeUp(1)} className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        {/* Cover */}
-        <div className="h-28 bg-gradient-to-r from-indigo-500 via-violet-500 to-cyan-500" />
+      <motion.div {...fu(1)} className={`overflow-hidden ${glassCard} hover:shadow-[0_8px_32px_rgba(99,102,241,0.15)] hover:-translate-y-0.5 hover:border-indigo-200/60`}>
+        {/* Cover — rich gradient with mesh overlay */}
+        <div className="relative h-32 bg-gradient-to-r from-indigo-500 via-violet-500 to-cyan-400 overflow-hidden">
+          {/* Mesh overlay pattern */}
+          <div className="absolute inset-0 opacity-20"
+            style={{
+              backgroundImage: "radial-gradient(circle at 20% 50%, rgba(255,255,255,0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.2) 0%, transparent 40%)",
+            }}
+          />
+          <div className="absolute inset-0"
+            style={{
+              backgroundImage: "linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.05) 75%), linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.05) 75%)",
+              backgroundSize: "20px 20px",
+              backgroundPosition: "0 0, 10px 10px",
+            }}
+          />
+        </div>
 
         {/* Avatar + info */}
         <div className="px-6 pb-6">
-          <div className="flex flex-wrap items-end gap-4 -mt-10">
+          <div className="flex flex-wrap items-end gap-4 -mt-12">
             <div className="relative">
-              <div className="flex h-20 w-20 items-center justify-center rounded-2xl border-4 border-white bg-indigo-600 text-2xl font-black text-white shadow-md">
+              <div className="flex h-24 w-24 items-center justify-center rounded-2xl border-4 border-white bg-gradient-to-br from-indigo-500 to-violet-500 text-2xl font-black text-white shadow-[0_8px_24px_rgba(99,102,241,0.35)]">
                 {initials}
               </div>
-              <button className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-white border border-slate-200 shadow-sm hover:bg-indigo-50 transition-colors">
-                <Camera className="h-3 w-3 text-slate-500" />
+              <button className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-white border border-indigo-100 shadow-md hover:bg-indigo-50 hover:border-indigo-200 transition-colors">
+                <Camera className="h-3.5 w-3.5 text-indigo-500" />
               </button>
             </div>
             <div className="flex-1 min-w-0 pb-1">
               <div className="flex flex-wrap items-center gap-2">
                 <h2 className="text-xl font-black text-slate-900">{user.fullName || "Your Name"}</h2>
-                <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide ${isCommercial ? "bg-indigo-50 text-indigo-700" : "bg-slate-100 text-slate-600"}`}>
+                <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide ${isCommercial ? "bg-indigo-50 text-indigo-700 border border-indigo-200" : "bg-slate-100 text-slate-600 border border-slate-200"}`}>
                   {isCommercial ? "Commercial" : "Individual"}
                 </span>
               </div>
               <p className="text-sm text-slate-500 mt-0.5">{user.email}</p>
             </div>
-            <button className="ml-auto flex items-center gap-2 rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700 hover:bg-indigo-100 transition-colors">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="ml-auto flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_12px_rgba(99,102,241,0.35)] hover:shadow-[0_6px_20px_rgba(99,102,241,0.5)] transition-shadow"
+            >
               <Edit3 className="h-4 w-4" />
               Edit Profile
-            </button>
+            </motion.button>
           </div>
 
           {/* Sub-services */}
           {user.subServices?.length > 0 && (
             <div className="mt-4 flex flex-wrap gap-2">
               {user.subServices.map((s: string) => (
-                <span key={s} className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                <span key={s} className="rounded-full bg-indigo-50 border border-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700">
                   {s}
                 </span>
               ))}
@@ -88,13 +108,18 @@ export default function ProfilePage() {
       </motion.div>
 
       {/* Info grid */}
-      <motion.div {...fadeUp(2)} className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6">
-        <h3 className="mb-4 text-sm font-bold uppercase tracking-wide text-slate-400">Personal Information</h3>
-        <div className="grid gap-4 sm:grid-cols-2">
+      <motion.div {...fu(2)} className={`${glassCard} p-6`}>
+        <div className="flex items-center gap-2 mb-5">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-500 shadow-md">
+            <User className="h-3.5 w-3.5 text-white" />
+          </span>
+          <h3 className="text-sm font-bold text-slate-900">Personal Information</h3>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
           {fields.map((f) => (
-            <div key={f.label} className="flex items-start gap-3 rounded-xl bg-slate-50 p-3.5">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white border border-slate-200 text-indigo-500 shadow-sm">
-                <f.icon className="h-4 w-4" />
+            <div key={f.label} className="flex items-start gap-3 rounded-xl bg-slate-50/80 border border-slate-100 p-3.5 transition-all hover:border-indigo-100 hover:bg-indigo-50/30">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-500 shadow-sm">
+                <f.icon className="h-4 w-4 text-white" />
               </span>
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">{f.label}</p>
@@ -107,13 +132,18 @@ export default function ProfilePage() {
 
       {/* Commercial section */}
       {isCommercial && (
-        <motion.div {...fadeUp(3)} className="rounded-2xl border border-indigo-100 bg-white shadow-sm p-6">
-          <h3 className="mb-4 text-sm font-bold uppercase tracking-wide text-indigo-400">Business Details</h3>
-          <div className="grid gap-4 sm:grid-cols-2">
+        <motion.div {...fu(3)} className="rounded-2xl bg-indigo-50/60 backdrop-blur-xl border border-indigo-200/60 shadow-[0_4px_24px_rgba(99,102,241,0.10)] transition-all duration-300 p-6">
+          <div className="flex items-center gap-2 mb-5">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-500 shadow-md">
+              <Building2 className="h-3.5 w-3.5 text-white" />
+            </span>
+            <h3 className="text-sm font-bold text-indigo-800">Business Details</h3>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
             {commercialFields.map((f) => (
-              <div key={f.label} className="flex items-start gap-3 rounded-xl bg-indigo-50/50 p-3.5">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white border border-indigo-100 text-indigo-500 shadow-sm">
-                  <f.icon className="h-4 w-4" />
+              <div key={f.label} className="flex items-start gap-3 rounded-xl bg-white/70 border border-indigo-100 p-3.5">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-500 shadow-sm">
+                  <f.icon className="h-4 w-4 text-white" />
                 </span>
                 <div>
                   <p className="text-[11px] font-semibold uppercase tracking-wide text-indigo-400">{f.label}</p>
@@ -126,8 +156,10 @@ export default function ProfilePage() {
       )}
 
       {/* Verification status */}
-      <motion.div {...fadeUp(4)} className="flex items-center gap-3 rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
-        <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />
+      <motion.div {...fu(4)} className="flex items-center gap-3 rounded-2xl bg-emerald-50/80 backdrop-blur-xl border border-emerald-200/60 shadow-[0_4px_24px_rgba(16,185,129,0.10)] p-4">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 shadow-md">
+          <CheckCircle2 className="h-5 w-5 text-white" />
+        </div>
         <div>
           <p className="text-sm font-bold text-emerald-800">Email Verified</p>
           <p className="text-xs text-emerald-600">Your account is active and verified via OTP.</p>
