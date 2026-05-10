@@ -1,39 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import {
-  FileText, FolderOpen, Building2, IndianRupee,
-  ArrowUpRight, TrendingUp, Users, Zap,
-} from "lucide-react";
+import { FileText, FolderOpen, Building2, IndianRupee, ArrowUpRight, TrendingUp, Users, Zap } from "lucide-react";
 
 export const Route = createFileRoute("/_dashboard/")({
   component: DashboardOverview,
 });
 
 const stats = [
-  {
-    label: "Active Tenders", value: "12", delta: "+3 this week",
-    icon: FileText, grad: "from-indigo-500 to-violet-500", glow: "rgba(99,102,241,0.18)",
-    corner: "bg-indigo-400/10",
-  },
-  {
-    label: "Live Projects", value: "5", delta: "+1 this month",
-    icon: FolderOpen, grad: "from-violet-500 to-purple-600", glow: "rgba(139,92,246,0.18)",
-    corner: "bg-violet-400/10",
-  },
-  {
-    label: "Companies", value: "48", delta: "+8 new",
-    icon: Building2, grad: "from-cyan-500 to-blue-500", glow: "rgba(6,182,212,0.18)",
-    corner: "bg-cyan-400/10",
-  },
-  {
-    label: "Total Bids", value: "₹2.4Cr", delta: "+12%",
-    icon: IndianRupee, grad: "from-emerald-500 to-teal-500", glow: "rgba(16,185,129,0.18)",
-    corner: "bg-emerald-400/10",
-  },
+  { label: "Active Tenders",   value: "12",     delta: "+3 this week",  icon: FileText,    grad: "from-indigo-500 to-violet-500",  corner: "bg-indigo-400/10"  },
+  { label: "Live Projects",    value: "5",      delta: "+1 this month", icon: FolderOpen,  grad: "from-violet-500 to-purple-600",  corner: "bg-violet-400/10"  },
+  { label: "Companies",        value: "48",     delta: "+8 new",        icon: Building2,   grad: "from-cyan-500 to-blue-500",      corner: "bg-cyan-400/10"    },
+  { label: "Total Bids",       value: "₹2.4Cr", delta: "+12%",          icon: IndianRupee, grad: "from-emerald-500 to-teal-500",   corner: "bg-emerald-400/10" },
 ];
 
 const recentTenders = [
-  { id: "T-001", title: "Road Construction — NH-48 Stretch",   status: "open",    value: "₹45L",  deadline: "Jun 15", grad: "from-emerald-500 to-teal-400" },
+  { id: "T-001", title: "Road Construction — NH-48 Stretch",   status: "open",    value: "₹45L",  deadline: "Jun 15", grad: "from-emerald-500 to-teal-400"  },
   { id: "T-002", title: "MEP Works — Commercial Complex Pune", status: "review",  value: "₹18L",  deadline: "Jun 20", grad: "from-amber-500 to-orange-400"  },
   { id: "T-003", title: "Structural Audit — IT Park Bhopal",   status: "awarded", value: "₹8.5L", deadline: "Jun 10", grad: "from-indigo-500 to-violet-400"  },
   { id: "T-004", title: "Interior Fitout — Hotel Mumbai",      status: "open",    value: "₹32L",  deadline: "Jul 2",  grad: "from-emerald-500 to-teal-400"  },
@@ -67,26 +48,19 @@ export default function DashboardOverview() {
   return (
     <div className="min-h-full p-6 space-y-6">
 
-      {/* ── Greeting banner ── */}
-      <motion.div {...fu(0)}
-        className={`relative overflow-hidden ${glassCard} p-6`}
-      >
-        {/* Gradient overlay */}
+      {/* Greeting banner */}
+      <motion.div {...fu(0)} className={`relative overflow-hidden ${glassCard} p-6`}>
         <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-violet-500/8 to-cyan-400/6 rounded-2xl" />
-        {/* Animated blobs inside */}
         <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-indigo-400/15 blur-3xl" />
         <div className="absolute right-20 bottom-0 h-24 w-24 rounded-full bg-violet-400/15 blur-2xl" />
         <div className="absolute left-1/2 top-0 h-px w-1/2 bg-gradient-to-r from-transparent via-indigo-400/40 to-transparent" />
-
         <div className="relative flex items-center justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-indigo-500">Welcome back</p>
             <h1 className="mt-1 text-2xl font-black bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-800 bg-clip-text text-transparent">
               Good morning, {firstName} 👋
             </h1>
-            <p className="mt-1.5 text-sm text-slate-500">
-              Here's what's happening with your account today.
-            </p>
+            <p className="mt-1.5 text-sm text-slate-500">Here's what's happening with your account today.</p>
           </div>
           <div className="hidden items-center gap-2 sm:flex">
             <div className="flex items-center gap-2 rounded-xl border border-indigo-200/60 bg-indigo-50/80 px-4 py-2">
@@ -97,15 +71,14 @@ export default function DashboardOverview() {
         </div>
       </motion.div>
 
-      {/* ── Stats ── */}
+      {/* Stats */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {stats.map((s, i) => (
           <motion.div key={s.label} {...fu(i + 1)}
-            className={`relative overflow-hidden ${glassCard} p-5 hover:shadow-[0_8px_32px_rgba(99,102,241,0.15)] hover:-translate-y-0.5 hover:border-indigo-200/60`}
+            whileHover={{ y: -2, boxShadow: "0 8px 32px rgba(99,102,241,0.15)" }}
+            className={`relative overflow-hidden ${glassCard} p-5 hover:border-indigo-200/60`}
           >
-            {/* Corner glow */}
             <div className={`absolute -right-4 -top-4 h-20 w-20 rounded-full ${s.corner} blur-2xl`} />
-
             <div className="relative flex items-start justify-between">
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">{s.label}</p>
@@ -123,13 +96,9 @@ export default function DashboardOverview() {
         ))}
       </div>
 
-      {/* ── Recent Tenders + Quick Actions ── */}
+      {/* Recent Tenders + Quick Actions */}
       <div className="grid gap-6 lg:grid-cols-3">
-
-        {/* Tenders table */}
-        <motion.div {...fu(5)}
-          className={`lg:col-span-2 overflow-hidden ${glassCard}`}
-        >
+        <motion.div {...fu(5)} className={`lg:col-span-2 overflow-hidden ${glassCard}`}>
           <div className="flex items-center justify-between border-b border-indigo-100/60 px-5 py-4">
             <div className="flex items-center gap-2">
               <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-500 shadow-md">
@@ -143,19 +112,15 @@ export default function DashboardOverview() {
               View all <ArrowUpRight className="h-3 w-3" />
             </Link>
           </div>
-
           <div className="divide-y divide-slate-100/60">
             {recentTenders.map((t, i) => {
               const s = statusConfig[t.status];
               return (
-                <motion.div
-                  key={t.id}
-                  initial={{ opacity: 0, x: -12 }}
-                  animate={{ opacity: 1, x: 0 }}
+                <motion.div key={t.id}
+                  initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.4 + i * 0.07, ease: "easeOut" }}
                   className="group flex items-center gap-4 px-5 py-3.5 transition-colors hover:bg-indigo-50/30"
                 >
-                  {/* Color bar */}
                   <div className={`h-8 w-1 shrink-0 rounded-full bg-gradient-to-b ${t.grad}`} />
                   <div className="flex-1 min-w-0">
                     <p className="truncate text-sm font-semibold text-slate-800 group-hover:text-slate-900 transition-colors">{t.title}</p>
@@ -172,7 +137,6 @@ export default function DashboardOverview() {
           </div>
         </motion.div>
 
-        {/* Quick actions */}
         <motion.div {...fu(6)} className="space-y-3">
           <div className="flex items-center gap-2 px-1">
             <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-500 shadow-sm">
@@ -185,8 +149,7 @@ export default function DashboardOverview() {
               <Link to={a.to}
                 className={`group flex items-center gap-3 ${glassCard} p-3.5 hover:shadow-[0_8px_32px_rgba(99,102,241,0.15)] hover:-translate-y-0.5 hover:border-indigo-200/60`}
               >
-                <span
-                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${a.grad} shadow-md transition-transform duration-200 group-hover:scale-110`}
+                <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${a.grad} shadow-md transition-transform duration-200 group-hover:scale-110`}
                   style={{ boxShadow: `0 4px 12px ${a.glow}` }}
                 >
                   <a.icon className="h-4 w-4 text-white" />

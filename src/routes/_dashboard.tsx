@@ -123,7 +123,6 @@ function DashboardLayout() {
                       ${active ? "text-slate-900" : "text-slate-500 hover:text-slate-800"}
                     `}
                   >
-                    {/* Active background */}
                     {active && (
                       <motion.div
                         layoutId="nav-pill"
@@ -131,20 +130,14 @@ function DashboardLayout() {
                         transition={{ type: "spring", stiffness: 380, damping: 30 }}
                       />
                     )}
-                    {/* Hover background */}
                     {!active && (
                       <span className="absolute inset-0 rounded-xl bg-transparent transition-colors duration-200 group-hover:bg-slate-50/80" />
                     )}
-
-                    {/* Icon */}
                     <span className={`relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-all duration-200 ${
-                      active
-                        ? `bg-gradient-to-br ${grad} shadow-md`
-                        : "bg-slate-100/80 group-hover:bg-slate-100"
+                      active ? `bg-gradient-to-br ${grad} shadow-md` : "bg-slate-100/80 group-hover:bg-slate-100"
                     }`}>
                       <Icon className={`h-3.5 w-3.5 ${active ? "text-white" : "text-slate-500 group-hover:text-slate-700"}`} />
                     </span>
-
                     <AnimatePresence>
                       {!collapsed && (
                         <motion.span
@@ -155,19 +148,14 @@ function DashboardLayout() {
                         </motion.span>
                       )}
                     </AnimatePresence>
-
                     {badge && !collapsed && (
                       <span className="relative z-10 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-gradient-to-r from-pink-500 to-rose-500 px-1.5 text-[10px] font-bold text-white shadow-sm">
                         {badge}
                       </span>
                     )}
-
-                    {/* Active left bar */}
                     {active && (
                       <span className={`absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-gradient-to-b ${grad}`} />
                     )}
-
-                    {/* Tooltip when collapsed */}
                     {collapsed && (
                       <span className="pointer-events-none absolute left-full ml-3 whitespace-nowrap rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
                         {label}
@@ -203,7 +191,6 @@ function DashboardLayout() {
               </motion.div>
             )}
           </AnimatePresence>
-
           <Link
             to="/login"
             className={`flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 transition-all hover:bg-red-50 hover:text-red-500 ${collapsed ? "justify-center" : ""}`}
@@ -224,18 +211,14 @@ function DashboardLayout() {
 
       {/* ── Main area ── */}
       <div className="relative z-10 flex min-w-0 flex-1 flex-col overflow-hidden">
-
         {/* Topbar */}
         <header className="flex h-16 shrink-0 items-center gap-4 bg-white/80 backdrop-blur-xl border-b border-indigo-100/60 shadow-[0_2px_12px_rgba(99,102,241,0.06)] px-4 sm:px-6">
-          {/* Mobile toggle */}
           <button
             className="rounded-xl border border-slate-200 bg-white p-2 text-slate-500 transition-colors hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 lg:hidden"
             onClick={() => setMobileOpen((o) => !o)}
           >
             {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
-
-          {/* Search */}
           <div className="flex flex-1 items-center gap-2.5 rounded-xl border border-slate-200/80 bg-white/70 backdrop-blur-xl px-3.5 py-2 max-w-sm transition-all focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-100 shadow-sm">
             <Search className="h-4 w-4 shrink-0 text-slate-400" />
             <input
@@ -245,9 +228,7 @@ function DashboardLayout() {
             />
             <kbd className="hidden rounded-md border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-[10px] font-mono text-slate-400 sm:block">⌘K</kbd>
           </div>
-
           <div className="ml-auto flex items-center gap-2">
-            {/* Notifications */}
             <motion.button
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               className="relative rounded-xl border border-slate-200 bg-white p-2.5 text-slate-500 transition-colors hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 shadow-sm"
@@ -255,16 +236,12 @@ function DashboardLayout() {
               <Bell className="h-4 w-4" />
               <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-red-500 shadow-[0_0_6px_rgba(239,68,68,0.8)]" />
             </motion.button>
-
-            {/* Page title pill */}
             <div className="hidden items-center gap-2 rounded-xl border border-indigo-100/80 bg-indigo-50/60 backdrop-blur-xl px-3 py-1.5 sm:flex">
               <span className="h-1.5 w-1.5 rounded-full bg-indigo-500 shadow-[0_0_6px_rgba(99,102,241,0.6)]" />
               <span className="text-xs font-semibold text-indigo-700">
                 {NAV_ITEMS.find(n => pathname === n.to || (n.to !== "/dashboard" && pathname.startsWith(n.to)))?.label ?? "Dashboard"}
               </span>
             </div>
-
-            {/* Avatar */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link
                 to="/dashboard/profile"
