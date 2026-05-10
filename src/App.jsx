@@ -9,6 +9,8 @@ import AboutUs from "./Component/Public/AboutUs";
 import Projects from "./Component/Public/Projects";
 import ConsultingService from "./Component/Public/Services/ConsultingService";
 import ContractorService from "./Component/Public/Services/ContractorService";
+import LoginPage from "./Component/Auth/LoginPage";
+import RegistrationPage from "./Component/Auth/RegistrationPage";
 
 
 
@@ -30,7 +32,9 @@ const App = () => {
 
         
         <Route path="/register" element={<RegisterCompany />} />
-          <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/registration" element={<RegistrationPage />} />
 
         
         <Route element={<Layout />}>

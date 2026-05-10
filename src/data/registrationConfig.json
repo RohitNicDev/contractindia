@@ -1,0 +1,52 @@
+{
+  "companyTypes": [
+    { "value": "contractor", "label": "Contractor" },
+    { "value": "consultant", "label": "Consultant" },
+    { "value": "supplier", "label": "Procurement Supplier" },
+    { "value": "tender", "label": "Tender Service Provider" }
+  ],
+  "states": [
+    {
+      "value": "delhi",
+      "label": "Delhi",
+      "cities": ["New Delhi", "Dwarka", "Rohini", "Saket"]
+    },
+    {
+      "value": "maharashtra",
+      "label": "Maharashtra",
+      "cities": ["Mumbai", "Pune", "Nagpur", "Nashik"]
+    },
+    {
+      "value": "madhya_pradesh",
+      "label": "Madhya Pradesh",
+      "cities": ["Bhopal", "Indore", "Jabalpur", "Gwalior"]
+    }
+  ],
+  "serviceGroups": [
+    {
+      "value": "consulting",
+      "label": "Consulting Services",
+      "subServices": ["Project Planning", "PMC", "Cost Estimation", "Architectural Design"]
+    },
+    {
+      "value": "contractor",
+      "label": "Contractor Services",
+      "subServices": ["Civil Work", "Interior Fitout", "MEP", "Road Construction"]
+    },
+    {
+      "value": "tender",
+      "label": "Tender Services",
+      "subServices": ["Tender Discovery", "Tender Drafting", "Bid Submission", "Compliance Review"]
+    },
+    {
+      "value": "procurement",
+      "label": "Procurement Categories",
+      "subServices": ["Cement", "Steel", "Electrical", "Plumbing"]
+    },
+    {
+      "value": "audit",
+      "label": "Construction Audit",
+      "subServices": ["Safety Audit", "Structural Audit", "Quality Audit", "Progress Audit"]
+    }
+  ]
+}

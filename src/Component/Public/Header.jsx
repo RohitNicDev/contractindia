@@ -17,7 +17,7 @@ import {
   Building2,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import { NavLink, useNavigate, Link } from "react-router-dom";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Button, Badge, Drawer, Collapse } from "antd";
 import logo from "../../assets/IMG/logo_con1.png";
 const { Panel } = Collapse;
@@ -209,7 +209,7 @@ const Header = () => {
           {/* Logo */}
           <div
             className="flex items-center gap-2 cursor-pointer shrink-0"
-            onClick={() => navigate("/")}
+            onClick={() => navigate({ to: "/" })}
           >
             <img
               src={logo}
@@ -267,7 +267,7 @@ const Header = () => {
                 <Button
                   type="default"
                   className="!rounded-lg !h-9 !px-4 !font-semibold border border-[#162646] text-[#162646] hover:!bg-[#162646] hover:!text-white transition"
-                  onClick={() => navigate("/register")}
+                  onClick={() => navigate({ to: "/register" })}
                 >
                   <span className="text-sm">Register</span>
                 </Button>
@@ -275,7 +275,7 @@ const Header = () => {
                 <Button
                   type="primary"
                   className="!bg-[#162646] !rounded-lg !h-8 sm:!h-10 !px-3 sm:!px-6 !font-bold flex items-center gap-1 sm:gap-2"
-                  onClick={() => navigate("/login")}
+                  onClick={() => navigate({ to: "/login" })}
                 >
                   <LogIn size={14} />
                   <span className="text-xs sm:text-sm">Login</span>
@@ -331,22 +331,19 @@ const Header = () => {
             }
             return (
               <div key={item.name} className="py-3">
-                <NavLink
+                <Link
                   to={item.path}
-                  className={({ isActive }) =>
-                    `relative px-3 py-1.5 text-sm font-bold no-underline rounded-lg transition ${isActive
-                      ? "text-blue-600 bg-blue-50"
-                      : "text-gray-600 hover:text-blue-600 hover:bg-blue-50/50"
-                    }`
-                  }
+                  className="relative px-3 py-1.5 text-sm font-bold no-underline rounded-lg transition"
+                  activeProps={{
+                    className: "text-blue-600 bg-blue-50",
+                  }}
+                  inactiveProps={{
+                    className:
+                      "text-gray-600 hover:text-blue-600 hover:bg-blue-50/50",
+                  }}
                 >
                   {item.name}
-                  {/* {item.isNew && (
-                    <span className="absolute -top-1 -right-1 text-[8px] bg-blue-600 text-white px-1 rounded-full font-bold">
-                      NEW
-                    </span>
-                  )} */}
-                </NavLink>
+                </Link>
               </div>
             );
           })}
@@ -416,29 +413,29 @@ const Header = () => {
                                 {col.title}
                               </p>
                             ) : (
-                              <NavLink
-                                to={col.path || '#'}
+                              <Link
+                                to={col.path || "#"}
                                 className="block text-[12px] sm:text-[13px] font-bold text-gray-700 uppercase tracking-wide mb-1 pl-2 hover:text-blue-600 transition"
                                 onClick={() => setIsDrawerOpen(false)}
                               >
                                 {col.title}
-                              </NavLink>
+                              </Link>
                             )}
 
                             {/* Items */}
                             {col.items && col.items.length > 0 && (
                               <div className="flex flex-col gap-0.5 border-l border-gray-100 pl-3">
                                 {col.items.map((sub) => (
-                                  <NavLink
-                                    key={typeof sub === 'string' ? sub : sub.name}
-                                    to={typeof sub === 'string' ? '#' : sub.path}
+                                  <Link
+                                    key={typeof sub === "string" ? sub : sub.name}
+                                    to={typeof sub === "string" ? "#" : sub.path}
                                     className="py-1 text-[12px] sm:text-[13px] text-gray-600 font-medium 
                                      active:text-blue-600 cursor-pointer 
                                      hover:text-blue-600 transition block no-underline"
                                     onClick={() => setIsDrawerOpen(false)}
                                   >
-                                    {typeof sub === 'string' ? sub : sub.name}
-                                  </NavLink>
+                                    {typeof sub === "string" ? sub : sub.name}
+                                  </Link>
                                 ))}
                               </div>
                             )}
@@ -447,7 +444,7 @@ const Header = () => {
                       </Panel>
                     </Collapse>
                   ) : (
-                    <NavLink
+                    <Link
                       to={item.path}
                       className="flex items-center justify-between px-3 py-2 
                        rounded-lg font-semibold text-[13px] sm:text-sm 
@@ -456,7 +453,7 @@ const Header = () => {
                     >
                       {item.name}
                       <ChevronRight size={14} className="text-gray-300" />
-                    </NavLink>
+                    </Link>
                   )}
                 </div>
               ))}
@@ -471,7 +468,7 @@ const Header = () => {
                 type="default"
                 size="large"
                 className="!rounded-xl border border-[#162646] text-[#162646] hover:!bg-[#162646] hover:!text-white"
-                onClick={() => navigate("/register")}
+                onClick={() => navigate({ to: "/register" })}
               >
                 Register
               </Button>
@@ -482,7 +479,7 @@ const Header = () => {
                 type="primary"
                 size="large"
                 className="!bg-[#162646] !rounded-xl"
-                onClick={() => navigate("/login")}
+                onClick={() => navigate({ to: "/login" })}
               >
                 Login
               </Button>
