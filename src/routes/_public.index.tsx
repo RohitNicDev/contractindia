@@ -6,11 +6,11 @@ export const Route = createFileRoute("/_public/")({
   head: () => ({
     meta: [
       { title: "ContractsIndia — Construction & Infrastructure Marketplace" },
-      {
-        name: "description",
-        content:
-          "India's integrated B2B platform for tenders, verified contractors, consulting, and procurement.",
-      },
+      // {
+      //   name: "description",
+      //   content:
+      //     "India's integrated B2B platform for tenders, verified contractors, consulting, and procurement.",
+      // },
       { property: "og:title", content: "ContractsIndia" },
       {
         property: "og:description",

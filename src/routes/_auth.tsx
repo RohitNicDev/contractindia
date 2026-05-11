@@ -39,7 +39,7 @@ const HERO_BY_PATH: Record<string, HeroConfig> = {
     title: "Access your",
     highlight: "workspace",
     subtitle:
-      "Manage tenders, procurement, contracts, and business services from your dashboard.",
+      "Manage procurement, contracts, and business services from your dashboard.",
     bullets: [
       { icon: ShieldCheck, text: "OTP-secured authentication system" },
       { icon: Building2, text: "Centralized contractor management" },
@@ -241,10 +241,10 @@ function AuthLayout() {
             {/* Card */}
             <div className="relative overflow-hidden rounded-[32px] border border-indigo-100 bg-white/80 shadow-[0_8px_40px_rgba(99,102,241,0.12)] backdrop-blur-2xl">
               {/* Top shimmer line */}
-              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-400/60 to-transparent" />
+              <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-indigo-400/60 to-transparent" />
 
               {/* Subtle inner tint */}
-              <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/40 to-violet-50/30" />
+              <div className="absolute inset-0 bg-linear-to-br from-indigo-50/40 to-violet-50/30" />
 
               {/* Form content */}
               <div className="relative z-10 p-6 sm:p-8 md:p-10">

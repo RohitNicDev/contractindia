@@ -59,7 +59,7 @@ const RegistrationPage = () => {
   };
 
   return (
-    <div className="min-h-screen overflow-hidden bg-gradient-to-b from-slate-950 via-blue-950 to-slate-900 px-6 py-16">
+    <div className="min-h-screen overflow-hidden bg-linear-to-b from-slate-950 via-blue-950 to-slate-900 px-6 py-16">
       <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-2">
         <motion.div
           initial={{ opacity: 0, x: -24 }}
@@ -72,7 +72,7 @@ const RegistrationPage = () => {
           </p>
           <h1 className="text-4xl font-black leading-tight md:text-6xl">
             Build your
-            <span className="bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent">
               {" "}
               business profile
             </span>

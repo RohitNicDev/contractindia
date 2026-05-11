@@ -50,14 +50,14 @@ export default function DashboardOverview() {
 
       {/* Greeting banner */}
       <motion.div {...fu(0)} className={`relative overflow-hidden ${glassCard} p-6`}>
-        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-violet-500/8 to-cyan-400/6 rounded-2xl" />
+        <div className="absolute inset-0 bg-linear-to-r from-indigo-500/10 via-violet-500/8 to-cyan-400/6 rounded-2xl" />
         <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-indigo-400/15 blur-3xl" />
         <div className="absolute right-20 bottom-0 h-24 w-24 rounded-full bg-violet-400/15 blur-2xl" />
-        <div className="absolute left-1/2 top-0 h-px w-1/2 bg-gradient-to-r from-transparent via-indigo-400/40 to-transparent" />
+        <div className="absolute left-1/2 top-0 h-px w-1/2 bg-linear-to-r from-transparent via-indigo-400/40 to-transparent" />
         <div className="relative flex items-center justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-indigo-500">Welcome back</p>
-            <h1 className="mt-1 text-2xl font-black bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-800 bg-clip-text text-transparent">
+            <h1 className="mt-1 text-2xl font-black bg-linear-to-r from-indigo-600 via-violet-600 to-indigo-800 bg-clip-text text-transparent">
               Good morning, {firstName} 👋
             </h1>
             <p className="mt-1.5 text-sm text-slate-500">Here's what's happening with your account today.</p>
@@ -88,7 +88,7 @@ export default function DashboardOverview() {
                   <p className="text-[11px] font-semibold text-emerald-600">{s.delta}</p>
                 </div>
               </div>
-              <span className={`flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${s.grad} shadow-lg`}>
+              <span className={`flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br ${s.grad} shadow-lg`}>
                 <s.icon className="h-5 w-5 text-white" />
               </span>
             </div>
@@ -101,7 +101,7 @@ export default function DashboardOverview() {
         <motion.div {...fu(5)} className={`lg:col-span-2 overflow-hidden ${glassCard}`}>
           <div className="flex items-center justify-between border-b border-indigo-100/60 px-5 py-4">
             <div className="flex items-center gap-2">
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-500 shadow-md">
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-linear-to-br from-indigo-500 to-violet-500 shadow-md">
                 <FileText className="h-3.5 w-3.5 text-white" />
               </span>
               <h2 className="text-sm font-bold text-slate-900">Recent Tenders</h2>
@@ -121,7 +121,7 @@ export default function DashboardOverview() {
                   transition={{ delay: 0.4 + i * 0.07, ease: "easeOut" }}
                   className="group flex items-center gap-4 px-5 py-3.5 transition-colors hover:bg-indigo-50/30"
                 >
-                  <div className={`h-8 w-1 shrink-0 rounded-full bg-gradient-to-b ${t.grad}`} />
+                  <div className={`h-8 w-1 shrink-0 rounded-full bg-linear-to-b ${t.grad}`} />
                   <div className="flex-1 min-w-0">
                     <p className="truncate text-sm font-semibold text-slate-800 group-hover:text-slate-900 transition-colors">{t.title}</p>
                     <p className="text-xs text-slate-400 mt-0.5">{t.id} · Due {t.deadline}</p>
@@ -139,7 +139,7 @@ export default function DashboardOverview() {
 
         <motion.div {...fu(6)} className="space-y-3">
           <div className="flex items-center gap-2 px-1">
-            <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-500 shadow-sm">
+            <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-linear-to-br from-indigo-500 to-violet-500 shadow-sm">
               <Zap className="h-3.5 w-3.5 text-white" />
             </span>
             <h2 className="text-sm font-bold text-slate-900">Quick Actions</h2>
@@ -149,7 +149,7 @@ export default function DashboardOverview() {
               <Link to={a.to}
                 className={`group flex items-center gap-3 ${glassCard} p-3.5 hover:shadow-[0_8px_32px_rgba(99,102,241,0.15)] hover:-translate-y-0.5 hover:border-indigo-200/60`}
               >
-                <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${a.grad} shadow-md transition-transform duration-200 group-hover:scale-110`}
+                <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-linear-to-br ${a.grad} shadow-md transition-transform duration-200 group-hover:scale-110`}
                   style={{ boxShadow: `0 4px 12px ${a.glow}` }}
                 >
                   <a.icon className="h-4 w-4 text-white" />

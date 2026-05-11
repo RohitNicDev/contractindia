@@ -37,7 +37,7 @@ const ContactPage = () => {
             className="w-full h-full object-cover scale-105"
           />
           {/* Overlay with primary brand color gradient */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#162646]/90 to-[#162646]/60"></div>
+          <div className="absolute inset-0 bg-linear-to-r from-[#162646]/90 to-[#162646]/60"></div>
         </div>
 
         <motion.div
@@ -147,7 +147,7 @@ const ContactPage = () => {
               address="3/744, Ramkund Gangaram Nagar, Choubey Colony, Raipur – 492001, Chhattisgarh"
             />
 
-           <div className="p-6 rounded-[2rem] bg-gradient-to-br from-[#162646] to-[#0f1b34] text-white shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden group">
+           <div className="p-6 rounded-[2rem] bg-linear-to-br from-[#162646] to-[#0f1b34] text-white shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden group">
 
 
                <div className="relative z-10">

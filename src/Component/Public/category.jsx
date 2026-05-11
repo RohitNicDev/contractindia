@@ -103,7 +103,7 @@ export function ValueStrip() {
             className={`group relative bg-white/90 backdrop-blur-xl rounded-2xl p-5 flex gap-4 items-start 
             shadow-[0_12px_30px_-10px_rgba(0,0,0,0.08)] border ${item.color} 
             hover:border-primary hover:shadow-[0_20px_40px_-10px_rgba(22,38,70,0.15)] 
-            hover:-translate-y-1.5 transition-all duration-400 overflow-hidden bg-gradient-to-br`}
+            hover:-translate-y-1.5 transition-all duration-400 overflow-hidden bg-linear-to-br`}
           >
             {/* Glow */}
             <div
@@ -156,7 +156,7 @@ export function Categories() {
         <div className="max-w-2xl">
           <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight">
             Our{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 to-indigo-500">
               Service Category
             </span>
           </h2>
@@ -197,7 +197,7 @@ export function Categories() {
         />
 
         {/* Soft Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/50 via-black/10 to-transparent" />
 
         {/* Floating Count Badge */}
         <div className="absolute bottom-2 left-2 bg-white/90 backdrop-blur px-2 py-1 rounded-md shadow text-[10px] font-bold text-slate-700">
@@ -239,7 +239,7 @@ export function Categories() {
       </div>
 
       {/* Bottom Accent Glow */}
-      <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-blue-500 to-indigo-500 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
+      <div className="absolute bottom-0 left-0 w-full h-[2px] bg-linear-to-r from-blue-500 to-indigo-500 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
 
     </motion.a>
   ))}

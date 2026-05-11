@@ -65,7 +65,7 @@ export function Companies() {
           <div className="max-w-2xl">
             <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight">
               Verified{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 to-indigo-500">
                 Industry Leaders
               </span>
             </h2>

@@ -53,7 +53,7 @@ const CompanyList = () => {
         <div className="flex items-center gap-3">
           <Avatar
             size={44}
-            className={`bg-gradient-to-br ${getAvatarColor(text)} text-white font-bold shadow-md`}
+            className={`bg-linear-to-br ${getAvatarColor(text)} text-white font-bold shadow-md`}
           >
             {text?.charAt(0)}
           </Avatar>
@@ -95,7 +95,7 @@ const CompanyList = () => {
       render: (state) => (
         <Tag
           className="rounded-full px-3 py-1 font-semibold border-none 
-                     bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-700"
+                     bg-linear-to-r from-emerald-100 to-green-100 text-emerald-700"
         >
           <GlobalOutlined className="mr-1" /> {state}
         </Tag>
@@ -122,7 +122,7 @@ const CompanyList = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6 lg:p-10">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 via-indigo-50 to-purple-50 p-6 lg:p-10">
       
       <Card
         className="rounded-[2rem] border-none shadow-[0_30px_80px_rgba(0,0,0,0.06)] overflow-hidden"
@@ -130,7 +130,7 @@ const CompanyList = () => {
       >
         {/* 🔥 HEADER */}
         <div className="flex justify-between items-center px-8 py-6 
-                        bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-500 
+                        bg-linear-to-r from-indigo-600 via-blue-600 to-cyan-500 
                         text-white">
           <div>
             <h2 className="text-2xl font-black mb-1">

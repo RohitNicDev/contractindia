@@ -80,7 +80,7 @@ export function Tenders() {
               {/* Text */}
               <span>
                 Live Tenders{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500">
+                <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 to-indigo-500">
                   Bid Now
                 </span>
               </span>

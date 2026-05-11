@@ -27,7 +27,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: () => void 
       whileTap={{ scale: 0.95 }}
       className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none ${
         checked
-          ? "bg-gradient-to-r from-indigo-500 to-violet-500 shadow-[0_0_8px_rgba(99,102,241,0.4)]"
+          ? "bg-linear-to-r from-indigo-500 to-violet-500 shadow-[0_0_8px_rgba(99,102,241,0.4)]"
           : "bg-slate-200"
       }`}
     >
@@ -54,12 +54,12 @@ export default function SettingsPage() {
       {/* Header */}
       <motion.div {...fu(0)}>
         <div className="flex items-center gap-3 mb-1">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-slate-500 to-slate-600 shadow-md">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-linear-to-br from-slate-500 to-slate-600 shadow-md">
             <Settings className="h-4.5 w-4.5 text-white" />
           </span>
           <div>
             <h1 className="text-2xl font-black text-slate-900">Settings</h1>
-            <div className="h-0.5 w-14 rounded-full bg-gradient-to-r from-slate-400 to-slate-500 mt-0.5" />
+            <div className="h-0.5 w-14 rounded-full bg-linear-to-r from-slate-400 to-slate-500 mt-0.5" />
           </div>
         </div>
         <p className="mt-2 text-sm text-slate-500 ml-12">Manage your account preferences and security.</p>
@@ -67,8 +67,8 @@ export default function SettingsPage() {
 
       {/* Notifications */}
       <motion.div {...fu(1)} className={`${glassCard} hover:shadow-[0_8px_32px_rgba(99,102,241,0.12)] hover:border-indigo-200/60`}>
-        <div className="flex items-center gap-3 border-b border-indigo-100/60 px-5 py-4 bg-gradient-to-r from-indigo-50/40 to-transparent">
-          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 shadow-md">
+        <div className="flex items-center gap-3 border-b border-indigo-100/60 px-5 py-4 bg-linear-to-r from-indigo-50/40 to-transparent">
+          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-linear-to-br from-indigo-500 to-violet-500 shadow-md">
             <Bell className="h-4 w-4 text-white" />
           </span>
           <div>
@@ -80,7 +80,7 @@ export default function SettingsPage() {
           {[
             { key: "email",    label: "Email notifications",  sub: "Receive updates via email"         },
             { key: "sms",      label: "SMS alerts",           sub: "Get SMS for critical updates"      },
-            { key: "tenders",  label: "New tender alerts",    sub: "Notify when matching tenders post" },
+            // { key: "tenders",  label: "New tender alerts",    sub: "Notify when matching tenders post" },
             { key: "messages", label: "Message notifications",sub: "Alerts for new messages"           },
             { key: "updates",  label: "Product updates",      sub: "News about ContractIndia features" },
           ].map(({ key, label, sub }) => (
@@ -100,8 +100,8 @@ export default function SettingsPage() {
 
       {/* Appearance */}
       <motion.div {...fu(2)} className={`${glassCard} hover:shadow-[0_8px_32px_rgba(99,102,241,0.12)] hover:border-indigo-200/60`}>
-        <div className="flex items-center gap-3 border-b border-indigo-100/60 px-5 py-4 bg-gradient-to-r from-violet-50/40 to-transparent">
-          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 shadow-md">
+        <div className="flex items-center gap-3 border-b border-indigo-100/60 px-5 py-4 bg-linear-to-r from-violet-50/40 to-transparent">
+          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-linear-to-br from-violet-500 to-purple-500 shadow-md">
             <Palette className="h-4 w-4 text-white" />
           </span>
           <div>
@@ -123,11 +123,11 @@ export default function SettingsPage() {
                 whileHover={{ y: -1 }} whileTap={{ scale: 0.97 }}
                 className={`flex flex-col items-center gap-2 rounded-xl border-2 p-3.5 text-xs font-semibold transition-all ${
                   theme === value
-                    ? "border-indigo-300 bg-gradient-to-br from-indigo-50 to-violet-50 text-indigo-700 shadow-[0_4px_12px_rgba(99,102,241,0.2)]"
+                    ? "border-indigo-300 bg-linear-to-br from-indigo-50 to-violet-50 text-indigo-700 shadow-[0_4px_12px_rgba(99,102,241,0.2)]"
                     : "border-slate-200/80 bg-white/50 text-slate-600 hover:border-indigo-200 hover:bg-indigo-50/40"
                 }`}
               >
-                <span className={`flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br ${grad} shadow-sm`}>
+                <span className={`flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br ${grad} shadow-sm`}>
                   <Icon className="h-4 w-4 text-white" />
                 </span>
                 {label}
@@ -139,8 +139,8 @@ export default function SettingsPage() {
 
       {/* Language */}
       <motion.div {...fu(3)} className={`${glassCard} hover:shadow-[0_8px_32px_rgba(99,102,241,0.12)] hover:border-indigo-200/60`}>
-        <div className="flex items-center gap-3 border-b border-indigo-100/60 px-5 py-4 bg-gradient-to-r from-cyan-50/40 to-transparent">
-          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 shadow-md">
+        <div className="flex items-center gap-3 border-b border-indigo-100/60 px-5 py-4 bg-linear-to-r from-cyan-50/40 to-transparent">
+          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-linear-to-br from-cyan-500 to-blue-500 shadow-md">
             <Globe className="h-4 w-4 text-white" />
           </span>
           <div>
@@ -165,8 +165,8 @@ export default function SettingsPage() {
 
       {/* Security */}
       <motion.div {...fu(4)} className={`${glassCard} hover:shadow-[0_8px_32px_rgba(99,102,241,0.12)] hover:border-indigo-200/60`}>
-        <div className="flex items-center gap-3 border-b border-indigo-100/60 px-5 py-4 bg-gradient-to-r from-emerald-50/40 to-transparent">
-          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 shadow-md">
+        <div className="flex items-center gap-3 border-b border-indigo-100/60 px-5 py-4 bg-linear-to-r from-emerald-50/40 to-transparent">
+          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-linear-to-br from-emerald-500 to-teal-500 shadow-md">
             <Shield className="h-4 w-4 text-white" />
           </span>
           <div>
@@ -204,8 +204,8 @@ export default function SettingsPage() {
       <motion.div {...fu(5)}
         className="rounded-2xl bg-red-50/60 backdrop-blur-xl border border-red-200/60 shadow-[0_4px_24px_rgba(239,68,68,0.08)] transition-all duration-300 overflow-hidden hover:shadow-[0_8px_32px_rgba(239,68,68,0.12)]"
       >
-        <div className="flex items-center gap-3 border-b border-red-100/60 px-5 py-4 bg-gradient-to-r from-red-50/60 to-transparent">
-          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-red-500 to-rose-500 shadow-md">
+        <div className="flex items-center gap-3 border-b border-red-100/60 px-5 py-4 bg-linear-to-r from-red-50/60 to-transparent">
+          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-linear-to-br from-red-500 to-rose-500 shadow-md">
             <Trash2 className="h-4 w-4 text-white" />
           </span>
           <div>

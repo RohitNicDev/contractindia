@@ -55,7 +55,7 @@ const Footer = () => {
           {/* Brand & Newsletter Section */}
           <div className="lg:col-span-4 space-y-8">
             <div className="flex items-center gap-3">
-              {/* <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-accent to-primary flex items-center justify-center shadow-lg shadow-accent/20"> */}
+              {/* <div className="h-12 w-12 rounded-2xl bg-linear-to-br from-accent to-primary flex items-center justify-center shadow-lg shadow-accent/20"> */}
                  <img
                                 src={logo}
                                 alt="Contracts India Logo"

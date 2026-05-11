@@ -86,7 +86,7 @@ const materials = [
 
 export function Materials() {
   return (
-    <section className="bg-gradient-to-br from-slate-50 to-slate-100 py-14">
+    <section className="bg-linear-to-br from-slate-50 to-slate-100 py-14">
     <div className="container mx-auto px-6 relative z-10">
 
         {/* HEADER */}
@@ -94,7 +94,7 @@ export function Materials() {
           <div className="max-w-2xl">
             <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight">
              Procurement  {" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 to-indigo-500">
                services
               </span>
             </h2>

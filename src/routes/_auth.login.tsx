@@ -6,10 +6,10 @@ export const Route = createFileRoute("/_auth/login")({
   head: () => ({
     meta: [
       { title: "Sign in | ContractsIndia" },
-      {
-        name: "description",
-        content: "Sign in to ContractsIndia to manage tenders, partners, and procurement.",
-      },
+      // {
+      //   name: "description",
+      //   content: "Sign in to ContractsIndia to manage tenders, partners, and procurement.",
+      // },
       { property: "og:title", content: "Sign in | ContractsIndia" },
       { property: "og:description", content: "Access your ContractsIndia workspace." },
       { property: "og:type", content: "website" },

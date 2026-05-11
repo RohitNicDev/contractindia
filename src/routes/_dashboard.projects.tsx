@@ -73,19 +73,19 @@ export default function ProjectsPage() {
       <motion.div {...fu(0)} className="flex items-start justify-between">
         <div>
           <div className="flex items-center gap-3 mb-1">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 shadow-[0_4px_12px_rgba(139,92,246,0.35)]">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-linear-to-br from-violet-500 to-purple-500 shadow-[0_4px_12px_rgba(139,92,246,0.35)]">
               <FolderOpen className="h-4.5 w-4.5 text-white" />
             </span>
             <div>
               <h1 className="text-2xl font-black text-slate-900">Projects</h1>
-              <div className="h-0.5 w-16 rounded-full bg-gradient-to-r from-violet-500 to-purple-500 mt-0.5" />
+              <div className="h-0.5 w-16 rounded-full bg-linear-to-r from-violet-500 to-purple-500 mt-0.5" />
             </div>
           </div>
           <p className="mt-2 text-sm text-slate-500 ml-12">Track and manage all your active projects.</p>
         </div>
         <motion.button
           whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-          className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-4 py-2.5 text-sm font-bold text-white shadow-[0_4px_12px_rgba(99,102,241,0.35)] hover:shadow-[0_6px_20px_rgba(99,102,241,0.5)] transition-shadow"
+          className="flex items-center gap-2 rounded-xl bg-linear-to-r from-indigo-500 to-violet-500 px-4 py-2.5 text-sm font-bold text-white shadow-[0_4px_12px_rgba(99,102,241,0.35)] hover:shadow-[0_6px_20px_rgba(99,102,241,0.5)] transition-shadow"
         >
           <Plus className="h-4 w-4" /> New Project
         </motion.button>
@@ -102,7 +102,7 @@ export default function ProjectsPage() {
             whileHover={{ y: -2 }}
             className={`rounded-2xl backdrop-blur-xl border ${s.border} ${s.bg} shadow-[0_4px_24px_rgba(99,102,241,0.06)] p-5 text-center transition-all duration-300 hover:shadow-[0_8px_32px_rgba(99,102,241,0.12)]`}
           >
-            <p className={`text-3xl font-black bg-gradient-to-br ${s.grad} bg-clip-text text-transparent`}>{s.count}</p>
+            <p className={`text-3xl font-black bg-linear-to-br ${s.grad} bg-clip-text text-transparent`}>{s.count}</p>
             <p className="text-xs font-semibold text-slate-500 mt-1">{s.label}</p>
           </motion.div>
         ))}
@@ -118,7 +118,7 @@ export default function ProjectsPage() {
               className={`${glassCard} overflow-hidden hover:shadow-[0_12px_40px_rgba(99,102,241,0.15)] hover:border-indigo-200/60`}
             >
               {/* Gradient top accent */}
-              <div className={`h-1 w-full bg-gradient-to-r ${p.grad}`} />
+              <div className={`h-1 w-full bg-linear-to-r ${p.grad}`} />
 
               <div className="p-5">
                 <div className="flex items-start justify-between">
@@ -145,7 +145,7 @@ export default function ProjectsPage() {
                   </div>
                   <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
                     <motion.div
-                      className={`h-2 rounded-full bg-gradient-to-r ${s.bar}`}
+                      className={`h-2 rounded-full bg-linear-to-r ${s.bar}`}
                       initial={{ width: 0 }}
                       animate={{ width: `${p.progress}%` }}
                       transition={{ duration: 1, delay: 0.3 + i * 0.1, ease: "easeOut" as const }}

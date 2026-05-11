@@ -44,7 +44,7 @@ export default function ProfilePage() {
       {/* Page title */}
       <motion.div {...fu(0)}>
         <div className="flex items-center gap-3 mb-1">
-          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 shadow-md">
+          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-linear-to-br from-amber-500 to-orange-500 shadow-md">
             <User className="h-4 w-4 text-white" />
           </span>
           <h1 className="text-2xl font-black text-slate-900">My Profile</h1>
@@ -57,7 +57,7 @@ export default function ProfilePage() {
         className={`overflow-hidden ${glassCard} hover:shadow-[0_8px_32px_rgba(99,102,241,0.15)] hover:-translate-y-0.5 hover:border-indigo-200/60`}
       >
         {/* Cover — rich gradient with mesh overlay */}
-        <div className="relative h-32 bg-gradient-to-r from-indigo-500 via-violet-500 to-cyan-400 overflow-hidden">
+        <div className="relative h-32 bg-linear-to-r from-indigo-500 via-violet-500 to-cyan-400 overflow-hidden">
           <div className="absolute inset-0 opacity-20"
             style={{
               backgroundImage:
@@ -81,7 +81,7 @@ export default function ProfilePage() {
         <div className="px-6 pb-6">
           <div className="flex flex-wrap items-end gap-4 -mt-12">
             <div className="relative">
-              <div className="flex h-24 w-24 items-center justify-center rounded-2xl border-4 border-white bg-gradient-to-br from-indigo-500 to-violet-500 text-2xl font-black text-white shadow-[0_8px_24px_rgba(99,102,241,0.35)]">
+              <div className="flex h-24 w-24 items-center justify-center rounded-2xl border-4 border-white bg-linear-to-br from-indigo-500 to-violet-500 text-2xl font-black text-white shadow-[0_8px_24px_rgba(99,102,241,0.35)]">
                 {initials}
               </div>
               <button className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-white border border-indigo-100 shadow-md hover:bg-indigo-50 hover:border-indigo-200 transition-colors">
@@ -103,7 +103,7 @@ export default function ProfilePage() {
             </div>
             <motion.button
               whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-              className="ml-auto flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_12px_rgba(99,102,241,0.35)] hover:shadow-[0_6px_20px_rgba(99,102,241,0.5)] transition-shadow"
+              className="ml-auto flex items-center gap-2 rounded-xl bg-linear-to-r from-indigo-500 to-violet-500 px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_12px_rgba(99,102,241,0.35)] hover:shadow-[0_6px_20px_rgba(99,102,241,0.5)] transition-shadow"
             >
               <Edit3 className="h-4 w-4" />
               Edit Profile
@@ -126,7 +126,7 @@ export default function ProfilePage() {
       {/* Personal info grid */}
       <motion.div {...fu(2)} className={`${glassCard} p-6`}>
         <div className="flex items-center gap-2 mb-5">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-500 shadow-md">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-linear-to-br from-indigo-500 to-violet-500 shadow-md">
             <User className="h-3.5 w-3.5 text-white" />
           </span>
           <h3 className="text-sm font-bold text-slate-900">Personal Information</h3>
@@ -138,7 +138,7 @@ export default function ProfilePage() {
               whileHover={{ x: 2 }}
               className="flex items-start gap-3 rounded-xl bg-slate-50/80 border border-slate-100 p-3.5 transition-all hover:border-indigo-100 hover:bg-indigo-50/30"
             >
-              <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br ${f.grad} shadow-sm`}>
+              <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-linear-to-br ${f.grad} shadow-sm`}>
                 <f.icon className="h-4 w-4 text-white" />
               </span>
               <div>
@@ -156,7 +156,7 @@ export default function ProfilePage() {
           className="rounded-2xl bg-indigo-50/60 backdrop-blur-xl border border-indigo-200/60 shadow-[0_4px_24px_rgba(99,102,241,0.10)] transition-all duration-300 p-6"
         >
           <div className="flex items-center gap-2 mb-5">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-500 shadow-md">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-linear-to-br from-indigo-500 to-violet-500 shadow-md">
               <Building2 className="h-3.5 w-3.5 text-white" />
             </span>
             <h3 className="text-sm font-bold text-indigo-800">Business Details</h3>
@@ -164,7 +164,7 @@ export default function ProfilePage() {
           <div className="grid gap-3 sm:grid-cols-2">
             {commercialFields.map((f) => (
               <div key={f.label} className="flex items-start gap-3 rounded-xl bg-white/70 border border-indigo-100 p-3.5">
-                <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br ${f.grad} shadow-sm`}>
+                <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-linear-to-br ${f.grad} shadow-sm`}>
                   <f.icon className="h-4 w-4 text-white" />
                 </span>
                 <div>
@@ -181,7 +181,7 @@ export default function ProfilePage() {
       <motion.div {...fu(4)}
         className="flex items-center gap-3 rounded-2xl bg-emerald-50/80 backdrop-blur-xl border border-emerald-200/60 shadow-[0_4px_24px_rgba(16,185,129,0.10)] p-4"
       >
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 shadow-md">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-emerald-500 to-teal-500 shadow-md">
           <CheckCircle2 className="h-5 w-5 text-white" />
         </div>
         <div>

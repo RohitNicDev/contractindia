@@ -9,7 +9,7 @@ export function AuthCard({ children }) {
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className="glass-card relative w-full max-w-xl rounded-3xl p-8 sm:p-10"
     >
-      <div className="pointer-events-none absolute inset-0 rounded-3xl bg-gradient-to-br from-white/40 to-transparent opacity-60" />
+      <div className="pointer-events-none absolute inset-0 rounded-3xl bg-linear-to-br from-white/40 to-transparent opacity-60" />
       <div className="relative">{children}</div>
     </motion.div>
   );

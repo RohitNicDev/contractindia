@@ -16,7 +16,7 @@ const LoginPage = () => {
   const onSubmit = () => {};
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-blue-900 via-blue-800 to-slate-900 text-white">
+    <div className="min-h-screen overflow-x-hidden bg-linear-to-br from-blue-900 via-blue-800 to-slate-900 text-white">
       <motion.div style={{ y: bgY }} className="pointer-events-none fixed inset-0">
         <div className="absolute -top-24 -left-12 h-72 w-72 rounded-full bg-cyan-300/20 blur-3xl" />
         <div className="absolute top-40 right-10 h-80 w-80 rounded-full bg-blue-300/20 blur-3xl" />
@@ -36,13 +36,13 @@ const LoginPage = () => {
             </p>
             <h1 className="text-4xl font-black leading-tight md:text-6xl">
               Sign in to your
-              <span className="bg-gradient-to-r from-cyan-200 to-blue-200 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-cyan-200 to-blue-200 bg-clip-text text-transparent">
                 {" "}
                 ContractsIndia
               </span>
             </h1>
             <p className="mt-5 max-w-md text-slate-200">
-              Manage tenders, projects, and verified partners from one animated
+              Manage projects, and verified partners from one animated
               dashboard experience.
             </p>
           </div>

@@ -48,12 +48,12 @@ export default function CompaniesPage() {
       {/* Header */}
       <motion.div {...fu(0)}>
         <div className="flex items-center gap-3 mb-1">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 shadow-[0_4px_12px_rgba(16,185,129,0.35)]">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-linear-to-br from-emerald-500 to-teal-500 shadow-[0_4px_12px_rgba(16,185,129,0.35)]">
             <Building2 className="h-4.5 w-4.5 text-white" />
           </span>
           <div>
             <h1 className="text-2xl font-black text-slate-900">Company Directory</h1>
-            <div className="h-0.5 w-20 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 mt-0.5" />
+            <div className="h-0.5 w-20 rounded-full bg-linear-to-r from-emerald-500 to-teal-500 mt-0.5" />
           </div>
         </div>
         <p className="mt-2 text-sm text-slate-500 ml-12">Find verified contractors, consultants, and suppliers.</p>
@@ -68,7 +68,7 @@ export default function CompaniesPage() {
           { label: "Verified",    count: COMPANIES.filter(c => c.verified).length,                  grad: "from-emerald-500 to-teal-500"   },
         ].map((s) => (
           <div key={s.label} className={`${glassCard} p-3 text-center hover:shadow-[0_6px_20px_rgba(99,102,241,0.12)] hover:-translate-y-0.5`}>
-            <p className={`text-xl font-black bg-gradient-to-br ${s.grad} bg-clip-text text-transparent`}>{s.count}</p>
+            <p className={`text-xl font-black bg-linear-to-br ${s.grad} bg-clip-text text-transparent`}>{s.count}</p>
             <p className="text-[11px] font-semibold text-slate-500 mt-0.5">{s.label}</p>
           </div>
         ))}
@@ -92,7 +92,7 @@ export default function CompaniesPage() {
               onClick={() => setTypeFilter(f)}
               className={`rounded-xl border px-3.5 py-2 text-xs font-semibold transition-all duration-200 ${
                 typeFilter === f
-                  ? "border-indigo-300 bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-[0_4px_12px_rgba(99,102,241,0.3)]"
+                  ? "border-indigo-300 bg-linear-to-r from-indigo-500 to-violet-500 text-white shadow-[0_4px_12px_rgba(99,102,241,0.3)]"
                   : "border-slate-200/80 bg-white/70 backdrop-blur-xl text-slate-600 hover:border-indigo-200 hover:bg-indigo-50/60"
               }`}
             >
@@ -113,12 +113,12 @@ export default function CompaniesPage() {
             className={`${glassCard} overflow-hidden hover:shadow-[0_12px_40px_rgba(99,102,241,0.15)] hover:border-indigo-200/60`}
           >
             {/* Gradient top line */}
-            <div className={`h-1 w-full bg-gradient-to-r ${c.grad}`} />
+            <div className={`h-1 w-full bg-linear-to-r ${c.grad}`} />
 
             <div className="p-5">
               <div className="flex items-start gap-3">
                 {/* Gradient avatar */}
-                <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${c.initGrad} text-white font-black text-lg shadow-md`}>
+                <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-linear-to-br ${c.initGrad} text-white font-black text-lg shadow-md`}>
                   {c.name[0]}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -169,7 +169,7 @@ export default function CompaniesPage() {
                 <motion.a
                   href={`mailto:${c.email}`}
                   whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                  className="flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 py-2 text-xs font-bold text-white shadow-[0_4px_12px_rgba(99,102,241,0.3)] hover:shadow-[0_6px_16px_rgba(99,102,241,0.45)] transition-shadow"
+                  className="flex items-center justify-center gap-1.5 rounded-xl bg-linear-to-r from-indigo-500 to-violet-500 py-2 text-xs font-bold text-white shadow-[0_4px_12px_rgba(99,102,241,0.3)] hover:shadow-[0_6px_16px_rgba(99,102,241,0.45)] transition-shadow"
                 >
                   <Mail className="h-3.5 w-3.5" /> Email
                 </motion.a>
@@ -181,7 +181,7 @@ export default function CompaniesPage() {
 
       {filtered.length === 0 && (
         <motion.div {...fu(2)} className="flex flex-col items-center justify-center py-24">
-          <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-emerald-100 to-teal-100 mb-5 shadow-sm">
+          <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-linear-to-br from-emerald-100 to-teal-100 mb-5 shadow-sm">
             <Building2 className="h-10 w-10 text-emerald-400" />
           </div>
           <p className="text-base font-bold text-slate-700">No companies found</p>

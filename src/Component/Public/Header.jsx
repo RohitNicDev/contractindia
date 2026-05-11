@@ -238,7 +238,7 @@ const Header = () => {
               </select>
               <input
                 type="text"
-                placeholder="Search tenders, contractors, materials..."
+                placeholder="Search , contractors, materials..."
                 className="flex-1 bg-transparent px-4 py-2 text-sm outline-none"
               />
               <button className="px-4 bg-[#162646] text-white hover:bg-blue-700 transition flex items-center justify-center">
@@ -266,7 +266,7 @@ const Header = () => {
               <div className="flex items-center gap-2">
                 <Button
                   type="default"
-                  className="!rounded-lg !h-9 !px-4 !font-semibold border border-[#162646] text-[#162646] hover:!bg-[#162646] hover:!text-white transition"
+                  className="!rounded-lg !h-9 !px-4 !font-semibold border border-[#162646] text-[#162646] hover:bg-[#162646]! hover:!text-white transition"
                   onClick={() => navigate({ to: "/register" })}
                 >
                   <span className="text-sm">Register</span>

@@ -128,7 +128,7 @@ const HeroSection = () => {
         <div className="absolute inset-0 bg-black/30" />
 
         {/* Optional gradient for premium feel */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/20 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-r from-black/50 via-black/20 to-transparent" />
       </motion.div>
     </AnimatePresence>
   </div>
@@ -142,7 +142,7 @@ const HeroSection = () => {
         {/* 🔷 HEADING */}
         <h2 className="text-4xl md:text-6xl font-extrabold leading-tight">
          India's Largest  {" "}
-          <span className="bg-gradient-to-r from-cta to-amber-300 text-transparent bg-clip-text">
+          <span className="bg-linear-to-r from-cta to-amber-300 text-transparent bg-clip-text">
             Construction Market Place
           </span>
         </h2>
@@ -210,7 +210,7 @@ const HeroSection = () => {
         className="premium-modal"
       >
         {/* HEADER */}
-        <div className=" mt-5 relative bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 p-6 rounded-t-2xl overflow-hidden">
+        <div className=" mt-5 relative bg-linear-to-r from-slate-900 via-slate-800 to-slate-900 p-6 rounded-t-2xl overflow-hidden">
           <div className="absolute top-0 right-0 w-40 h-40 bg-blue-500/20 blur-3xl rounded-full"></div>
 
           <div className="relative z-10 flex items-center gap-4">
@@ -445,7 +445,7 @@ const HeroSection = () => {
                   type="button"
                   onClick={() => companyForm.resetFields()}
                   className="h-10 px-5 rounded-xl font-bold text-white
-      bg-gradient-to-r from-gray-500 to-gray-700
+      bg-linear-to-r from-gray-500 to-gray-700
       hover:from-gray-600 hover:to-gray-800
       shadow-md transition-all"
                 >
@@ -457,7 +457,7 @@ const HeroSection = () => {
                   type="button"
                   onClick={() => setOpen(false)}
                   className="h-10 px-5 rounded-xl font-bold text-white
-      bg-gradient-to-r from-red-500 to-red-700
+      bg-linear-to-r from-red-500 to-red-700
       hover:from-red-600 hover:to-red-800
       shadow-md transition-all"
                 >
@@ -470,7 +470,7 @@ const HeroSection = () => {
                 type="submit"
                 disabled={loading}
                 className="h-11 px-8 rounded-xl font-bold text-white
-    bg-gradient-to-r from-[#162646] to-[#1e3a5f]
+    bg-linear-to-r from-[#162646] to-[#1e3a5f]
     hover:from-[#0f1e38] hover:to-[#274c77]
     shadow-lg transition-all disabled:opacity-60"
               >

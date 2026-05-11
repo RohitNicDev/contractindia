@@ -57,7 +57,7 @@ export default function MessagesPage() {
       <div className="flex w-72 shrink-0 flex-col bg-white/80 backdrop-blur-2xl border-r border-indigo-100/60 shadow-[2px_0_12px_rgba(99,102,241,0.06)]">
         <div className="border-b border-indigo-100/60 p-4">
           <div className="flex items-center gap-2 mb-3">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-pink-500 to-rose-500 shadow-md">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-linear-to-br from-pink-500 to-rose-500 shadow-md">
               <MessageSquare className="h-3.5 w-3.5 text-white" />
             </span>
             <h2 className="text-sm font-bold text-slate-900">Messages</h2>
@@ -83,12 +83,12 @@ export default function MessagesPage() {
               onClick={() => setActive(c.id)}
               className={`flex w-full items-center gap-3 px-4 py-3 text-left transition-all ${
                 active === c.id
-                  ? "bg-gradient-to-r from-indigo-50/90 to-violet-50/70 border-r-2 border-indigo-400"
+                  ? "bg-linear-to-r from-indigo-50/90 to-violet-50/70 border-r-2 border-indigo-400"
                   : "hover:bg-slate-50/80"
               }`}
             >
               <div className="relative shrink-0">
-                <div className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold text-white bg-gradient-to-br ${
+                <div className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold text-white bg-linear-to-br ${
                   active === c.id ? c.grad : "from-slate-300 to-slate-400"
                 } ${active === c.id ? "shadow-[0_0_12px_rgba(99,102,241,0.3)]" : ""}`}>
                   {c.name[0]}
@@ -107,7 +107,7 @@ export default function MessagesPage() {
                 <p className="truncate text-[11px] text-slate-400 mt-0.5">{c.last}</p>
               </div>
               {c.unread > 0 && (
-                <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-gradient-to-r from-indigo-500 to-violet-500 px-1.5 text-[10px] font-bold text-white shadow-sm">
+                <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-linear-to-r from-indigo-500 to-violet-500 px-1.5 text-[10px] font-bold text-white shadow-sm">
                   {c.unread}
                 </span>
               )}
@@ -117,12 +117,12 @@ export default function MessagesPage() {
       </div>
 
       {/* Chat area */}
-      <div className="flex flex-1 flex-col overflow-hidden bg-gradient-to-br from-slate-50 via-indigo-50/20 to-violet-50/10">
+      <div className="flex flex-1 flex-col overflow-hidden bg-linear-to-br from-slate-50 via-indigo-50/20 to-violet-50/10">
 
         {/* Chat header */}
         <div className="flex items-center gap-3 bg-white/80 backdrop-blur-xl border-b border-indigo-100/60 shadow-[0_2px_8px_rgba(99,102,241,0.06)] px-5 py-3.5">
           <div className="relative">
-            <div className={`flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br ${contact.grad} text-sm font-bold text-white shadow-md`}>
+            <div className={`flex h-9 w-9 items-center justify-center rounded-full bg-linear-to-br ${contact.grad} text-sm font-bold text-white shadow-md`}>
               {contact.name[0]}
             </div>
             {contact.online && (
@@ -159,7 +159,7 @@ export default function MessagesPage() {
               >
                 <div className={`max-w-xs rounded-2xl px-4 py-2.5 text-sm ${
                   m.from === "me"
-                    ? "rounded-br-sm bg-gradient-to-br from-indigo-500 to-violet-500 text-white shadow-[0_4px_16px_rgba(99,102,241,0.35)]"
+                    ? "rounded-br-sm bg-linear-to-br from-indigo-500 to-violet-500 text-white shadow-[0_4px_16px_rgba(99,102,241,0.35)]"
                     : "rounded-bl-sm bg-white/80 backdrop-blur-xl text-slate-800 border border-white/80 shadow-[0_4px_16px_rgba(99,102,241,0.08)]"
                 }`}>
                   <p>{m.text}</p>
@@ -183,7 +183,7 @@ export default function MessagesPage() {
             <motion.button
               whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.92 }}
               onClick={sendMessage}
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 text-white shadow-[0_4px_12px_rgba(99,102,241,0.35)] hover:shadow-[0_6px_16px_rgba(99,102,241,0.5)] transition-shadow"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-indigo-500 to-violet-500 text-white shadow-[0_4px_12px_rgba(99,102,241,0.35)] hover:shadow-[0_6px_16px_rgba(99,102,241,0.5)] transition-shadow"
             >
               <Send className="h-3.5 w-3.5" />
             </motion.button>

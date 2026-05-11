@@ -57,7 +57,7 @@ const Projects = () => {
                 src="https://thumbs.dreamstime.com/b/wide-high-detailed-banner-illustration-silhouette-buildings-under-construction-process-wide-high-detailed-banner-100333894.jpg"
                 className="w-full h-full object-cover scale-110"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#162646]/95 via-[#162646]/80 to-[#162646]/40"></div>
+              <div className="absolute inset-0 bg-linear-to-r from-[#162646]/95 via-[#162646]/80 to-[#162646]/40"></div>
             </div>
     
             <motion.div

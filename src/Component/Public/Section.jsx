@@ -49,7 +49,7 @@ const testimonials = [
 
 export function HowItWorks() {
   return (
-    <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-20 relative overflow-hidden">
+    <section className="bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 py-20 relative overflow-hidden">
       
       {/* Subtle Pattern */}
       <div className="absolute inset-0 
@@ -72,7 +72,7 @@ export function HowItWorks() {
 
           <h2 className="text-3xl md:text-4xl font-black text-white leading-tight">
             How{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cta to-indigo-400">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-cta to-indigo-400">
               ContractsIndia™
             </span>{" "}
             Works
@@ -102,7 +102,7 @@ export function HowItWorks() {
 
                 {/* Top */}
                 <div className="flex justify-between items-center mb-4">
-                  <div className={`h-12 w-12 rounded-xl bg-gradient-to-br ${s.color} text-white flex items-center justify-center shadow-md text-lg group-hover:scale-105 transition`}>
+                  <div className={`h-12 w-12 rounded-xl bg-linear-to-br ${s.color} text-white flex items-center justify-center shadow-md text-lg group-hover:scale-105 transition`}>
                     {s.icon}
                   </div>
 
