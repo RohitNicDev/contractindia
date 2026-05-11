@@ -36,6 +36,7 @@ import { RegisterForm } from "./components/auth/RegisterForm";
 import { OtpVerification } from "./components/auth/OtpVerification";
 import { LoginForm } from "./components/auth/LoginForm";
 import LegalContracts from "./Component/Public/Services/LegalContracts";
+import ContractionAudit from "./Component/Public/Services/ContractionAudit";
 
 export const router = createBrowserRouter([
   // ── Public routes ──────────────────────────────────────────
@@ -56,6 +57,7 @@ export const router = createBrowserRouter([
       { path: "/services/material-manufacturing",   element: <MaterialManufacture /> },
       { path: "/services/material-supply",          element: <MaterialSuppler /> },
       { path: "/services/tender",                   element: <TenderServices /> },
+      { path: "/services/contraction-audit",         element: <ContractionAudit /> },
     ],
   },
 

@@ -81,6 +81,12 @@ const NAV_ITEMS = [
         color: "green",
         path: "/services/marketing",
       },
+      {
+        title: "Contraction Audit",
+        icon: <Wrench size={15} className="text-green-500" />,
+        color: "green",
+        path: "/services/contraction-audit",
+      },
     ],
   },
   { name: "Projects", path: "/projects", isNew: true },

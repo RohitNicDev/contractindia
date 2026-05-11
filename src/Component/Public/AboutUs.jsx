@@ -33,8 +33,8 @@ const AboutUs = () => {
   ];
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-800 overflow-x-hidden">
-      {/* 🔥 HERO (Improved Depth) */}
-      <section className="relative h-[50vh] flex items-center justify-center overflow-hidden">
+       
+      {/* <section className="relative h-[50vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <img
             src="https://thumbs.dreamstime.com/b/wide-high-detailed-banner-illustration-silhouette-buildings-under-construction-process-wide-high-detailed-banner-100333894.jpg"
@@ -52,11 +52,9 @@ const AboutUs = () => {
           <h1 className="text-5xl md:text-6xl font-black text-white tracking-tight">
             About <span className="text-[#fbb820]">Us</span>
           </h1>
-          {/* <p className="text-slate-300 mt-3 text-sm md:text-base">
-            Building Infrastructure That Powers India
-          </p> */}
+       
         </motion.div>
-      </section>
+      </section> */}
 
       {/* 🏢 STORY */}
       <section className="py-16 container mx-auto px-4 md:px-6">
@@ -145,14 +143,7 @@ const AboutUs = () => {
                 .
               </p>
 
-              {/* Highlight Box */}
-              <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                <p className="text-xs">
-                  All project data is collected from multiple sources and
-                  verified before listing. Contractor and consultant profiles
-                  are also validated to ensure trust and reliability.
-                </p>
-              </div>
+              
 
               <p>
                 Employers can easily find and select the best professionals from
@@ -296,18 +287,20 @@ It provides verified information and profiles to help organizations choose the b
                   </h2>
                 </div>
 
-                <p className="text-slate-400 text-xs sm:text-sm max-w-xs">
+                {/* <p className="text-slate-400 text-xs sm:text-sm max-w-xs">
                   A team of experts delivering quality and innovation.
-                </p>
+                </p> */}
               </div>
 
-              {/* TEAM GRID */}
-     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
+             
+  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 place-items-center">
   {team.map((member, i) => (
-    <div key={i} className="text-center group flex flex-col items-center">
-
+    <div
+      key={i}
+      className="text-center group flex flex-col items-center justify-center"
+    >
       {/* IMAGE */}
-      <div className="w-full max-w-[140px] sm:max-w-[150px] overflow-hidden rounded-xl shadow mb-2">
+      <div className="w-full max-w-[100px] sm:max-w-[150px] overflow-hidden rounded-xl shadow mb-2 mx-auto">
         <img
           src={member.img}
           className="w-full h-32 sm:h-40 md:h-44 object-cover object-top group-hover:scale-105 transition duration-300"
@@ -316,11 +309,11 @@ It provides verified information and profiles to help organizations choose the b
       </div>
 
       {/* DETAILS */}
-      <h4 className="text-xs sm:text-sm font-semibold text-slate-800 leading-tight">
+      <h4 className="text-xs sm:text-sm font-semibold text-slate-800 leading-tight text-center">
         {member.name}
       </h4>
 
-      <p className="text-[9px] sm:text-[10px] text-blue-500 uppercase tracking-wide mt-0.5">
+      <p className="text-[9px] sm:text-[10px] text-blue-500 uppercase tracking-wide mt-0.5 text-center">
         {member.role}
       </p>
     </div>
