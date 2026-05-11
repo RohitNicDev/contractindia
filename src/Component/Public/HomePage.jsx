@@ -8,72 +8,59 @@ import HomePageLogocarasole from "./HomePageLogocarasole";
 import { HowItWorks, Testimonials } from "./Section";
 import Test from "./Test";
 
-const sectionMotion = {
-  initial: { opacity: 0, y: 40 },
+// Staggered reveal — each section fades up as it enters the viewport
+const reveal = (delay = 0) => ({
+  initial: { opacity: 0, y: 36 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.2 },
-  transition: { duration: 0.6, ease: "easeOut" },
-};
-
-function AuthCtaStrip() {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.45 }}
-      className="border-b border-[var(--auth-input-border)]"
-      style={{ background: "var(--glass-bg)" }}
-    >
-      <div className="mx-auto flex max-w-[1440px] flex-col items-center justify-center gap-3 px-4 py-3 sm:flex-row sm:justify-between sm:px-6">
-        <p className="text-center text-sm font-semibold text-[var(--auth-text-primary)] sm:text-left">
-          Secure sign-in, registration, and OTP — built for teams across India.
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-2">
-          <Link
-            to="/login"
-            className="rounded-xl border border-[var(--auth-input-border)] bg-[var(--auth-input-bg)] px-4 py-2 text-sm font-bold text-[var(--auth-text-primary)] no-underline transition hover:shadow-[var(--shadow-glass)]"
-          >
-            Sign in
-          </Link>
-          <Link
-            to="/register"
-            className="rounded-xl px-4 py-2 text-sm font-bold text-[var(--auth-chip-active-fg)] no-underline transition hover:opacity-95"
-            style={{ background: "var(--gradient-primary)" }}
-          >
-            Create account
-          </Link>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
+  viewport: { once: true, amount: 0.12 },
+  transition: { duration: 0.65, delay, ease: [0.22, 1, 0.36, 1] },
+});
 
 const HomePage = () => {
   return (
     <ThemeProvider>
-      {/* <AuthCtaStrip /> */}
-      <HeroSection />
-      <motion.div {...sectionMotion}>
-        <ValueStrip />
-      </motion.div>
-      <motion.div {...sectionMotion}>
-        <Categories />
-      </motion.div>
-      <motion.div {...sectionMotion}>
-        <Companies />
-      </motion.div>
-      <motion.div {...sectionMotion}>
-        <HomePageLogocarasole />
-      </motion.div>
-      <motion.div {...sectionMotion}>
-        <HowItWorks />
-      </motion.div>
-      <motion.div {...sectionMotion}>
-        <Testimonials />
-      </motion.div>
-      <motion.div {...sectionMotion}>
-        <Test />
-      </motion.div>
+      {/* Smooth scroll for the whole page */}
+      <div style={{ scrollBehavior: "smooth" }}>
+
+        {/* Hero — no reveal wrapper, it animates internally */}
+        <HeroSection />
+
+        {/* Value strip — overlaps hero bottom */}
+        <motion.div {...reveal(0)}>
+          <ValueStrip />
+        </motion.div>
+
+        {/* Service categories */}
+        <motion.div {...reveal(0)}>
+          <Categories />
+        </motion.div>
+
+        {/* Featured companies */}
+        <motion.div {...reveal(0)}>
+          <Companies />
+        </motion.div>
+
+        {/* Partner logo carousel */}
+        <motion.div {...reveal(0)}>
+          <HomePageLogocarasole />
+        </motion.div>
+
+        {/* How it works */}
+        <motion.div {...reveal(0)}>
+          <HowItWorks />
+        </motion.div>
+
+        {/* Testimonials */}
+        <motion.div {...reveal(0)}>
+          <Testimonials />
+        </motion.div>
+
+        {/* CTA banner */}
+        <motion.div {...reveal(0)}>
+          <Test />
+        </motion.div>
+
+      </div>
     </ThemeProvider>
   );
 };
