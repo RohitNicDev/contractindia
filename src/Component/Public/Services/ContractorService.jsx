@@ -170,7 +170,7 @@ const ContractorService = () => {
         projects: 18,
         rating: "4.7",
         image:
-          "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?q=80&w=1200&auto=format&fit=crop",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwfpGPMRYuDpAkqyWk_eHeAHsmAaSuzkMcGg&s",
       },
     ],
 
@@ -185,7 +185,7 @@ const ContractorService = () => {
         projects: 30,
         rating: "4.8",
         image:
-          "https://images.unsplash.com/photo-1581092921461-eab10380d70a?q=80&w=1200&auto=format&fit=crop",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6eG_uCijtr2lFklWtFgDaJomZJTALOTZH5w&s",
       },
 
       {
@@ -211,7 +211,7 @@ const ContractorService = () => {
         projects: 20,
         rating: "4.6",
         image:
-          "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1200&auto=format&fit=crop",
+          "https://www.spek.fi/wp-content/uploads/2022/08/palontorjuntatekniikanhyotyjaarvo.jpg",
       },
 
       {
@@ -222,7 +222,7 @@ const ContractorService = () => {
         projects: 27,
         rating: "4.8",
         image:
-          "https://images.unsplash.com/photo-1516321497487-e288fb19713f?q=80&w=1200&auto=format&fit=crop",
+          "https://internationalfireandsafetyjournal.com/wp-content/uploads/2025/11/industrial-fire-shield.webp",
       },
     ],
 
@@ -764,7 +764,7 @@ const ContractorService = () => {
             <div className="flex items-center justify-between mb-6 px-1">
               <div>
                 <h2 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  {activeMenu.replace(/([A-Z])/g, " $1")}
+                  {activeLabel} /
                   <span className="text-sm font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded-md">
                     {currentData.length}
                   </span>

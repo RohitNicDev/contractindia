@@ -182,29 +182,38 @@ const AboutUs = () => {
       </section>
 
       {/* 🎯 CORE VALUES (Glass effect) */}
-      <section className="bg-[#162646] py-20">
-        <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-3 gap-6">
-            <ValueCard
-              icon={<Target />}
-              title="Objective"
-              desc="The primary objective of ContractsIndia is to connect contractors, architects, consultants, and employers on a single platform for tenders and projects.
-It provides verified information and profiles to help organizations choose the best professionals and enable efficient bidding opportunities."
-            />
+    
+<section className="relative py-16 sm:py-20 overflow-hidden bg-gradient-to-br from-[#0f172a] via-[#162646] to-[#1e293b]">
+  {/* Background Blur */}
+  <div className="absolute top-0 left-0 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl"></div>
+  <div className="absolute bottom-0 right-0 w-80 h-80 bg-cyan-400/10 rounded-full blur-3xl"></div>
 
-            <ValueCard
-              icon={<Award />}
-              title="Mission"
-              desc="To create availability of the best of Services & Solutions with the most competitive price/cost by/for an individual or institution in all aspects related to infrastructure works/ services without comprising the quality and providing various alternatives in transparent manner."
-            />
-            <ValueCard
-              icon={<Eye />}
-              title="Vision"
-              desc="Every Client/User shall be able to take/give the best solutions/services in an economical and effective way having required skills at the right time, considering the importance of timeliness delivery & providing solutions/services with complete transparency."
-            />
-          </div>
-        </div>
-      </section>
+  <div className="container mx-auto px-4 sm:px-6 relative z-10">
+    
+     
+
+    {/* Cards */}
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
+      <ValueCard
+        icon={<Target size={26} />}
+        title="Objective"
+        desc="The primary objective of ContractsIndia is to connect contractors, architects, consultants, and employers on a single platform for tenders and projects. It provides verified information and profiles to help organizations choose the best professionals and enable efficient bidding opportunities."
+      />
+
+      <ValueCard
+        icon={<Award size={26} />}
+        title="Mission"
+        desc="To create availability of the best services and solutions with the most competitive cost for individuals and institutions in infrastructure-related works while maintaining quality, transparency, and multiple professional alternatives."
+      />
+
+      <ValueCard
+        icon={<Eye size={26} />}
+        title="Vision"
+        desc="Every client and user should be able to access the best solutions and professional services economically and effectively with complete transparency, skilled expertise, and timely delivery."
+      />
+    </div>
+  </div>
+</section>
 
       {/* 👥 TEAM & LEADERSHIP */}
       <section className="py-12 md:py-16  bg-linear-to-b from-slate-50 to-white">
@@ -329,12 +338,53 @@ It provides verified information and profiles to help organizations choose the b
 
 const ValueCard = ({ icon, title, desc }) => (
   <motion.div
-    whileHover={{ y: -6 }}
-    className="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/10 hover:bg-white/20 transition"
+    whileHover={{ y: -8 }}
+    transition={{ duration: 0.3 }}
+    className="
+      relative overflow-hidden group
+      bg-white/5 backdrop-blur-xl
+      border border-white/10
+      rounded-[28px]
+      p-6 sm:p-8
+      shadow-xl
+      hover:border-blue-400/30
+      hover:bg-white/10
+      transition-all duration-500
+    "
   >
-    <div className="mb-3 text-white">{icon}</div>
-    <h3 className="text-white font-semibold mb-1">{title}</h3>
-    <p className="text-slate-300 text-xs  text-justify">{desc}</p>
+    {/* Glow Effect */}
+    <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl group-hover:bg-blue-500/20 transition-all duration-500"></div>
+
+    {/* Icon */}
+    <div
+      className="
+        relative z-10
+        w-14 h-14
+        rounded-2xl
+        bg-gradient-to-br from-blue-500 to-cyan-400
+        flex items-center justify-center
+        text-white
+        shadow-lg shadow-blue-500/20
+        mb-5
+        group-hover:scale-110 group-hover:rotate-3
+        transition-all duration-500
+      "
+    >
+      {icon}
+    </div>
+
+    {/* Title */}
+    <h3 className="relative z-10 text-xl sm:text-2xl font-bold text-white mb-3">
+      {title}
+    </h3>
+
+    {/* Description */}
+    <p className="relative z-10 text-slate-300 text-sm leading-relaxed text-justify">
+      {desc}
+    </p>
+
+    {/* Bottom Border Glow */}
+    <div className="absolute bottom-0 left-0 h-1 w-0 bg-gradient-to-r from-blue-400 to-cyan-400 group-hover:w-full transition-all duration-500"></div>
   </motion.div>
 );
 

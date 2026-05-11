@@ -256,7 +256,7 @@ const menuItems = [
             <div className="flex items-center justify-between mb-6 px-1">
               <div>
                 <h2 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  {activeMenu.replace(/([A-Z])/g, " $1")}
+                   {activeLabel} /
                   <span className="text-sm font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded-md">
                     {currentData.length}
                   </span>

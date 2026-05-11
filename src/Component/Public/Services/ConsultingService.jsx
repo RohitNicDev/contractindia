@@ -31,7 +31,7 @@ const consultingData = {
       description:
         "Specialized EPC consultancy firm delivering end-to-end infrastructure and industrial project solutions.",
       image:
-        "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1200&auto=format&fit=crop",
+        "https://www.apacoutlookmag.com/media/MAIN-Primero.webp",
     },
 
     {
@@ -121,7 +121,7 @@ const consultingData = {
       description:
         "Integrated MEP design consultancy for commercial, hospital and industrial projects.",
       image:
-        "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop",
+        "https://sparko-africa.com/wp-content/uploads/2025/11/23.webp",
     },
 
     {
@@ -134,7 +134,7 @@ const consultingData = {
       description:
         "Professional MEP planning, drafting and engineering consultancy services.",
       image:
-        "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?q=80&w=1200&auto=format&fit=crop",
+        "https://sparko-africa.com/wp-content/uploads/2025/11/23.webp",
     },
   ],
 
@@ -151,7 +151,7 @@ const consultingData = {
       description:
         "HVAC consultancy and energy-efficient cooling system design specialists.",
       image:
-        "https://images.unsplash.com/photo-1581092921461-eab10380d70a?q=80&w=1200&auto=format&fit=crop",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQA0am-QxEN8QREmuYoI3OBw-CErgLC4omajg&sv",
     },
 
     {
@@ -271,7 +271,7 @@ const consultingData = {
       description:
         "Water and waste water infrastructure consultancy for municipal and industrial projects.",
       image:
-        "https://images.unsplash.com/photo-1473773508845-188df298d2d1?q=80&w=1200&auto=format&fit=crop",
+        "https://images.jdmagicbox.com/v2/comp/bangalore/h1/080pxx80.xx80.200117211232.q8h1/catalogue/blue-water-company-kengeri-bangalore-environmental-health-consultants-c87kfo27z5.jpg",
     },
 
     {
@@ -284,7 +284,7 @@ const consultingData = {
       description:
         "Specialized in STP, WTP and waste water recycling consultancy solutions.",
       image:
-        "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4hFAkLGLQsjuanHv6PoGu3bpOG4LA31erDg&s",
     },
   ],
 };
@@ -433,7 +433,7 @@ const menuItems = [
             <div className="flex items-center justify-between mb-6 px-1">
               <div>
                 <h2 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  {activeMenu.replace(/([A-Z])/g, " $1")}
+                  {activeLabel } /
                   <span className="text-sm font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded-md">
                     {currentData.length}
                   </span>

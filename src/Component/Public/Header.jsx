@@ -17,7 +17,7 @@ import {
   Building2,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, Link } from "react-router-dom";
 import { Button, Badge, Drawer, Collapse } from "antd";
 import logo from "../../assets/IMG/logo_con1.png";
 const { Panel } = Collapse;
@@ -82,7 +82,7 @@ const NAV_ITEMS = [
         path: "/services/marketing",
       },
       {
-        title: "Contraction Audit",
+        title: "Contraction Audit ",
         icon: <Wrench size={15} className="text-green-500" />,
         color: "green",
         path: "/services/contraction-audit",
@@ -244,7 +244,7 @@ const Header = () => {
               </select>
               <input
                 type="text"
-                placeholder="Search , contractors, materials..."
+                placeholder="Search tenders, contractors, materials..."
                 className="flex-1 bg-transparent px-4 py-2 text-sm outline-none"
               />
               <button className="px-4 bg-[#162646] text-white hover:bg-blue-700 transition flex items-center justify-center">
@@ -272,7 +272,7 @@ const Header = () => {
               <div className="flex items-center gap-2">
                 <Button
                   type="default"
-                  className="!rounded-lg !h-9 !px-4 !font-semibold border border-[#162646] text-[#162646] hover:bg-[#162646]! hover:!text-white transition"
+                  className="!rounded-lg !h-9 !px-4 !font-semibold border border-[#162646] text-[#162646] hover:!bg-[#162646] hover:!text-white transition"
                   onClick={() => navigate("/register")}
                 >
                   <span className="text-sm">Register</span>
@@ -337,162 +337,227 @@ const Header = () => {
             }
             return (
               <div key={item.name} className="py-3">
-                <Link
-                  to={item.path}
-                  className="relative px-3 py-1.5 text-sm font-bold no-underline rounded-lg transition"
-                  activeProps={{
-                    className: "text-blue-600 bg-blue-50",
-                  }}
-                  inactiveProps={{
-                    className:
-                      "text-gray-600 hover:text-blue-600 hover:bg-blue-50/50",
-                  }}
-                >
-                  {item.name}
-                </Link>
+               <NavLink
+  to={item.path}
+  onClick={() => setIsDrawerOpen(false)}
+  className={({ isActive }) =>
+    `flex items-center justify-between px-4 py-3 rounded-2xl no-underline transition-all
+    ${
+      isActive
+        ? "bg-[#162646] text-white shadow-lg"
+        : "bg-white text-slate-700 hover:bg-slate-100"
+    }`
+  }
+>
+  <span className="text-[14px] font-semibold">
+    {item.name}
+  </span>
+                  {/* {item.isNew && (
+                    <span className="absolute -top-1 -right-1 text-[8px] bg-blue-600 text-white px-1 rounded-full font-bold">
+                      NEW
+                    </span>
+                  )} */}
+                </NavLink>
               </div>
             );
           })}
         </nav>
       </div>
 
-      {/* 📱 MOBILE DRAWER */}
-      <Drawer
-        placement="left"
-        onClose={() => setIsDrawerOpen(false)}
-        open={isDrawerOpen}
-        width={300}
-        closeIcon={null}
-        styles={{ body: { padding: 0 } }}
-      >
-        <div className="flex flex-col h-full">
-          <div className="bg-[#162646] p-6 text-white">
-            <div className="flex justify-between items-center mb-4">
-              <button
-                onClick={() => setIsDrawerOpen(false)}
-                className="text-white/70 hover:text-white"
-              >
-                <X size={24} />
-              </button>
-            </div>
-            <div className="flex items-center gap-3">
-              <img
-                src={logo}
-                alt="Contracts India Logo"
-                className="rounded-2xl h-9 w-9 sm:h-11 sm:w-11 object-contain transition-all duration-300 group-hover:scale-105"
-              />
-              <div>
-                <p className="text-sm font-bold mb-0 leading-none">
-                  CONTRACTSINDIA
-                </p>
-                <p className="text-[10px] text-white/50">
-                  Integrated Solution For Construction &amp; Infrastructure
-                </p>
-              </div>
-            </div>
-          </div>
+  {/* 📱 MOBILE DRAWER */}
+<Drawer
+  placement="left"
+  onClose={() => setIsDrawerOpen(false)}
+  open={isDrawerOpen}
+  width={320}
+  closeIcon={null}
+  styles={{
+    body: {
+      padding: 0,
+      background: "#f8fafc",
+    },
+  }}
+>
+  <div className="flex flex-col h-full">
+    {/* HEADER */}
+    <div className="bg-[#162646] px-5 py-5 text-white relative overflow-hidden">
+      <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
 
-          <div className="flex-1 overflow-y-auto">
-            <div className="p-2 sm:p-3">
-              {NAV_ITEMS.map((item) => (
-                <div key={item.name} className="mb-1">
-                  {item.mega ? (
-                    <Collapse
-                      ghost
-                      expandIconPosition="end"
-                      className="mobile-nav-collapse"
-                    >
-                      <Panel
-                        header={
-                          <span className="font-semibold text-[13px] sm:text-sm text-gray-700">
-                            {item.name}
-                          </span>
-                        }
-                        key={item.name}
-                        className="!p-0"
-                      >
-                        {item.columns.map((col) => (
-                          <div key={col.title} className="mb-2 ml-1">
-                            {/* Section Title */}
-                            {col.items && col.items.length > 0 ? (
-                              <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wide mb-1 pl-2">
-                                {col.title}
-                              </p>
-                            ) : (
-                              <Link
-                                to={col.path || "#"}
-                                className="block text-[12px] sm:text-[13px] font-bold text-gray-700 uppercase tracking-wide mb-1 pl-2 hover:text-blue-600 transition"
-                                onClick={() => setIsDrawerOpen(false)}
-                              >
-                                {col.title}
-                              </Link>
-                            )}
+      <div className="flex items-center justify-between relative z-10">
+        <div className="flex items-center gap-3">
+          <img
+            src={logo}
+            alt="Contracts India Logo"
+            className="h-11 w-11 rounded-xl object-contain bg-white p-1"
+          />
 
-                            {/* Items */}
-                            {col.items && col.items.length > 0 && (
-                              <div className="flex flex-col gap-0.5 border-l border-gray-100 pl-3">
-                                {col.items.map((sub) => (
-                                  <Link
-                                    key={typeof sub === "string" ? sub : sub.name}
-                                    to={typeof sub === "string" ? "#" : sub.path}
-                                    className="py-1 text-[12px] sm:text-[13px] text-gray-600 font-medium 
-                                     active:text-blue-600 cursor-pointer 
-                                     hover:text-blue-600 transition block no-underline"
-                                    onClick={() => setIsDrawerOpen(false)}
-                                  >
-                                    {typeof sub === "string" ? sub : sub.name}
-                                  </Link>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </Panel>
-                    </Collapse>
-                  ) : (
-                    <Link
-                      to={item.path}
-                      className="flex items-center justify-between px-3 py-2 
-                       rounded-lg font-semibold text-[13px] sm:text-sm 
-                       text-gray-700 hover:bg-blue-50 no-underline transition"
-                      onClick={() => setIsDrawerOpen(false)}
-                    >
-                      {item.name}
-                      <ChevronRight size={14} className="text-gray-300" />
-                    </Link>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
+          <div>
+            <h3 className="text-sm font-black leading-tight">
+              ContractsIndia™
+            </h3>
 
-          <div className="p-6 border-t border-gray-100 bg-gray-50">
-            <div className="flex gap-3">
-              {/* Register Button */}
-              <Button
-                block
-                type="default"
-                size="large"
-                className="!rounded-xl border border-[#162646] text-[#162646] hover:!bg-[#162646] hover:!text-white"
-                onClick={() => navigate("/register")}
-              >
-                Register
-              </Button>
-
-              {/* Login Button */}
-              <Button
-                block
-                type="primary"
-                size="large"
-                className="!bg-[#162646] !rounded-xl"
-                onClick={() => navigate("/login")}
-              >
-                Login
-              </Button>
-            </div>
+            <p className="text-[10px] text-white/70 leading-snug">
+              Integrated Solution For Construction & Infrastructure
+            </p>
           </div>
         </div>
-      </Drawer>
+
+        <button
+          onClick={() => setIsDrawerOpen(false)}
+          className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+        >
+          <X size={18} />
+        </button>
+      </div>
+    </div>
+
+    {/* SEARCH */}
+    <div className="p-4 border-b border-slate-200 bg-white">
+      <div className="flex items-center bg-slate-100 rounded-xl overflow-hidden border border-slate-200">
+        <input
+          type="text"
+          placeholder="Search services..."
+          className="flex-1 bg-transparent px-4 py-3 text-sm outline-none"
+        />
+
+        <button className="px-4 text-slate-500 hover:text-[#162646] transition">
+          <Search size={18} />
+        </button>
+      </div>
+    </div>
+
+    {/* MENU */}
+    <div className="flex-1 overflow-y-auto px-3 py-4">
+      {NAV_ITEMS.map((item) => (
+        <div key={item.name} className="mb-2">
+          {item.mega ? (
+            <Collapse
+              ghost
+              expandIconPosition="end"
+              className="custom-mobile-collapse"
+            >
+              <Panel
+                key={item.name}
+                header={
+                  <span className="text-[14px] font-bold text-slate-700">
+                    {item.name}
+                  </span>
+                }
+              >
+                <div className="space-y-2">
+                  {item.columns.map((col) => (
+                    <div
+                      key={col.title}
+                      className="bg-white rounded-2xl border border-slate-100 overflow-hidden"
+                    >
+                      {/* MAIN ITEM */}
+                      <Link
+                        to={col.path || "#"}
+                        onClick={() => setIsDrawerOpen(false)}
+                        className="flex items-center justify-between px-4 py-3 no-underline hover:bg-slate-50 transition"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center">
+                            {col.icon}
+                          </div>
+
+                          <span className="text-[13px] font-semibold text-slate-700">
+                            {col.title}
+                          </span>
+                        </div>
+
+                        {col.items && (
+                          <ChevronRight
+                            size={14}
+                            className="text-slate-400"
+                          />
+                        )}
+                      </Link>
+
+                      {/* SUBMENU */}
+                      {col.items && (
+                        <div className="border-t border-slate-100 bg-slate-50/60">
+                          {col.items.map((sub) => (
+                            <Link
+                              key={
+                                typeof sub === "string"
+                                  ? sub
+                                  : sub.name
+                              }
+                              to={
+                                typeof sub === "string"
+                                  ? "#"
+                                  : sub.path
+                              }
+                              onClick={() => setIsDrawerOpen(false)}
+                              className="block px-5 py-2.5 text-[12px] text-slate-600 hover:text-[#162646] hover:bg-white transition no-underline"
+                            >
+                              •{" "}
+                              {typeof sub === "string"
+                                ? sub
+                                : sub.name}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </Panel>
+            </Collapse>
+          ) : (
+            <NavLink
+              to={item.path}
+              onClick={() => setIsDrawerOpen(false)}
+              className={({ isActive }) =>
+                `flex items-center justify-between px-4 py-3 rounded-2xl no-underline transition-all
+                ${
+                  isActive
+                    ? "bg-[#162646] text-white shadow-lg"
+                    : "bg-white text-slate-700 hover:bg-slate-100"
+                }`
+              }
+            >
+              <span className="text-[14px] font-semibold">
+                {item.name}
+              </span>
+
+              <ChevronRight size={16} />
+            </NavLink>
+          )}
+        </div>
+      ))}
+    </div>
+
+    {/* FOOTER BUTTONS */}
+    <div className="p-4 border-t border-slate-200 bg-white">
+      <div className="grid grid-cols-2 gap-3">
+        <Button
+          size="large"
+          className="!h-11 !rounded-xl !border-[#162646] !text-[#162646] hover:!bg-[#162646] hover:!text-white !font-semibold"
+          onClick={() => {
+            navigate("/register");
+            setIsDrawerOpen(false);
+          }}
+        >
+          Register
+        </Button>
+
+        <Button
+          type="primary"
+          size="large"
+          className="!h-11 !rounded-xl !bg-[#162646] !font-semibold"
+          onClick={() => {
+            navigate("/login");
+            setIsDrawerOpen(false);
+          }}
+        >
+          Login
+        </Button>
+      </div>
+    </div>
+  </div>
+</Drawer>
     </header>
   );
 };
