@@ -22,6 +22,13 @@ import { Route as AuthOtpRouteImport } from './routes/_auth.otp'
 import { Route as AuthLoginRouteImport } from './routes/_auth.login'
 import { Route as PublicServicesContractorRouteImport } from './routes/_public.services.contractor'
 import { Route as PublicServicesConsultingRouteImport } from './routes/_public.services.consulting'
+import { Route as PublicServicesTenderRouteImport } from './routes/_public.services.tender'
+import { Route as PublicServicesAssetsManagementRouteImport } from './routes/_public.services.assets-management'
+import { Route as PublicServicesLegalContractsRouteImport } from './routes/_public.services.legal-contracts'
+import { Route as PublicServicesBrandDevelopmentRouteImport } from './routes/_public.services.brand-development'
+import { Route as PublicServicesMarketingRouteImport } from './routes/_public.services.marketing'
+import { Route as PublicServicesMaterialManufacturingRouteImport } from './routes/_public.services.material-manufacturing'
+import { Route as PublicServicesMaterialSupplyRouteImport } from './routes/_public.services.material-supply'
 import { Route as DashboardIndexRouteImport } from './routes/_dashboard.index'
 import { Route as DashboardProfileRouteImport } from './routes/_dashboard.profile'
 import { Route as DashboardTendersRouteImport } from './routes/_dashboard.tenders'
@@ -93,6 +100,41 @@ const PublicServicesConsultingRoute = PublicServicesConsultingRouteImport.update
   path: '/services/consulting',
   getParentRoute: () => PublicRoute,
 } as any)
+const PublicServicesTenderRoute = PublicServicesTenderRouteImport.update({
+  id: '/services/tender',
+  path: '/services/tender',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicServicesAssetsManagementRoute = PublicServicesAssetsManagementRouteImport.update({
+  id: '/services/assets-management',
+  path: '/services/assets-management',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicServicesLegalContractsRoute = PublicServicesLegalContractsRouteImport.update({
+  id: '/services/legal-contracts',
+  path: '/services/legal-contracts',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicServicesBrandDevelopmentRoute = PublicServicesBrandDevelopmentRouteImport.update({
+  id: '/services/brand-development',
+  path: '/services/brand-development',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicServicesMarketingRoute = PublicServicesMarketingRouteImport.update({
+  id: '/services/marketing',
+  path: '/services/marketing',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicServicesMaterialManufacturingRoute = PublicServicesMaterialManufacturingRouteImport.update({
+  id: '/services/material-manufacturing',
+  path: '/services/material-manufacturing',
+  getParentRoute: () => PublicRoute,
+} as any)
+const PublicServicesMaterialSupplyRoute = PublicServicesMaterialSupplyRouteImport.update({
+  id: '/services/material-supply',
+  path: '/services/material-supply',
+  getParentRoute: () => PublicRoute,
+} as any)
 
 // Dashboard routes
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
@@ -142,6 +184,13 @@ export interface FileRoutesByFullPath {
   '/projects': typeof PublicProjectsRoute
   '/services/consulting': typeof PublicServicesConsultingRoute
   '/services/contractor': typeof PublicServicesContractorRoute
+  '/services/tender': typeof PublicServicesTenderRoute
+  '/services/assets-management': typeof PublicServicesAssetsManagementRoute
+  '/services/legal-contracts': typeof PublicServicesLegalContractsRoute
+  '/services/brand-development': typeof PublicServicesBrandDevelopmentRoute
+  '/services/marketing': typeof PublicServicesMarketingRoute
+  '/services/material-manufacturing': typeof PublicServicesMaterialManufacturingRoute
+  '/services/material-supply': typeof PublicServicesMaterialSupplyRoute
   '/dashboard': typeof DashboardIndexRoute
   '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/tenders': typeof DashboardTendersRoute
@@ -161,6 +210,13 @@ export interface FileRoutesByTo {
   '/projects': typeof PublicProjectsRoute
   '/services/consulting': typeof PublicServicesConsultingRoute
   '/services/contractor': typeof PublicServicesContractorRoute
+  '/services/tender': typeof PublicServicesTenderRoute
+  '/services/assets-management': typeof PublicServicesAssetsManagementRoute
+  '/services/legal-contracts': typeof PublicServicesLegalContractsRoute
+  '/services/brand-development': typeof PublicServicesBrandDevelopmentRoute
+  '/services/marketing': typeof PublicServicesMarketingRoute
+  '/services/material-manufacturing': typeof PublicServicesMaterialManufacturingRoute
+  '/services/material-supply': typeof PublicServicesMaterialSupplyRoute
   '/dashboard': typeof DashboardIndexRoute
   '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/tenders': typeof DashboardTendersRoute
@@ -184,6 +240,9 @@ export interface FileRoutesById {
   '/_public/': typeof PublicIndexRoute
   '/_public/services/consulting': typeof PublicServicesConsultingRoute
   '/_public/services/contractor': typeof PublicServicesContractorRoute
+  '/_public/services/tender': typeof PublicServicesTenderRoute
+  '/_public/services/assets-management': typeof PublicServicesAssetsManagementRoute
+  '/_public/services/legal-contracts': typeof PublicServicesLegalContractsRoute
   '/_dashboard/dashboard': typeof DashboardIndexRoute
   '/_dashboard/dashboard/profile': typeof DashboardProfileRoute
   '/_dashboard/dashboard/tenders': typeof DashboardTendersRoute
@@ -205,6 +264,9 @@ export interface FileRouteTypes {
     | '/projects'
     | '/services/consulting'
     | '/services/contractor'
+    | '/services/tender'
+    | '/services/assets-management'
+    | '/services/legal-contracts'
     | '/dashboard'
     | '/dashboard/profile'
     | '/dashboard/tenders'
@@ -224,6 +286,9 @@ export interface FileRouteTypes {
     | '/projects'
     | '/services/consulting'
     | '/services/contractor'
+    | '/services/tender'
+    | '/services/assets-management'
+    | '/services/legal-contracts'
     | '/dashboard'
     | '/dashboard/profile'
     | '/dashboard/tenders'
@@ -246,6 +311,13 @@ export interface FileRouteTypes {
     | '/_public/'
     | '/_public/services/consulting'
     | '/_public/services/contractor'
+    | '/_public/services/tender'
+    | '/_public/services/assets-management'
+    | '/_public/services/legal-contracts'
+    | '/_public/services/brand-development'
+    | '/_public/services/marketing'
+    | '/_public/services/material-manufacturing'
+    | '/_public/services/material-supply'
     | '/_dashboard/dashboard'
     | '/_dashboard/dashboard/profile'
     | '/_dashboard/dashboard/tenders'
@@ -354,6 +426,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicServicesConsultingRouteImport
       parentRoute: typeof PublicRoute
     }
+    '/_public/services/tender': {
+      id: '/_public/services/tender'
+      path: '/services/tender'
+      fullPath: '/services/tender'
+      preLoaderRoute: typeof PublicServicesTenderRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/services/assets-management': {
+      id: '/_public/services/assets-management'
+      path: '/services/assets-management'
+      fullPath: '/services/assets-management'
+      preLoaderRoute: typeof PublicServicesAssetsManagementRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/services/legal-contracts': {
+      id: '/_public/services/legal-contracts'
+      path: '/services/legal-contracts'
+      fullPath: '/services/legal-contracts'
+      preLoaderRoute: typeof PublicServicesLegalContractsRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/services/brand-development': {
+      id: '/_public/services/brand-development'
+      path: '/services/brand-development'
+      fullPath: '/services/brand-development'
+      preLoaderRoute: typeof PublicServicesBrandDevelopmentRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/services/marketing': {
+      id: '/_public/services/marketing'
+      path: '/services/marketing'
+      fullPath: '/services/marketing'
+      preLoaderRoute: typeof PublicServicesMarketingRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/services/material-manufacturing': {
+      id: '/_public/services/material-manufacturing'
+      path: '/services/material-manufacturing'
+      fullPath: '/services/material-manufacturing'
+      preLoaderRoute: typeof PublicServicesMaterialManufacturingRouteImport
+      parentRoute: typeof PublicRoute
+    }
+    '/_public/services/material-supply': {
+      id: '/_public/services/material-supply'
+      path: '/services/material-supply'
+      fullPath: '/services/material-supply'
+      preLoaderRoute: typeof PublicServicesMaterialSupplyRouteImport
+      parentRoute: typeof PublicRoute
+    }
     '/_dashboard/dashboard': {
       id: '/_dashboard/dashboard'
       path: '/dashboard'
@@ -440,6 +561,13 @@ interface PublicRouteChildren {
   PublicIndexRoute: typeof PublicIndexRoute
   PublicServicesConsultingRoute: typeof PublicServicesConsultingRoute
   PublicServicesContractorRoute: typeof PublicServicesContractorRoute
+  PublicServicesTenderRoute: typeof PublicServicesTenderRoute
+  PublicServicesAssetsManagementRoute: typeof PublicServicesAssetsManagementRoute
+  PublicServicesLegalContractsRoute: typeof PublicServicesLegalContractsRoute
+  PublicServicesBrandDevelopmentRoute: typeof PublicServicesBrandDevelopmentRoute
+  PublicServicesMarketingRoute: typeof PublicServicesMarketingRoute
+  PublicServicesMaterialManufacturingRoute: typeof PublicServicesMaterialManufacturingRoute
+  PublicServicesMaterialSupplyRoute: typeof PublicServicesMaterialSupplyRoute
 }
 const PublicRouteChildren: PublicRouteChildren = {
   PublicAboutRoute: PublicAboutRoute,
@@ -449,6 +577,13 @@ const PublicRouteChildren: PublicRouteChildren = {
   PublicIndexRoute: PublicIndexRoute,
   PublicServicesConsultingRoute: PublicServicesConsultingRoute,
   PublicServicesContractorRoute: PublicServicesContractorRoute,
+  PublicServicesTenderRoute: PublicServicesTenderRoute,
+  PublicServicesAssetsManagementRoute: PublicServicesAssetsManagementRoute,
+  PublicServicesLegalContractsRoute: PublicServicesLegalContractsRoute,
+  PublicServicesBrandDevelopmentRoute: PublicServicesBrandDevelopmentRoute,
+  PublicServicesMarketingRoute: PublicServicesMarketingRoute,
+  PublicServicesMaterialManufacturingRoute: PublicServicesMaterialManufacturingRoute,
+  PublicServicesMaterialSupplyRoute: PublicServicesMaterialSupplyRoute,
 }
 const PublicRouteWithChildren = PublicRoute._addFileChildren(PublicRouteChildren)
 
