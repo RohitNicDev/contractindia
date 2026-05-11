@@ -11,339 +11,92 @@ import {
   Star,
 } from "lucide-react";
 
-const ConsultingService = () => {
-  const [activeMenu, setActiveMenu] = useState("epcconsultancy");
-  const [openMenu, setOpenMenu] = useState("mep");
+const MarketingManagement = () => {
+  const [activeMenu, setActiveMenu] = useState("marketingmanagement");
+  const [openMenu, setOpenMenu] = useState("marketingmanagement");
 
-  /* ---------------- DUMMY JSON DATA ---------------- */
-
-const consultingData = {
-  /* ---------------- EPC CONSULTANCY ---------------- */
-
-  epcconsultancy: [
+const marketingManagementData = {
+  marketingmanagement: [
     {
       id: 1,
-      company: "Prime EPC Consultants",
+      company: "Digital Reach Marketing",
       location: "Delhi",
-      experience: "15 Years",
-      projects: 55,
+      experience: "9 Years",
+      projects: 140,
       rating: "4.9",
       description:
-        "Specialized EPC consultancy firm delivering end-to-end infrastructure and industrial project solutions.",
+        "Complete digital marketing management including SEO, social media campaigns, lead generation and online branding.",
       image:
-        "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop",
     },
 
     {
       id: 2,
-      company: "Mega Infra Consultancy",
+      company: "Growth Media Solutions",
       location: "Mumbai",
       experience: "11 Years",
-      projects: 39,
-      rating: "4.7",
-      description:
-        "Expert consultants for engineering procurement and turnkey construction management services.",
-      image:
-        "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1200&auto=format&fit=crop",
-    },
-  ],
-
-  /* ---------------- PROJECT MANAGEMENT ---------------- */
-
-  projectmanagement: [
-    {
-      id: 1,
-      company: "Vision PMC Services",
-      location: "Pune",
-      experience: "13 Years",
-      projects: 48,
+      projects: 180,
       rating: "4.8",
       description:
-        "Providing complete project management consultancy for residential and commercial developments.",
+        "Strategic marketing management services focused on business growth, advertising and customer engagement.",
       image:
-        "https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=1200&auto=format&fit=crop",
     },
 
     {
-      id: 2,
-      company: "BuildTrack PMC",
+      id: 3,
+      company: "Creative Campaign Studio",
       location: "Bangalore",
-      experience: "10 Years",
-      projects: 30,
-      rating: "4.6",
-      description:
-        "Professional PMC firm focused on execution planning, budgeting and project supervision.",
-      image:
-        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200&auto=format&fit=crop",
-    },
-  ],
-
-  /* ---------------- ARCHITECTURAL ---------------- */
-
-  architectural: [
-    {
-      id: 1,
-      company: "UrbanArc Designers",
-      location: "Jaipur",
-      experience: "14 Years",
-      projects: 44,
-      rating: "4.9",
-      description:
-        "Creative architectural consultancy for luxury residential and commercial spaces.",
-      image:
-        "https://images.unsplash.com/photo-1511818966892-d7d671e672a2?q=80&w=1200&auto=format&fit=crop",
-    },
-
-    {
-      id: 2,
-      company: "SpaceCraft Architects",
-      location: "Delhi",
-      experience: "9 Years",
-      projects: 27,
-      rating: "4.7",
-      description:
-        "Innovative architectural planning and modern building design consultancy services.",
-      image:
-        "https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1200&auto=format&fit=crop",
-    },
-  ],
-
-  /* ---------------- MEP DESIGN ---------------- */
-
-  mepdesign: [
-    {
-      id: 1,
-      company: "MEP Tech Consultants",
-      location: "Hyderabad",
-      experience: "12 Years",
-      projects: 35,
-      rating: "4.8",
-      description:
-        "Integrated MEP design consultancy for commercial, hospital and industrial projects.",
-      image:
-        "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop",
-    },
-
-    {
-      id: 2,
-      company: "Integrated MEP Solutions",
-      location: "Noida",
-      experience: "8 Years",
-      projects: 22,
-      rating: "4.6",
-      description:
-        "Professional MEP planning, drafting and engineering consultancy services.",
-      image:
-        "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?q=80&w=1200&auto=format&fit=crop",
-    },
-  ],
-
-  /* ---------------- HVAC DESIGN ---------------- */
-
-  hvacdesign: [
-    {
-      id: 1,
-      company: "CoolAir Design Studio",
-      location: "Chennai",
-      experience: "11 Years",
-      projects: 31,
-      rating: "4.8",
-      description:
-        "HVAC consultancy and energy-efficient cooling system design specialists.",
-      image:
-        "https://images.unsplash.com/photo-1581092921461-eab10380d70a?q=80&w=1200&auto=format&fit=crop",
-    },
-
-    {
-      id: 2,
-      company: "Climate Engineers",
-      location: "Pune",
       experience: "7 Years",
-      projects: 18,
-      rating: "4.5",
-      description:
-        "Experts in HVAC load calculation, ducting and centralized cooling solutions.",
-      image:
-        "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?q=80&w=1200&auto=format&fit=crop",
-    },
-  ],
-
-  /* ---------------- ELECTRICAL DESIGN ---------------- */
-
-  electricaldesign: [
-    {
-      id: 1,
-      company: "Volt Design Consultancy",
-      location: "Raipur",
-      experience: "10 Years",
-      projects: 25,
+      projects: 95,
       rating: "4.7",
       description:
-        "Electrical system design consultancy for residential, commercial and industrial projects.",
+        "Creative campaign management for startups and enterprises including social media and paid advertising.",
       image:
-        "https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=1200&auto=format&fit=crop",
     },
 
     {
-      id: 2,
-      company: "PowerGrid Engineers",
-      location: "Delhi",
-      experience: "13 Years",
-      projects: 40,
-      rating: "4.9",
-      description:
-        "Experts in HT/LT electrical planning, substation layouts and power management systems.",
-      image:
-        "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?q=80&w=1200&auto=format&fit=crop",
-    },
-  ],
-
-  /* ---------------- FIRE FIGHTING DESIGN ---------------- */
-
-  firefightingdesign: [
-    {
-      id: 1,
-      company: "FireSecure Consultants",
-      location: "Noida",
-      experience: "9 Years",
-      projects: 20,
-      rating: "4.6",
-      description:
-        "Fire protection and fire fighting design consultancy with safety compliance expertise.",
-      image:
-        "https://images.unsplash.com/photo-1516321497487-e288fb19713f?q=80&w=1200&auto=format&fit=crop",
-    },
-
-    {
-      id: 2,
-      company: "SafeZone Fire Engineers",
-      location: "Mumbai",
-      experience: "12 Years",
-      projects: 29,
+      id: 4,
+      company: "Market Vision Experts",
+      location: "Hyderabad",
+      experience: "10 Years",
+      projects: 125,
       rating: "4.8",
       description:
-        "Consultancy for hydrant systems, sprinkler systems and fire alarm planning.",
+        "Professional marketing consultancy and brand promotion solutions for online and offline markets.",
       image:
-        "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop",
     },
-  ],
 
-  /* ---------------- PLUMBING DESIGN ---------------- */
-
-  plumbingdesign: [
     {
-      id: 1,
-      company: "AquaFlow Consultants",
-      location: "Ahmedabad",
+      id: 5,
+      company: "Smart Growth Agency",
+      location: "Pune",
       experience: "8 Years",
-      projects: 17,
-      rating: "4.5",
+      projects: 88,
+      rating: "4.6",
       description:
-        "Professional plumbing and piping design consultancy for modern infrastructure projects.",
+        "Business marketing management with performance analytics, content strategy and customer acquisition planning.",
       image:
-        "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?q=80&w=1200&auto=format&fit=crop",
-    },
-
-    {
-      id: 2,
-      company: "FlowTech Engineers",
-      location: "Bhopal",
-      experience: "10 Years",
-      projects: 24,
-      rating: "4.7",
-      description:
-        "Experts in plumbing layouts, water distribution and drainage design systems.",
-      image:
-        "https://images.unsplash.com/photo-1600585154526-990dced4db0d?q=80&w=1200&auto=format&fit=crop",
-    },
-  ],
-
-  /* ---------------- WATER & WASTE WATER ---------------- */
-
-  waterwastewater: [
-    {
-      id: 1,
-      company: "BlueWater Consultants",
-      location: "Surat",
-      experience: "14 Years",
-      projects: 38,
-      rating: "4.9",
-      description:
-        "Water and waste water infrastructure consultancy for municipal and industrial projects.",
-      image:
-        "https://images.unsplash.com/photo-1473773508845-188df298d2d1?q=80&w=1200&auto=format&fit=crop",
-    },
-
-    {
-      id: 2,
-      company: "Eco Utility Engineers",
-      location: "Nagpur",
-      experience: "11 Years",
-      projects: 26,
-      rating: "4.7",
-      description:
-        "Specialized in STP, WTP and waste water recycling consultancy solutions.",
-      image:
-        "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1200&auto=format&fit=crop",
     },
   ],
 };
 
- 
-
 const menuItems = [
   {
-    key: "epcconsultancy",
-    label: "EPC Consultancy",
-  },
-
-  {
-    key: "projectmanagement",
-    label: "Project Management Consultancy",
-  },
-
-  {
-    key: "architectural",
-    label: "Architectural Services",
-  },
-
-  {
-    key: "mepdesign",
-    label: "MEP Design Consultancy",
-  },
-
-  {
-    key: "hvacdesign",
-    label: "HVAC Design Consultancy",
-  },
-
-  {
-    key: "electricaldesign",
-    label: "Electrical Design Consultancy",
-  },
-
-  {
-    key: "firefightingdesign",
-    label: "Fire Fighting Design Consultancy",
-  },
-
-  {
-    key: "plumbingdesign",
-    label: "Plumbing Design Consultancy",
-  },
-
-  {
-    key: "waterwastewater",
-    label: "Water & Waste Water Design Consultancy",
+    key: "marketingmanagement",
+    label: "Marketing Management",
   },
 ];
 
-  const currentData = consultingData [activeMenu] || [];
+  const currentData = marketingManagementData[activeMenu] || [];
 
   const activeLabel =
     menuItems
       .flatMap((item) => (item.subMenu ? item.subMenu : item))
-      .find((m) => m.key === activeMenu)?.label || "Consulting Services";
+      .find((m) => m.key === activeMenu)?.label || "Procurement Services/ Material Manufacturing";
 
   return (
     <div className="min-h-screen bg-[#F1F5F9] py-8 px-4 md:px-6 font-sans selection:bg-blue-100">
@@ -353,8 +106,9 @@ const menuItems = [
         
           <aside className="space-y-4 h-fit sticky top-6">
             <p className="text-[14px] font-bold uppercase tracking-[0.2em] text-slate-500 px-3">
-              Consulting Services
+             Marketing Management
             </p>
+           
             <nav className="bg-white/70 backdrop-blur-xl rounded-[24px] p-2 border border-white shadow-sm">
               {menuItems.map((menu) => {
                 const hasSubMenu = menu.subMenu && menu.subMenu.length > 0;
@@ -549,4 +303,4 @@ const menuItems = [
   );
 };
 
-export default ConsultingService;
+export default MarketingManagement;

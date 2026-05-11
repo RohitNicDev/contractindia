@@ -11,339 +11,209 @@ import {
   Star,
 } from "lucide-react";
 
-const ConsultingService = () => {
-  const [activeMenu, setActiveMenu] = useState("epcconsultancy");
-  const [openMenu, setOpenMenu] = useState("mep");
+const TenderServices = () => {
+  const [activeMenu, setActiveMenu] = useState("stategov");
+const [openMenu, setOpenMenu] = useState("govtenders");
 
   /* ---------------- DUMMY JSON DATA ---------------- */
 
-const consultingData = {
-  /* ---------------- EPC CONSULTANCY ---------------- */
+const tenderData = {
+  /* ---------------- STATE GOV ---------------- */
 
-  epcconsultancy: [
+  stategov: [
     {
       id: 1,
-      company: "Prime EPC Consultants",
-      location: "Delhi",
-      experience: "15 Years",
-      projects: 55,
+      company: "PWD Road Development Tender",
+      location: "Raipur, Chhattisgarh",
+      experience: "Tender Value ₹2.5 Cr",
+      projects: 12,
       rating: "4.9",
       description:
-        "Specialized EPC consultancy firm delivering end-to-end infrastructure and industrial project solutions.",
+        "State government tender for highway widening, drainage and road infrastructure development work.",
       image:
-        "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1504215680853-026ed2a45def?q=80&w=1200&auto=format&fit=crop",
     },
 
     {
       id: 2,
-      company: "Mega Infra Consultancy",
-      location: "Mumbai",
-      experience: "11 Years",
-      projects: 39,
+      company: "Smart City Civil Tender",
+      location: "Indore, Madhya Pradesh",
+      experience: "Tender Value ₹1.2 Cr",
+      projects: 8,
       rating: "4.7",
       description:
-        "Expert consultants for engineering procurement and turnkey construction management services.",
-      image:
-        "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1200&auto=format&fit=crop",
-    },
-  ],
-
-  /* ---------------- PROJECT MANAGEMENT ---------------- */
-
-  projectmanagement: [
-    {
-      id: 1,
-      company: "Vision PMC Services",
-      location: "Pune",
-      experience: "13 Years",
-      projects: 48,
-      rating: "4.8",
-      description:
-        "Providing complete project management consultancy for residential and commercial developments.",
-      image:
-        "https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=1200&auto=format&fit=crop",
-    },
-
-    {
-      id: 2,
-      company: "BuildTrack PMC",
-      location: "Bangalore",
-      experience: "10 Years",
-      projects: 30,
-      rating: "4.6",
-      description:
-        "Professional PMC firm focused on execution planning, budgeting and project supervision.",
+        "Urban smart city development tender including landscaping, electrical and public utility work.",
       image:
         "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200&auto=format&fit=crop",
     },
   ],
 
-  /* ---------------- ARCHITECTURAL ---------------- */
+  /* ---------------- CENTRAL GOV ---------------- */
 
-  architectural: [
+  centralgov: [
     {
       id: 1,
-      company: "UrbanArc Designers",
-      location: "Jaipur",
-      experience: "14 Years",
-      projects: 44,
+      company: "National Highway Authority Tender",
+      location: "Delhi",
+      experience: "Tender Value ₹18 Cr",
+      projects: 22,
       rating: "4.9",
       description:
-        "Creative architectural consultancy for luxury residential and commercial spaces.",
+        "Central government infrastructure tender for expressway and bridge construction package.",
+      image:
+        "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=1200&auto=format&fit=crop",
+    },
+
+    {
+      id: 2,
+      company: "Railway Electrification Tender",
+      location: "Mumbai",
+      experience: "Tender Value ₹9 Cr",
+      projects: 16,
+      rating: "4.8",
+      description:
+        "Indian railway electrical and signaling infrastructure modernization tender.",
+      image:
+        "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?q=80&w=1200&auto=format&fit=crop",
+    },
+  ],
+
+  /* ---------------- INDIVIDUAL TENDERS ---------------- */
+
+  individualtenders: [
+    {
+      id: 1,
+      company: "Residential Interior Tender",
+      location: "Pune",
+      experience: "Tender Value ₹28 Lakh",
+      projects: 5,
+      rating: "4.6",
+      description:
+        "Private residential interior and renovation work tender for villa project execution.",
+      image:
+        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200&auto=format&fit=crop",
+    },
+
+    {
+      id: 2,
+      company: "Office Renovation Tender",
+      location: "Bangalore",
+      experience: "Tender Value ₹42 Lakh",
+      projects: 7,
+      rating: "4.5",
+      description:
+        "Corporate office renovation tender including HVAC, electrical and furnishing work.",
+      image:
+        "https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=1200&auto=format&fit=crop",
+    },
+  ],
+
+  /* ---------------- BUILDERS TENDERS ---------------- */
+
+  builderstenders: [
+    {
+      id: 1,
+      company: "Luxury Township Tender",
+      location: "Noida",
+      experience: "Tender Value ₹14 Cr",
+      projects: 20,
+      rating: "4.8",
+      description:
+        "Builder tender for residential towers, clubhouse and landscape infrastructure development.",
       image:
         "https://images.unsplash.com/photo-1511818966892-d7d671e672a2?q=80&w=1200&auto=format&fit=crop",
     },
 
     {
       id: 2,
-      company: "SpaceCraft Architects",
-      location: "Delhi",
-      experience: "9 Years",
-      projects: 27,
+      company: "Commercial Complex Tender",
+      location: "Hyderabad",
+      experience: "Tender Value ₹7 Cr",
+      projects: 15,
       rating: "4.7",
       description:
-        "Innovative architectural planning and modern building design consultancy services.",
+        "Commercial building construction tender with façade, MEP and civil package work.",
       image:
         "https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1200&auto=format&fit=crop",
     },
   ],
 
-  /* ---------------- MEP DESIGN ---------------- */
+  /* ---------------- CONTRACTOR TENDERS ---------------- */
 
-  mepdesign: [
+  contractortenders: [
     {
       id: 1,
-      company: "MEP Tech Consultants",
-      location: "Hyderabad",
-      experience: "12 Years",
-      projects: 35,
-      rating: "4.8",
-      description:
-        "Integrated MEP design consultancy for commercial, hospital and industrial projects.",
-      image:
-        "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop",
-    },
-
-    {
-      id: 2,
-      company: "Integrated MEP Solutions",
-      location: "Noida",
-      experience: "8 Years",
-      projects: 22,
-      rating: "4.6",
-      description:
-        "Professional MEP planning, drafting and engineering consultancy services.",
-      image:
-        "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?q=80&w=1200&auto=format&fit=crop",
-    },
-  ],
-
-  /* ---------------- HVAC DESIGN ---------------- */
-
-  hvacdesign: [
-    {
-      id: 1,
-      company: "CoolAir Design Studio",
-      location: "Chennai",
-      experience: "11 Years",
-      projects: 31,
-      rating: "4.8",
-      description:
-        "HVAC consultancy and energy-efficient cooling system design specialists.",
-      image:
-        "https://images.unsplash.com/photo-1581092921461-eab10380d70a?q=80&w=1200&auto=format&fit=crop",
-    },
-
-    {
-      id: 2,
-      company: "Climate Engineers",
-      location: "Pune",
-      experience: "7 Years",
-      projects: 18,
-      rating: "4.5",
-      description:
-        "Experts in HVAC load calculation, ducting and centralized cooling solutions.",
-      image:
-        "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?q=80&w=1200&auto=format&fit=crop",
-    },
-  ],
-
-  /* ---------------- ELECTRICAL DESIGN ---------------- */
-
-  electricaldesign: [
-    {
-      id: 1,
-      company: "Volt Design Consultancy",
-      location: "Raipur",
-      experience: "10 Years",
-      projects: 25,
-      rating: "4.7",
-      description:
-        "Electrical system design consultancy for residential, commercial and industrial projects.",
-      image:
-        "https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=1200&auto=format&fit=crop",
-    },
-
-    {
-      id: 2,
-      company: "PowerGrid Engineers",
-      location: "Delhi",
-      experience: "13 Years",
-      projects: 40,
-      rating: "4.9",
-      description:
-        "Experts in HT/LT electrical planning, substation layouts and power management systems.",
-      image:
-        "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?q=80&w=1200&auto=format&fit=crop",
-    },
-  ],
-
-  /* ---------------- FIRE FIGHTING DESIGN ---------------- */
-
-  firefightingdesign: [
-    {
-      id: 1,
-      company: "FireSecure Consultants",
-      location: "Noida",
-      experience: "9 Years",
-      projects: 20,
-      rating: "4.6",
-      description:
-        "Fire protection and fire fighting design consultancy with safety compliance expertise.",
-      image:
-        "https://images.unsplash.com/photo-1516321497487-e288fb19713f?q=80&w=1200&auto=format&fit=crop",
-    },
-
-    {
-      id: 2,
-      company: "SafeZone Fire Engineers",
-      location: "Mumbai",
-      experience: "12 Years",
-      projects: 29,
-      rating: "4.8",
-      description:
-        "Consultancy for hydrant systems, sprinkler systems and fire alarm planning.",
-      image:
-        "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1200&auto=format&fit=crop",
-    },
-  ],
-
-  /* ---------------- PLUMBING DESIGN ---------------- */
-
-  plumbingdesign: [
-    {
-      id: 1,
-      company: "AquaFlow Consultants",
+      company: "Industrial Plant Tender",
       location: "Ahmedabad",
-      experience: "8 Years",
-      projects: 17,
-      rating: "4.5",
+      experience: "Tender Value ₹11 Cr",
+      projects: 18,
+      rating: "4.8",
       description:
-        "Professional plumbing and piping design consultancy for modern infrastructure projects.",
+        "Industrial fabrication and EPC contractor tender for plant expansion project.",
       image:
-        "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1565008447742-97f6f38c985c?q=80&w=1200&auto=format&fit=crop",
     },
 
     {
       id: 2,
-      company: "FlowTech Engineers",
-      location: "Bhopal",
-      experience: "10 Years",
-      projects: 24,
-      rating: "4.7",
+      company: "Bridge Repair Tender",
+      location: "Lucknow",
+      experience: "Tender Value ₹3.8 Cr",
+      projects: 10,
+      rating: "4.6",
       description:
-        "Experts in plumbing layouts, water distribution and drainage design systems.",
+        "Infrastructure contractor tender for bridge strengthening and rehabilitation work.",
       image:
-        "https://images.unsplash.com/photo-1600585154526-990dced4db0d?q=80&w=1200&auto=format&fit=crop",
-    },
-  ],
-
-  /* ---------------- WATER & WASTE WATER ---------------- */
-
-  waterwastewater: [
-    {
-      id: 1,
-      company: "BlueWater Consultants",
-      location: "Surat",
-      experience: "14 Years",
-      projects: 38,
-      rating: "4.9",
-      description:
-        "Water and waste water infrastructure consultancy for municipal and industrial projects.",
-      image:
-        "https://images.unsplash.com/photo-1473773508845-188df298d2d1?q=80&w=1200&auto=format&fit=crop",
-    },
-
-    {
-      id: 2,
-      company: "Eco Utility Engineers",
-      location: "Nagpur",
-      experience: "11 Years",
-      projects: 26,
-      rating: "4.7",
-      description:
-        "Specialized in STP, WTP and waste water recycling consultancy solutions.",
-      image:
-        "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?q=80&w=1200&auto=format&fit=crop",
     },
   ],
 };
 
- 
-
 const menuItems = [
   {
-    key: "epcconsultancy",
-    label: "EPC Consultancy",
+    key: "govtenders",
+    label: "Gov. Tenders",  
+    subMenu: [
+      {
+        key: "stategov",
+        label: "State Gov.",
+      },
+
+      {
+        key: "centralgov",
+        label: "Central Gov.",
+      },
+    ],
   },
 
   {
-    key: "projectmanagement",
-    label: "Project Management Consultancy",
-  },
+    key: "privatetenders",
+    label: "Private Tenders",
+    subMenu: [
+      {
+        key: "individualtenders",
+        label: "Individual Tenders",
+      },
 
-  {
-    key: "architectural",
-    label: "Architectural Services",
-  },
+      {
+        key: "builderstenders",
+        label: "Builders Tenders",
+      },
 
-  {
-    key: "mepdesign",
-    label: "MEP Design Consultancy",
-  },
-
-  {
-    key: "hvacdesign",
-    label: "HVAC Design Consultancy",
-  },
-
-  {
-    key: "electricaldesign",
-    label: "Electrical Design Consultancy",
-  },
-
-  {
-    key: "firefightingdesign",
-    label: "Fire Fighting Design Consultancy",
-  },
-
-  {
-    key: "plumbingdesign",
-    label: "Plumbing Design Consultancy",
-  },
-
-  {
-    key: "waterwastewater",
-    label: "Water & Waste Water Design Consultancy",
+      {
+        key: "contractortenders",
+        label: "Contractor Tenders",
+      },
+    ],
   },
 ];
 
-  const currentData = consultingData [activeMenu] || [];
+  const currentData = tenderData  [activeMenu] || [];
 
   const activeLabel =
     menuItems
       .flatMap((item) => (item.subMenu ? item.subMenu : item))
-      .find((m) => m.key === activeMenu)?.label || "Consulting Services";
+      .find((m) => m.key === activeMenu)?.label || "Tender Services";
 
   return (
     <div className="min-h-screen bg-[#F1F5F9] py-8 px-4 md:px-6 font-sans selection:bg-blue-100">
@@ -353,7 +223,7 @@ const menuItems = [
         
           <aside className="space-y-4 h-fit sticky top-6">
             <p className="text-[14px] font-bold uppercase tracking-[0.2em] text-slate-500 px-3">
-              Consulting Services
+              Tender Services
             </p>
             <nav className="bg-white/70 backdrop-blur-xl rounded-[24px] p-2 border border-white shadow-sm">
               {menuItems.map((menu) => {
@@ -549,4 +419,4 @@ const menuItems = [
   );
 };
 
-export default ConsultingService;
+export default TenderServices;

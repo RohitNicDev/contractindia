@@ -27,11 +27,11 @@ const HERO_BY_PATH: Record<string, HeroConfig> = {
     title: "Build your",
     highlight: "business profile",
     subtitle:
-      "Connect with contractors, consultants, suppliers, and tenders across India through one powerful platform.",
+      "Connect with contractors, consultants and suppliers  across India through one powerful platform.",
     bullets: [
       { icon: Building2, text: "Verified contractor & supplier ecosystem" },
       { icon: ShieldCheck, text: "Secure onboarding with trusted verification" },
-      { icon: Zap, text: "Tenders, procurement & compliance in one place" },
+      // { icon: Zap, text: "Tenders, procurement & compliance in one place" },
     ],
   },
   "/login": {

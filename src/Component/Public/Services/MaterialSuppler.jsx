@@ -11,339 +11,220 @@ import {
   Star,
 } from "lucide-react";
 
-const ConsultingService = () => {
-  const [activeMenu, setActiveMenu] = useState("epcconsultancy");
-  const [openMenu, setOpenMenu] = useState("mep");
+const MaterialSuppler = () => {
+  const [activeMenu, setActiveMenu] = useState("cementtrades");
+  const [openMenu, setOpenMenu] = useState("cementtrades");
 
   /* ---------------- DUMMY JSON DATA ---------------- */
 
-const consultingData = {
-  /* ---------------- EPC CONSULTANCY ---------------- */
+const materialSupplierTradeData = {
+  /* ---------------- CEMENT TRADES ---------------- */
 
-  epcconsultancy: [
+  cementtrades: [
     {
       id: 1,
-      company: "Prime EPC Consultants",
-      location: "Delhi",
+      company: "Shree Cement Traders",
+      location: "Raipur",
       experience: "15 Years",
-      projects: 55,
-      rating: "4.9",
+      projects: 320,
+      rating: "4.8",
       description:
-        "Specialized EPC consultancy firm delivering end-to-end infrastructure and industrial project solutions.",
+        "Leading cement trading company supplying OPC, PPC and premium cement brands for infrastructure and residential projects.",
       image:
-        "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=1200&auto=format&fit=crop",
     },
 
     {
       id: 2,
-      company: "Mega Infra Consultancy",
-      location: "Mumbai",
-      experience: "11 Years",
-      projects: 39,
+      company: "BuildStrong Cement Supply",
+      location: "Nagpur",
+      experience: "12 Years",
+      projects: 250,
       rating: "4.7",
       description:
-        "Expert consultants for engineering procurement and turnkey construction management services.",
+        "Bulk cement supplier serving builders, contractors and industrial construction projects across India.",
+      image:
+        "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1200&auto=format&fit=crop",
+    },
+
+    {
+      id: 3,
+      company: "UltraMix Cement Agency",
+      location: "Delhi",
+      experience: "10 Years",
+      projects: 190,
+      rating: "4.6",
+      description:
+        "Authorized cement distributor providing fast delivery and premium construction material solutions.",
       image:
         "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1200&auto=format&fit=crop",
     },
   ],
 
-  /* ---------------- PROJECT MANAGEMENT ---------------- */
+  /* ---------------- ALUMINIUM TRADES ---------------- */
 
-  projectmanagement: [
+  aluminiumtrades: [
     {
       id: 1,
-      company: "Vision PMC Services",
-      location: "Pune",
-      experience: "13 Years",
-      projects: 48,
-      rating: "4.8",
+      company: "AluTech Trading Co.",
+      location: "Ahmedabad",
+      experience: "11 Years",
+      projects: 180,
+      rating: "4.7",
       description:
-        "Providing complete project management consultancy for residential and commercial developments.",
+        "Supplier of aluminium sheets, ACP panels, windows and fabrication materials for modern infrastructure.",
       image:
-        "https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1200&auto=format&fit=crop",
     },
 
     {
       id: 2,
-      company: "BuildTrack PMC",
-      location: "Bangalore",
-      experience: "10 Years",
-      projects: 30,
-      rating: "4.6",
+      company: "Metro Aluminium Traders",
+      location: "Mumbai",
+      experience: "14 Years",
+      projects: 230,
+      rating: "4.8",
       description:
-        "Professional PMC firm focused on execution planning, budgeting and project supervision.",
+        "Industrial aluminium trading company serving façade, commercial and fabrication industries.",
       image:
         "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200&auto=format&fit=crop",
     },
-  ],
 
-  /* ---------------- ARCHITECTURAL ---------------- */
-
-  architectural: [
     {
-      id: 1,
-      company: "UrbanArc Designers",
-      location: "Jaipur",
-      experience: "14 Years",
-      projects: 44,
-      rating: "4.9",
+      id: 3,
+      company: "Elite Aluminium Works",
+      location: "Pune",
+      experience: "9 Years",
+      projects: 145,
+      rating: "4.5",
       description:
-        "Creative architectural consultancy for luxury residential and commercial spaces.",
+        "Premium aluminium supplier for doors, windows, curtain walls and architectural projects.",
       image:
         "https://images.unsplash.com/photo-1511818966892-d7d671e672a2?q=80&w=1200&auto=format&fit=crop",
+    },
+  ],
+
+  /* ---------------- WOODEN TILES TRADE ---------------- */
+
+  woodentilestrade: [
+    {
+      id: 1,
+      company: "WoodStyle Flooring",
+      location: "Bangalore",
+      experience: "9 Years",
+      projects: 140,
+      rating: "4.6",
+      description:
+        "Supplier of premium wooden tiles, laminate flooring and decorative interior surface products.",
+      image:
+        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200&auto=format&fit=crop",
     },
 
     {
       id: 2,
-      company: "SpaceCraft Architects",
-      location: "Delhi",
-      experience: "9 Years",
-      projects: 27,
+      company: "Natural Wood Decor",
+      location: "Hyderabad",
+      experience: "11 Years",
+      projects: 170,
       rating: "4.7",
       description:
-        "Innovative architectural planning and modern building design consultancy services.",
+        "Wooden tile and texture flooring trading company for residential and commercial interiors.",
+      image:
+        "https://images.unsplash.com/photo-1484154218962-a197022b5858?q=80&w=1200&auto=format&fit=crop",
+    },
+
+    {
+      id: 3,
+      company: "Urban Floor Gallery",
+      location: "Delhi",
+      experience: "7 Years",
+      projects: 115,
+      rating: "4.5",
+      description:
+        "Modern wooden flooring and tile trading solutions for luxury spaces and offices.",
       image:
         "https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1200&auto=format&fit=crop",
     },
   ],
 
-  /* ---------------- MEP DESIGN ---------------- */
+  /* ---------------- PAINTS TRADE ---------------- */
 
-  mepdesign: [
+  paintstrade: [
     {
       id: 1,
-      company: "MEP Tech Consultants",
-      location: "Hyderabad",
-      experience: "12 Years",
-      projects: 35,
-      rating: "4.8",
-      description:
-        "Integrated MEP design consultancy for commercial, hospital and industrial projects.",
-      image:
-        "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop",
-    },
-
-    {
-      id: 2,
-      company: "Integrated MEP Solutions",
-      location: "Noida",
-      experience: "8 Years",
-      projects: 22,
-      rating: "4.6",
-      description:
-        "Professional MEP planning, drafting and engineering consultancy services.",
-      image:
-        "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?q=80&w=1200&auto=format&fit=crop",
-    },
-  ],
-
-  /* ---------------- HVAC DESIGN ---------------- */
-
-  hvacdesign: [
-    {
-      id: 1,
-      company: "CoolAir Design Studio",
-      location: "Chennai",
-      experience: "11 Years",
-      projects: 31,
-      rating: "4.8",
-      description:
-        "HVAC consultancy and energy-efficient cooling system design specialists.",
-      image:
-        "https://images.unsplash.com/photo-1581092921461-eab10380d70a?q=80&w=1200&auto=format&fit=crop",
-    },
-
-    {
-      id: 2,
-      company: "Climate Engineers",
-      location: "Pune",
-      experience: "7 Years",
-      projects: 18,
-      rating: "4.5",
-      description:
-        "Experts in HVAC load calculation, ducting and centralized cooling solutions.",
-      image:
-        "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?q=80&w=1200&auto=format&fit=crop",
-    },
-  ],
-
-  /* ---------------- ELECTRICAL DESIGN ---------------- */
-
-  electricaldesign: [
-    {
-      id: 1,
-      company: "Volt Design Consultancy",
-      location: "Raipur",
-      experience: "10 Years",
-      projects: 25,
-      rating: "4.7",
-      description:
-        "Electrical system design consultancy for residential, commercial and industrial projects.",
-      image:
-        "https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=1200&auto=format&fit=crop",
-    },
-
-    {
-      id: 2,
-      company: "PowerGrid Engineers",
-      location: "Delhi",
+      company: "ColorPlus Paint Traders",
+      location: "Mumbai",
       experience: "13 Years",
-      projects: 40,
-      rating: "4.9",
+      projects: 290,
+      rating: "4.8",
       description:
-        "Experts in HT/LT electrical planning, substation layouts and power management systems.",
-      image:
-        "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?q=80&w=1200&auto=format&fit=crop",
-    },
-  ],
-
-  /* ---------------- FIRE FIGHTING DESIGN ---------------- */
-
-  firefightingdesign: [
-    {
-      id: 1,
-      company: "FireSecure Consultants",
-      location: "Noida",
-      experience: "9 Years",
-      projects: 20,
-      rating: "4.6",
-      description:
-        "Fire protection and fire fighting design consultancy with safety compliance expertise.",
+        "Authorized dealer of decorative, industrial and waterproof paints for residential and commercial projects.",
       image:
         "https://images.unsplash.com/photo-1516321497487-e288fb19713f?q=80&w=1200&auto=format&fit=crop",
     },
 
     {
       id: 2,
-      company: "SafeZone Fire Engineers",
-      location: "Mumbai",
-      experience: "12 Years",
-      projects: 29,
-      rating: "4.8",
-      description:
-        "Consultancy for hydrant systems, sprinkler systems and fire alarm planning.",
-      image:
-        "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1200&auto=format&fit=crop",
-    },
-  ],
-
-  /* ---------------- PLUMBING DESIGN ---------------- */
-
-  plumbingdesign: [
-    {
-      id: 1,
-      company: "AquaFlow Consultants",
-      location: "Ahmedabad",
+      company: "Prime Paint Solutions",
+      location: "Pune",
       experience: "8 Years",
-      projects: 17,
+      projects: 150,
       rating: "4.5",
       description:
-        "Professional plumbing and piping design consultancy for modern infrastructure projects.",
+        "Premium supplier of interior paints, textures and exterior weatherproof coating solutions.",
       image:
-        "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1200&auto=format&fit=crop",
     },
 
     {
-      id: 2,
-      company: "FlowTech Engineers",
-      location: "Bhopal",
+      id: 3,
+      company: "Rainbow Paint Hub",
+      location: "Jaipur",
       experience: "10 Years",
-      projects: 24,
+      projects: 210,
       rating: "4.7",
       description:
-        "Experts in plumbing layouts, water distribution and drainage design systems.",
+        "Paint trading and coating solutions provider for infrastructure and luxury interior projects.",
       image:
-        "https://images.unsplash.com/photo-1600585154526-990dced4db0d?q=80&w=1200&auto=format&fit=crop",
-    },
-  ],
-
-  /* ---------------- WATER & WASTE WATER ---------------- */
-
-  waterwastewater: [
-    {
-      id: 1,
-      company: "BlueWater Consultants",
-      location: "Surat",
-      experience: "14 Years",
-      projects: 38,
-      rating: "4.9",
-      description:
-        "Water and waste water infrastructure consultancy for municipal and industrial projects.",
-      image:
-        "https://images.unsplash.com/photo-1473773508845-188df298d2d1?q=80&w=1200&auto=format&fit=crop",
-    },
-
-    {
-      id: 2,
-      company: "Eco Utility Engineers",
-      location: "Nagpur",
-      experience: "11 Years",
-      projects: 26,
-      rating: "4.7",
-      description:
-        "Specialized in STP, WTP and waste water recycling consultancy solutions.",
-      image:
-        "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=1200&auto=format&fit=crop",
     },
   ],
 };
-
  
-
 const menuItems = [
   {
-    key: "epcconsultancy",
-    label: "EPC Consultancy",
-  },
+    key: "materialsuppliertrade",
+    label: "Material Supplier & Trade",
+    subMenu: [
+      {
+        key: "cementtrades",
+        label: "Cement Trades",
+      },
 
-  {
-    key: "projectmanagement",
-    label: "Project Management Consultancy",
-  },
+      {
+        key: "aluminiumtrades",
+        label: "Aluminium Trades",
+      },
 
-  {
-    key: "architectural",
-    label: "Architectural Services",
-  },
+      {
+        key: "woodentilestrade",
+        label: "Wooden Tiles Trade",
+      },
 
-  {
-    key: "mepdesign",
-    label: "MEP Design Consultancy",
-  },
-
-  {
-    key: "hvacdesign",
-    label: "HVAC Design Consultancy",
-  },
-
-  {
-    key: "electricaldesign",
-    label: "Electrical Design Consultancy",
-  },
-
-  {
-    key: "firefightingdesign",
-    label: "Fire Fighting Design Consultancy",
-  },
-
-  {
-    key: "plumbingdesign",
-    label: "Plumbing Design Consultancy",
-  },
-
-  {
-    key: "waterwastewater",
-    label: "Water & Waste Water Design Consultancy",
+      {
+        key: "paintstrade",
+        label: "Paints Trade",
+      },
+    ],
   },
 ];
 
-  const currentData = consultingData [activeMenu] || [];
+  const currentData = materialSupplierTradeData [activeMenu] || [];
 
   const activeLabel =
     menuItems
       .flatMap((item) => (item.subMenu ? item.subMenu : item))
-      .find((m) => m.key === activeMenu)?.label || "Consulting Services";
+      .find((m) => m.key === activeMenu)?.label || "Procurement Services/ Material Manufacturing";
 
   return (
     <div className="min-h-screen bg-[#F1F5F9] py-8 px-4 md:px-6 font-sans selection:bg-blue-100">
@@ -353,8 +234,9 @@ const menuItems = [
         
           <aside className="space-y-4 h-fit sticky top-6">
             <p className="text-[14px] font-bold uppercase tracking-[0.2em] text-slate-500 px-3">
-              Consulting Services
+             Procurement Services/ Material Supply
             </p>
+           
             <nav className="bg-white/70 backdrop-blur-xl rounded-[24px] p-2 border border-white shadow-sm">
               {menuItems.map((menu) => {
                 const hasSubMenu = menu.subMenu && menu.subMenu.length > 0;
@@ -549,4 +431,4 @@ const menuItems = [
   );
 };
 
-export default ConsultingService;
+export default MaterialSuppler;
