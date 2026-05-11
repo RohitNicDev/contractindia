@@ -37,9 +37,9 @@ const HERO_BY_PATH: Record<string, HeroConfig> = {
     subtitle:
       "Manage procurement, contracts, and business services from your dashboard.",
     bullets: [
-      { icon: ShieldCheck, text: "OTP-secured authentication system" },
+      { icon: ShieldCheck, text: "Verified contractor & supplier ecosystem" },
       { icon: Building2, text: "Centralized contractor management" },
-      { icon: Sparkles, text: "Smart service & tender tracking" },
+      // { icon: Sparkles, text: "Smart service & tender tracking" },
     ],
   },
   "/otp": {
