@@ -17,7 +17,7 @@ import {
   Building2,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, Badge, Drawer, Collapse } from "antd";
 import logo from "../../assets/IMG/logo_con1.png";
 const { Panel } = Collapse;
@@ -209,7 +209,7 @@ const Header = () => {
           {/* Logo */}
           <div
             className="flex items-center gap-2 cursor-pointer shrink-0"
-            onClick={() => navigate({ to: "/" })}
+            onClick={() => navigate("/")}
           >
             <img
               src={logo}
@@ -267,7 +267,7 @@ const Header = () => {
                 <Button
                   type="default"
                   className="!rounded-lg !h-9 !px-4 !font-semibold border border-[#162646] text-[#162646] hover:bg-[#162646]! hover:!text-white transition"
-                  onClick={() => navigate({ to: "/register" })}
+                  onClick={() => navigate("/register")}
                 >
                   <span className="text-sm">Register</span>
                 </Button>
@@ -275,7 +275,7 @@ const Header = () => {
                 <Button
                   type="primary"
                   className="!bg-[#162646] !rounded-lg !h-8 sm:!h-10 !px-3 sm:!px-6 !font-bold flex items-center gap-1 sm:gap-2"
-                  onClick={() => navigate({ to: "/login" })}
+                  onClick={() => navigate("/login")}
                 >
                   <LogIn size={14} />
                   <span className="text-xs sm:text-sm">Login</span>
@@ -468,7 +468,7 @@ const Header = () => {
                 type="default"
                 size="large"
                 className="!rounded-xl border border-[#162646] text-[#162646] hover:!bg-[#162646] hover:!text-white"
-                onClick={() => navigate({ to: "/register" })}
+                onClick={() => navigate("/register")}
               >
                 Register
               </Button>
@@ -479,7 +479,7 @@ const Header = () => {
                 type="primary"
                 size="large"
                 className="!bg-[#162646] !rounded-xl"
-                onClick={() => navigate({ to: "/login" })}
+                onClick={() => navigate("/login")}
               >
                 Login
               </Button>

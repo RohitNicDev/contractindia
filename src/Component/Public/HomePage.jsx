@@ -1,6 +1,6 @@
 import ThemeProvider from "../../theme/ThemeProvider";
 import { motion } from "framer-motion";
-import { Link } from "@tanstack/react-router";
+import { Link } from "react-router-dom";
 import { Categories, ValueStrip } from "./category";
 import { Companies } from "./Companies";
 import HeroSection from "./HeroSection";

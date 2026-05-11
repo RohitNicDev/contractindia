@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate, Link } from "@tanstack/react-router";
+import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
 import {
   User,
@@ -103,7 +103,7 @@ export function RegisterForm() {
   const onSubmit = (values: RegistrationFormValues) => {
     localStorage.setItem("registration_form_v1", JSON.stringify(values));
     toast.success("Registration saved. Verify your email with OTP.");
-    navigate({ to: "/otp" });
+    navigate("/otp");
   };
 
   return (

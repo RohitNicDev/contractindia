@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Mail, Lock, ArrowRight } from "lucide-react";
 import { AuthCard } from "./AuthCard";
@@ -28,7 +28,7 @@ export function LoginForm() {
       JSON.stringify({ email: data.email, remember: data.remember }),
     );
     toast.success("Signed in (demo). Continue with OTP.");
-    navigate({ to: "/otp" });
+    navigate("/otp");
   };
 
   return (

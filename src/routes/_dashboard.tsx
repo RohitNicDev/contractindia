@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -7,10 +7,6 @@ import {
   Bell, Search, ChevronLeft, Menu, X, Sparkles,
 } from "lucide-react";
 import logo from "../assets/IMG/logo_con1.png";
-
-export const Route = createFileRoute("/_dashboard")({
-  component: DashboardLayout,
-});
 
 const NAV_ITEMS = [
   { to: "/dashboard",           label: "Overview",   icon: LayoutDashboard },
@@ -32,15 +28,22 @@ const NAV_GRADIENTS: Record<string, string> = {
   "/dashboard/settings":  "from-slate-400 to-slate-500",
 };
 
-function DashboardLayout() {
+export default function DashboardLayout() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
 
   const user = JSON.parse(localStorage.getItem("registration_form_v1") || "{}");
   const displayName = user.fullName || "User";
   const email = user.email || "";
   const initials = displayName.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase();
+
+  const handleSignOut = () => {
+    localStorage.removeItem("login_mock_v1");
+    localStorage.removeItem("otp_mock_verified_v1");
+    navigate("/login");
+  };
 
   return (
     <div className="flex h-screen overflow-hidden font-sans bg-linear-to-br from-slate-50 via-indigo-50/30 to-violet-50/20">
@@ -191,13 +194,13 @@ function DashboardLayout() {
               </motion.div>
             )}
           </AnimatePresence>
-          <Link
-            to="/login"
-            className={`flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 transition-all hover:bg-red-50 hover:text-red-500 ${collapsed ? "justify-center" : ""}`}
+          <button
+            onClick={handleSignOut}
+            className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 transition-all hover:bg-red-50 hover:text-red-500 ${collapsed ? "justify-center" : ""}`}
           >
             <LogOut className="h-4 w-4 shrink-0" />
             {!collapsed && <span>Sign out</span>}
-          </Link>
+          </button>
         </div>
 
         {/* Collapse toggle */}
@@ -223,7 +226,7 @@ function DashboardLayout() {
             <Search className="h-4 w-4 shrink-0 text-slate-400" />
             <input
               type="text"
-              placeholder="Search  projects…"
+              placeholder="Search projects…"
               className="flex-1 bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
             />
             <kbd className="hidden rounded-md border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-[10px] font-mono text-slate-400 sm:block">⌘K</kbd>

@@ -1,11 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Search, Building2, MapPin, Star, Phone, Mail, BadgeCheck, Users } from "lucide-react";
-
-export const Route = createFileRoute("/_dashboard/companies")({
-  component: CompaniesPage,
-});
 
 const COMPANIES = [
   { id: 1, name: "Buildtech Constructions", type: "Contractor", location: "Mumbai", rating: 4.8, reviews: 124, services: ["Civil Work", "MEP", "Road Construction"],    verified: true,  phone: "+91 98200 11111", email: "info@buildtech.in",    grad: "from-indigo-500 to-violet-500",  initGrad: "from-indigo-400 to-violet-400"  },

@@ -1,13 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import {
   User, Mail, Phone, MapPin, Building2,
   Briefcase, FileText, Edit3, CheckCircle2, Camera,
 } from "lucide-react";
-
-export const Route = createFileRoute("/_dashboard/profile")({
-  component: ProfilePage,
-});
 
 const fu = (i: number) => ({
   initial: { opacity: 0, y: 18 },

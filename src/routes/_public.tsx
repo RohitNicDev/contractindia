@@ -1,12 +1,8 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { Outlet } from "react-router-dom";
 import Header from "../Component/Public/Header";
 import Footer from "../Component/Public/Footer";
 
-export const Route = createFileRoute("/_public")({
-  component: PublicLayout,
-});
-
-function PublicLayout() {
+export default function PublicLayout() {
   return (
     <>
       <Header />

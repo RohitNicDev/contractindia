@@ -1,11 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, FileText, MapPin, IndianRupee, Clock, ArrowUpRight, Bookmark, SlidersHorizontal } from "lucide-react";
-
-export const Route = createFileRoute("/_dashboard/tenders")({
-  component: TendersPage,
-});
 
 const TENDERS = [
   { id: "T-001", title: "Road Construction — NH-48 Stretch, Delhi",         category: "Civil Work",      value: "₹45L",  deadline: "Jun 15, 2026", location: "Delhi",   status: "open",    topGrad: "from-emerald-400 to-teal-400"  },

@@ -1,11 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Search, MoreVertical, Phone, Video, MessageSquare } from "lucide-react";
-
-export const Route = createFileRoute("/_dashboard/messages")({
-  component: MessagesPage,
-});
 
 const CONTACTS = [
   { id: 1, name: "Buildtech Constructions", last: "Please share the BOQ document.", time: "10:32 AM", unread: 2, online: true,  grad: "from-indigo-500 to-violet-500"  },

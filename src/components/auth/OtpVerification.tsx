@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { useNavigate, Link } from "@tanstack/react-router";
+import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
 import { ShieldCheck, ArrowRight } from "lucide-react";
 import { AuthCard } from "./AuthCard";
@@ -34,7 +34,7 @@ export function OtpVerification() {
     localStorage.setItem("otp_mock_verified_v1", JSON.stringify({ code, at: Date.now() }));
     toast.success("Verified successfully");
     setSuccessPulse(true);
-    window.setTimeout(() => navigate({ to: "/dashboard" }), 900);
+    window.setTimeout(() => navigate("/dashboard"), 900);
   };
 
   const resend = () => {

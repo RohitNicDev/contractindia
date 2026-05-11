@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
+import { Outlet, Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
@@ -9,9 +9,6 @@ import {
   Zap,
 } from "lucide-react";
 import logo from "../assets/IMG/logo_con1.png";
-export const Route = createFileRoute("/_auth")({
-  component: AuthLayout,
-});
 
 type HeroConfig = {
   kicker: string;
@@ -27,11 +24,10 @@ const HERO_BY_PATH: Record<string, HeroConfig> = {
     title: "Build your",
     highlight: "business profile",
     subtitle:
-      "Connect with contractors, consultants and suppliers  across India through one powerful platform.",
+      "Connect with contractors, consultants and suppliers across India through one powerful platform.",
     bullets: [
       { icon: Building2, text: "Verified contractor & supplier ecosystem" },
       { icon: ShieldCheck, text: "Secure onboarding with trusted verification" },
-      // { icon: Zap, text: "Tenders, procurement & compliance in one place" },
     ],
   },
   "/login": {
@@ -61,8 +57,8 @@ const HERO_BY_PATH: Record<string, HeroConfig> = {
 
 const DEFAULT_HERO = HERO_BY_PATH["/login"];
 
-function AuthLayout() {
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
+export default function AuthLayout() {
+  const { pathname } = useLocation();
   const hero = HERO_BY_PATH[pathname] ?? DEFAULT_HERO;
 
   return (
@@ -158,7 +154,6 @@ function AuthLayout() {
                     transition-all duration-300 
                     group-hover:scale-105"
               />
-              {/* <Building2 className="" /> */}
             </div>
             <div>
               <h2 className="text-lg font-bold tracking-wide text-slate-900">
@@ -169,12 +164,6 @@ function AuthLayout() {
               </p>
             </div>
           </div>
-
-          {/* Kicker badge */}
-          {/* <div className="inline-flex w-fit items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.25em] text-indigo-600">
-            <Sparkles className="h-3.5 w-3.5" />
-            {hero.kicker}
-          </div> */}
 
           {/* Heading */}
           <h1 className="mt-1 max-w-xl text-4xl font-black leading-tight text-slate-900 sm:text-5xl xl:text-6xl">
@@ -258,5 +247,3 @@ function AuthLayout() {
     </div>
   );
 }
-
-export default AuthLayout;

@@ -1,10 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { FileText, FolderOpen, Building2, IndianRupee, ArrowUpRight, TrendingUp, Users, Zap } from "lucide-react";
-
-export const Route = createFileRoute("/_dashboard/")({
-  component: DashboardOverview,
-});
 
 const stats = [
   { label: "Active Tenders",   value: "12",     delta: "+3 this week",  icon: FileText,    grad: "from-indigo-500 to-violet-500",  corner: "bg-indigo-400/10"  },

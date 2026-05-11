@@ -1,13 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import {
   FolderOpen, Plus, Calendar, Users, TrendingUp,
   MoreHorizontal, CheckCircle2, AlertCircle, Clock,
 } from "lucide-react";
-
-export const Route = createFileRoute("/_dashboard/projects")({
-  component: ProjectsPage,
-});
 
 const PROJECTS = [
   {

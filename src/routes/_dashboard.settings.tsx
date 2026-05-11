@@ -1,4 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import {
@@ -6,10 +5,6 @@ import {
   ChevronRight, Moon, Sun, Monitor, Settings,
   Lock, Smartphone, Activity,
 } from "lucide-react";
-
-export const Route = createFileRoute("/_dashboard/settings")({
-  component: SettingsPage,
-});
 
 const fu = (i: number) => ({
   initial: { opacity: 0, y: 18 },
