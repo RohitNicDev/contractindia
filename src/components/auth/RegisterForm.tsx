@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
@@ -22,9 +22,22 @@ import { AuthCard } from "./AuthCard";
 import { AuthFormField } from "./AuthFormField";
 import { AuthFormSelect } from "./AuthFormSelect";
 import { ChipMultiSelect } from "./ChipMultiSelect";
+import { CaptchaChallenge } from "./CaptchaChallenge";
 import { GradientButton } from "./GradientButton";
 
 type UserType = "individual" | "commercial";
+
+const createAlphabetCaptcha = () => {
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let captchaText = '';
+  for (let i = 0; i < 5; i++) {
+    captchaText += letters[Math.floor(Math.random() * letters.length)];
+  }
+  return {
+    question: captchaText,
+    answer: captchaText,
+  };
+};
 
 type RegistrationFormValues = {
   userType: UserType;
@@ -41,6 +54,7 @@ type RegistrationFormValues = {
   pinCode: string;
   serviceGroup: string;
   subServices: string[];
+  captcha: string;
 };
 
 export function RegisterForm() {
@@ -66,8 +80,16 @@ export function RegisterForm() {
       pinCode: "",
       serviceGroup: "",
       subServices: [],
+      captcha: "",
     },
   });
+
+  const [captcha, setCaptcha] = useState(createAlphabetCaptcha);
+
+  const refreshCaptcha = () => {
+    setCaptcha(createAlphabetCaptcha());
+    setValue("captcha", "", { shouldValidate: false });
+  };
 
   const userType = watch("userType");
   const isCommercial = userType === "commercial";
@@ -313,6 +335,20 @@ export function RegisterForm() {
                 {...register("password", {
                   required: "Required",
                   minLength: { value: 6, message: "Min 6 chars" },
+                })}
+              />
+            </div>
+
+            <div className="col-span-2">
+              <CaptchaChallenge
+                question={captcha.question}
+                onRefresh={refreshCaptcha}
+                error={errors.captcha?.message}
+                placeholder="Type the answer"
+                {...register("captcha", {
+                  required: "Required",
+                  validate: (value) =>
+                    value.trim() === captcha.answer || "Incorrect captcha answer",
                 })}
               />
             </div>
