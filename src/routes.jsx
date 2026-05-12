@@ -9,16 +9,8 @@ import DashboardLayout from "./routes/_dashboard";
 import Index from "./routes/_public.index";
 import About from "./routes/_public.about";
 import CompanyList from "./routes/_public.company-list";
-import Contact from "./routes/_public.contact";
-import Projects from "./routes/_public.projects";
-
+  
 // Service pages
-import ServicesConsulting from "./routes/_public.services.consulting";
-import ServicesContractor from "./routes/_public.services.contractor";
-import ServicesAssetsManagement from "./routes/_public.services.assets-management";
-import ServicesBrandDevelopment from "./routes/_public.services.brand-development";
-import ServicesLegalContracts from "./routes/_public.services.legal-contracts";
- 
  
 // Dashboard pages
 import DashboardIndex from "./routes/_dashboard.index";
@@ -37,6 +29,12 @@ import { OtpVerification } from "./components/auth/OtpVerification";
 import { LoginForm } from "./components/auth/LoginForm";
 import LegalContracts from "./Component/Public/Services/LegalContracts";
 import ContractionAudit from "./Component/Public/Services/ContractionAudit";
+import BrandDevelopment from "./Component/Public/Services/BrandDevelopment";
+import AssetsManagement from "./Component/Public/Services/AssetsManagement"; 
+import ContractorService from "./Component/Public/Services/ContractorService";
+import ConsultingService from "./Component/Public/Services/ConsultingService";
+import ContactPage from "./Component/Public/ContactPage";
+import Projects from "./Component/Public/Projects";
 
 export const router = createBrowserRouter([
   // ── Public routes ──────────────────────────────────────────
@@ -46,12 +44,12 @@ export const router = createBrowserRouter([
       { path: "/",                                  element: <Index /> },
       { path: "/about",                             element: <About /> },
       { path: "/company-list",                      element: <CompanyList /> },
-      { path: "/contact",                           element: <Contact /> },
+      { path: "/contact",                           element: <ContactPage /> },
       { path: "/projects",                          element: <Projects /> },
-      { path: "/services/consulting",               element: <ServicesConsulting /> },
-      { path: "/services/contractor",               element: <ServicesContractor /> },
-      { path: "/services/assets-management",        element: <ServicesAssetsManagement /> },
-      { path: "/services/brand-development",        element: <ServicesBrandDevelopment /> },
+      { path: "/services/consulting",               element: <ConsultingService /> },
+      { path: "/services/contractor",               element: <ContractorService /> },
+      { path: "/services/assets-management",        element: <AssetsManagement /> },
+      { path: "/services/brand-development",        element: <BrandDevelopment /> },
       { path: "/services/legal-contracts",          element: <LegalContracts /> },
       { path: "/services/marketing",                element: <MarketingManagement /> },
       { path: "/services/material-manufacturing",   element: <MaterialManufacture /> },

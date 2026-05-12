@@ -8,7 +8,7 @@ import {
   ChevronRight,
   Layout,
   MapPin,
-  Globe2,
+ 
   Brush,
   Zap,
   Users,
@@ -142,9 +142,7 @@ const Header = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
-  const [serviceOpen, setServiceOpen] = useState(false);
-  const [activeCategory, setActiveCategory] = useState(null);
-  const megaRef = useRef(null);
+    const megaRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -345,7 +343,7 @@ const Header = () => {
     ${
       isActive
         ? "bg-[#162646] text-white shadow-lg"
-        : "bg-white text-slate-700 hover:bg-slate-100"
+        : "  text-slate-700 hover:bg-slate-100"
     }`
   }
 >
@@ -514,7 +512,7 @@ const Header = () => {
                 ${
                   isActive
                     ? "bg-[#162646] text-white shadow-lg"
-                    : "bg-white text-slate-700 hover:bg-slate-100"
+                    : "  text-slate-700 hover:bg-slate-100"
                 }`
               }
             >
