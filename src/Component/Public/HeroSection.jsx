@@ -121,29 +121,43 @@ const HeroSection = () => {
               
 
               {/* Main heading */}
-              <AnimatePresence mode="wait">
-                <motion.h1
-                  key={`title-${currentSlide}`}
-                  initial={{ opacity: 0, y: 24 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -16 }}
-                  transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-                  className="text-4xl md:text-6xl lg:text-7xl font-black leading-[1.05] tracking-tight"
-                >
-                  India's Largest{" "}
-                  <span
-                    className="bg-clip-text text-transparent"
-                    style={{ backgroundImage: "linear-gradient(135deg, #f59e0b 0%, #fbbf24 40%, #fde68a 100%)" }}
-                  >
-                    Construction
-                  </span>
-                  <br />
-                  <span className="text-white/90">Marketplace</span>
-                </motion.h1>
-              </AnimatePresence>
+           {/* Main heading - Blink removed by removing AnimatePresence and dynamic keys */}
+<motion.h1
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.8, ease: "easeOut" }}
+  className="text-4xl md:text-6xl lg:text-7xl font-black leading-[1.05] tracking-tight"
+>
+  Integrated Solution For{" "}
+  <span
+    className="bg-clip-text text-transparent"
+    style={{ 
+      backgroundImage: "linear-gradient(135deg, #f59e0b 0%, #fbbf24 40%, #fde68a 100%)",
+      WebkitBackgroundClip: "text" 
+    }}
+  >
+    Construction Infrastructure
+  </span>
+  <br />
+  <span className="text-white/90">Marketplace</span>
+</motion.h1>
+
+{/* Optional: Agar aap chahte hain sirf DESCRIPTION change ho, toh usme AnimatePresence rakhein heading mein nahi */}
+<AnimatePresence mode="wait">
+  <motion.p
+    key={currentSlide}
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    transition={{ duration: 0.5 }}
+    className="mt-5 text-lg text-slate-300"
+  >
+    {slides[currentSlide].desc}
+  </motion.p>
+</AnimatePresence>
 
               {/* Slide desc */}
-              <AnimatePresence mode="wait">
+              {/* <AnimatePresence mode="wait">
                 <motion.p
                   key={`desc-${currentSlide}`}
                   initial={{ opacity: 0, y: 16 }}
@@ -154,16 +168,16 @@ const HeroSection = () => {
                 >
                   {slides[currentSlide].desc}
                 </motion.p>
-              </AnimatePresence>
+              </AnimatePresence> */}
 
               {/* CTA buttons */}
-              <motion.div
+              {/* <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.25 }}
                 className="mt-8 flex flex-wrap gap-3"
               >
-                {/* <motion.button
+                <motion.button
                   whileHover={{ scale: 1.04, boxShadow: "0 0 32px rgba(245,158,11,0.5)" }}
                   whileTap={{ scale: 0.97 }}
                   onClick={() =>  navigate("register")}
@@ -172,18 +186,18 @@ const HeroSection = () => {
                 >
                   Register Company — FREE
                   <ArrowRight className="w-4 h-4" />
-                </motion.button> */}
-                {/* <motion.button
+                </motion.button>
+                <motion.button
                   whileHover={{ scale: 1.04, backgroundColor: "rgba(255,255,255,0.18)" }}
                   whileTap={{ scale: 0.97 }}
                   className="flex items-center gap-2 px-7 py-3.5 rounded-2xl font-bold text-sm text-white border border-white/25 bg-white/10 backdrop-blur-md transition-all"
                 >
                   Browse Tenders
-                </motion.button> */}
-              </motion.div>
+                </motion.button>
+              </motion.div> */}
 
               {/* Stats row */}
-              <motion.div
+              {/* <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
@@ -202,7 +216,7 @@ const HeroSection = () => {
                     </div>
                   </motion.div>
                 ))}
-              </motion.div>
+              </motion.div> */}
             </div>
           </div>
         </div>

@@ -1,8 +1,9 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
-
+import { useNavigate } from "react-router-dom";
 const Test = () => {
+  const navigate = useNavigate();
   return (
     <section className="px-4 sm:px-6 pb-12">
       <motion.div
@@ -49,18 +50,23 @@ const Test = () => {
           <p className="text-slate-400 text-sm font-medium mb-10 max-w-lg mx-auto">
             Join 50,000+ verified companies. Get matching tenders, connect with clients, and scale faster.
           </p>
-
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <motion.button
-              whileHover={{ scale: 1.05, boxShadow: "0 0 40px rgba(245,158,11,0.5)" }}
-              whileTap={{ scale: 0.97 }}
-              className="flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-bold text-sm text-[#162646] shadow-xl transition-all"
-              style={{ background: "linear-gradient(135deg, #f59e0b, #fbbf24)" }}
-            >
-              Register Company — FREE
-              <ArrowRight className="w-4 h-4" />
-            </motion.button>
-          </div>
+<div className="flex flex-col sm:flex-row justify-center gap-4">
+  <motion.button
+    whileHover={{
+      scale: 1.05,
+      boxShadow: "0 0 40px rgba(245,158,11,0.5)",
+    }}
+    whileTap={{ scale: 0.97 }}
+    onClick={() => navigate("/register")}
+    className="flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-bold text-sm text-[#162646] shadow-xl transition-all"
+    style={{
+      background: "linear-gradient(135deg, #f59e0b, #fbbf24)",
+    }}
+  >
+    Register Now
+    <ArrowRight className="w-4 h-4" />
+  </motion.button>
+</div>
         </div>
       </motion.div>
     </section>

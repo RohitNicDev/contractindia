@@ -17,7 +17,7 @@ const cats = [
 const valueItems = [
   {
     emoji: "📋",
-    title: "Book Free Consultation",
+    title: "Book Consultation",
     desc: "👁️ No hidden costs · 🧮 Easy EMI",
     accent: "#6366f1",
     glow: "rgba(99,102,241,0.25)",
