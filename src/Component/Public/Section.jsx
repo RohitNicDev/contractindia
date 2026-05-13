@@ -10,7 +10,7 @@ const steps = [
     n: "01",
     icon: <UserPlus className="w-5 h-5" />,
     title: "Register Your Company",
-    desc: "Create your free elite company profile with certifications and past project portfolios.",
+    desc: "Create your elite company profile with certifications and past project portfolios.",
     grad: "from-blue-500 to-indigo-600",
     glow: "rgba(99,102,241,0.35)",
   },

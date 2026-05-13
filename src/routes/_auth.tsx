@@ -20,7 +20,7 @@ type HeroConfig = {
 
 const HERO_BY_PATH: Record<string, HeroConfig> = {
   "/register": {
-    kicker: "CONTRACT INDIA",
+    kicker: "ContractsIndia™",
     title: "Build your",
     highlight: "business profile",
     subtitle:
@@ -157,7 +157,7 @@ export default function AuthLayout() {
             </div>
             <div>
               <h2 className="text-lg font-bold tracking-wide text-slate-900">
-                Contract India
+                ContractsIndia™
               </h2>
               <p className="text-xs tracking-wider text-slate-500">
                 Integrated Solution For Construction & Infrastructure

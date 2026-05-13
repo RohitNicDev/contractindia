@@ -57,7 +57,7 @@ const Test = () => {
               className="flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-bold text-sm text-[#162646] shadow-xl transition-all"
               style={{ background: "linear-gradient(135deg, #f59e0b, #fbbf24)" }}
             >
-              Register Company — FREE
+              Register Company 
               <ArrowRight className="w-4 h-4" />
             </motion.button>
           </div>
