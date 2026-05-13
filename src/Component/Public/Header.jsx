@@ -171,36 +171,42 @@ const Header = () => {
         : "bg-white border-b border-gray-100"
         }`}
     >
+    
       {/* 🌐 TOP BAR */}
-      <div className="bg-[#162646] text-white/90 py-2 px-4 sm:px-6 overflow-hidden">
-        <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
-          <div className="flex items-center gap-3 text-[10px] sm:text-[11px] font-medium tracking-wide">
-            {/* <span className="flex items-center gap-1 shrink-0">
-              <Globe2 size={12} className="text-blue-400" />
-              Govt Initiative
-            </span> */}
-            <span className="opacity-30">|</span>
-            <span className="flex items-center gap-1 shrink-0">
-              <Layout size={12} className="text-blue-400" />
-              Integrated Solution For Construction &amp; Infrastructure
-            </span>
-            <span className="hidden lg:inline opacity-30">|</span>
-            <span className="hidden lg:flex items-center gap-1 shrink-0">
-              <MapPin size={12} className="text-blue-400" />
-              All India Coverage
-            </span>
-          </div>
-          <div className="flex items-center gap-4 text-[10px] sm:text-[11px] font-semibold border-t border-white/10 md:border-none pt-2 md:pt-0 w-full md:w-auto justify-center">
-            <span className="cursor-pointer hover:text-blue-300 transition uppercase tracking-tighter">
-              Advertise
-            </span>
-            <span className="opacity-30">|</span>
-            <span className="cursor-pointer hover:text-blue-300 transition uppercase tracking-tighter">
-              Become a Seller
-            </span>
-          </div>
-        </div>
-      </div>
+<div className="bg-[#162646] text-white/90 py-2.5 px-4 sm:px-6 overflow-hidden">
+  <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
+    
+    {/* LEFT */}
+    <div className="flex items-center gap-3 text-[11px] sm:text-[12px] font-medium tracking-wide">
+      <span className="opacity-30">|</span>
+
+      <span className="flex items-center gap-1 shrink-0">
+        <Layout size={13} className="text-blue-400" />
+        Integrated Solution For Construction &amp; Infrastructure
+      </span>
+
+      <span className="hidden lg:inline opacity-30">|</span>
+
+      <span className="hidden lg:flex items-center gap-1 shrink-0">
+        <MapPin size={13} className="text-blue-400" />
+        All India Coverage
+      </span>
+    </div>
+
+    {/* RIGHT */}
+    <div className="flex items-center gap-4 text-[11px] sm:text-[12px] font-semibold border-t border-white/10 md:border-none pt-2 md:pt-0 w-full md:w-auto justify-center">
+      <span className="cursor-pointer hover:text-blue-300 transition uppercase tracking-wide">
+        Advertise
+      </span>
+
+      <span className="opacity-30">|</span>
+
+      <span className="cursor-pointer hover:text-blue-300 transition uppercase tracking-wide">
+        Become a Seller
+      </span>
+    </div>
+  </div>
+</div>
 
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between py-3 lg:py-4 gap-4">
@@ -213,25 +219,27 @@ const Header = () => {
           </button>
 
           {/* Logo */}
-          <div
-            className="flex items-center gap-2 cursor-pointer shrink-0"
-            onClick={() => navigate("/")}
-          >
-            <img
-              src={logo}
-              alt="Contracts India Logo"
-              className="rounded-2xl h-9 w-9 sm:h-11 sm:w-11 object-contain transition-all duration-300 group-hover:scale-105"
-            />
-            <div className="leading-tight">
-              <h1 className="text-lg sm:text-xl font-black text-[#162646] tracking-tight">
-               ContractsIndia™
-                {/* CONTRACTS<span className="text-blue-600">INDIA</span> */}
-              </h1>
-              <p className="hidden sm:block text-[8px] text-gray-400 font-bold uppercase tracking-wider">
-                Integrated Solution For Construction &amp; Infrastructure
-              </p>
-            </div>
-          </div>
+       {/* Logo */}
+<div
+  className="flex items-center gap-3 cursor-pointer shrink-0"
+  onClick={() => navigate("/")}
+>
+  <img
+    src={logo}
+    alt="Contracts India Logo"
+    className="rounded-2xl h-10 w-10 sm:h-12 sm:w-12 object-contain transition-all duration-300"
+  />
+
+  <div className="leading-tight">
+    <h1 className="text-xl sm:text-2xl font-black text-[#162646] tracking-tight">
+      ContractsIndia™
+    </h1>
+
+    <p className="hidden sm:block text-[9px] text-gray-400 font-bold uppercase tracking-wider">
+      Integrated Solution For Construction &amp; Infrastructure
+    </p>
+  </div>
+</div>
 
           {/* Desktop Search */}
           <div className="hidden lg:flex flex-1 max-w-xl mx-4">
@@ -337,21 +345,16 @@ const Header = () => {
             }
             return (
               <div key={item.name} className="py-3">
-               <NavLink
-  to={item.path}
-  onClick={() => setIsDrawerOpen(false)}
-  className={({ isActive }) =>
-    `flex items-center justify-between px-4 py-3 rounded-2xl no-underline transition-all
-    ${
-      isActive
-        ? "bg-[#162646] text-white shadow-lg"
-        : "bg-white text-slate-700 hover:bg-slate-100"
-    }`
-  }
->
-  <span className="text-[14px] font-semibold">
-    {item.name}
-  </span>
+                <NavLink
+                  to={item.path}
+                  className={({ isActive }) =>
+                    `relative px-3 py-1.5 text-sm font-bold no-underline rounded-lg transition ${isActive
+                      ? "text-blue-600 bg-blue-50"
+                      : "text-gray-600 hover:text-blue-600 hover:bg-blue-50/50"
+                    }`
+                  }
+                >
+                  {item.name}
                   {/* {item.isNew && (
                     <span className="absolute -top-1 -right-1 text-[8px] bg-blue-600 text-white px-1 rounded-full font-bold">
                       NEW
@@ -364,200 +367,143 @@ const Header = () => {
         </nav>
       </div>
 
-  {/* 📱 MOBILE DRAWER */}
-<Drawer
-  placement="left"
-  onClose={() => setIsDrawerOpen(false)}
-  open={isDrawerOpen}
-  width={320}
-  closeIcon={null}
-  styles={{
-    body: {
-      padding: 0,
-      background: "#f8fafc",
-    },
-  }}
->
-  <div className="flex flex-col h-full">
-    {/* HEADER */}
-    <div className="bg-[#162646] px-5 py-5 text-white relative overflow-hidden">
-      <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+      {/* 📱 MOBILE DRAWER */}
+      <Drawer
+        placement="left"
+        onClose={() => setIsDrawerOpen(false)}
+        open={isDrawerOpen}
+        width={300}
+        closeIcon={null}
+        styles={{ body: { padding: 0 } }}
+      >
+        <div className="flex flex-col h-full">
+          <div className="bg-[#162646] p-6 text-white">
+            <div className="flex justify-between items-center mb-4">
+              <button
+                onClick={() => setIsDrawerOpen(false)}
+                className="text-white/70 hover:text-white"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            <div className="flex items-center gap-3">
+              <img
+                src={logo}
+                alt="Contracts India Logo"
+                className="rounded-2xl h-9 w-9 sm:h-11 sm:w-11 object-contain transition-all duration-300 group-hover:scale-105"
+              />
+              <div>
+                <p className="text-sm font-bold mb-0 leading-none">
+                  CONTRACTSINDIA
+                </p>
+                <p className="text-[10px] text-white/50">
+                  Integrated Solution For Construction &amp; Infrastructure
+                </p>
+              </div>
+            </div>
+          </div>
 
-      <div className="flex items-center justify-between relative z-10">
-        <div className="flex items-center gap-3">
-          <img
-            src={logo}
-            alt="Contracts India Logo"
-            className="h-11 w-11 rounded-xl object-contain bg-white p-1"
-          />
+          <div className="flex-1 overflow-y-auto">
+            <div className="p-2 sm:p-3">
+              {NAV_ITEMS.map((item) => (
+                <div key={item.name} className="mb-1">
+                  {item.mega ? (
+                    <Collapse
+                      ghost
+                      expandIconPosition="end"
+                      className="mobile-nav-collapse"
+                    >
+                      <Panel
+                        header={
+                          <span className="font-semibold text-[13px] sm:text-sm text-gray-700">
+                            {item.name}
+                          </span>
+                        }
+                        key={item.name}
+                        className="!p-0"
+                      >
+                        {item.columns.map((col) => (
+                          <div key={col.title} className="mb-2 ml-1">
+                            {/* Section Title */}
+                            {col.items && col.items.length > 0 ? (
+                              <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wide mb-1 pl-2">
+                                {col.title}
+                              </p>
+                            ) : (
+                              <NavLink
+                                to={col.path || '#'}
+                                className="block text-[12px] sm:text-[13px] font-bold text-gray-700 uppercase tracking-wide mb-1 pl-2 hover:text-blue-600 transition"
+                                onClick={() => setIsDrawerOpen(false)}
+                              >
+                                {col.title}
+                              </NavLink>
+                            )}
 
-          <div>
-            <h3 className="text-sm font-black leading-tight">
-              ContractsIndia™
-            </h3>
+                            {/* Items */}
+                            {col.items && col.items.length > 0 && (
+                              <div className="flex flex-col gap-0.5 border-l border-gray-100 pl-3">
+                                {col.items.map((sub) => (
+                                  <NavLink
+                                    key={typeof sub === 'string' ? sub : sub.name}
+                                    to={typeof sub === 'string' ? '#' : sub.path}
+                                    className="py-1 text-[12px] sm:text-[13px] text-gray-600 font-medium 
+                                     active:text-blue-600 cursor-pointer 
+                                     hover:text-blue-600 transition block no-underline"
+                                    onClick={() => setIsDrawerOpen(false)}
+                                  >
+                                    {typeof sub === 'string' ? sub : sub.name}
+                                  </NavLink>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </Panel>
+                    </Collapse>
+                  ) : (
+                    <NavLink
+                      to={item.path}
+                      className="flex items-center justify-between px-3 py-2 
+                       rounded-lg font-semibold text-[13px] sm:text-sm 
+                       text-gray-700 hover:bg-blue-50 no-underline transition"
+                      onClick={() => setIsDrawerOpen(false)}
+                    >
+                      {item.name}
+                      <ChevronRight size={14} className="text-gray-300" />
+                    </NavLink>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
 
-            <p className="text-[10px] text-white/70 leading-snug">
-              Integrated Solution For Construction & Infrastructure
-            </p>
+          <div className="p-6 border-t border-gray-100 bg-gray-50">
+            <div className="flex gap-3">
+              {/* Register Button */}
+              <Button
+                block
+                type="default"
+                size="large"
+                className="!rounded-xl border border-[#162646] text-[#162646] hover:!bg-[#162646] hover:!text-white"
+                onClick={() => navigate("/register")}
+              >
+                Register
+              </Button>
+
+              {/* Login Button */}
+              <Button
+                block
+                type="primary"
+                size="large"
+                className="!bg-[#162646] !rounded-xl"
+                onClick={() => navigate("/login")}
+              >
+                Login
+              </Button>
+            </div>
           </div>
         </div>
-
-        <button
-          onClick={() => setIsDrawerOpen(false)}
-          className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-        >
-          <X size={18} />
-        </button>
-      </div>
-    </div>
-
-    {/* SEARCH */}
-    <div className="p-4 border-b border-slate-200 bg-white">
-      <div className="flex items-center bg-slate-100 rounded-xl overflow-hidden border border-slate-200">
-        <input
-          type="text"
-          placeholder="Search services..."
-          className="flex-1 bg-transparent px-4 py-3 text-sm outline-none"
-        />
-
-        <button className="px-4 text-slate-500 hover:text-[#162646] transition">
-          <Search size={18} />
-        </button>
-      </div>
-    </div>
-
-    {/* MENU */}
-    <div className="flex-1 overflow-y-auto px-3 py-4">
-      {NAV_ITEMS.map((item) => (
-        <div key={item.name} className="mb-2">
-          {item.mega ? (
-            <Collapse
-              ghost
-              expandIconPosition="end"
-              className="custom-mobile-collapse"
-            >
-              <Panel
-                key={item.name}
-                header={
-                  <span className="text-[14px] font-bold text-slate-700">
-                    {item.name}
-                  </span>
-                }
-              >
-                <div className="space-y-2">
-                  {item.columns.map((col) => (
-                    <div
-                      key={col.title}
-                      className="bg-white rounded-2xl border border-slate-100 overflow-hidden"
-                    >
-                      {/* MAIN ITEM */}
-                      <Link
-                        to={col.path || "#"}
-                        onClick={() => setIsDrawerOpen(false)}
-                        className="flex items-center justify-between px-4 py-3 no-underline hover:bg-slate-50 transition"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center">
-                            {col.icon}
-                          </div>
-
-                          <span className="text-[13px] font-semibold text-slate-700">
-                            {col.title}
-                          </span>
-                        </div>
-
-                        {col.items && (
-                          <ChevronRight
-                            size={14}
-                            className="text-slate-400"
-                          />
-                        )}
-                      </Link>
-
-                      {/* SUBMENU */}
-                      {col.items && (
-                        <div className="border-t border-slate-100 bg-slate-50/60">
-                          {col.items.map((sub) => (
-                            <Link
-                              key={
-                                typeof sub === "string"
-                                  ? sub
-                                  : sub.name
-                              }
-                              to={
-                                typeof sub === "string"
-                                  ? "#"
-                                  : sub.path
-                              }
-                              onClick={() => setIsDrawerOpen(false)}
-                              className="block px-5 py-2.5 text-[12px] text-slate-600 hover:text-[#162646] hover:bg-white transition no-underline"
-                            >
-                              •{" "}
-                              {typeof sub === "string"
-                                ? sub
-                                : sub.name}
-                            </Link>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </Panel>
-            </Collapse>
-          ) : (
-            <NavLink
-              to={item.path}
-              onClick={() => setIsDrawerOpen(false)}
-              className={({ isActive }) =>
-                `flex items-center justify-between px-4 py-3 rounded-2xl no-underline transition-all
-                ${
-                  isActive
-                    ? "bg-[#162646] text-white shadow-lg"
-                    : "bg-white text-slate-700 hover:bg-slate-100"
-                }`
-              }
-            >
-              <span className="text-[14px] font-semibold">
-                {item.name}
-              </span>
-
-              <ChevronRight size={16} />
-            </NavLink>
-          )}
-        </div>
-      ))}
-    </div>
-
-    {/* FOOTER BUTTONS */}
-    <div className="p-4 border-t border-slate-200 bg-white">
-      <div className="grid grid-cols-2 gap-3">
-        <Button
-          size="large"
-          className="!h-11 !rounded-xl !border-[#162646] !text-[#162646] hover:!bg-[#162646] hover:!text-white !font-semibold"
-          onClick={() => {
-            navigate("/register");
-            setIsDrawerOpen(false);
-          }}
-        >
-          Register
-        </Button>
-
-        <Button
-          type="primary"
-          size="large"
-          className="!h-11 !rounded-xl !bg-[#162646] !font-semibold"
-          onClick={() => {
-            navigate("/login");
-            setIsDrawerOpen(false);
-          }}
-        >
-          Login
-        </Button>
-      </div>
-    </div>
-  </div>
-</Drawer>
+      </Drawer>
     </header>
   );
 };

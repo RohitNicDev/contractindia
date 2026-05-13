@@ -118,19 +118,7 @@ const HeroSection = () => {
           <div className="container mx-auto px-6 lg:px-12">
             <div className="max-w-2xl">
 
-              {/* Slide badge */}
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={`badge-${currentSlide}`}
-                  initial={{ opacity: 0, y: -12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 12 }}
-                  transition={{ duration: 0.4 }}
-                  className="inline-flex items-center gap-2 mb-5 px-4 py-1.5 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-xs font-bold uppercase tracking-widest text-amber-300"
-                >
-                  {slides[currentSlide].badge}
-                </motion.div>
-              </AnimatePresence>
+              
 
               {/* Main heading */}
               <AnimatePresence mode="wait">
@@ -175,7 +163,7 @@ const HeroSection = () => {
                 transition={{ duration: 0.5, delay: 0.25 }}
                 className="mt-8 flex flex-wrap gap-3"
               >
-                <motion.button
+                {/* <motion.button
                   whileHover={{ scale: 1.04, boxShadow: "0 0 32px rgba(245,158,11,0.5)" }}
                   whileTap={{ scale: 0.97 }}
                   onClick={() =>  navigate("register")}
@@ -184,14 +172,14 @@ const HeroSection = () => {
                 >
                   Register Company — FREE
                   <ArrowRight className="w-4 h-4" />
-                </motion.button>
-                <motion.button
+                </motion.button> */}
+                {/* <motion.button
                   whileHover={{ scale: 1.04, backgroundColor: "rgba(255,255,255,0.18)" }}
                   whileTap={{ scale: 0.97 }}
                   className="flex items-center gap-2 px-7 py-3.5 rounded-2xl font-bold text-sm text-white border border-white/25 bg-white/10 backdrop-blur-md transition-all"
                 >
                   Browse Tenders
-                </motion.button>
+                </motion.button> */}
               </motion.div>
 
               {/* Stats row */}
