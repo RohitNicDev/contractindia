@@ -51,7 +51,7 @@ export function LoginForm() {
       JSON.stringify({ email: data.email, remember: data.remember }),
     );
     toast.success("Signed in (demo). Continue with OTP.");
-    navigate("/otp");
+    navigate("/otp", { state: data });
   };
 
   return (

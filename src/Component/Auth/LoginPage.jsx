@@ -38,7 +38,7 @@ const LoginPage = () => {
               Sign in to your
               <span className="bg-linear-to-r from-cyan-200 to-blue-200 bg-clip-text text-transparent">
                 {" "}
-                ContractsIndia
+                ContractsIndia™
               </span>
             </h1>
             <p className="mt-5 max-w-md text-slate-200">

@@ -77,7 +77,7 @@ export default function SettingsPage() {
             { key: "sms",      label: "SMS alerts",           sub: "Get SMS for critical updates"      },
             // { key: "tenders",  label: "New tender alerts",    sub: "Notify when matching tenders post" },
             { key: "messages", label: "Message notifications",sub: "Alerts for new messages"           },
-            { key: "updates",  label: "Product updates",      sub: "News about ContractIndia features" },
+            { key: "updates",  label: "Product updates",      sub: "News about ContractsIndia features" },
           ].map(({ key, label, sub }) => (
             <div key={key} className="flex items-center justify-between px-5 py-3.5 hover:bg-indigo-50/20 transition-colors">
               <div>

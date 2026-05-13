@@ -20,7 +20,7 @@ type HeroConfig = {
 
 const HERO_BY_PATH: Record<string, HeroConfig> = {
   "/register": {
-    kicker: "CONTRACT INDIA",
+    kicker: "ContractsIndia™",
     title: "Build your",
     highlight: "business profile",
     subtitle:

@@ -79,7 +79,7 @@ export function RegisterForm() {
       city: "",
       pinCode: "",
       serviceGroup: "",
-      subServices: [],
+      // subServices: [],
       captcha: "",
     },
   });
@@ -302,7 +302,7 @@ export function RegisterForm() {
                 <option key={x.value} value={x.value}>{x.label}</option>
               ))}
             </AuthFormSelect>
-            <div className="col-span-2">
+            {/* <div className="col-span-2">
               <input
                 type="hidden"
                 {...register("subServices", {
@@ -322,7 +322,7 @@ export function RegisterForm() {
                     : undefined
                 }
               />
-            </div>
+            </div> */}
             <div className="col-span-2">
               <AuthFormField
                 compact

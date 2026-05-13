@@ -87,7 +87,7 @@ export default function DashboardLayout() {
           <div className="relative shrink-0">
             <div className="absolute inset-0 rounded-xl bg-indigo-400/20 blur-md" />
             <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-white shadow-sm border border-indigo-100">
-              <img src={logo} alt="ContractIndia" className="h-7 w-7 rounded-lg object-contain" />
+              <img src={logo} alt="ContractsIndia™" className="h-7 w-7 rounded-lg object-contain" />
             </div>
           </div>
           <AnimatePresence>
@@ -97,7 +97,7 @@ export default function DashboardLayout() {
                 exit={{ opacity: 0, x: -8 }} transition={{ duration: 0.2 }}
                 className="overflow-hidden"
               >
-                <p className="whitespace-nowrap text-sm font-bold text-slate-900">ContractIndia</p>
+                <p className="whitespace-nowrap text-sm font-bold text-slate-900">ContractsIndia™</p>
                 <p className="whitespace-nowrap text-[10px] text-indigo-500/70">Pro Dashboard</p>
               </motion.div>
             )}
