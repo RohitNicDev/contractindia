@@ -8,7 +8,7 @@ import {
   ChevronRight,
   Layout,
   MapPin,
-  Globe2,
+ 
   Brush,
   Zap,
   Users,
@@ -142,9 +142,7 @@ const Header = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
-  const [serviceOpen, setServiceOpen] = useState(false);
-  const [activeCategory, setActiveCategory] = useState(null);
-  const megaRef = useRef(null);
+    const megaRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {

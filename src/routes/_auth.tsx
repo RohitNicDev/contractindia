@@ -35,7 +35,7 @@ const HERO_BY_PATH: Record<string, HeroConfig> = {
     title: "Access your",
     highlight: "workspace",
     subtitle:
-      "Manage procurement, contracts, and business services from your dashboard.",
+      "",
     bullets: [
       { icon: ShieldCheck, text: "Verified contractor & supplier ecosystem" },
       { icon: Building2, text: "Centralized contractor management" },
@@ -117,7 +117,7 @@ export default function AuthLayout() {
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="relative flex w-full flex-col justify-center px-6 py-12 sm:px-10 lg:w-1/2 lg:px-16 xl:px-24"
+          className="relative flex w-full flex-col   px-6 py-12 sm:px-10 lg:w-1/2 lg:px-16 xl:px-24"
         >
           {/* Home button */}
           <div className="mb-8">

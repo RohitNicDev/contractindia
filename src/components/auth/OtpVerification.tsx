@@ -34,7 +34,8 @@ export function OtpVerification() {
     localStorage.setItem("otp_mock_verified_v1", JSON.stringify({ code, at: Date.now() }));
     toast.success("Verified successfully");
     setSuccessPulse(true);
-    window.setTimeout(() => navigate("/dashboard"), 900);
+    // window.setTimeout(() => navigate("/dashboard"), 900);
+    window.setTimeout(() => navigate("/home"), 900);
   };
 
   const resend = () => {

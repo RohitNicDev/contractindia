@@ -1,15 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import {
-  Phone,
-  Mail,
-  MapPin,
-  Globe,
-  User,
-  Building2,
-  ExternalLink,
-  ArrowRight
-} from "lucide-react";
+import { Phone, Mail, MapPin, User, Building2, ArrowRight } from "lucide-react";
 
 const ContactPage = () => {
   const fadeIn = {
@@ -21,13 +12,12 @@ const ContactPage = () => {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: { staggerChildren: 0.1 }
-    }
+      transition: { staggerChildren: 0.1 },
+    },
   };
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-800 font-sans">
-      
       {/* ⚡ HERO SECTION */}
       <section className="relative h-[45vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
@@ -61,7 +51,6 @@ const ContactPage = () => {
       {/* 🏢 MAIN CONTENT */}
       <section className="container mx-auto px-6 -mt-16 relative z-20 pb-20">
         <div className="grid lg:grid-cols-3 gap-8">
-          
           {/* LEFT: HEAD OFFICE CARD */}
           <motion.div
             variants={fadeIn}
@@ -74,9 +63,9 @@ const ContactPage = () => {
               <div>
                 <h2 className="text-3xl font-black text-[#162646] flex items-center gap-3">
                   <div className="p-2 bg-blue-50 rounded-lg">
-                  <Building2 className="text-[#162646]" size={28} />
+                    <Building2 className="text-[#162646]" size={28} />
                   </div>
-               Contracts India
+                  Contracts India
                 </h2>
                 {/* <p className="text-slate-400 mt-1 ml-14 font-medium uppercase tracking-wider text-xs">Head Office</p> */}
               </div>
@@ -89,28 +78,31 @@ const ContactPage = () => {
             <div className="grid md:grid-cols-2 gap-x-12 gap-y-8">
               {/* Info Block */}
               <div className="space-y-6">
-                <ContactInfoItem 
-                  icon={<MapPin />} 
+                <ContactInfoItem
+                  icon={<MapPin />}
                   label="Our Address"
                   value="35, Veer Savarkar Block, 3rd Floor, Above S. M. Garments, Opp. Metro Pillar No. 57, Shakkarpur, New Delhi - 110092"
                 />
-                <ContactInfoItem 
-                  icon={<User />} 
+                <ContactInfoItem
+                  icon={<User />}
                   label="Contact Person"
                   value="Mr. Prakash Gupta"
                 />
               </div>
 
               <div className="space-y-6">
-                <ContactInfoItem 
-                  icon={<Phone />} 
+                <ContactInfoItem
+                  icon={<Phone />}
                   label="Phone & Landline"
                   value={["+91 9999418599", "+91 9868318936", "011-43034185"]}
                 />
-                <ContactInfoItem 
-                  icon={<Mail />} 
+                <ContactInfoItem
+                  icon={<Mail />}
                   label="Email Addresses"
-                  value={["pgcprojects.india@gmail.com", "pgcprojects@contractsindia.in"]}
+                  value={[
+                    "pgcprojects.india@gmail.com",
+                    "pgcprojects@contractsindia.in",
+                  ]}
                 />
               </div>
             </div>
@@ -126,38 +118,43 @@ const ContactPage = () => {
           </motion.div>
 
           {/* RIGHT SIDE: BRANCHES */}
-          <motion.div 
+          <motion.div
             variants={container}
             initial="hidden"
             whileInView="show"
             viewport={{ once: true }}
             className="space-y-6"
           >
-            <h4 className="text-sm font-bold text-slate-100 uppercase tracking-widest px-2">Regional Branches</h4>
-            
-            <BranchCard 
-              city="Ranchi Branch" 
-              manager="Mr. Deepak Kumar" 
+            <h4 className="text-sm font-bold text-slate-100 uppercase tracking-widest px-2">
+              Regional Branches
+            </h4>
+
+            <BranchCard
+              city="Ranchi Branch"
+              manager="Mr. Deepak Kumar"
               address="Indira Garden Apartment, Cheshire Home Road, Bariatu, Ranchi - 834009, Jharkhand"
             />
-            
-            <BranchCard 
-              city="Raipur Branch" 
-              manager="Mr. Sunil Kumar" 
+
+            <BranchCard
+              city="Raipur Branch"
+              manager="Mr. Sunil Kumar"
               address="3/744, Ramkund Gangaram Nagar, Choubey Colony, Raipur – 492001, Chhattisgarh"
             />
 
-           <div className="p-6 rounded-[2rem] bg-linear-to-br from-[#162646] to-[#0f1b34] text-white shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden group">
-
-
-               <div className="relative z-10">
+            <div className="p-6 rounded-[2rem] bg-linear-to-br from-[#162646] to-[#0f1b34] text-white shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden group">
+              <div className="relative z-10">
                 <h3 className="font-bold text-lg mb-1">Need Support?</h3>
-                <p className="text-blue-100 text-sm mb-4">Our team is available 24/7 for urgent inquiries.</p>
+                <p className="text-blue-100 text-sm mb-4">
+                  Our team is available 24/7 for urgent inquiries.
+                </p>
                 <button className="bg-white text-blue-600 px-6 py-2 rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-blue-50 transition-colors">
                   Send Message <ArrowRight size={16} />
                 </button>
-               </div>
-               <Building2 className="absolute -bottom-4 -right-4 text-white/10" size={120} />
+              </div>
+              <Building2
+                className="absolute -bottom-4 -right-4 text-white/10"
+                size={120}
+              />
             </div>
           </motion.div>
         </div>
@@ -173,11 +170,19 @@ const ContactInfoItem = ({ icon, label, value }) => (
       {React.cloneElement(icon, { size: 18 })}
     </div>
     <div>
-      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">{label}</p>
+      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">
+        {label}
+      </p>
       {Array.isArray(value) ? (
-        value.map((item, idx) => <p key={idx} className="text-sm font-semibold text-slate-700">{item}</p>)
+        value.map((item, idx) => (
+          <p key={idx} className="text-sm font-semibold text-slate-700">
+            {item}
+          </p>
+        ))
       ) : (
-        <p className="text-sm font-semibold text-slate-700 leading-snug">{value}</p>
+        <p className="text-sm font-semibold text-slate-700 leading-snug">
+          {value}
+        </p>
       )}
     </div>
   </div>
@@ -185,7 +190,9 @@ const ContactInfoItem = ({ icon, label, value }) => (
 
 const TaxBadge = ({ label, value }) => (
   <div className="bg-slate-50 border border-slate-100 p-3 rounded-xl">
-    <p className="text-[9px] font-black text-slate-400 uppercase leading-none mb-1">{label}</p>
+    <p className="text-[9px] font-black text-slate-400 uppercase leading-none mb-1">
+      {label}
+    </p>
     <p className="text-xs font-mono font-bold text-[#162646]">{value}</p>
   </div>
 );
@@ -194,22 +201,23 @@ const BranchCard = ({ city, manager, address }) => (
   <motion.div
     variants={{
       hidden: { opacity: 0, x: 20 },
-      show: { opacity: 1, x: 0 }
+      show: { opacity: 1, x: 0 },
     }}
     className="bg-white p-6 rounded-[1.5rem] shadow-sm border border-slate-100 hover:shadow-md hover:border-blue-100 transition-all group"
   >
     <h3 className="font-bold text-[#162646] flex items-center justify-between group-hover:text-blue-600 transition-colors">
       {city}
       <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-blue-50">
-        <MapPin size={14} className="text-slate-400 group-hover:text-blue-500" />
+        <MapPin
+          size={14}
+          className="text-slate-400 group-hover:text-blue-500"
+        />
       </div>
     </h3>
     <div className="mt-3 flex items-center gap-2 text-sm font-medium text-slate-600">
       <User size={14} className="text-blue-500" /> {manager}
     </div>
-    <p className="mt-2 text-sm text-slate-700 leading-relaxed  ">
-      {address}
-    </p>
+    <p className="mt-2 text-sm text-slate-700 leading-relaxed  ">{address}</p>
   </motion.div>
 );
 

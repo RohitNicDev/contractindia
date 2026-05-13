@@ -1,15 +1,30 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Mail, Lock, ArrowRight } from "lucide-react";
 import { AuthCard } from "./AuthCard";
 import { AuthFormField } from "./AuthFormField";
+import { CaptchaChallenge } from "./CaptchaChallenge";
 import { GradientButton } from "./GradientButton";
 
 type LoginValues = {
   email: string;
   password: string;
   remember: boolean;
+  captcha: string;
+};
+
+const createAlphabetCaptcha = () => {
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let captchaText = '';
+  for (let i = 0; i < 5; i++) {
+    captchaText += letters[Math.floor(Math.random() * letters.length)];
+  }
+  return {
+    question: captchaText,
+    answer: captchaText,
+  };
 };
 
 export function LoginForm() {
@@ -17,10 +32,18 @@ export function LoginForm() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<LoginValues>({
-    defaultValues: { email: "", password: "", remember: false },
+    defaultValues: { email: "", password: "", remember: false, captcha: "" },
   });
+
+  const [captcha, setCaptcha] = useState(createAlphabetCaptcha);
+
+  const refreshCaptcha = () => {
+    setCaptcha(createAlphabetCaptcha());
+    setValue("captcha", "", { shouldValidate: false });
+  };
 
   const onSubmit = (data: LoginValues) => {
     localStorage.setItem(
@@ -89,6 +112,18 @@ export function LoginForm() {
             Forgot password?
           </button>
         </div>
+
+        <CaptchaChallenge
+          question={captcha.question}
+          onRefresh={refreshCaptcha}
+          error={errors.captcha?.message}
+          placeholder="Type the answer"
+          {...register("captcha", {
+            required: "Required",
+            validate: (value) =>
+              value.trim() === captcha.answer || "Incorrect captcha answer",
+          })}
+        />
 
         <GradientButton
           type="submit"
