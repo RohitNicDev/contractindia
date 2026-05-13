@@ -70,7 +70,7 @@ const AboutUs = () => {
          
 
           <h2 className="text-4xl md:text-5xl font-black text-[#28354D] leading-tight mt-2 ">
-            ContractsIndia
+            ContractsIndia™
           </h2>
 
           <div className="w-16 h-1 bg-[#28354D] mt-3 rounded-full "></div>
@@ -92,7 +92,7 @@ const AboutUs = () => {
                 <img
                   src="https://www.autodesk.com/blogs/construction/wp-content/uploads/2024/04/construction-phase-what-is-it.jpg"
                   className="w-full h-[260px] sm:h-[340px] md:h-[420px] lg:h-[500px] object-cover transition duration-700 group-hover:scale-105"
-                  alt="ContractsIndia"
+                  alt="ContractsIndia™"
                 />
               </div>
 
@@ -123,7 +123,7 @@ const AboutUs = () => {
       </span> */}
 
               <h4 className="text-xl sm:text-3xl lg:text-4xl font-black text-[#28354D] leading-tight mt-2">
-                ContractsIndia
+                ContractsIndia™
               </h4>
 
               <div className="w-15 h-1 bg-[#28354D] rounded-full"></div>
@@ -132,7 +132,7 @@ const AboutUs = () => {
             {/* CONTENT */}
             <div className="space-y-4 text-slate-600 text-sm sm:text-[15px] leading-relaxed">
               <p className="font-medium text-[#28354D]/90 border-l-4 border-blue-500 pl-4 bg-blue-50/50 py-3 rounded-r-xl shadow-sm">
-                ContractsIndia provides platform to contractors, architects,
+                ContractsIndia™ provides platform to contractors, architects,
                 consultants and employers where they can collaborate for
                 tenders, infrastructure projects and construction opportunities
                 across India.
@@ -145,7 +145,7 @@ const AboutUs = () => {
               </p>
 
               <p>
-                ContractsIndia maintains one of the largest online databases of
+                ContractsIndia™ maintains one of the largest online databases of
                 tenders floated by Government Agencies, Departments, PSUs and
                 Private Sector Undertakings.
               </p>
@@ -233,7 +233,7 @@ const AboutUs = () => {
             <ValueCard
               icon={<Target size={26} />}
               title="Objective"
-              desc="The primary objective of ContractsIndia is to connect contractors, architects, consultants, and employers on a single platform for tenders and projects. It provides verified information and profiles to help organizations choose the best professionals and enable efficient bidding opportunities."
+              desc="The primary objective of ContractsIndia™ is to connect contractors, architects, consultants, and employers on a single platform for tenders and projects. It provides verified information and profiles to help organizations choose the best professionals and enable efficient bidding opportunities."
             />
 
             <ValueCard

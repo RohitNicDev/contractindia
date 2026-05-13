@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { ShieldCheck, ArrowRight } from "lucide-react";
 import { AuthCard } from "./AuthCard";
@@ -14,8 +14,10 @@ export function OtpVerification() {
   const [code, setCode] = useState("");
   const [seconds, setSeconds] = useState(RESEND_SEC);
   const [successPulse, setSuccessPulse] = useState(false);
-
+  const location = useLocation();
   const isComplete = /^\d{6}$/.test(code);
+  const datatoNavigate = location?.state;
+  console.log(datatoNavigate, "datatoNavigate");
 
   useEffect(() => {
     if (seconds <= 0) return;
@@ -34,8 +36,13 @@ export function OtpVerification() {
     localStorage.setItem("otp_mock_verified_v1", JSON.stringify({ code, at: Date.now() }));
     toast.success("Verified successfully");
     setSuccessPulse(true);
-    // window.setTimeout(() => navigate("/dashboard"), 900);
-    window.setTimeout(() => navigate("/home"), 900);
+    datatoNavigate.email == "admin@gmail.com" ?
+      navigate("/admin/dashboard") :
+      datatoNavigate.email == "individual@gmail.com"
+        ? navigate("/individual/dashboard") :
+        datatoNavigate.email == "commercial@gmail.com"
+          ? navigate("/commercial/dashboard") : navigate("/home")
+
   };
 
   const resend = () => {
