@@ -49,7 +49,7 @@ import CommercialDashboard from "./Component/Dashboard/CommercialDashboard";
 
 // Admin
 // import AdminLogin from "./Component/Admin/AdminLogin";
-import AdminDashboard from "./Component/Admin/AdminDashboard";
+import AdminDashboard from "./Component/Dashboard/AdminDashboard";
 
 export const router = createBrowserRouter([
   // ── Public routes (with Header + Footer) ───────────────────
