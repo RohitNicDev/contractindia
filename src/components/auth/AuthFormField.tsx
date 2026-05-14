@@ -35,6 +35,7 @@ export const AuthFormField = forwardRef<HTMLInputElement, AuthFormFieldProps>(
           ) : null}
           <input
             id={fieldId}
+            
             ref={ref}
             className={`w-full min-w-0 bg-transparent font-medium text-[var(--auth-text-input)] outline-none placeholder:text-[var(--auth-placeholder)] ${dense ? "min-h-[2rem] py-1 text-sm" : "min-h-[2.75rem] py-2 text-base"} ${className}`}
             {...props}

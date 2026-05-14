@@ -146,7 +146,7 @@
     #a78bfa 83%,
     #e0e7ff 100%
   );
-  animation: border-spin 3s linear infinite;
+  animation: border-spin 8s linear infinite;
 }
 
 /* ── Tailwind v4 theme / utility extensions ── */
