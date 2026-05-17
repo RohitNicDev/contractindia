@@ -8,7 +8,7 @@ import {
   ChevronRight,
   Layout,
   MapPin,
- 
+
   Brush,
   Zap,
   Users,
@@ -142,13 +142,29 @@ const Header = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
-    const megaRef = useRef(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const megaRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    const checkAuthStatus = () => {
+      const auth = localStorage.getItem("isLoggedIn");
+      setIsLoggedIn(auth === "true");
+    };
+    checkAuthStatus();
+
+    // Listen to storage events for cross-tab updates or custom dispatched events
+    window.addEventListener("storage", checkAuthStatus);
+    window.addEventListener("auth_changed", checkAuthStatus);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("storage", checkAuthStatus);
+      window.removeEventListener("auth_changed", checkAuthStatus);
+    };
   }, []);
 
   // Close mega menu on outside click
@@ -169,42 +185,42 @@ const Header = () => {
         : "bg-white border-b border-gray-100"
         }`}
     >
-    
+
       {/* 🌐 TOP BAR */}
-<div className="bg-[#162646] text-white/90 py-2.5 px-4 sm:px-6 overflow-hidden">
-  <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
-    
-    {/* LEFT */}
-    <div className="flex items-center gap-3 text-[11px] sm:text-[12px] font-medium tracking-wide">
-      <span className="opacity-30">|</span>
+      <div className="bg-[#162646] text-white/90 py-2.5 px-4 sm:px-6 overflow-hidden">
+        <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
 
-      <span className="flex items-center gap-1 shrink-0">
-        <Layout size={13} className="text-blue-400" />
-        Integrated Solution For Construction &amp; Infrastructure
-      </span>
+          {/* LEFT */}
+          <div className="flex items-center gap-3 text-[11px] sm:text-[12px] font-medium tracking-wide">
+            <span className="opacity-30">|</span>
 
-      <span className="hidden lg:inline opacity-30">|</span>
+            <span className="flex items-center gap-1 shrink-0">
+              <Layout size={13} className="text-blue-400" />
+              Integrated Solution For Construction &amp; Infrastructure
+            </span>
 
-      <span className="hidden lg:flex items-center gap-1 shrink-0">
-        <MapPin size={13} className="text-blue-400" />
-        All India Coverage
-      </span>
-    </div>
+            <span className="hidden lg:inline opacity-30">|</span>
 
-    {/* RIGHT */}
-    <div className="flex items-center gap-4 text-[11px] sm:text-[12px] font-semibold border-t border-white/10 md:border-none pt-2 md:pt-0 w-full md:w-auto justify-center">
-      <span className="cursor-pointer hover:text-blue-300 transition uppercase tracking-wide">
-        Advertise
-      </span>
+            <span className="hidden lg:flex items-center gap-1 shrink-0">
+              <MapPin size={13} className="text-blue-400" />
+              All India Coverage
+            </span>
+          </div>
 
-      <span className="opacity-30">|</span>
+          {/* RIGHT */}
+          <div className="flex items-center gap-4 text-[11px] sm:text-[12px] font-semibold border-t border-white/10 md:border-none pt-2 md:pt-0 w-full md:w-auto justify-center">
+            <span className="cursor-pointer hover:text-blue-300 transition uppercase tracking-wide">
+              Advertise
+            </span>
 
-      <span className="cursor-pointer hover:text-blue-300 transition uppercase tracking-wide">
-        Become a Seller
-      </span>
-    </div>
-  </div>
-</div>
+            <span className="opacity-30">|</span>
+
+            <span className="cursor-pointer hover:text-blue-300 transition uppercase tracking-wide">
+              Become a Seller
+            </span>
+          </div>
+        </div>
+      </div>
 
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between py-3 lg:py-4 gap-4">
@@ -217,27 +233,27 @@ const Header = () => {
           </button>
 
           {/* Logo */}
-       {/* Logo */}
-<div
-  className="flex items-center gap-3 cursor-pointer shrink-0"
-  onClick={() => navigate("/")}
->
-  <img
-    src={logo}
-    alt="Contracts India Logo"
-    className="rounded-2xl h-10 w-10 sm:h-12 sm:w-12 object-contain transition-all duration-300"
-  />
+          {/* Logo */}
+          <div
+            className="flex items-center gap-3 cursor-pointer shrink-0"
+            onClick={() => navigate("/")}
+          >
+            <img
+              src={logo}
+              alt="Contracts India Logo"
+              className="rounded-2xl h-10 w-10 sm:h-12 sm:w-12 object-contain transition-all duration-300"
+            />
 
-  <div className="leading-tight">
-    <h1 className="text-xl sm:text-2xl font-black text-[#162646] tracking-tight">
-      ContractsIndia™
-    </h1>
+            <div className="leading-tight">
+              <h1 className="text-xl sm:text-2xl font-black text-[#162646] tracking-tight">
+                ContractsIndia™
+              </h1>
 
-    <p className="hidden sm:block text-[9px] text-gray-400 font-bold uppercase tracking-wider">
-      Integrated Solution For Construction &amp; Infrastructure
-    </p>
-  </div>
-</div>
+              <p className="hidden sm:block text-[9px] text-gray-400 font-bold uppercase tracking-wider">
+                Integrated Solution For Construction &amp; Infrastructure
+              </p>
+            </div>
+          </div>
 
           {/* Desktop Search */}
           <div className="hidden lg:flex flex-1 max-w-xl mx-4">
@@ -276,22 +292,35 @@ const Header = () => {
               </Badge>
 
               <div className="flex items-center gap-2">
-                <Button
-                  type="default"
-                  className="!rounded-lg !h-9 !px-4 !font-semibold border border-[#162646] text-[#162646] hover:!bg-[#162646] hover:!text-white transition"
-                  onClick={() => navigate("/register")}
-                >
-                  <span className="text-sm">Register</span>
-                </Button>
+                {!isLoggedIn ? (
+                  <>
+                    <Button
+                      type="default"
+                      className="!rounded-lg !h-9 !px-4 !font-semibold border border-[#162646] text-[#162646] hover:!bg-[#162646] hover:!text-white transition"
+                      onClick={() => navigate("/register")}
+                    >
+                      <span className="text-sm">Register</span>
+                    </Button>
 
-                <Button
-                  type="primary"
-                  className="!bg-[#162646] !rounded-lg !h-8 sm:!h-10 !px-3 sm:!px-6 !font-bold flex items-center gap-1 sm:gap-2"
-                  onClick={() => navigate("/login")}
-                >
-                  <LogIn size={14} />
-                  <span className="text-xs sm:text-sm">Login</span>
-                </Button>
+                    <Button
+                      type="primary"
+                      className="!bg-[#162646] !rounded-lg !h-8 sm:!h-10 !px-3 sm:!px-6 !font-bold flex items-center gap-1 sm:gap-2"
+                      onClick={() => navigate("/login")}
+                    >
+                      <LogIn size={14} />
+                      <span className="text-xs sm:text-sm">Login</span>
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    type="primary"
+                    className="!bg-[#162646] !rounded-lg !h-8 sm:!h-10 !px-4 sm:!px-6 !font-bold flex items-center gap-2"
+                    onClick={() => navigate("/dashboard")}
+                  >
+                    <Layout size={14} />
+                    <span className="text-xs sm:text-sm">Dashboard</span>
+                  </Button>
+                )}
               </div>
             </div>
           </div>
@@ -477,27 +506,51 @@ const Header = () => {
 
           <div className="p-6 border-t border-gray-100 bg-gray-50">
             <div className="flex gap-3">
-              {/* Register Button */}
-              <Button
-                block
-                type="default"
-                size="large"
-                className="!rounded-xl border border-[#162646] text-[#162646] hover:!bg-[#162646] hover:!text-white"
-                onClick={() => navigate("/register")}
-              >
-                Register
-              </Button>
+              {!isLoggedIn ? (
+                <>
+                  {/* Register Button */}
+                  <Button
+                    block
+                    type="default"
+                    size="large"
+                    className="!rounded-xl border border-[#162646] text-[#162646] hover:!bg-[#162646] hover:!text-white"
+                    onClick={() => {
+                      setIsDrawerOpen(false);
+                      navigate("/register");
+                    }}
+                  >
+                    Register
+                  </Button>
 
-              {/* Login Button */}
-              <Button
-                block
-                type="primary"
-                size="large"
-                className="!bg-[#162646] !rounded-xl"
-                onClick={() => navigate("/login")}
-              >
-                Login
-              </Button>
+                  {/* Login Button */}
+                  <Button
+                    block
+                    type="primary"
+                    size="large"
+                    className="!bg-[#162646] !rounded-xl"
+                    onClick={() => {
+                      setIsDrawerOpen(false);
+                      navigate("/login");
+                    }}
+                  >
+                    Login
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  block
+                  type="primary"
+                  size="large"
+                  className="!bg-[#162646] !rounded-xl flex items-center justify-center gap-2"
+                  onClick={() => {
+                    setIsDrawerOpen(false);
+                    navigate("/dashboard");
+                  }}
+                >
+                  <Layout size={18} />
+                  Dashboard
+                </Button>
+              )}
             </div>
           </div>
         </div>

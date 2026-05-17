@@ -46,12 +46,14 @@ export function LoginForm() {
   };
 
   const onSubmit = (data: LoginValues) => {
+    localStorage.setItem("isLoggedIn", "true");
     localStorage.setItem(
       "login_mock_v1",
       JSON.stringify({ email: data.email, remember: data.remember }),
     );
-    toast.success("Signed in (demo). Continue with OTP.");
-    navigate("/otp", { state: data });
+    window.dispatchEvent(new Event("auth_changed")); // Alert other components
+    toast.success("Successfully logged in.");
+    navigate("/");
   };
 
   return (
