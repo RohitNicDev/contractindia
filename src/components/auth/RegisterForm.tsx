@@ -409,7 +409,7 @@ export function RegisterForm() {
                 },
               })}
             />
-            {isCommercial && (
+            {/* {isCommercial && (
               <AuthFormField
                 compact
                 label="Alternate Phone"
@@ -425,7 +425,7 @@ export function RegisterForm() {
                   },
                 })}
               />
-            )}
+            )} */}
             {/* <AuthFormSelect
               compact
               label="Company type"
@@ -503,7 +503,9 @@ export function RegisterForm() {
                 </div>
               )}
             </div>{" "}
-            <AuthFormSelect
+
+             {isCommercial && (
+                <AuthFormSelect
               compact
               label="Service category"
               icon={Briefcase}
@@ -517,6 +519,8 @@ export function RegisterForm() {
                 </option>
               ))}
             </AuthFormSelect>
+            )}
+          
             <div className="col-span-2">
               <AuthFormTextarea
                 compact

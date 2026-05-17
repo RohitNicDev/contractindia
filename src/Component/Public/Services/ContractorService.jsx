@@ -17,575 +17,271 @@ const ContractorService = () => {
 
   /* ---------------- DUMMY JSON DATA ---------------- */
 
-  const contractorData = {
-    /* ---------------- EPC ---------------- */
-
-    epc: [
-      {
-        id: 1,
-        company: "EPC Infra Projects",
-        location: "Delhi",
-        experience: "15 Years",
-        projects: 52,
-        rating: "4.9",
-        image:
-          "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1200&auto=format&fit=crop",
-      },
-
-      {
-        id: 2,
-        company: "Mega EPC Solutions",
-        location: "Mumbai",
-        experience: "11 Years",
-        projects: 38,
-        rating: "4.7",
-        image:
-          "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1200&auto=format&fit=crop",
-      },
-    ],
-
-    /* ---------------- BUILDING ---------------- */
-
-    building: [
-      {
-        id: 1,
-        company: "Skyline Builders",
-        location: "Bilaspur",
-        experience: "12 Years",
-        projects: 32,
-        rating: "4.8",
-        image:
-          "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200&auto=format&fit=crop",
-      },
-
-      {
-        id: 2,
-        company: "Urban Heights Construction",
-        location: "Raipur",
-        experience: "9 Years",
-        projects: 24,
-        rating: "4.6",
-        image:
-          "https://images.unsplash.com/photo-1511818966892-d7d671e672a2?q=80&w=1200&auto=format&fit=crop",
-      },
-    ],
-
-    /* ---------------- ROAD ---------------- */
-
-    road: [
-      {
-        id: 1,
-        company: "Highway Infra Ltd",
-        location: "Korba",
-        experience: "20 Years",
-        projects: 50,
-        rating: "4.9",
-        image:
-          "https://images.unsplash.com/photo-1504215680853-026ed2a45def?q=80&w=1200&auto=format&fit=crop",
-      },
-
-      {
-        id: 2,
-        company: "National Road Developers",
-        location: "Nagpur",
-        experience: "17 Years",
-        projects: 41,
-        rating: "4.7",
-        image:
-          "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=1200&auto=format&fit=crop",
-      },
-    ],
-
-    /* ---------------- HEAVY FABRICATION ---------------- */
-
-    heavyfabrication: [
-      {
-        id: 1,
-        company: "SteelFab Industries",
-        location: "Bhilai",
-        experience: "14 Years",
-        projects: 29,
-        rating: "4.8",
-        image:
-          "https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=1200&auto=format&fit=crop",
-      },
-
-      {
-        id: 2,
-        company: "Heavy Structure Works",
-        location: "Raigarh",
-        experience: "16 Years",
-        projects: 35,
-        rating: "4.7",
-        image:
-          "https://images.unsplash.com/photo-1565008447742-97f6f38c985c?q=80&w=1200&auto=format&fit=crop",
-      },
-    ],
-
-    /* ---------------- DOOR WINDOW ---------------- */
-
-    doorwindow: [
-      {
-        id: 1,
-        company: "Modern Door Systems",
-        location: "Indore",
-        experience: "8 Years",
-        projects: 19,
-        rating: "4.5",
-        image:
-          "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200&auto=format&fit=crop",
-      },
-
-      {
-        id: 2,
-        company: "UPVC World",
-        location: "Delhi",
-        experience: "6 Years",
-        projects: 15,
-        rating: "4.6",
-        image:
-          "https://images.unsplash.com/photo-1484154218962-a197022b5858?q=80&w=1200&auto=format&fit=crop",
-      },
-    ],
-
-    /* ---------------- ELECTRICAL ---------------- */
-
-    electrical: [
-      {
-        id: 1,
-        company: "Power Grid Electricals",
-        location: "Raipur",
-        experience: "10 Years",
-        projects: 25,
-        rating: "4.9",
-        image:
-          "https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=1200&auto=format&fit=crop",
-      },
-
-      {
-        id: 2,
-        company: "Volt Energy Infra",
-        location: "Bilaspur",
-        experience: "7 Years",
-        projects: 18,
-        rating: "4.7",
-        image:
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwfpGPMRYuDpAkqyWk_eHeAHsmAaSuzkMcGg&s",
-      },
-    ],
-
-    /* ---------------- HVAC ---------------- */
-
-    hvac: [
-      {
-        id: 1,
-        company: "Cool Air Systems",
-        location: "Durg",
-        experience: "12 Years",
-        projects: 30,
-        rating: "4.8",
-        image:
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6eG_uCijtr2lFklWtFgDaJomZJTALOTZH5w&s",
-      },
-
-      {
-        id: 2,
-        company: "Smart Climate Solutions",
-        location: "Pune",
-        experience: "9 Years",
-        projects: 21,
-        rating: "4.6",
-        image:
-          "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?q=80&w=1200&auto=format&fit=crop",
-      },
-    ],
-
-    /* ---------------- FIRE FIGHTING ---------------- */
-
-    firefighting: [
-      {
-        id: 1,
-        company: "Safe Fire Tech",
-        location: "Raipur",
-        experience: "8 Years",
-        projects: 20,
-        rating: "4.6",
-        image:
-          "https://www.spek.fi/wp-content/uploads/2022/08/palontorjuntatekniikanhyotyjaarvo.jpg",
-      },
-
-      {
-        id: 2,
-        company: "Fire Shield Systems",
-        location: "Noida",
-        experience: "11 Years",
-        projects: 27,
-        rating: "4.8",
-        image:
-          "https://internationalfireandsafetyjournal.com/wp-content/uploads/2025/11/industrial-fire-shield.webp",
-      },
-    ],
-
-    /* ---------------- PLUMBING ---------------- */
-
-    plumbing: [
-      {
-        id: 1,
-        company: "Aqua Plumbing Works",
-        location: "Bilaspur",
-        experience: "9 Years",
-        projects: 18,
-        rating: "4.7",
-        image:
-          "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?q=80&w=1200&auto=format&fit=crop",
-      },
-
-      {
-        id: 2,
-        company: "FlowMax Plumbing",
-        location: "Raipur",
-        experience: "7 Years",
-        projects: 16,
-        rating: "4.5",
-        image:
-          "https://images.unsplash.com/photo-1600585154526-990dced4db0d?q=80&w=1200&auto=format&fit=crop",
-      },
-    ],
-
-    /* ---------------- STP / WTP / ETP ---------------- */
-
-    stpwtpetp: [
-      {
-        id: 1,
-        company: "Pure Water Solutions",
-        location: "Ahmedabad",
-        experience: "13 Years",
-        projects: 31,
-        rating: "4.9",
-        image:
-          "https://images.unsplash.com/photo-1513828583688-c52646db42da?q=80&w=1200&auto=format&fit=crop",
-      },
-
-      {
-        id: 2,
-        company: "Eco Treatment Plants",
-        location: "Hyderabad",
-        experience: "10 Years",
-        projects: 22,
-        rating: "4.7",
-        image:
-          "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=1200&auto=format&fit=crop",
-      },
-    ],
-
-    /* ---------------- ELV ---------------- */
-
-    elv: [
-      {
-        id: 1,
-        company: "ELV Smart Systems",
-        location: "Bangalore",
-        experience: "8 Years",
-        projects: 17,
-        rating: "4.6",
-        image:
-          "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop",
-      },
-
-      {
-        id: 2,
-        company: "Secure ELV Solutions",
-        location: "Delhi",
-        experience: "6 Years",
-        projects: 13,
-        rating: "4.5",
-        image:
-          "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1200&auto=format&fit=crop",
-      },
-    ],
-
-    /* ---------------- MEDICAL SUPPLY ---------------- */
-
-    medicalsupply: [
-      {
-        id: 1,
-        company: "Health Equip Suppliers",
-        location: "Bilaspur",
-        experience: "6 Years",
-        projects: 11,
-        rating: "4.6",
-        image:
-          "https://images.unsplash.com/photo-1580281657527-47b7f8d2b1df?q=80&w=1200&auto=format&fit=crop",
-      },
-
-      {
-        id: 2,
-        company: "MediTech Supply",
-        location: "Delhi",
-        experience: "9 Years",
-        projects: 19,
-        rating: "4.8",
-        image:
-          "https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=1200&auto=format&fit=crop",
-      },
-    ],
-
-    /* ---------------- MEDICAL GAS ---------------- */
-
-    medicalgas: [
-      {
-        id: 1,
-        company: "OxyFlow Gas Systems",
-        location: "Mumbai",
-        experience: "12 Years",
-        projects: 28,
-        rating: "4.9",
-        image:
-          "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?q=80&w=1200&auto=format&fit=crop",
-      },
-
-      {
-        id: 2,
-        company: "Hospital Gas Infra",
-        location: "Chennai",
-        experience: "10 Years",
-        projects: 21,
-        rating: "4.7",
-        image:
-          "https://images.unsplash.com/photo-1581595219315-a187dd40c322?q=80&w=1200&auto=format&fit=crop",
-      },
-    ],
-
-    /* ---------------- FIRE ALARM ---------------- */
-
-    firealarm: [
-      {
-        id: 1,
-        company: "Alert Fire Systems",
-        location: "Raipur",
-        experience: "9 Years",
-        projects: 17,
-        rating: "4.7",
-        image:
-          "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1200&auto=format&fit=crop",
-      },
-
-      {
-        id: 2,
-        company: "Safe Alert Technologies",
-        location: "Pune",
-        experience: "7 Years",
-        projects: 15,
-        rating: "4.5",
-        image:
-          "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1200&auto=format&fit=crop",
-      },
-    ],
-
-    /* ---------------- WATER WASTE WATER ---------------- */
-
-    waterwastewater: [
-      {
-        id: 1,
-        company: "Water Care Infra",
-        location: "Nagpur",
-        experience: "14 Years",
-        projects: 36,
-        rating: "4.9",
-        image:
-          "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop",
-      },
-
-      {
-        id: 2,
-        company: "BlueDrop Utilities",
-        location: "Surat",
-        experience: "11 Years",
-        projects: 24,
-        rating: "4.7",
-        image:
-          "https://images.unsplash.com/photo-1473773508845-188df298d2d1?q=80&w=1200&auto=format&fit=crop",
-      },
-    ],
-
-    /* ---------------- GLASS FACADE ---------------- */
-
-    glassfacade: [
-      {
-        id: 1,
-        company: "Crystal Facade Systems",
-        location: "Delhi",
-        experience: "13 Years",
-        projects: 34,
-        rating: "4.8",
-        image:
-          "https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1200&auto=format&fit=crop",
-      },
-
-      {
-        id: 2,
-        company: "Modern Glass Infra",
-        location: "Noida",
-        experience: "9 Years",
-        projects: 22,
-        rating: "4.6",
-        image:
-          "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1200&auto=format&fit=crop",
-      },
-    ],
-
-    /* ---------------- ACP FACADE ---------------- */
-
-    acpfacade: [
-      {
-        id: 1,
-        company: "ACP Cladding Experts",
-        location: "Indore",
-        experience: "11 Years",
-        projects: 27,
-        rating: "4.7",
-        image:
-          "https://images.unsplash.com/photo-1484154218962-a197022b5858?q=80&w=1200&auto=format&fit=crop",
-      },
-
-      {
-        id: 2,
-        company: "Elite ACP Solutions",
-        location: "Bhopal",
-        experience: "8 Years",
-        projects: 18,
-        rating: "4.5",
-        image:
-          "https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1200&auto=format&fit=crop",
-      },
-    ],
-
-    /* ---------------- STONE FACADE ---------------- */
-
-    stonefacade: [
-      {
-        id: 1,
-        company: "StoneCraft Facades",
-        location: "Jaipur",
-        experience: "16 Years",
-        projects: 41,
-        rating: "4.9",
-        image:
-          "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=1200&auto=format&fit=crop",
-      },
-    ],
-
-    /* ---------------- GRC FACADE ---------------- */
-
-    grcfacade: [
-      {
-        id: 1,
-        company: "GRC Design Studio",
-        location: "Mumbai",
-        experience: "10 Years",
-        projects: 20,
-        rating: "4.6",
-        image:
-          "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200&auto=format&fit=crop",
-      },
-    ],
-
-    /* ---------------- BRIDGE ---------------- */
-
-    bridge: [
-      {
-        id: 1,
-        company: "Bridge Tech Infra",
-        location: "Raipur",
-        experience: "18 Years",
-        projects: 36,
-        rating: "4.8",
-        image:
-          "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?q=80&w=1200&auto=format&fit=crop",
-      },
-
-      {
-        id: 2,
-        company: "RiverSpan Engineering",
-        location: "Lucknow",
-        experience: "15 Years",
-        projects: 31,
-        rating: "4.7",
-        image:
-          "https://images.unsplash.com/photo-1516490981167-dc990a242afe?q=80&w=1200&auto=format&fit=crop",
-      },
-    ],
-
-    /* ---------------- CIVIL ---------------- */
-
-    civil: [
-      {
-        id: 1,
-        company: "CivilCore Projects",
-        location: "Raigarh",
-        experience: "14 Years",
-        projects: 28,
-        rating: "4.7",
-        image:
-          "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1200&auto=format&fit=crop",
-      },
-
-      {
-        id: 2,
-        company: "Prime Civil Works",
-        location: "Patna",
-        experience: "9 Years",
-        projects: 19,
-        rating: "4.5",
-        image:
-          "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1200&auto=format&fit=crop",
-      },
-    ],
-
-    /* ---------------- HARD SCAPE ---------------- */
-
-    hardscape: [
-      {
-        id: 1,
-        company: "Hardscape Designers",
-        location: "Pune",
-        experience: "8 Years",
-        projects: 15,
-        rating: "4.6",
-        image:
-          "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200&auto=format&fit=crop",
-      },
-    ],
-
-    /* ---------------- SOFT SCAPE ---------------- */
-
-    softscape: [
-      {
-        id: 1,
-        company: "Green Leaf Landscapes",
-        location: "Bangalore",
-        experience: "10 Years",
-        projects: 26,
-        rating: "4.8",
-        image:
-          "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80&w=1200&auto=format&fit=crop",
-      },
-
-      {
-        id: 2,
-        company: "NatureScape Horticulture",
-        location: "Hyderabad",
-        experience: "7 Years",
-        projects: 14,
-        rating: "4.5",
-        image:
-          "https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?q=80&w=1200&auto=format&fit=crop",
-      },
-    ],
-  };
-
- 
-
+const contractorData = {
+  epc: [
+    {
+      id: 1,
+      company: "EPC Infra Projects",
+      location: "Delhi",
+      experience: "15 Years",
+      projects: 52,
+      rating: "4.9",
+      image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1200&auto=format&fit=crop",
+    },
+  ],
+
+  building: [
+    {
+      id: 1,
+      company: "Skyline Builders",
+      location: "Bilaspur",
+      experience: "12 Years",
+      projects: 32,
+      rating: "4.8",
+      image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200&auto=format&fit=crop",
+    },
+  ],
+
+  road: [
+    {
+      id: 1,
+      company: "Highway Infra Ltd",
+      location: "Korba",
+      experience: "20 Years",
+      projects: 50,
+      rating: "4.9",
+      image: "https://images.unsplash.com/photo-1504215680853-026ed2a45def?q=80&w=1200&auto=format&fit=crop",
+    },
+  ],
+
+  heavyfabrication: [
+    {
+      id: 1,
+      company: "SteelFab Industries",
+      location: "Bhilai",
+      experience: "14 Years",
+      projects: 29,
+      rating: "4.8",
+      image: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=1200&auto=format&fit=crop",
+    },
+  ],
+
+  doorwindow: [
+    {
+      id: 1,
+      company: "Modern Door Systems",
+      location: "Indore",
+      experience: "8 Years",
+      projects: 19,
+      rating: "4.5",
+      image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200&auto=format&fit=crop",
+    },
+  ],
+
+  electrical: [
+    {
+      id: 1,
+      company: "Power Grid Electricals",
+      location: "Raipur",
+      experience: "10 Years",
+      projects: 25,
+      rating: "4.9",
+      image: "https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=1200&auto=format&fit=crop",
+    },
+  ],
+
+  hvac: [
+    {
+      id: 1,
+      company: "Cool Air Systems",
+      location: "Durg",
+      experience: "12 Years",
+      projects: 30,
+      rating: "4.8",
+      image: "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?q=80&w=1200&auto=format&fit=crop",
+    },
+  ],
+
+  firefighting: [
+    {
+      id: 1,
+      company: "Safe Fire Tech",
+      location: "Raipur",
+      experience: "8 Years",
+      projects: 20,
+      rating: "4.6",
+      image: "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?q=80&w=1200&auto=format&fit=crop",
+    },
+  ],
+
+  plumbing: [
+    {
+      id: 1,
+      company: "Aqua Plumbing Works",
+      location: "Bilaspur",
+      experience: "9 Years",
+      projects: 18,
+      rating: "4.7",
+      image: "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?q=80&w=1200&auto=format&fit=crop",
+    },
+  ],
+
+  STP: [
+    {
+      id: 1,
+      company: "Pure Water Solutions",
+      location: "Ahmedabad",
+      experience: "13 Years",
+      projects: 31,
+      rating: "4.9",
+      image: "https://images.unsplash.com/photo-1513828583688-c52646db42da?q=80&w=1200&auto=format&fit=crop",
+    },
+  ],
+
+  ELV: [
+    {
+      id: 1,
+      company: "ELV Smart Systems",
+      location: "Bangalore",
+      experience: "8 Years",
+      projects: 17,
+      rating: "4.6",
+      image: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop",
+    },
+  ],
+
+  Medical: [
+    {
+      id: 1,
+      company: "OxyFlow Gas Systems",
+      location: "Mumbai",
+      experience: "12 Years",
+      projects: 28,
+      rating: "4.9",
+      image: "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?q=80&w=1200&auto=format&fit=crop",
+    },
+  ],
+
+  FireAlarm: [
+    {
+      id: 1,
+      company: "Alert Fire Systems",
+      location: "Raipur",
+      experience: "9 Years",
+      projects: 17,
+      rating: "4.7",
+      image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1200&auto=format&fit=crop",
+    },
+  ],
+
+  water: [
+    {
+      id: 1,
+      company: "Water Care Infra",
+      location: "Nagpur",
+      experience: "14 Years",
+      projects: 36,
+      rating: "4.9",
+      image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop",
+    },
+  ],
+
+  glassfacade: [
+    {
+      id: 1,
+      company: "Crystal Facade Systems",
+      location: "Delhi",
+      experience: "13 Years",
+      projects: 34,
+      rating: "4.8",
+      image: "https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1200&auto=format&fit=crop",
+    },
+  ],
+
+  acpfacade: [
+    {
+      id: 1,
+      company: "ACP Cladding Experts",
+      location: "Indore",
+      experience: "11 Years",
+      projects: 27,
+      rating: "4.7",
+      image: "https://images.unsplash.com/photo-1484154218962-a197022b5858?q=80&w=1200&auto=format&fit=crop",
+    },
+  ],
+
+  stonefacade: [
+    {
+      id: 1,
+      company: "StoneCraft Facades",
+      location: "Jaipur",
+      experience: "16 Years",
+      projects: 41,
+      rating: "4.9",
+      image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=1200&auto=format&fit=crop",
+    },
+  ],
+
+  GrcFacade: [
+    {
+      id: 1,
+      company: "GRC Design Studio",
+      location: "Mumbai",
+      experience: "10 Years",
+      projects: 20,
+      rating: "4.6",
+      image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200&auto=format&fit=crop",
+    },
+  ],
+
+  bridge: [
+    {
+      id: 1,
+      company: "Bridge Tech Infra",
+      location: "Raipur",
+      experience: "18 Years",
+      projects: 36,
+      rating: "4.8",
+      image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?q=80&w=1200&auto=format&fit=crop",
+    },
+  ],
+
+  civil: [
+    {
+      id: 1,
+      company: "CivilCore Projects",
+      location: "Raigarh",
+      experience: "14 Years",
+      projects: 28,
+      rating: "4.7",
+      image: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1200&auto=format&fit=crop",
+    },
+  ],
+
+  hardscape: [
+    {
+      id: 1,
+      company: "Hardscape Designers",
+      location: "Pune",
+      experience: "8 Years",
+      projects: 15,
+      rating: "4.6",
+      image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200&auto=format&fit=crop",
+    },
+  ],
+
+  softscape: [
+    {
+      id: 1,
+      company: "Green Leaf Landscapes",
+      location: "Bangalore",
+      experience: "10 Years",
+      projects: 26,
+      rating: "4.8",
+      image: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80&w=1200&auto=format&fit=crop",
+    },
+  ],
+};
   const menuItems = [
     {
       key: "epc",
@@ -624,7 +320,12 @@ const ContractorService = () => {
         { key: "electrical", label: "Electrical" },
         { key: "hvac", label: "HVAC" },
         { key: "firefighting", label: "Fire Fighting" },
-        { key: "plumbing", label: "Plumbing" },
+        { key: "plumbing", label: "Plumbing Contractor" },
+        { key: "STP", label: "STP, WTP, ETP Contractor" },
+        { key: "ELV", label: "ELV Contractor" },
+        { key: "Medical", label: "Medical Gas Contractor" },
+        { key: "FireAlarm ", label: "Fire Alarm Contractor" },
+        { key: "water", label: "Water & Waste Contractor" },
       ],
     },
 
@@ -639,6 +340,14 @@ const ContractorService = () => {
         {
           key: "acpfacade",
           label: "ACP Facade",
+        },
+        {
+          key: "stonefacade",
+          label: "Stone Facade",
+        },
+        {
+          key: "GrcFacade",
+          label: "GRC Facade",
         },
       ],
     },
@@ -663,7 +372,7 @@ const ContractorService = () => {
         },
         {
           key: "softscape",
-          label: "Soft Scape",
+          label: "Soft Scape Harticultural",
         },
       ],
     },
