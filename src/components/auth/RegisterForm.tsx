@@ -437,7 +437,7 @@ export function RegisterForm() {
                 <option key={x.value} value={x.value}>{x.label}</option>
               ))}
             </AuthFormSelect> */}
-            <div className="col-span-2 flex gap-2">
+            {/* <div className="col-span-2 flex gap-2"> */}
               <AuthFormSelect
                 compact
                 label="State"
@@ -462,7 +462,7 @@ export function RegisterForm() {
                 <Zap className="h-4 w-4" />
                 {detectingLocation ? "Detecting…" : "Auto-detect"}
               </button> */}
-            </div>
+            {/* </div> */}
             <AuthFormSelect
               compact
               label="City"
@@ -480,7 +480,7 @@ export function RegisterForm() {
                 </option>
               ))}
             </AuthFormSelect>
-            <div className="col-span-2 flex gap-2">
+            {/* <div className="col-span-2 flex gap-2"> */}
               <AuthFormField
                 compact
                 label="Pin code"
@@ -501,7 +501,7 @@ export function RegisterForm() {
                   Fetching…
                 </div>
               )}
-            </div>{" "}
+            {/* </div> */}
 
             {isCommercial && (
               <AuthFormSelect
