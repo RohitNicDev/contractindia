@@ -4,17 +4,18 @@ import { useNavigate, Link } from "react-router-dom";
 import {
   User, Mail, Phone, MapPin, Briefcase, Settings, LogOut,
   CreditCard, ShoppingBag, Bell, BookOpen, History, ArrowRight,
-  Edit3, CheckCircle2, Plus, Star, Zap, Menu, X, LayoutDashboard,
+  Edit3, CheckCircle2, Plus, Star, Zap, Menu, X, LayoutDashboard, Key,
+  ToggleLeft, ToggleRight,
 } from "lucide-react";
 import { toast } from "sonner";
 
 const NAV = [
-  { id: "overview",  label: "Overview",        icon: LayoutDashboard },
-  { id: "profile",   label: "My Profile",       icon: User            },
-  { id: "account",   label: "My Account",       icon: CreditCard      },
-  { id: "services",  label: "Get Services",     icon: ShoppingBag     },
+  // { id: "overview",  label: "Overview",        icon: LayoutDashboard },
+  // { id: "profile",   label: "My Profile",       icon: User            },
+  // { id: "account",   label: "My Account",       icon: CreditCard      },
+  // { id: "services",  label: "Get Services",     icon: ShoppingBag     },
   // { id: "newsletter",label: "Newsletter",       icon: BookOpen        },
-  { id: "history",   label: "Booked History",   icon: History         },
+  // { id: "history",   label: "Booked History",   icon: History         },
   { id: "settings",  label: "Settings",         icon: Settings        },
 ];
 
@@ -243,6 +244,148 @@ function Newsletter() {
   );
 }
 
+function SettingsPanel({ user, onUpdate }) {
+  const [form, setForm] = useState({
+    name: user.name || "",
+    email: user.email || "",
+    mobile: user.mobile || "",
+    address: user.address || "",
+    profession: user.profession || "",
+  });
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [emailNotif, setEmailNotif] = useState(true);
+  const [pushNotif, setPushNotif] = useState(true);
+
+  const subscriptions = [
+    { plan: "Basic Plan", price: "₹299/mo", status: "Active", expires: "2026-06-20" },
+    { plan: "Premium Plan", price: "₹599/mo", status: "Expired", expires: "2026-04-22" },
+  ];
+
+  const handleUpdate = () => {
+    const updated = { ...user, ...form };
+    localStorage.setItem("individual_user_v1", JSON.stringify(updated));
+    onUpdate(updated);
+    toast.success("Profile settings updated successfully!");
+  };
+
+  const handlePasswordChange = () => {
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      toast.error("Fill in all password fields.");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error("New password and confirmation must match.");
+      return;
+    }
+    setOldPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+    toast.success("Password updated successfully (demo only).");
+  };
+
+  return (
+    <div className={`${glassCard} p-6 space-y-6`}>
+      <div className="flex items-center gap-3">
+        <Settings className="w-5 h-5 text-slate-500" />
+        <div>
+          <h3 className="font-black text-slate-900">Settings</h3>
+          <p className="text-xs text-slate-500">Update account details, security, and subscriptions.</p>
+        </div>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <div className="rounded-3xl border border-slate-200 bg-slate-50/90 p-5">
+          <h4 className="text-sm font-black text-slate-900 mb-4">Profile Details</h4>
+          {[
+            ["Name", "name"],
+            ["Email", "email"],
+            ["Mobile", "mobile"],
+            ["Profession", "profession"],
+          ].map(([label, key]) => (
+            <label key={key} className="block mb-4">
+              <span className="text-xs font-semibold uppercase tracking-wide text-slate-600">{label}</span>
+              <input value={form[key]} onChange={e => setForm(prev => ({ ...prev, [key]: e.target.value }))}
+                className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100" />
+            </label>
+          ))}
+          <label className="block mb-4">
+            <span className="text-xs font-semibold uppercase tracking-wide text-slate-600">Address</span>
+            <textarea value={form.address} onChange={e => setForm(prev => ({ ...prev, address: e.target.value }))}
+              rows={3} className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 resize-none" />
+          </label>
+          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleUpdate}
+            className="inline-flex items-center gap-2 rounded-2xl bg-indigo-600 px-5 py-3 text-sm font-bold text-white shadow-lg">
+            <Edit3 className="w-4 h-4" /> Save Profile
+          </motion.button>
+        </div>
+
+        <div className="rounded-3xl border border-slate-200 bg-slate-50/90 p-5">
+          <h4 className="text-sm font-black text-slate-900 mb-4">Security</h4>
+          {/* <label className="flex items-center justify-between gap-3 rounded-3xl border border-slate-200 bg-white p-4 mb-4">
+            <div>
+              <p className="font-semibold text-slate-900">Email Notifications</p>
+              <p className="text-xs text-slate-500">Get updates and reminders by email.</p>
+            </div>
+            <button onClick={() => setEmailNotif(v => !v)}>
+              {emailNotif ? <ToggleRight className="w-10 h-10 text-indigo-500" /> : <ToggleLeft className="w-10 h-10 text-slate-400" />}
+            </button>
+          </label>
+          <label className="flex items-center justify-between gap-3 rounded-3xl border border-slate-200 bg-white p-4 mb-4">
+            <div>
+              <p className="font-semibold text-slate-900">Push Notifications</p>
+              <p className="text-xs text-slate-500">Receive instant app alerts.</p>
+            </div>
+            <button onClick={() => setPushNotif(v => !v)}>
+              {pushNotif ? <ToggleRight className="w-10 h-10 text-indigo-500" /> : <ToggleLeft className="w-10 h-10 text-slate-400" />}
+            </button>
+          </label> */}
+          <div className="rounded-3xl border border-slate-200 bg-white p-4">
+            <label className="block mb-4">
+              <span className="text-xs font-semibold uppercase tracking-wide text-slate-600">Current Password</span>
+              <input type="password" value={oldPassword} onChange={e => setOldPassword(e.target.value)}
+                className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100" />
+            </label>
+            <label className="block mb-4">
+              <span className="text-xs font-semibold uppercase tracking-wide text-slate-600">New Password</span>
+              <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)}
+                className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100" />
+            </label>
+            <label className="block mb-4">
+              <span className="text-xs font-semibold uppercase tracking-wide text-slate-600">Confirm Password</span>
+              <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}
+                className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100" />
+            </label>
+            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handlePasswordChange}
+              className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 text-sm font-bold text-white shadow-lg">
+              <Key className="w-4 h-4" /> Update Password
+            </motion.button>
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-3xl border border-slate-200 bg-white/90 p-5 shadow-sm">
+        <h4 className="text-sm font-black text-slate-900 mb-4">Subscription Summary</h4>
+        <div className="grid gap-4 md:grid-cols-2">
+          {subscriptions.map(sub => (
+            <div key={sub.plan} className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+              <div className="flex items-center justify-between mb-3">
+                <p className="font-semibold text-slate-900">{sub.plan}</p>
+                <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${sub.status === "Active" ? "bg-emerald-50 text-emerald-700 border border-emerald-100" : "bg-slate-100 text-slate-500 border border-slate-200"}`}>
+                  {sub.status}
+                </span>
+              </div>
+              <p className="text-sm text-slate-700 font-black mb-2">{sub.price}</p>
+              <p className="text-xs text-slate-500">Expires on {sub.expires}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function IndividualDashboard() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
@@ -265,6 +408,7 @@ export default function IndividualDashboard() {
       case "services":   return <GetServices />;
       case "newsletter": return <Newsletter />;
       case "history":    return <MyAccount />;
+      case "settings":   return <SettingsPanel user={user} onUpdate={setUser} />;
       default:           return <Overview user={user} />;
     }
   };

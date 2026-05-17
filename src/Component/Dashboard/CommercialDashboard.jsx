@@ -5,24 +5,25 @@ import { toast } from "sonner";
 import {
   LayoutDashboard, User, CreditCard, History, Briefcase, Eye,
   List, FileText, Settings, LogOut, Menu, X, Plus, CheckCircle2,
-  Upload, ChevronDown, Zap, ToggleLeft, ToggleRight,
+  Upload, ChevronDown, Zap, ToggleLeft, Key,
+  ToggleRight,
 } from "lucide-react";
 
 const glassCard = "rounded-2xl bg-white/70 backdrop-blur-xl border border-white/80 shadow-[0_4px_24px_rgba(99,102,241,0.08)]";
 const btnGrad = { background: "linear-gradient(135deg, #3b82f6, #6366f1)" };
 
 const NAV = [
-  { id: "overview",      label: "Overview",              icon: LayoutDashboard },
+  { id: "Dashboard",      label: "Dashboard",              icon: LayoutDashboard },
   { id: "profile",       label: "My Profile",            icon: User            },
   { id: "credits",       label: "Add Credits",           icon: CreditCard      },
   { id: "payments",      label: "Payment History",       icon: History         },
   { id: "subscription",  label: "Subscription History",  icon: Briefcase       },
   { id: "clients",       label: "Client History",        icon: User            },
   { id: "leads",         label: "Lead Management",       icon: List            },
-  // { id: "visibility",    label: "Marketplace Visibility",icon: Eye             },
+  // { id: "visibility",    label: "Marketplace Visibility",icon: Eye },
   { id: "services",      label: "Service Listing",       icon: Briefcase       },
-  { id: "documents",     label: "Documents",             icon: FileText        },
-  // { id: "settings",      label: "Settings",              icon: Settings        },
+  // { id: "documents",     label: "Documents",             icon: FileText        } ,
+  { id: "settings",      label: "Settings",              icon: Settings        },
 ];
 
 const ALL_SERVICES = [
@@ -31,8 +32,8 @@ const ALL_SERVICES = [
   "Contractor Service","Construction Audit",
 ];
 
-// ─── Overview ────────────────────────────────────────────────────────────────
-function Overview({ user }) {
+// ─── Dashboard ────────────────────────────────────────────────────────────────
+function Dashboard({ user }) {
   const name = user.companyName || user.contactPerson || "there";
   return (
     <div className="space-y-6">
@@ -328,89 +329,188 @@ function ServiceListing() {
 }
 
 // ─── Documents ────────────────────────────────────────────────────────────────
-const DOC_UPLOADS = [
-  "Proof of Identity","MOA/AOA","Proprietorship/Partnership Deed","Bank Certificate",
-  "Registration under Shop Establishment Act","CST/VAT/TIN/PIN Certificate",
-  "Certificate/Registration issued by Sales Tax/Service Tax/Professional Tax Authorities",
-  "Certificate of Incorporation",
-  "Registration with Govt Authorities/Local Bodies/Tax Authorities/State Authorities",
-  "Trade Licence","Registered/Notarized Trust Deed","AICTE Approval for Educational Institutions",
-  "Import Export Certificate","Mandi Board Registration Certificate","Udyog Aadhar",
-];
+const DOCUMENT_CATEGORIES = {
+  "Business Registration": [
+    "GST Certificate", "MOA/AOA", "Trade Licence", "Certificate of Incorporation", "Udyog Aadhar",
+  ],
+  "Identity & Address": [
+    "Proof of Identity", "Proof of Address", "PAN Card", "Passport", "Driving License",
+  ],
+  "Compliance Certificates": [
+    "Bank Certificate", "CST/VAT/TIN/PIN Certificate", "Sales Tax/Service Tax/Professional Tax Certificate", "AICTE Approval", "Import Export Certificate",
+  ],
+  "Other Documents": [
+    "Trade Licence", "Registered/Notarized Trust Deed", "Shop Act Registration", "Company Profile", "Others",
+  ],
+};
 
-const POI_OPTIONS = [
-  "Income Tax PAN Card","Passport","Driving License",
-  "Photo Identity Card with Address issued by recognized Professional Body",
-  "ECHS/CGHS Card","Defence Personnel Service Certificate",
-  "Certificate issued by MP/MLA/Gazetted Officer","Domicile Certificate",
-  "Caste Certificate with Photograph","Govt Recognized Education Institute Certificate",
-  "Address Card with Photo issued by Dept. of Posts",
-  "Smart Card/Dependent Card issued by CSD","Current Passbook with Photograph",
-  "Freedom Fighter Card","Embassy/Consulate Certificate","POI Card","Embassy ID Card",
-];
-
-const POA_OPTIONS = [
-  "Certificate/Registration issued by Sales Tax","MOA/AOA",
-  "Registration of Firm issued by Government Authorities",
-  "Registration under Shop Establishment Act","CST/VAT/TIN/PIN Certificate",
-  "Sales Tax/Service Tax/Professional Tax Certificates","Certificate of Incorporation",
-  "Govt Registration Certificates","Registered/Notarized Rent Agreement",
-  "Import Export Certificate","Leased Line Bill","Trade Licence","AICTE Approval",
-];
-
-function DropZone({ label }) {
-  const [file, setFile] = useState(null);
+function DocumentUploader({ label, files = [], onChange }) {
   return (
     <div>
       <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-1.5">{label}</label>
-      <label className="flex flex-col items-center justify-center gap-1 border-2 border-dashed border-blue-200 rounded-xl p-4 cursor-pointer hover:border-blue-400 bg-blue-50/30 transition-all min-h-[80px]">
+      <label className="flex flex-col items-center justify-center gap-1 border-2 border-dashed border-blue-200 rounded-2xl p-4 cursor-pointer hover:border-blue-400 bg-blue-50/30 transition-all min-h-[108px]">
         <Upload className="w-5 h-5 text-blue-400" />
-        <span className="text-xs text-slate-500 text-center">{file ? file.name : "Drag & drop or click to upload"}</span>
-        {file && <span className="text-[10px] text-emerald-600 font-semibold">✓ Ready to submit</span>}
-        <input type="file" className="hidden" onChange={e => setFile(e.target.files[0])} />
+        <span className="text-xs text-slate-500 text-center">{files.length ? `${files.length} file(s) selected` : "Drag & drop or click to upload"}</span>
+        {files.length ? <span className="text-[10px] text-emerald-600 font-semibold">✓ Ready to submit</span> : null}
+        <input type="file" className="hidden" multiple onChange={e => onChange(Array.from(e.target.files))} />
       </label>
-    </div>
-  );
-}
-
-function SelectField({ label, options }) {
-  const [val, setVal] = useState("");
-  return (
-    <div className="sm:col-span-2">
-      <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-1.5">{label}</label>
-      <div className="relative">
-        <select value={val} onChange={e => setVal(e.target.value)}
-          className="w-full appearance-none px-3 py-2.5 pr-8 rounded-xl border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none text-sm bg-white/70">
-          <option value="">— Select —</option>
-          {options.map(o => <option key={o} value={o}>{o}</option>)}
-        </select>
-        <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
-      </div>
+      {files.length > 0 && (
+        <ul className="mt-3 max-h-28 overflow-y-auto text-[11px] text-slate-500 space-y-1">
+          {files.map((file, idx) => (
+            <li key={`${file.name}-${idx}`} className="truncate">• {file.name}</li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
 
 function Documents() {
+  const raw = localStorage.getItem("commercial_user_v1");
+  const storedUser = raw ? JSON.parse(raw) : {};
+  const [step, setStep] = useState(1);
+  const [profile, setProfile] = useState({
+    companyName: storedUser.companyName || "",
+    contactPerson: storedUser.contactPerson || "",
+    email: storedUser.email || "",
+    mobile: storedUser.mobile || "",
+    address: storedUser.address || "",
+  });
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [uploadedDocs, setUploadedDocs] = useState({});
+
+  const categoryFields = DOCUMENT_CATEGORIES[selectedCategory] || [];
+  const canContinue = profile.companyName && profile.contactPerson && profile.email && profile.mobile;
+
+  const handleProfileChange = (key, value) => setProfile(p => ({ ...p, [key]: value }));
+  const handleFiles = (field, files) => setUploadedDocs(prev => ({ ...prev, [field]: files }));
+
+  const saveProfile = () => {
+    localStorage.setItem("commercial_user_v1", JSON.stringify({ ...storedUser, ...profile }));
+    toast.success("Profile saved. Continue to upload documents.");
+    setStep(2);
+  };
+
+  const handleSubmit = () => {
+    const uploadedSummary = Object.entries(uploadedDocs)
+      .filter(([, files]) => files?.length)
+      .map(([field, files]) => `${field}: ${files.length}`)
+      .join(" · ");
+
+    toast.success(uploadedSummary ? `Saved documents: ${uploadedSummary}` : "No documents selected yet, but changes saved.");
+  };
+
   return (
     <div className={`${glassCard} p-6 space-y-6`}>
-      <h3 className="font-black text-slate-900 flex items-center gap-2"><FileText className="w-5 h-5 text-blue-500" /> Documents</h3>
-
-      {/* Upload fields */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {DOC_UPLOADS.map(d => <DropZone key={d} label={d} />)}
+      <div className="rounded-[28px] border border-slate-200 bg-white/90 p-4 shadow-sm">
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { step: 1, title: "Profile", subtitle: "Company details" },
+            { step: 2, title: "Documents", subtitle: "Upload required files" },
+          ].map(item => {
+            const active = step === item.step;
+            return (
+              <button key={item.title} type="button" onClick={() => setStep(item.step)}
+                className={`flex items-center gap-3 rounded-3xl border px-4 py-3 text-left transition ${active ? "border-blue-300 bg-blue-50 shadow-sm" : "border-slate-200 bg-slate-50/80 hover:border-blue-200"}`}>
+                <span className={`grid h-9 w-9 place-items-center rounded-2xl font-bold ${active ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-600"}`}>{item.step}</span>
+                <div>
+                  <p className="text-sm font-bold text-slate-900">{item.title}</p>
+                  <p className="text-xs text-slate-500">{item.subtitle}</p>
+                </div>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Dropdowns */}
-      <div className="grid sm:grid-cols-2 gap-4">
-        <SelectField label="Proof of Identity (Authorized Signatory)" options={POI_OPTIONS} />
-        <SelectField label="Proof of Address" options={POA_OPTIONS} />
-      </div>
+      {step === 1 ? (
+        <div className="space-y-5">
+          <div className="grid sm:grid-cols-2 gap-4">
+            {[
+              ["Company Name *", "companyName"],
+              ["Contact Person *", "contactPerson"],
+              ["Email *", "email"],
+              ["Mobile *", "mobile"],
+            ].map(([label, field]) => (
+              <div key={field}>
+                <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-1.5">{label}</label>
+                <input className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none text-sm bg-white/70"
+                  value={profile[field]} onChange={e => handleProfileChange(field, e.target.value)} />
+              </div>
+            ))}
+          </div>
 
-      <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-        onClick={() => toast.success("Documents submitted (demo)")}
-        className="flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm text-white shadow-lg" style={btnGrad}>
-        <CheckCircle2 className="w-4 h-4" /> SUBMIT DOCUMENTS
-      </motion.button>
+          <div>
+            <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-1.5">Address</label>
+            <textarea rows={3} className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none text-sm bg-white/70 resize-none"
+              value={profile.address} onChange={e => handleProfileChange("address", e.target.value)} />
+          </div>
+
+          <div className="rounded-3xl border border-slate-200 bg-slate-50/80 p-4">
+            <p className="text-sm font-semibold text-slate-900">Fast tip</p>
+            <p className="text-xs text-slate-500 mt-1">Complete your profile first so document submission is linked to your latest company details.</p>
+          </div>
+
+          <div className="flex flex-wrap gap-3">
+            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={saveProfile}
+              disabled={!canContinue}
+              className="inline-flex items-center gap-2 rounded-xl px-6 py-2.5 font-bold text-sm text-white shadow-lg disabled:cursor-not-allowed disabled:bg-slate-300"
+              style={btnGrad}>
+              <CheckCircle2 className="w-4 h-4" /> Save & Continue
+            </motion.button>
+            <button type="button" onClick={() => setStep(2)}
+              className="rounded-xl border border-slate-200 bg-white px-6 py-2.5 text-sm font-semibold text-slate-700 hover:border-blue-200 transition-all">
+              Skip to Documents
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          <div className="space-y-4">
+            <div>
+              <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-2">Select document section</label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {Object.keys(DOCUMENT_CATEGORIES).map(category => (
+                  <button key={category} type="button" onClick={() => { setSelectedCategory(category); setUploadedDocs({}); }}
+                    className={`rounded-2xl border px-3 py-2 text-left text-sm font-semibold transition ${selectedCategory === category ? "border-blue-500 bg-blue-50 text-blue-700" : "border-slate-200 bg-white text-slate-700 hover:border-blue-300"}`}>
+                    {category}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="rounded-3xl border border-slate-200 bg-slate-50/80 p-4">
+              <p className="text-sm font-semibold text-slate-900">How it works</p>
+              <p className="text-xs text-slate-500 mt-1">Choose one of the four document sections, then upload files for each required field. All fields support multiple file uploads.</p>
+            </div>
+          </div>
+
+          {selectedCategory ? (
+            <div className="grid sm:grid-cols-2 gap-4">
+              {categoryFields.map(field => (
+                <DocumentUploader key={field} label={field}
+                  files={uploadedDocs[field] || []}
+                  onChange={files => handleFiles(field, files)} />
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50/90 p-6 text-sm text-slate-500">
+              Select a document section above to load the matching upload fields.
+            </div>
+          )}
+
+          <div className="flex flex-wrap gap-3">
+            <button type="button" onClick={() => setStep(1)}
+              className="rounded-xl border border-slate-200 bg-white px-6 py-2.5 text-sm font-semibold text-slate-700 hover:border-blue-200 transition-all">
+              Back to Profile
+            </button>
+            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleSubmit}
+              className="inline-flex items-center gap-2 rounded-xl px-6 py-2.5 font-bold text-sm text-white shadow-lg"
+              style={btnGrad}>
+              <CheckCircle2 className="w-4 h-4" /> Submit Documents
+            </motion.button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -419,25 +519,90 @@ function Documents() {
 function SettingsPanel({ user }) {
   const [notif, setNotif] = useState(true);
   const [email, setEmail] = useState(true);
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const handlePasswordChange = () => {
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      toast.error("Please fill in all password fields.");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error("New passwords do not match.");
+      return;
+    }
+    setOldPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+    toast.success("Password changed successfully (demo). Please log in again if this were real.");
+  };
+
   return (
-    <div className={`${glassCard} p-6 space-y-5`}>
-      <h3 className="font-black text-slate-900 flex items-center gap-2"><Settings className="w-5 h-5 text-slate-500" /> Settings</h3>
-      {[["Email Notifications", email, setEmail],["Push Notifications", notif, setNotif]].map(([lbl, val, setter]) => (
-        <div key={lbl} className="flex items-center justify-between p-4 rounded-xl bg-slate-50/80 border border-slate-100">
-          <p className="font-semibold text-slate-700 text-sm">{lbl}</p>
-          <button onClick={() => setter(v => !v)}>
-            {val ? <ToggleRight className="w-9 h-9 text-blue-500" /> : <ToggleLeft className="w-9 h-9 text-slate-400" />}
-          </button>
+    <div className={`${glassCard} p-6 space-y-6`}>
+      {/* <div className="flex flex-col gap-2 rounded-[28px] border border-slate-200 bg-white/90 p-5 shadow-sm">
+        <div className="flex items-center gap-3">
+          <Settings className="w-5 h-5 text-slate-500" />
+          <div>
+            <h3 className="font-black text-slate-900">Settings</h3>
+            <p className="text-xs text-slate-500">Manage account preferences, notifications, and security.</p>
+          </div>
         </div>
-      ))}
-      <div className="p-4 rounded-xl bg-red-50/60 border border-red-100">
-        <p className="text-sm font-bold text-red-700 mb-1">Danger Zone</p>
-        <p className="text-xs text-slate-500 mb-3">Permanently delete your account and all data.</p>
-        <button onClick={() => toast.error("Account deletion requires support contact.")}
-          className="px-4 py-2 rounded-xl text-xs font-bold text-red-600 border border-red-200 hover:bg-red-100 transition-all">
-          Delete Account
-        </button>
+        <div className="grid gap-3 md:grid-cols-2">
+          {[
+            ["Email Notifications", email, setEmail, "Stay updated with email alerts."],
+            ["Push Notifications", notif, setNotif, "Receive app notifications instantly."],
+          ].map(([label, value, setter, description]) => (
+            <div key={label} className="flex items-center justify-between gap-4 rounded-3xl border border-slate-200 bg-slate-50/90 p-4">
+              <div>
+                <p className="font-semibold text-slate-900">{label}</p>
+                <p className="text-xs text-slate-500">{description}</p>
+              </div>
+              <button onClick={() => setter(v => !v)}>
+                {value ? <ToggleRight className="w-10 h-10 text-blue-500" /> : <ToggleLeft className="w-10 h-10 text-slate-400" />}
+              </button>
+            </div>
+          ))}
+        </div>
+      </div> */}
+
+      <div className="rounded-[32px] border border-slate-200 bg-slate-50/90 p-5 shadow-sm">
+        <div className="flex items-center gap-3 mb-4">
+          <span className="grid h-11 w-11 place-items-center rounded-2xl bg-blue-50 text-blue-600">
+            <Key className="w-5 h-5" />
+          </span>
+          <div>
+            <h4 className="font-black text-slate-900">Change Password</h4>
+            <p className="text-xs text-slate-500">Update your password to keep your account secure.</p>
+          </div>
+        </div>
+        <div className="grid gap-4">
+          <label className="block">
+            <span className="text-xs font-semibold uppercase tracking-wide text-slate-600">Current Password</span>
+            <input type="password" value={oldPassword} onChange={e => setOldPassword(e.target.value)}
+              className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100" />
+          </label>
+          <label className="block">
+            <span className="text-xs font-semibold uppercase tracking-wide text-slate-600">New Password</span>
+            <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)}
+              className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100" />
+          </label>
+          <label className="block">
+            <span className="text-xs font-semibold uppercase tracking-wide text-slate-600">Confirm Password</span>
+            <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}
+              className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100" />
+          </label>
+          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handlePasswordChange}
+            className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-6 py-3 text-sm font-bold text-white shadow-lg">
+            <Key className="w-4 h-4" /> Update Password
+          </motion.button>
+        </div>
       </div>
+
+      {/* <div className="rounded-3xl border border-slate-200 bg-white/90 p-4 shadow-sm">
+        <p className="text-sm font-semibold text-slate-900">Need help?</p>
+        <p className="text-xs text-slate-500 mt-1">If you forget your current password, contact support to reset it securely.</p>
+      </div> */}
     </div>
   );
 }
@@ -450,7 +615,7 @@ export default function CommercialDashboard() {
     companyName: "Demo Company", contactPerson: "Demo User",
     email: "demo@company.com", mobile: "9876543210",
   });
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState("Dashboard");
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const initials = (user.companyName || user.contactPerson || "C")
@@ -472,14 +637,15 @@ export default function CommercialDashboard() {
   ];
   const clientRows = [
     ["Rajesh Kumar","rajesh@email.com","Consulting","2026-05-10","Active"],
-    ["Priya Sharma","priya@email.com","Legal","2026-04-22","Completed"],
+    ["Priya Sharma","priya@email.com","Legal","2026-04-22","Inactive"],
     ["Amit Singh","amit@email.com","Tender","2026-03-18","Active"],
   ];
 
   const renderContent = () => {
     switch (activeTab) {
-      case "overview":     return <Overview user={user} />;
-      case "profile":      return <MyProfile user={user} onUpdate={setUser} />;
+      case "Dashboard":     return <Dashboard user={user} />;
+      // case "profile":      return <MyProfile user={user} onUpdate={setUser} />;
+      case "profile":      return <Documents />;
       case "credits":      return <AddCredits />;
       case "payments":     return <DataTable title="Payment History" icon={History} color="blue"
                              cols={["Txn ID","Amount","Type","Date","Status"]} rows={payRows} />;
@@ -490,9 +656,9 @@ export default function CommercialDashboard() {
       case "leads":        return <LeadManagement />;
       case "visibility":   return <MarketplaceVisibility />;
       case "services":     return <ServiceListing />;
-      case "documents":    return <Documents />;
+      // case "documents":    return <Documents />;
       case "settings":     return <SettingsPanel user={user} />;
-      default:             return <Overview user={user} />;
+      default:             return <Dashboard user={user} />;
     }
   };
 
