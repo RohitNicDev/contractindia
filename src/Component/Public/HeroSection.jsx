@@ -128,7 +128,7 @@ const HeroSection = () => {
   transition={{ duration: 0.8, ease: "easeOut" }}
   className="text-4xl md:text-6xl lg:text-7xl font-black leading-[1.05] tracking-tight"
 >
-  Integrated Solution For{" "}
+India's Largest {" "}
   <span
     className="bg-clip-text text-transparent"
     style={{ 
@@ -136,10 +136,10 @@ const HeroSection = () => {
       WebkitBackgroundClip: "text" 
     }}
   >
-    Construction Infrastructure
+    Construction Marketplace
   </span>
   <br />
-  <span className="text-white/90">Marketplace</span>
+  {/* <span className="text-white/90">Marketplace</span> */}
 </motion.h1>
 
 {/* Optional: Agar aap chahte hain sirf DESCRIPTION change ho, toh usme AnimatePresence rakhein heading mein nahi */}
