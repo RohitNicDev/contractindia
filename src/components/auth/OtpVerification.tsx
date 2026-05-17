@@ -31,9 +31,6 @@ export function OtpVerification() {
     const t = window.setInterval(() => setSeconds((s) => s - 1), 1000);
     return () => window.clearInterval(t);
   }, [seconds]);
-  useEffect(() => {
-   
-  }, [step]);
 
   const ringProgress = useMemo(() => {
     const p = seconds / RESEND_SEC;
