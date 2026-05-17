@@ -19,7 +19,7 @@ const NAV = [
   { id: "subscription",  label: "Subscription History",  icon: Briefcase       },
   { id: "clients",       label: "Client History",        icon: User            },
   { id: "leads",         label: "Lead Management",       icon: List            },
-  { id: "visibility",    label: "Marketplace Visibility",icon: Eye             },
+  // { id: "visibility",    label: "Marketplace Visibility",icon: Eye             },
   { id: "services",      label: "Service Listing",       icon: Briefcase       },
   { id: "documents",     label: "Documents",             icon: FileText        },
   { id: "settings",      label: "Settings",              icon: Settings        },

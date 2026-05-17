@@ -13,7 +13,7 @@ const NAV = [
   { id: "profile",   label: "My Profile",       icon: User            },
   { id: "account",   label: "My Account",       icon: CreditCard      },
   { id: "services",  label: "Get Services",     icon: ShoppingBag     },
-  { id: "newsletter",label: "Newsletter",       icon: BookOpen        },
+  // { id: "newsletter",label: "Newsletter",       icon: BookOpen        },
   { id: "history",   label: "Booked History",   icon: History         },
   { id: "settings",  label: "Settings",         icon: Settings        },
 ];

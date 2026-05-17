@@ -118,7 +118,7 @@ export function RegisterForm() {
         (s) =>
           s.label.toLowerCase() === locationData.state.toLowerCase() ||
           s.value.toLowerCase() ===
-            locationData.state.toLowerCase().replace(/\s+/g, "_"),
+          locationData.state.toLowerCase().replace(/\s+/g, "_"),
       );
 
       if (matchedState) {
@@ -214,9 +214,12 @@ export function RegisterForm() {
       handlePincodeChange(pinCode);
     }
   }, [pinCode]);
-
+  useEffect(() => {
+    detectLocation();
+  }, [])
   // Reset commercial-only fields when switching to individual
   useEffect(() => {
+
     if (!isCommercial) {
       setValue("businessName", "");
       setValue("gstNumber", "");
@@ -264,19 +267,17 @@ export function RegisterForm() {
               className={`
                 flex items-center gap-2.5 rounded-xl border-2 px-3 py-2.5
                 text-left text-xs font-semibold transition-all duration-200
-                ${
-                  !isCommercial
-                    ? "border-[var(--auth-input-border-focus)] bg-indigo-50 text-indigo-700 shadow-sm"
-                    : "border-[var(--auth-input-border)] bg-white/60 text-[var(--auth-text-body)] hover:border-indigo-200 hover:bg-white"
+                ${!isCommercial
+                  ? "border-[var(--auth-input-border-focus)] bg-indigo-50 text-indigo-700 shadow-sm"
+                  : "border-[var(--auth-input-border)] bg-white/60 text-[var(--auth-text-body)] hover:border-indigo-200 hover:bg-white"
                 }
               `}
             >
               <span
-                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
-                  !isCommercial
+                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${!isCommercial
                     ? "bg-indigo-600 text-white"
                     : "bg-slate-100 text-slate-400"
-                }`}
+                  }`}
               >
                 <UserCircle className="h-4 w-4" />
               </span>
@@ -295,19 +296,17 @@ export function RegisterForm() {
               className={`
                 flex items-center gap-2.5 rounded-xl border-2 px-3 py-2.5
                 text-left text-xs font-semibold transition-all duration-200
-                ${
-                  isCommercial
-                    ? "border-[var(--auth-input-border-focus)] bg-indigo-50 text-indigo-700 shadow-sm"
-                    : "border-[var(--auth-input-border)] bg-white/60 text-[var(--auth-text-body)] hover:border-indigo-200 hover:bg-white"
+                ${isCommercial
+                  ? "border-[var(--auth-input-border-focus)] bg-indigo-50 text-indigo-700 shadow-sm"
+                  : "border-[var(--auth-input-border)] bg-white/60 text-[var(--auth-text-body)] hover:border-indigo-200 hover:bg-white"
                 }
               `}
             >
               <span
-                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
-                  isCommercial
+                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${isCommercial
                     ? "bg-indigo-600 text-white"
                     : "bg-slate-100 text-slate-400"
-                }`}
+                  }`}
               >
                 <BadgeCheck className="h-4 w-4" />
               </span>
@@ -453,7 +452,7 @@ export function RegisterForm() {
                   </option>
                 ))}
               </AuthFormSelect>
-              <button
+              {/* <button
                 type="button"
                 onClick={detectLocation}
                 disabled={detectingLocation}
@@ -462,7 +461,7 @@ export function RegisterForm() {
               >
                 <Zap className="h-4 w-4" />
                 {detectingLocation ? "Detecting…" : "Auto-detect"}
-              </button>
+              </button> */}
             </div>
             <AuthFormSelect
               compact
@@ -504,23 +503,23 @@ export function RegisterForm() {
               )}
             </div>{" "}
 
-             {isCommercial && (
-                <AuthFormSelect
-              compact
-              label="Service category"
-              icon={Briefcase}
-              error={errors.serviceGroup?.message}
-              {...register("serviceGroup", { required: "Required" })}
-            >
-              <option value="">Category…</option>
-              {registrationConfig.serviceGroups.map((x) => (
-                <option key={x.value} value={x.value}>
-                  {x.label}
-                </option>
-              ))}
-            </AuthFormSelect>
+            {isCommercial && (
+              <AuthFormSelect
+                compact
+                label="Service category"
+                icon={Briefcase}
+                error={errors.serviceGroup?.message}
+                {...register("serviceGroup", { required: "Required" })}
+              >
+                <option value="">Category…</option>
+                {registrationConfig.serviceGroups.map((x) => (
+                  <option key={x.value} value={x.value}>
+                    {x.label}
+                  </option>
+                ))}
+              </AuthFormSelect>
             )}
-          
+
             <div className="col-span-2">
               <AuthFormTextarea
                 compact
