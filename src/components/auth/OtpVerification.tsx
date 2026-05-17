@@ -56,12 +56,11 @@ export function OtpVerification() {
       toast.success("Both verified successfully!");
       setSuccessPulse(true);
       setStep("complete");
-      
-      // Navigate based on user type or email
+       // Navigate based on user type or email
       setTimeout(() => {
-        state?.userType === "commercial"
+        state?.email === "commercial@gmail.com"
           ? navigate("/commercial/dashboard")
-          : state?.userType === "individual"
+          : state?.email === "individual@gmail.com"
           ? navigate("/individual/dashboard")
           : navigate("/home");
       }, 500);
