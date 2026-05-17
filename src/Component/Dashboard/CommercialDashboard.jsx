@@ -22,7 +22,7 @@ const NAV = [
   // { id: "visibility",    label: "Marketplace Visibility",icon: Eye             },
   { id: "services",      label: "Service Listing",       icon: Briefcase       },
   { id: "documents",     label: "Documents",             icon: FileText        },
-  { id: "settings",      label: "Settings",              icon: Settings        },
+  // { id: "settings",      label: "Settings",              icon: Settings        },
 ];
 
 const ALL_SERVICES = [
