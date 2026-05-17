@@ -623,6 +623,9 @@ export default function CommercialDashboard() {
 
   const handleSignOut = () => {
     localStorage.removeItem("commercial_user_v1");
+    localStorage.removeItem("login_mock_v1");
+        localStorage.setItem("isLoggedIn", false);
+    
     navigate("/login");
   };
 

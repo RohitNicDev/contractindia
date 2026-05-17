@@ -90,19 +90,19 @@ export const router = createBrowserRouter([
   // { path: "/register/commercial",  element: <CommercialRegister /> },
 
   // ── Existing dashboard (with DashboardLayout) ──────────────
-  {
-    path: "/dashboard",
-    element: <DashboardLayout />,
-    children: [
-      { index: true,       element: <DashboardIndex /> },
-      { path: "profile",   element: <DashboardProfile /> },
-      { path: "tenders",   element: <DashboardTenders /> },
-      { path: "projects",  element: <DashboardProjects /> },
-      { path: "companies", element: <DashboardCompanies /> },
-      { path: "messages",  element: <DashboardMessages /> },
-      { path: "settings",  element: <DashboardSettings /> },
-    ],
-  },
+  // {
+  //   path: "/dashboard",
+  //   element: <DashboardLayout />,
+  //   children: [
+  //     { index: true,       element: <DashboardIndex /> },
+  //     { path: "profile",   element: <DashboardProfile /> },
+  //     { path: "tenders",   element: <DashboardTenders /> },
+  //     { path: "projects",  element: <DashboardProjects /> },
+  //     { path: "companies", element: <DashboardCompanies /> },
+  //     { path: "messages",  element: <DashboardMessages /> },
+  //     { path: "settings",  element: <DashboardSettings /> },
+  //   ],
+  // },
 
   // ── Individual dashboard (standalone) ──────────────────────
   { path: "/individual/dashboard", element: <IndividualDashboard /> },

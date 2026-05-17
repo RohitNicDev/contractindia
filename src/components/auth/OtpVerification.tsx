@@ -31,6 +31,9 @@ export function OtpVerification() {
     const t = window.setInterval(() => setSeconds((s) => s - 1), 1000);
     return () => window.clearInterval(t);
   }, [seconds]);
+  useEffect(() => {
+   
+  }, [step]);
 
   const ringProgress = useMemo(() => {
     const p = seconds / RESEND_SEC;
@@ -40,7 +43,7 @@ export function OtpVerification() {
 
   const verifyStep = () => {
     if (!isComplete) return;
-    
+
     if (step === "email") {
       toast.success("Email verified!");
       setStep("mobile");
@@ -48,21 +51,17 @@ export function OtpVerification() {
       setMobileCode("");
     } else if (step === "mobile") {
       // Both verified
-      localStorage.setItem("otp_verified_v1", JSON.stringify({ 
-        emailCode, 
-        mobileCode, 
-        at: Date.now() 
+      localStorage.setItem("otp_verified_v1", JSON.stringify({
+        emailCode,
+        mobileCode,
+        at: Date.now()
       }));
       toast.success("Both verified successfully!");
       setSuccessPulse(true);
       setStep("complete");
-       // Navigate based on user type or email
+      // Navigate based on user type or email
       setTimeout(() => {
-        state?.email === "commercial@gmail.com"
-          ? navigate("/commercial/dashboard")
-          : state?.email === "individual@gmail.com"
-          ? navigate("/individual/dashboard")
-          : navigate("/home");
+        navigate("/home");
       }, 500);
     }
   };
@@ -100,6 +99,7 @@ export function OtpVerification() {
       {step !== "complete" && (
         <>
           <OtpInput
+            key={step}
             compact
             length={6}
             onCodeChange={step === "email" ? setEmailCode : setMobileCode}

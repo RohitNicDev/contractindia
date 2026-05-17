@@ -467,7 +467,13 @@ export default function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const navigate = useNavigate();
   const Section = sectionMap[active];
-  const signOut = () => { localStorage.removeItem("admin_auth_v1"); toast.success("Signed out"); navigate("/login"); };
+  const signOut = () => { 
+        localStorage.setItem("isLoggedIn", false);
+    localStorage.removeItem("admin_auth_v1"); 
+    localStorage.removeItem("login_mock_v1"); 
+    toast.success("Signed out"); navigate("/login");
+    
+   };
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: "#f1f5f9" }}>
       <motion.aside animate={{ width: sidebarOpen ? 240 : 64 }} transition={{ duration: 0.25 }} className="flex flex-col h-full overflow-hidden flex-shrink-0" style={{ background: "#0f172a", borderRight: "1px solid rgba(255,255,255,0.06)" }}>

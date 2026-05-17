@@ -35,7 +35,7 @@ export function LoginForm() {
     setValue,
     formState: { errors },
   } = useForm<LoginValues>({
-    defaultValues: { email: "", password: "", remember: false, captcha: "" },
+    // defaultValues: { email: "", password: "", remember: false, captcha: "" },
   });
 
   const [captcha, setCaptcha] = useState(createAlphabetCaptcha);
@@ -46,6 +46,8 @@ export function LoginForm() {
   };
 
   const onSubmit = (data: LoginValues) => {
+    console.log(data);
+    
     localStorage.setItem("isLoggedIn", "true");
     localStorage.setItem(
       "login_mock_v1",
@@ -53,7 +55,7 @@ export function LoginForm() {
     );
     window.dispatchEvent(new Event("auth_changed")); // Alert other components
     toast.success("Successfully logged in.");
-    navigate("/");
+    navigate("/otp", { state: { email: data.email } });
   };
 
   return (

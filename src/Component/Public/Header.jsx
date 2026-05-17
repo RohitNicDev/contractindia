@@ -145,6 +145,7 @@ const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const megaRef = useRef(null);
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("login_mock_v1") || "{}");
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -315,7 +316,17 @@ const Header = () => {
                   <Button
                     type="primary"
                     className="!bg-[#162646] !rounded-lg !h-8 sm:!h-10 !px-4 sm:!px-6 !font-bold flex items-center gap-2"
-                    onClick={() => navigate("/dashboard")}
+                    onClick={() =>
+                    // console.log(user)
+                      user.email === "commercial@gmail.com"
+                        ? navigate("/commercial/dashboard")
+                        : user.email === "individual@gmail.com"
+                          ? navigate("/individual/dashboard")
+                          : navigate("/home")
+
+
+
+                    }
                   >
                     <Layout size={14} />
                     <span className="text-xs sm:text-sm">Dashboard</span>
