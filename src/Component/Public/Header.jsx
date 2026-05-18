@@ -218,14 +218,14 @@ const Header = () => {
 
           {/* RIGHT */}
           <div className="flex items-center gap-4 text-[11px] sm:text-[12px] font-semibold border-t border-white/10 md:border-none pt-2 md:pt-0 w-full md:w-auto justify-center">
-            <span className="cursor-pointer hover:text-blue-300 transition uppercase tracking-wide">
+            {/* <span className="cursor-pointer hover:text-blue-300 transition uppercase tracking-wide">
               Advertise
-            </span>
+            </span> */}
 
             <span className="opacity-30">|</span>
 
-            <span className="cursor-pointer hover:text-blue-300 transition uppercase tracking-wide">
-              Become a Seller
+            <span className="cursor-pointer hover:text-blue-300 transition  tracking-wide">
+              Welcome Demo User
             </span>
           </div>
         </div>

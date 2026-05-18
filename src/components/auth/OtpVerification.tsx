@@ -25,7 +25,7 @@ export function OtpVerification() {
   const mobileComplete = /^\d{6}$/.test(mobileCode);
   const currentCode = step === "email" ? emailCode : mobileCode;
   const isComplete = (step === "email" && emailComplete) || (step === "mobile" && mobileComplete);
-
+ const user = JSON.parse(localStorage.getItem("login_mock_v1") || "{}");
   useEffect(() => {
     if (seconds <= 0) return;
     const t = window.setInterval(() => setSeconds((s) => s - 1), 1000);
@@ -59,6 +59,11 @@ export function OtpVerification() {
       // Navigate based on user type or email
       setTimeout(() => {
         navigate("/home");
+        user.email === "commercial@gmail.com"
+                        ? navigate("/commercial/dashboard")
+                        : user.email === "admin@gmail.com"
+                          ? navigate("/admin/dashboard")
+                          : navigate("/home")
       }, 500);
     }
   };

@@ -10,6 +10,8 @@ import {
   TrendingUp, ArrowUpRight, Shield, FolderOpen, Building2,
   Trash2, Bell, Search, CircleDot,
 } from "lucide-react";
+// const glassCard = "rounded-2xl bg-white/70 backdrop-blur-xl border border-white/80 shadow-[0_4px_24px_rgba(99,102,241,0.08)]";
+// const btnGrad = { background: "linear-gradient(135deg, #3b82f6, #6366f1)" };
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
 const glass = "rounded-2xl bg-white/80 backdrop-blur-xl border border-white/90 shadow-[0_2px_20px_rgba(99,102,241,0.07)]";
@@ -25,6 +27,19 @@ const NAV = [
   { id: "leads",        label: "Lead Management",       icon: List            },
   { id: "services",     label: "Service Listing",       icon: Briefcase       },
   { id: "settings",     label: "Settings",              icon: Settings        },
+  // { id: "Dashboard",      label: "Dashboard",              icon: LayoutDashboard },
+  // { id: "profile",       label: "My Profile",            icon: User            },
+  //  { id: "services",      label: "Service Listing",       icon: Briefcase       },
+  //  { id: "subscription",  label: "Subscription ",  icon: Briefcase       },
+  // { id: "credits",       label: "Add Credits",           icon: CreditCard      },
+  // { id: "payments",      label: "Payment Received",       icon: History         },
+ 
+  // { id: "clients",       label: "Client History",        icon: User            },
+  // // { id: "leads",         label: "Lead Management",       icon: List            },
+  // // { id: "visibility",    label: "Marketplace Visibility",icon: Eye },
+ 
+  // // { id: "documents",     label: "Documents",             icon: FileText        } ,
+  // { id: "settings",      label: "Settings",              icon: Settings        },
 ];
 
 const ALL_SERVICES = [
@@ -38,7 +53,7 @@ const DOC_SECTIONS = [
   {
     id:"biz", label:"Business Registration", icon: Building2,
     color:"#185FA5", bg:"#E6F1FB", border:"#B5D4F4",
-    options:["GST Certificate","MOA / AOA","Trade Licence","Certificate of Incorporation","Udyog Aadhar","Other"],
+    options:["GST Certificate","MOA / AOA","Trade Licence","Certificate of Incorporation","Udyog Aadhar","Registered/Notarized Trust Deed","Shop Act Registration","Other"],
   },
   {
     id:"identity", label:"Identity & Address", icon: CreditCard,
@@ -53,7 +68,7 @@ const DOC_SECTIONS = [
   {
     id:"other", label:"Other Documents", icon: FolderOpen,
     color:"#534AB7", bg:"#EEEDFE", border:"#CECBF6",
-    options:["Trade Licence","Registered Trust Deed","Shop Act Registration","Company Profile","Other"],
+    options:["Trade Licence","Registered Trust Deed","Shop Act Registration","Company Profile","Brochure","Other"],
   },
 ];
 
@@ -825,6 +840,197 @@ function ServiceListing() {
   );
 }
 
+// ─── Documents ────────────────────────────────────────────────────────────────
+const DOCUMENT_CATEGORIES = {
+  "Business Registration": [
+    "GST Certificate",  "Trade Licence", "Certificate of Incorporation", "Udyog Aadhar", "Trade Licence","Registered/Notarized Trust Deed", "Shop Act Registration",
+  ],
+  "Identity & Address": [
+    "Proof of Identity", "Proof of Address", "PAN Card", "Passport", "Driving License",
+  ],
+  "Compliance Certificates": [
+    "Bank Certificate",  "Import Export Certificate",
+  ],
+  "Company Profile": [
+      "Company Profile", "Brochure",  
+  ],
+};
+
+function DocumentUploader({ label, files = [], onChange }) {
+  return (
+    <div>
+      <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-1.5">{label}</label>
+      <label className="flex flex-col items-center justify-center gap-1 border-2 border-dashed border-blue-200 rounded-2xl p-4 cursor-pointer hover:border-blue-400 bg-blue-50/30 transition-all min-h-[108px]">
+        <Upload className="w-5 h-5 text-blue-400" />
+        <span className="text-xs text-slate-500 text-center">{files.length ? `${files.length} file(s) selected` : "Drag & drop or click to upload"}</span>
+        {files.length ? <span className="text-[10px] text-emerald-600 font-semibold">✓ Ready to submit</span> : null}
+        <input type="file" className="hidden" multiple onChange={e => onChange(Array.from(e.target.files))} />
+      </label>
+      {files.length > 0 && (
+        <ul className="mt-3 max-h-28 overflow-y-auto text-[11px] text-slate-500 space-y-1">
+          {files.map((file, idx) => (
+            <li key={`${file.name}-${idx}`} className="truncate">• {file.name}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+// function Documents() {
+//   const raw = localStorage.getItem("commercial_user_v1");
+//   const storedUser = raw ? JSON.parse(raw) : {};
+//   const [step, setStep] = useState(1);
+//   const [profile, setProfile] = useState({
+//     companyName: storedUser.companyName || "",
+//     contactPerson: storedUser.contactPerson || "",
+//     email: storedUser.email || "",
+//     mobile: storedUser.mobile || "",
+//     address: storedUser.address || "",
+//   });
+//   const [selectedCategory, setSelectedCategory] = useState("");
+//   const [uploadedDocs, setUploadedDocs] = useState({});
+
+//   const categoryFields = DOCUMENT_CATEGORIES[selectedCategory] || [];
+//   const canContinue = profile.companyName && profile.contactPerson && profile.email && profile.mobile;
+
+//   const handleProfileChange = (key, value) => setProfile(p => ({ ...p, [key]: value }));
+//   const handleFiles = (field, files) => setUploadedDocs(prev => ({ ...prev, [field]: files }));
+
+//   const saveProfile = () => {
+//     localStorage.setItem("commercial_user_v1", JSON.stringify({ ...storedUser, ...profile }));
+//     toast.success("Profile saved. Continue to upload documents.");
+//     setStep(2);
+//   };
+
+//   const handleSubmit = () => {
+//     const uploadedSummary = Object.entries(uploadedDocs)
+//       .filter(([, files]) => files?.length)
+//       .map(([field, files]) => `${field}: ${files.length}`)
+//       .join(" · ");
+
+//     toast.success(uploadedSummary ? `Saved documents: ${uploadedSummary}` : "No documents selected yet, but changes saved.");
+//   };
+
+//   return (
+//     <div className={`${glassCard} p-6 space-y-6`}>
+//       <div className="rounded-[28px] border border-slate-200 bg-white/90 p-4 shadow-sm">
+//         <div className="grid grid-cols-2 gap-3">
+//           {[
+//             { step: 1, title: "Profile", subtitle: "Company details" },
+//             { step: 2, title: "Documents", subtitle: "Upload required files" },
+//           ].map(item => {
+//             const active = step === item.step;
+//             return (
+//               <button key={item.title} type="button" onClick={() => setStep(item.step)}
+//                 className={`flex items-center gap-3 rounded-3xl border px-4 py-3 text-left transition ${active ? "border-blue-300 bg-blue-50 shadow-sm" : "border-slate-200 bg-slate-50/80 hover:border-blue-200"}`}>
+//                 <span className={`grid h-9 w-9 place-items-center rounded-2xl font-bold ${active ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-600"}`}>{item.step}</span>
+//                 <div>
+//                   <p className="text-sm font-bold text-slate-900">{item.title}</p>
+//                   <p className="text-xs text-slate-500">{item.subtitle}</p>
+//                 </div>
+//               </button>
+//             );
+//           })}
+//         </div>
+//       </div>
+
+//       {step === 1 ? (
+//         <div className="space-y-5">
+//           <div className="grid sm:grid-cols-2 gap-4">
+//             {[
+//               ["Company Name *", "companyName"],
+//               ["Company Type , private LTD,Proprighter,LLP*", "companyName"],
+//               ["Contact Person *", "contactPerson"],
+//               ["Email *", "email"],
+//               ["Mobile *", "mobile"],
+//               ["State *", "state"],
+//               ["City *", "city"],
+//               ["Pin Code *", "pinCode"],
+//             ].map(([label, field]) => (
+//               <div key={field}>
+//                 <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-1.5">{label}</label>
+//                 <input className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none text-sm bg-white/70"
+//                   value={profile[field]} onChange={e => handleProfileChange(field, e.target.value)} />
+//               </div>
+//             ))}
+//           </div>
+
+//           <div>
+//             <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-1.5">Address</label>
+//             <textarea rows={3} className="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none text-sm bg-white/70 resize-none"
+//               value={profile.address} onChange={e => handleProfileChange("address", e.target.value)} />
+//           </div>
+
+//           <div className="rounded-3xl border border-slate-200 bg-slate-50/80 p-4">
+//             <p className="text-sm font-semibold text-slate-900">Fast tip</p>
+//             <p className="text-xs text-slate-500 mt-1">Complete your profile first so document submission is linked to your latest company details.</p>
+//           </div>
+
+//           <div className="flex flex-wrap gap-3">
+//             <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={saveProfile}
+//               disabled={!canContinue}
+//               className="inline-flex items-center gap-2 rounded-xl px-6 py-2.5 font-bold text-sm text-white shadow-lg disabled:cursor-not-allowed disabled:bg-slate-300"
+//               style={btnGrad}>
+//               <CheckCircle2 className="w-4 h-4" /> Save & Continue
+//             </motion.button>
+//             <button type="button" onClick={() => setStep(2)}
+//               className="rounded-xl border border-slate-200 bg-white px-6 py-2.5 text-sm font-semibold text-slate-700 hover:border-blue-200 transition-all">
+//               Skip to Documents
+//             </button>
+//           </div>
+//         </div>
+//       ) : (
+//         <div className="space-y-6">
+//           <div className="space-y-4">
+//             <div>
+//               <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-2">Select document section</label>
+//               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+//                 {Object.keys(DOCUMENT_CATEGORIES).map(category => (
+//                   <button key={category} type="button" onClick={() => { setSelectedCategory(category); setUploadedDocs({}); }}
+//                     className={`rounded-2xl border px-3 py-2 text-left text-sm font-semibold transition ${selectedCategory === category ? "border-blue-500 bg-blue-50 text-blue-700" : "border-slate-200 bg-white text-slate-700 hover:border-blue-300"}`}>
+//                     {category}
+//                   </button>
+//                 ))}
+//               </div>
+//             </div>
+//             <div className="rounded-3xl border border-slate-200 bg-slate-50/80 p-4">
+//               <p className="text-sm font-semibold text-slate-900">How it works</p>
+//               <p className="text-xs text-slate-500 mt-1">Choose one of the four document sections, then upload files for each required field. All fields support multiple file uploads.</p>
+//             </div>
+//           </div>
+
+//           {selectedCategory ? (
+//             <div className="grid sm:grid-cols-2 gap-4">
+//               {categoryFields.map(field => (
+//                 <DocumentUploader key={field} label={field}
+//                   files={uploadedDocs[field] || []}
+//                   onChange={files => handleFiles(field, files)} />
+//               ))}
+//             </div>
+//           ) : (
+//             <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50/90 p-6 text-sm text-slate-500">
+//               Select a document section above to load the matching upload fields.
+//             </div>
+//           )}
+
+//           <div className="flex flex-wrap gap-3">
+//             <button type="button" onClick={() => setStep(1)}
+//               className="rounded-xl border border-slate-200 bg-white px-6 py-2.5 text-sm font-semibold text-slate-700 hover:border-blue-200 transition-all">
+//               Back to Profile
+//             </button>
+//             <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleSubmit}
+//               className="inline-flex items-center gap-2 rounded-xl px-6 py-2.5 font-bold text-sm text-white shadow-lg"
+//               style={btnGrad}>
+//               <CheckCircle2 className="w-4 h-4" /> Submit Documents
+//             </motion.button>
+//           </div>
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+
 // ─── Settings ─────────────────────────────────────────────────────────────────
 function SettingsPanel() {
   const [old, setOld] = useState("");
@@ -918,6 +1124,22 @@ export default function CommercialDashboard() {
       case "services":     return <ServiceListing/>;
       case "settings":     return <SettingsPanel/>;
       default:             return <Dashboard user={user}/>;
+      // case "Dashboard":     return <Dashboard user={user} />;
+      // // case "profile":      return <MyProfile user={user} onUpdate={setUser} />;
+      // case "profile":      return <Documents />;
+      // case "credits":      return <AddCredits />;
+      // case "payments":     return <DataTable title="Payment Received" icon={History} color="blue"
+      //                        cols={["Txn ID","Amount","Type","Date","Status"]} rows={payRows} />;
+      // case "subscription": return <DataTable title="Subscription History" icon={Briefcase} color="violet"
+      //                        cols={["Plan","Price","Start","End","Status"]} rows={subRows} />;
+      // case "clients":      return <DataTable title="Client History" icon={User} color="emerald"
+      //                        cols={["Name","Email","Service","Date","Status"]} rows={clientRows} />;
+      // case "leads":        return <LeadManagement />;
+      // case "visibility":   return <MarketplaceVisibility />;
+      // case "services":     return <ServiceListing />;
+      // // case "documents":    return <Documents />;
+      // case "settings":     return <SettingsPanel user={user} />;
+      // default:             return <Dashboard user={user} />;
     }
   };
 
