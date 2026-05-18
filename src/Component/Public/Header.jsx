@@ -8,7 +8,6 @@ import {
   ChevronRight,
   Layout,
   MapPin,
-
   Brush,
   Zap,
   Users,
@@ -65,8 +64,14 @@ const NAV_ITEMS = [
         icon: <Wrench size={15} className="text-green-500" />,
         color: "green",
         items: [
-          { name: "Material Manufacturing", path: "/services/material-manufacturing" },
-          { name: "Material Supply & trades", path: "/services/material-supply" }
+          {
+            name: "Material Manufacturing",
+            path: "/services/material-manufacturing",
+          },
+          {
+            name: "Material Supply & trades",
+            path: "/services/material-supply",
+          },
         ],
       },
       {
@@ -96,36 +101,40 @@ const NAV_ITEMS = [
 // ─── Services Dropdown Menu ──────────────────────────────────────
 const DropdownMenu = ({ columns, visible }) => (
   <div
-    className={`absolute top-full left-0 bg-white shadow-xl border border-gray-100 rounded-md py-2 w-72 transition-all duration-200 origin-top z-50 ${visible
-      ? "opacity-100 scale-y-100 pointer-events-auto"
-      : "opacity-0 scale-y-95 pointer-events-none"
-      }`}
+    className={`absolute top-full left-0 bg-white shadow-xl border border-gray-100 rounded-md py-2 w-72 transition-all duration-200 origin-top z-50 ${
+      visible
+        ? "opacity-100 scale-y-100 pointer-events-auto"
+        : "opacity-0 scale-y-95 pointer-events-none"
+    }`}
   >
     {columns.map((col) => (
-      <div
-        key={col.title}
-        className="relative group/item"
-      >
-        <Link to={col.path || '#'} className="flex items-center justify-between px-4 py-2.5 cursor-pointer transition-colors hover:bg-blue-50 group-hover/item:bg-blue-50 no-underline">
+      <div key={col.title} className="relative group/item">
+        <Link
+          to={col.path || "#"}
+          className="flex items-center justify-between px-4 py-2.5 cursor-pointer transition-colors hover:bg-blue-50 group-hover/item:bg-blue-50 no-underline"
+        >
           <span className="text-[13px] font-bold tracking-wide uppercase text-gray-700 group-hover/item:text-blue-600">
             {col.title}
           </span>
-          {col.items && col.items.length > 0 && <ChevronRight size={14} className="text-gray-400 group-hover/item:text-blue-600" />}
+          {col.items && col.items.length > 0 && (
+            <ChevronRight
+              size={14}
+              className="text-gray-400 group-hover/item:text-blue-600"
+            />
+          )}
         </Link>
 
         {/* Sub-menu */}
         {col.items && col.items.length > 0 && (
-          <div
-            className="absolute left-[calc(100%-8px)] top-0 pl-2 opacity-0 invisible group-hover/item:opacity-100 group-hover/item:visible transition-all duration-200 z-50 w-64 pointer-events-none group-hover/item:pointer-events-auto"
-          >
+          <div className="absolute left-[calc(100%-8px)] top-0 pl-2 opacity-0 invisible group-hover/item:opacity-100 group-hover/item:visible transition-all duration-200 z-50 w-64 pointer-events-none group-hover/item:pointer-events-auto">
             <div className="bg-white shadow-xl border border-gray-100 rounded-md py-2 w-full">
               {col.items.map((item) => (
                 <Link
-                  key={typeof item === 'string' ? item : item.name}
-                  to={typeof item === 'string' ? '#' : item.path}
+                  key={typeof item === "string" ? item : item.name}
+                  to={typeof item === "string" ? "#" : item.path}
                   className="block px-4 py-2 text-[13px] font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600 no-underline transition-colors"
                 >
-                  {typeof item === 'string' ? item : item.name}
+                  {typeof item === "string" ? item : item.name}
                 </Link>
               ))}
             </div>
@@ -181,16 +190,15 @@ const Header = () => {
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-500 ${scrolled
-        ? "bg-white/70 backdrop-blur-md shadow-lg border-b border-white/30"
-        : "bg-white border-b border-gray-100"
-        }`}
+      className={`sticky top-0 z-50 transition-all duration-500 ${
+        scrolled
+          ? "bg-white/70 backdrop-blur-md shadow-lg border-b border-white/30"
+          : "bg-white border-b border-gray-100"
+      }`}
     >
-
       {/* 🌐 TOP BAR */}
       <div className="bg-[#162646] text-white/90 py-2.5 px-4 sm:px-6 overflow-hidden">
         <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
-
           {/* LEFT */}
           <div className="flex items-center gap-3 text-[11px] sm:text-[12px] font-medium tracking-wide">
             <span className="opacity-30">|</span>
@@ -317,15 +325,14 @@ const Header = () => {
                     type="primary"
                     className="!bg-[#162646] !rounded-lg !h-8 sm:!h-10 !px-4 sm:!px-6 !font-bold flex items-center gap-2"
                     onClick={() =>
-                    // console.log(user)
+                      // console.log(user)
                       user.email === "commercial@gmail.com"
                         ? navigate("/commercial/dashboard")
                         : user.email === "individual@gmail.com"
                           ? navigate("/individual/dashboard")
-                          : navigate("/home")
-
-
-
+                          : user.email === "admin@gmail.com"
+                            ? navigate("/admin/dashboard")
+                            : navigate("/home")
                     }
                   >
                     <Layout size={14} />
@@ -366,10 +373,11 @@ const Header = () => {
                   onMouseLeave={() => setMegaOpen(false)}
                 >
                   <button
-                    className={`flex items-center gap-1 px-3 py-1.5 text-sm font-bold rounded-lg transition outline-none ${megaOpen
-                      ? "text-blue-600 bg-blue-50"
-                      : "text-gray-600 hover:text-blue-600 hover:bg-blue-50/50"
-                      }`}
+                    className={`flex items-center gap-1 px-3 py-1.5 text-sm font-bold rounded-lg transition outline-none ${
+                      megaOpen
+                        ? "text-blue-600 bg-blue-50"
+                        : "text-gray-600 hover:text-blue-600 hover:bg-blue-50/50"
+                    }`}
                   >
                     {item.name}
                     <ChevronDown
@@ -386,9 +394,10 @@ const Header = () => {
                 <NavLink
                   to={item.path}
                   className={({ isActive }) =>
-                    `relative px-3 py-1.5 text-sm font-bold no-underline rounded-lg transition ${isActive
-                      ? "text-blue-600 bg-blue-50"
-                      : "text-gray-600 hover:text-blue-600 hover:bg-blue-50/50"
+                    `relative px-3 py-1.5 text-sm font-bold no-underline rounded-lg transition ${
+                      isActive
+                        ? "text-blue-600 bg-blue-50"
+                        : "text-gray-600 hover:text-blue-600 hover:bg-blue-50/50"
                     }`
                   }
                 >
@@ -469,7 +478,7 @@ const Header = () => {
                               </p>
                             ) : (
                               <NavLink
-                                to={col.path || '#'}
+                                to={col.path || "#"}
                                 className="block text-[12px] sm:text-[13px] font-bold text-gray-700 uppercase tracking-wide mb-1 pl-2 hover:text-blue-600 transition"
                                 onClick={() => setIsDrawerOpen(false)}
                               >
@@ -482,14 +491,18 @@ const Header = () => {
                               <div className="flex flex-col gap-0.5 border-l border-gray-100 pl-3">
                                 {col.items.map((sub) => (
                                   <NavLink
-                                    key={typeof sub === 'string' ? sub : sub.name}
-                                    to={typeof sub === 'string' ? '#' : sub.path}
+                                    key={
+                                      typeof sub === "string" ? sub : sub.name
+                                    }
+                                    to={
+                                      typeof sub === "string" ? "#" : sub.path
+                                    }
                                     className="py-1 text-[12px] sm:text-[13px] text-gray-600 font-medium 
                                      active:text-blue-600 cursor-pointer 
                                      hover:text-blue-600 transition block no-underline"
                                     onClick={() => setIsDrawerOpen(false)}
                                   >
-                                    {typeof sub === 'string' ? sub : sub.name}
+                                    {typeof sub === "string" ? sub : sub.name}
                                   </NavLink>
                                 ))}
                               </div>
