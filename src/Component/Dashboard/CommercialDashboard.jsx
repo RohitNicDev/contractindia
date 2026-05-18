@@ -1,8 +1,18 @@
 import { useState, useRef, useEffect, } from "react";
 import { createPortal } from "react-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import {  AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+ 
+import {
+   
+  ChevronRight,
+  Check,
+ 
+  Layers3,
+} from "lucide-react";
 import { toast } from "sonner";
+
 import {
   LayoutDashboard, User, CreditCard, History, Briefcase, Eye,
   List, FileText, Settings, LogOut, Menu, X, Plus, CheckCircle2,
@@ -10,6 +20,7 @@ import {
   TrendingUp, ArrowUpRight, Shield, FolderOpen, Building2,
   Trash2, Bell, Search, CircleDot,
 } from "lucide-react";
+import { SERVICES_HIERARCHY } from "../../data/services_hierarchy";
 // const glassCard = "rounded-2xl bg-white/70 backdrop-blur-xl border border-white/80 shadow-[0_4px_24px_rgba(99,102,241,0.08)]";
 // const btnGrad = { background: "linear-gradient(135deg, #3b82f6, #6366f1)" };
 
@@ -799,42 +810,422 @@ function LeadManagement() {
 }
 
 // ─── Service Listing ──────────────────────────────────────────────────────────
-function ServiceListing() {
-  const [active, setActive] = useState(["Consulting Service","Legal Contracts"]);
-  const toggle = s => {
-    setActive(p => p.includes(s) ? p.filter(x=>x!==s) : [...p,s]);
-    toast.success(`${s} ${active.includes(s)?"removed":"activated"}`);
+function  ServiceListing() {
+  const [selectedService, setSelectedService] = useState(null);
+
+  const [activeServices, setActiveServices] = useState([
+    "consultingservice",
+    "legalcontracts",
+  ]);
+
+  const [activeSubServices, setActiveSubServices] = useState([
+    "epcconsultancy",
+    "projectmanagement",
+    "legaldrafting",
+  ]);
+
+  const toggleMainService = (serviceId) => {
+    setActiveServices((prev) => {
+      const exists = prev.includes(serviceId);
+
+      if (exists) {
+        toast.success("Service deactivated");
+
+        return prev.filter((x) => x !== serviceId);
+      }
+
+      toast.success("Service activated");
+
+      return [...prev, serviceId];
+    });
+  };
+
+  const toggleSubService = (subId) => {
+    setActiveSubServices((prev) => {
+      const exists = prev.includes(subId);
+
+      if (exists) {
+        toast.success("Sub-service removed");
+
+        return prev.filter((x) => x !== subId);
+      }
+
+      toast.success("Sub-service activated");
+
+      return [...prev, subId];
+    });
   };
 
   return (
-    <div className={`${glass} p-6`}>
-      <div className="flex items-center gap-2 mb-5">
-        <span className="w-8 h-8 rounded-xl flex items-center justify-center bg-violet-50">
-          <Briefcase className="w-4 h-4 text-violet-500"/>
-        </span>
-        <div>
-          <h3 className="font-black text-slate-800">Service Listing</h3>
-          <p className="text-xs text-slate-400">{active.length} of {ALL_SERVICES.length} active</p>
+    <>
+      {/* MAIN CARD */}
+      <div className={`${glass} p-6`}>
+        {/* HEADER */}
+        <div className="mb-5 flex items-center gap-3">
+          <div
+            className="
+              flex h-11 w-11 items-center justify-center
+              rounded-2xl
+              bg-violet-50
+            "
+          >
+            <Briefcase className="h-5 w-5 text-violet-600" />
+          </div>
+
+          <div>
+            <h3 className="text-lg font-black text-slate-800">
+              Service Listing
+            </h3>
+
+            <p className="text-xs text-slate-400">
+              Activate your business services & sub-services
+            </p>
+          </div>
+        </div>
+
+        {/* SERVICES */}
+        <div className="grid gap-3 sm:grid-cols-2">
+          {SERVICES_HIERARCHY.map((service) => {
+            const isActive = activeServices.includes(service.id);
+
+            return (
+              <div
+                key={service.id}
+                className="
+                  group rounded-2xl border
+                  bg-white p-4
+                  transition-all duration-300
+                  hover:-translate-y-[2px]
+                  hover:shadow-lg
+                "
+                style={{
+                  borderColor: isActive
+                    ? "#c4b5fd"
+                    : "#e5e7eb",
+                }}
+              >
+                {/* TOP */}
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex gap-3">
+                    <div
+                      className={`
+                        mt-0.5 h-3 w-3 rounded-full
+                        ${
+                          isActive
+                            ? "bg-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.6)]"
+                            : "bg-slate-300"
+                        }
+                      `}
+                    />
+
+                    <div>
+                      <h4 className="text-sm font-bold text-slate-800">
+                        {service.name}
+                      </h4>
+
+                      <p className="mt-1 text-xs text-slate-400">
+                        {service.subServices?.length || 0} sub-services
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* ACTIVE BUTTON */}
+                  <button
+                    onClick={() =>
+                      toggleMainService(service.id)
+                    }
+                    className={`
+                      rounded-full border px-3 py-1
+                      text-[11px] font-bold
+                      transition-all
+                      ${
+                        isActive
+                          ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                          : "border-slate-200 bg-slate-50 text-slate-500 hover:border-violet-200"
+                      }
+                    `}
+                  >
+                    {isActive
+                      ? "Active"
+                      : "Inactive"}
+                  </button>
+                </div>
+
+                {/* ACTIONS */}
+                <div className="mt-4 flex items-center justify-between">
+                  <div className="flex items-center gap-1 text-xs text-slate-400">
+                    <Layers3 className="h-3.5 w-3.5" />
+                    Configure Sub-services
+                  </div>
+
+                  <button
+                    onClick={() =>
+                      setSelectedService(service)
+                    }
+                    className="
+                      flex items-center gap-1
+                      rounded-xl
+                      bg-violet-50
+                      px-3 py-2
+                      text-xs font-bold text-violet-700
+                      transition-all
+                      hover:bg-violet-100
+                    "
+                  >
+                    Manage
+                    <ChevronRight className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
-      <div className="grid sm:grid-cols-2 gap-2.5">
-        {ALL_SERVICES.map(s => (
-          <div key={s} className="flex items-center justify-between p-3.5 rounded-xl border bg-white hover:shadow-sm transition-all"
-            style={{ borderColor: active.includes(s) ? "#c4b5fd" : "#e8edf5" }}>
-            <div className="flex items-center gap-2.5">
-              <div className={`w-2 h-2 rounded-full ${active.includes(s) ? "bg-emerald-400" : "bg-slate-200"}`}/>
-              <span className="text-sm font-semibold text-slate-700">{s}</span>
-            </div>
-            <button onClick={() => toggle(s)}
-              className={`text-[10.5px] font-bold px-3 py-1 rounded-full border transition-all ${
-                active.includes(s)
-                  ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                  : "bg-slate-50 text-slate-500 border-slate-200 hover:border-violet-200"
-              }`}>
-              {active.includes(s) ? "Active" : "Inactive"}
-            </button>
+
+      {/* MODAL */}
+      {selectedService && (
+        <ServiceModal
+          service={selectedService}
+          onClose={() =>
+            setSelectedService(null)
+          }
+          activeSubServices={activeSubServices}
+          toggleSubService={toggleSubService}
+        />
+      )}
+    </>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* MODAL */
+/* -------------------------------------------------------------------------- */
+
+function ServiceModal({
+  service,
+  onClose,
+  activeSubServices,
+  toggleSubService,
+}) {
+  return (
+    <div
+      className="
+        fixed inset-0 z-[999]
+        flex items-center justify-center
+        bg-black/60
+        p-4
+        backdrop-blur-md
+      "
+    >
+      {/* CARD */}
+      <div
+        className="
+          relative w-full max-w-3xl
+          overflow-hidden rounded-[30px]
+          border border-white/10
+          bg-white
+          shadow-2xl
+        "
+      >
+        {/* HEADER */}
+        <div
+          className="
+            flex items-center justify-between
+            border-b border-slate-100
+            px-6 py-5
+          "
+        >
+          <div>
+            <h2 className="text-xl font-black text-slate-800">
+              {service.name}
+            </h2>
+
+            <p className="mt-1 text-sm text-slate-400">
+              Activate or deactivate sub-services
+            </p>
           </div>
-        ))}
+
+          <button
+            onClick={onClose}
+            className="
+              flex h-10 w-10 items-center justify-center
+              rounded-xl
+              bg-slate-100
+              text-slate-500
+              transition-all
+              hover:bg-red-50
+              hover:text-red-500
+            "
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* BODY */}
+        <div className="max-h-[70vh] overflow-y-auto p-6">
+          <div className="grid gap-4 sm:grid-cols-2">
+            {service.subServices?.map((sub) => {
+              const active =
+                activeSubServices.includes(sub.id);
+
+              return (
+                <div
+                  key={sub.id}
+                  className="
+                    rounded-2xl border
+                    border-slate-200
+                    bg-slate-50
+                    p-4
+                  "
+                >
+                  {/* TOP */}
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <h4 className="text-sm font-bold text-slate-800">
+                        {sub.name}
+                      </h4>
+
+                      {sub.children && (
+                        <p className="mt-1 text-xs text-slate-400">
+                          {
+                            sub.children.length
+                          }{" "}
+                          nested services
+                        </p>
+                      )}
+                    </div>
+
+                    {/* ACTIVE BUTTON */}
+                    <button
+                      onClick={() =>
+                        toggleSubService(sub.id)
+                      }
+                      className={`
+                        rounded-full border px-3 py-1
+                        text-[11px] font-bold
+                        transition-all
+                        ${
+                          active
+                            ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                            : "border-slate-200 bg-white text-slate-500"
+                        }
+                      `}
+                    >
+                      {active
+                        ? "Active"
+                        : "Inactive"}
+                    </button>
+                  </div>
+
+                  {/* CHILDREN */}
+                  {sub.children && (
+                    <div className="mt-4 space-y-2">
+                      {sub.children.map(
+                        (child) => {
+                          const childActive =
+                            activeSubServices.includes(
+                              child.id,
+                            );
+
+                          return (
+                            <div
+                              key={child.id}
+                              className="
+                                flex items-center justify-between
+                                rounded-xl
+                                border border-slate-200
+                                bg-white
+                                px-3 py-2
+                              "
+                            >
+                              <div className="flex items-center gap-2">
+                                <div
+                                  className={`
+                                    h-2.5 w-2.5 rounded-full
+                                    ${
+                                      childActive
+                                        ? "bg-emerald-400"
+                                        : "bg-slate-300"
+                                    }
+                                  `}
+                                />
+
+                                <span className="text-xs font-medium text-slate-700">
+                                  {child.name}
+                                </span>
+                              </div>
+
+                              <button
+                                onClick={() =>
+                                  toggleSubService(
+                                    child.id,
+                                  )
+                                }
+                                className={`
+                                  flex items-center gap-1
+                                  rounded-lg px-2.5 py-1
+                                  text-[10px] font-bold
+                                  ${
+                                    childActive
+                                      ? "bg-emerald-50 text-emerald-700"
+                                      : "bg-slate-100 text-slate-500"
+                                  }
+                                `}
+                              >
+                                {childActive && (
+                                  <Check className="h-3 w-3" />
+                                )}
+
+                                {childActive
+                                  ? "Active"
+                                  : "Inactive"}
+                              </button>
+                            </div>
+                          );
+                        },
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* FOOTER */}
+        <div
+          className="
+            flex items-center justify-end gap-3
+            border-t border-slate-100
+            px-6 py-4
+          "
+        >
+          <button
+            onClick={onClose}
+            className="
+              rounded-xl border border-slate-200
+              px-5 py-2.5
+              text-sm font-semibold text-slate-600
+              transition-all hover:bg-slate-50
+            "
+          >
+            Cancel
+          </button>
+
+          <button
+            onClick={onClose}
+            className="
+              rounded-xl
+              bg-violet-600
+              px-5 py-2.5
+              text-sm font-semibold text-white
+              shadow-lg shadow-violet-500/20
+              transition-all hover:bg-violet-700
+            "
+          >
+            Save Changes
+          </button>
+        </div>
       </div>
     </div>
   );
