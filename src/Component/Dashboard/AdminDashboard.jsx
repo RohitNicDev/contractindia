@@ -67,9 +67,11 @@ const initIndividual = [
   { id: 4, name: "Sunita Rao", email: "sunita@gmail.com", mobile: "9001122334", date: "2025-06-07", status: "Rejected" },
 ];
 const initCommercial = [
-  { id: 1, name: "Sharma Builders Pvt Ltd", email: "info@sharmabuilders.com", mobile: "9811223344", date: "2025-05-28", status: "Pending" },
-  { id: 2, name: "Gupta Contractors", email: "contact@guptacontractors.com", mobile: "9922334455", date: "2025-06-02", status: "Verified" },
-  { id: 3, name: "Patel Interiors", email: "hello@patelinteriors.com", mobile: "9033445566", date: "2025-06-06", status: "Pending" },
+  { id: 1, name: "Shapoorji Pallonji & Co.", email: "shapoorjipallonji@gmail.com", mobile: "9811223344", date: "2025-05-28", status: "Verified" },
+  { id: 2, name: "Design Arc Architects", email: "designarcarchitects@gmail.com", mobile: "9922334455", date: "2025-06-02", status: "Verified" },
+  { id: 3, name: "UrbanSpace Interiors", email: "urbanSpaceinteriors@gmail.com", mobile: "9033445566", date: "2025-06-06", status: "Verified" },
+  { id: 4, name: "Volt & Wire Electrical", email: "vote@voltwireelectrical.com", mobile: "9033446532", date: "2025-02-06", status: "Verified" },
+  { id: 5, name: "Shivam Brothers", email: "shivam@patelinteriors.com", mobile: "9033446589", date: "2025-01-06", status: "Pending" },
 ];
 
 function UserVerification() {
@@ -122,7 +124,7 @@ function UserVerification() {
 const initServices = [
   { id: 1, name: "Consulting", category: "Consultant", desc: "Expert business consulting", subs: ["Strategy", "Finance", "Operations"] },
   { id: 2, name: "Contractor", category: "Contractor", desc: "Construction contracting", subs: ["Civil", "Electrical", "Plumbing"] },
-  { id: 3, name: "Tender", category: "Contractor", desc: "Tender management services", subs: ["Govt Tenders", "Private Tenders"] },
+  // { id: 3, name: "Tender", category: "Contractor", desc: "Tender management services", subs: ["Govt Tenders", "Private Tenders"] },
   { id: 4, name: "Assets Management", category: "Builder", desc: "Asset lifecycle management", subs: ["Valuation", "Maintenance"] },
   { id: 5, name: "Legal Contracts", category: "Consultant", desc: "Legal documentation", subs: ["Drafting", "Review", "Compliance"] },
   { id: 6, name: "Brand Development", category: "Manufacturer", desc: "Brand strategy and identity", subs: ["Logo", "Marketing Kit"] },
@@ -247,7 +249,7 @@ function UserControl() {
 }
 
 const existingPlans = [
-  { name: "Basic", price: "999/mo", features: "5 Services, 100 Credits, Email Support", credits: 100 },
+  { name: "Basic", price: "0/mo", features: "5 Services, 100 Credits, Email Support", credits: 100 },
   { name: "Pro", price: "2,499/mo", features: "All Services, 500 Credits, Priority Support", credits: 500 },
   { name: "Enterprise", price: "9,999/mo", features: "Unlimited, 2000 Credits, Dedicated Manager", credits: 2000 },
 ];

@@ -16,7 +16,7 @@ const NAV = [
   // { id: "services",  label: "Get Services",     icon: ShoppingBag     },
   // { id: "newsletter",label: "Newsletter",       icon: BookOpen        },
   // { id: "history",   label: "Booked History",   icon: History         },
-  { id: "settings",  label: "Settings",         icon: Settings        },
+  { id: "settings",  label: "My Profile",         icon: Settings        },
 ];
 
 const glassCard = "rounded-2xl bg-white/70 backdrop-blur-xl border border-white/80 shadow-[0_4px_24px_rgba(99,102,241,0.08)]";
@@ -30,15 +30,15 @@ function Overview({ user }) {
         <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-violet-500/8 to-cyan-400/6 rounded-2xl" />
         <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-indigo-400/15 blur-3xl" />
         <div className="relative">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-indigo-500">Welcome back</p>
+          {/* <p className="text-xs font-semibold uppercase tracking-[0.2em] text-indigo-500">Welcome back</p> */}
           <h1 className="mt-1 text-2xl font-black bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-800 bg-clip-text text-transparent">
-            Good morning, {firstName} 👋
+           Welcome back {firstName} 👋
           </h1>
           <p className="mt-1.5 text-sm text-slate-500">Manage your services, credits, and profile from here.</p>
         </div>
       </motion.div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { label: "Credits",       value: "250",  icon: CreditCard,  grad: "from-indigo-500 to-violet-500" },
           { label: "Services",      value: "3",    icon: ShoppingBag, grad: "from-emerald-500 to-teal-500"  },
@@ -58,7 +58,7 @@ function Overview({ user }) {
             </div>
           </motion.div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }
@@ -258,10 +258,26 @@ function SettingsPanel({ user, onUpdate }) {
   const [emailNotif, setEmailNotif] = useState(true);
   const [pushNotif, setPushNotif] = useState(true);
 
-  const subscriptions = [
-    { plan: "Basic Plan", price: "₹299/mo", status: "Active", expires: "2026-06-20" },
-    { plan: "Premium Plan", price: "₹599/mo", status: "Expired", expires: "2026-04-22" },
-  ];
+const subscriptions = [
+  {
+    plan: "Free Plan",
+    price: "₹0/mo",
+    status: "Active",
+    expires: "Unlimited",
+  },
+  {
+    plan: "Basic Plan",
+    price: "₹299/mo",
+    status: "Active",
+    expires: "2026-06-20",
+  },
+  {
+    plan: "Premium Plan",
+    price: "₹599/mo",
+    status: "Expired",
+    expires: "2026-04-22",
+  },
+];
 
   const handleUpdate = () => {
     const updated = { ...user, ...form };
@@ -290,7 +306,7 @@ function SettingsPanel({ user, onUpdate }) {
       <div className="flex items-center gap-3">
         <Settings className="w-5 h-5 text-slate-500" />
         <div>
-          <h3 className="font-black text-slate-900">Settings</h3>
+          <h3 className="font-black text-slate-900"> My Profile</h3>
           <p className="text-xs text-slate-500">Update account details, security, and subscriptions.</p>
         </div>
       </div>
@@ -322,7 +338,7 @@ function SettingsPanel({ user, onUpdate }) {
         </div>
 
         <div className="rounded-3xl border border-slate-200 bg-slate-50/90 p-5">
-          <h4 className="text-sm font-black text-slate-900 mb-4">Security</h4>
+          <h4 className="text-sm font-black text-slate-900 mb-4">Change Password</h4>
           {/* <label className="flex items-center justify-between gap-3 rounded-3xl border border-slate-200 bg-white p-4 mb-4">
             <div>
               <p className="font-semibold text-slate-900">Email Notifications</p>
@@ -372,9 +388,16 @@ function SettingsPanel({ user, onUpdate }) {
             <div key={sub.plan} className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
               <div className="flex items-center justify-between mb-3">
                 <p className="font-semibold text-slate-900">{sub.plan}</p>
-                <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${sub.status === "Active" ? "bg-emerald-50 text-emerald-700 border border-emerald-100" : "bg-slate-100 text-slate-500 border border-slate-200"}`}>
-                  {sub.status}
-                </span>
+                <button
+  type="button"
+  className={`rounded-full px-3 py-1 text-[11px] font-bold border transition-all duration-300 ${
+    sub.status === "Active"
+      ? "bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-100"
+      : "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200"
+  }`}
+>
+  {sub.status}
+</button>
               </div>
               <p className="text-sm text-slate-700 font-black mb-2">{sub.price}</p>
               <p className="text-xs text-slate-500">Expires on {sub.expires}</p>

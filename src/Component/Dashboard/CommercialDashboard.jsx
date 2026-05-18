@@ -15,13 +15,15 @@ const btnGrad = { background: "linear-gradient(135deg, #3b82f6, #6366f1)" };
 const NAV = [
   { id: "Dashboard",      label: "Dashboard",              icon: LayoutDashboard },
   { id: "profile",       label: "My Profile",            icon: User            },
+   { id: "services",      label: "Service Listing",       icon: Briefcase       },
+   { id: "subscription",  label: "Subscription ",  icon: Briefcase       },
   { id: "credits",       label: "Add Credits",           icon: CreditCard      },
-  { id: "payments",      label: "Payment History",       icon: History         },
-  { id: "subscription",  label: "Subscription History",  icon: Briefcase       },
+  { id: "payments",      label: "Payment Received",       icon: History         },
+ 
   { id: "clients",       label: "Client History",        icon: User            },
-  { id: "leads",         label: "Lead Management",       icon: List            },
+  // { id: "leads",         label: "Lead Management",       icon: List            },
   // { id: "visibility",    label: "Marketplace Visibility",icon: Eye },
-  { id: "services",      label: "Service Listing",       icon: Briefcase       },
+ 
   // { id: "documents",     label: "Documents",             icon: FileText        } ,
   { id: "settings",      label: "Settings",              icon: Settings        },
 ];
@@ -331,16 +333,16 @@ function ServiceListing() {
 // ─── Documents ────────────────────────────────────────────────────────────────
 const DOCUMENT_CATEGORIES = {
   "Business Registration": [
-    "GST Certificate", "MOA/AOA", "Trade Licence", "Certificate of Incorporation", "Udyog Aadhar",
+    "GST Certificate",  "Trade Licence", "Certificate of Incorporation", "Udyog Aadhar", "Trade Licence","Registered/Notarized Trust Deed", "Shop Act Registration",
   ],
   "Identity & Address": [
     "Proof of Identity", "Proof of Address", "PAN Card", "Passport", "Driving License",
   ],
   "Compliance Certificates": [
-    "Bank Certificate", "CST/VAT/TIN/PIN Certificate", "Sales Tax/Service Tax/Professional Tax Certificate", "AICTE Approval", "Import Export Certificate",
+    "Bank Certificate",  "Import Export Certificate",
   ],
-  "Other Documents": [
-    "Trade Licence", "Registered/Notarized Trust Deed", "Shop Act Registration", "Company Profile", "Others",
+  "Company Profile": [
+      "Company Profile", "Brochure",  
   ],
 };
 
@@ -428,9 +430,13 @@ function Documents() {
           <div className="grid sm:grid-cols-2 gap-4">
             {[
               ["Company Name *", "companyName"],
+              ["Company Type , private LTD,Proprighter,LLP*", "companyName"],
               ["Contact Person *", "contactPerson"],
               ["Email *", "email"],
               ["Mobile *", "mobile"],
+              ["State *", "state"],
+              ["City *", "city"],
+              ["Pin Code *", "pinCode"],
             ].map(([label, field]) => (
               <div key={field}>
                 <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-1.5">{label}</label>
@@ -650,7 +656,7 @@ export default function CommercialDashboard() {
       // case "profile":      return <MyProfile user={user} onUpdate={setUser} />;
       case "profile":      return <Documents />;
       case "credits":      return <AddCredits />;
-      case "payments":     return <DataTable title="Payment History" icon={History} color="blue"
+      case "payments":     return <DataTable title="Payment Received" icon={History} color="blue"
                              cols={["Txn ID","Amount","Type","Date","Status"]} rows={payRows} />;
       case "subscription": return <DataTable title="Subscription History" icon={Briefcase} color="violet"
                              cols={["Plan","Price","Start","End","Status"]} rows={subRows} />;
