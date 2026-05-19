@@ -1,0 +1,23 @@
+# Explicit browser targeting for ContractIndia
+# Optimized for Windows 7 compatibility (Chrome 109+) while supporting modern browsers
+
+# Production browsers
+last 2 Chrome major versions
+Chrome >= 109
+Chrome >= 51  # Windows 7 minimum
+
+Firefox >= 115
+Firefox >= 54  # Extended support baseline
+
+Safari >= 12
+Safari >= 10   # Fallback support
+
+Edge >= 109
+Edge >= 79    # Chromium-based Edge
+
+# Exclude very old versions
+not dead
+not IE 11
+not IE 10
+not IE 9
+not IE 8
