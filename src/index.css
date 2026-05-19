@@ -24,3 +24,62 @@
     --font-family: 'Open Sans', sans-serif;
     --border-radius: 12px;
 }
+
+/* ═════════════════════════════════════════════════════════════
+   Windows 7 / Chrome 109 Compatibility Fallbacks
+   ═════════════════════════════════════════════════════════════ */
+
+/* Fallback for browsers without CSS custom properties full support */
+@supports not (--test: 0) {
+  :root {
+    color-scheme: light dark;
+  }
+}
+
+/* Ensure critical layout works without modern CSS nesting */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Open Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Flexbox fallbacks for older browsers */
+.flex {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+
+.grid {
+  display: grid;
+  display: -ms-grid;  /* For IE11 users on Windows 7 */
+}
+
+/* Ensure modal and overlay work correctly */
+.modal-overlay,
+[role="dialog"] {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Fallback for components using CSS custom properties */
+.btn-primary {
+  background-color: var(--accent-color, #6366f1);
+  color: white;
+}
+
+/* Ensure smooth animations work */
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
