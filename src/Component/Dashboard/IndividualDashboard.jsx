@@ -10,13 +10,10 @@ import {
 import { toast } from "sonner";
 
 const NAV = [
-  // { id: "overview",  label: "Overview",        icon: LayoutDashboard },
-  // { id: "profile",   label: "My Profile",       icon: User            },
-  // { id: "account",   label: "My Account",       icon: CreditCard      },
-  // { id: "services",  label: "Get Services",     icon: ShoppingBag     },
-  // { id: "newsletter",label: "Newsletter",       icon: BookOpen        },
-  // { id: "history",   label: "Booked History",   icon: History         },
-  { id: "settings",  label: "My Profile",         icon: Settings        },
+  { id: "overview",     label: "Dashboard",             icon: LayoutDashboard },
+  { id: "profile",      label: "My Profile",           icon: User            },
+  { id: "password",     label: "Change Password",      icon: Key             },
+  { id: "subscription", label: "Subscription Plan", icon: CreditCard      },
 ];
 
 const glassCard = "rounded-2xl bg-white/70 backdrop-blur-xl border border-white/80 shadow-[0_4px_24px_rgba(99,102,241,0.08)]";
@@ -110,6 +107,119 @@ function MyProfile({ user, onUpdate }) {
         style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)" }}>
         <CheckCircle2 className="w-4 h-4" /> UPDATE
       </motion.button>
+    </div>
+  );
+}
+
+function ChangePassword() {
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const handlePasswordChange = () => {
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      toast.error("Fill in all password fields.");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error("New password and confirmation must match.");
+      return;
+    }
+    setOldPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+    toast.success("Password updated successfully (demo only).");
+  };
+
+  return (
+    <div className={`${glassCard} p-6 space-y-6`}>
+      <div className="flex items-center gap-3 mb-2">
+        <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 shadow-md">
+          <Key className="h-4 w-4 text-white" />
+        </span>
+        <div>
+          <h2 className="text-lg font-black text-slate-900">Change Password</h2>
+          <p className="text-sm text-slate-500">Update your account security with a new password.</p>
+        </div>
+      </div>
+      <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
+        <label className="block mb-4">
+          <span className="text-xs font-semibold uppercase tracking-wide text-slate-600">Current Password</span>
+          <input type="password" value={oldPassword} onChange={e => setOldPassword(e.target.value)}
+            className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100" />
+        </label>
+        <label className="block mb-4">
+          <span className="text-xs font-semibold uppercase tracking-wide text-slate-600">New Password</span>
+          <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)}
+            className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100" />
+        </label>
+        <label className="block mb-4">
+          <span className="text-xs font-semibold uppercase tracking-wide text-slate-600">Confirm Password</span>
+          <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}
+            className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100" />
+        </label>
+        <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handlePasswordChange}
+          className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 text-sm font-bold text-white shadow-lg">
+          <Key className="w-4 h-4" /> Update Password
+        </motion.button>
+      </div>
+    </div>
+  );
+}
+
+function SubscriptionSummary() {
+  const subscriptions = [
+    {
+      plan: "Free Plan",
+      price: "₹0/mo",
+      status: "Active",
+      expires: "Unlimited",
+    },
+    {
+      plan: "Basic Plan",
+      price: "₹299/mo",
+      status: "Active",
+      expires: "2026-06-20",
+    },
+    {
+      plan: "Premium Plan",
+      price: "₹599/mo",
+      status: "Expired",
+      expires: "2026-04-22",
+    },
+  ];
+
+  return (
+    <div className={`${glassCard} p-6`}> 
+      <div className="flex items-center gap-3 mb-2">
+        <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 shadow-md">
+          <CreditCard className="h-4 w-4 text-white" />
+        </span>
+        <div>
+          <h2 className="text-lg font-black text-slate-900">Subscription Plan</h2>
+          <p className="text-sm text-slate-500">Review your active and past subscription plans.</p>
+        </div>
+      </div>
+      <div className="grid gap-4 md:grid-cols-2">
+        {subscriptions.map(sub => (
+          <div key={sub.plan} className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+            <div className="flex items-center justify-between mb-3">
+              <p className="font-semibold text-slate-900">{sub.plan}</p>
+              <button
+                type="button"
+                className={`rounded-full px-3 py-1 text-[11px] font-bold border transition-all duration-300 ${
+                  sub.status === "Active"
+                    ? "bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-100"
+                    : "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200"
+                }`}>
+                {sub.status}
+              </button>
+            </div>
+            <p className="text-sm text-slate-700 font-black mb-2">{sub.price}</p>
+            <p className="text-xs text-slate-500">Expires on {sub.expires}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -428,14 +538,16 @@ export default function IndividualDashboard() {
 
   const renderContent = () => {
     switch (activeTab) {
-      case "overview":   return <Overview user={user} />;
-      case "profile":    return <MyProfile user={user} onUpdate={setUser} />;
-      case "account":    return <MyAccount />;
-      case "services":   return <GetServices />;
-      case "newsletter": return <Newsletter />;
-      case "history":    return <MyAccount />;
-      case "settings":   return <SettingsPanel user={user} onUpdate={setUser} />;
-      default:           return <Overview user={user} />;
+      case "overview":     return <Overview user={user} />;
+      case "profile":      return <MyProfile user={user} onUpdate={setUser} />;
+      case "password":     return <ChangePassword />;
+      case "subscription": return <SubscriptionSummary />;
+      case "account":      return <MyAccount />;
+      case "services":     return <GetServices />;
+      case "newsletter":   return <Newsletter />;
+      case "history":      return <MyAccount />;
+      case "settings":     return <SettingsPanel user={user} onUpdate={setUser} />;
+      default:             return <Overview user={user} />;
     }
   };
 

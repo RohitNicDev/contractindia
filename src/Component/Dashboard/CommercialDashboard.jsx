@@ -598,35 +598,116 @@ function Documents() {
 
       {/* ── Step 1 ── */}
       {step === 1 && (
-        <div className="space-y-4">
-          <div className="grid sm:grid-cols-2 gap-4">
-            {[["Company Name *","companyName"],["Contact Person *","contactPerson"],
-              ["Email *","email"],["Mobile *","mobile"]].map(([lbl,key]) => (
-              <div key={key}>
-                <label className="text-[10.5px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5">{lbl}</label>
-                <input className={inp} value={profile[key]}
-                  onChange={e => setProfile(p => ({ ...p,[key]:e.target.value }))} />
-              </div>
-            ))}
-            <div className="sm:col-span-2">
-              <label className="text-[10.5px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5">Address</label>
-              <textarea className={`${inp} resize-none`} rows={2} value={profile.address}
-                onChange={e => setProfile(p => ({ ...p, address:e.target.value }))} />
-            </div>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <motion.button whileHover={{ scale:1.02 }} whileTap={{ scale:0.97 }}
-              onClick={saveProfile} disabled={!canContinue}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm text-white shadow-lg disabled:opacity-40 disabled:cursor-not-allowed"
-              style={btnPrimary}>
-              <CheckCircle2 className="w-4 h-4"/> Save & Continue
-            </motion.button>
-            <button type="button" onClick={() => setStep(2)}
-              className="px-6 py-2.5 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-slate-700 hover:border-blue-200 transition-all">
-              Skip to Documents
-            </button>
-          </div>
-        </div>
+       <div className="space-y-4">
+  <div className="grid sm:grid-cols-2 gap-4">
+
+    {/* Company Name */}
+    <div>
+      <label className="text-[10.5px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5">
+        Company Name *
+      </label>
+
+      <input
+        className={inp}
+        value={profile.companyName}
+        onChange={(e) =>
+          setProfile((p) => ({
+            ...p,
+            companyName: e.target.value,
+          }))
+        }
+      />
+    </div>
+
+    {/* Company Type */}
+    <div>
+      <label className="text-[10.5px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5">
+        Company Type *
+      </label>
+
+      <select
+        className={inp}
+        value={profile.companyType || ""}
+        onChange={(e) =>
+          setProfile((p) => ({
+            ...p,
+            companyType: e.target.value,
+          }))
+        }
+      >
+        <option value="">Select Company Type</option>
+        <option value="LLP">LLP</option>
+        <option value="Private Limited">Private Limited</option>
+        <option value="Proprietorship">Proprietor</option>
+      </select>
+    </div>
+
+    {/* Remaining Fields */}
+    {[
+      ["Contact Person *", "contactPerson"],
+      ["Email *", "email"],
+      ["Mobile *", "mobile"],
+    ].map(([lbl, key]) => (
+      <div key={key}>
+        <label className="text-[10.5px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5">
+          {lbl}
+        </label>
+
+        <input
+          className={inp}
+          value={profile[key]}
+          onChange={(e) =>
+            setProfile((p) => ({
+              ...p,
+              [key]: e.target.value,
+            }))
+          }
+        />
+      </div>
+    ))}
+
+    {/* Address */}
+    <div className="sm:col-span-2">
+      <label className="text-[10.5px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5">
+        Address
+      </label>
+
+      <textarea
+        className={`${inp} resize-none`}
+        rows={2}
+        value={profile.address}
+        onChange={(e) =>
+          setProfile((p) => ({
+            ...p,
+            address: e.target.value,
+          }))
+        }
+      />
+    </div>
+  </div>
+
+  <div className="flex flex-wrap gap-3">
+    <motion.button
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.97 }}
+      onClick={saveProfile}
+      disabled={!canContinue}
+      className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm text-white shadow-lg disabled:opacity-40 disabled:cursor-not-allowed"
+      style={btnPrimary}
+    >
+      <CheckCircle2 className="w-4 h-4" />
+      Save & Continue
+    </motion.button>
+
+    <button
+      type="button"
+      onClick={() => setStep(2)}
+      className="px-6 py-2.5 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-slate-700 hover:border-blue-200 transition-all"
+    >
+      Skip to Documents
+    </button>
+  </div>
+</div>
       )}
 
       {/* ── Step 2 ── */}
