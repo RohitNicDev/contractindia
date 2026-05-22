@@ -16,8 +16,8 @@ type LoginValues = {
 };
 
 const createAlphabetCaptcha = () => {
-  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  let captchaText = '';
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let captchaText = "";
   for (let i = 0; i < 5; i++) {
     captchaText += letters[Math.floor(Math.random() * letters.length)];
   }
@@ -47,7 +47,7 @@ export function LoginForm() {
 
   const onSubmit = (data: LoginValues) => {
     console.log(data);
-    
+
     localStorage.setItem("isLoggedIn", "true");
     localStorage.setItem(
       "login_mock_v1",
@@ -55,7 +55,9 @@ export function LoginForm() {
     );
     window.dispatchEvent(new Event("auth_changed")); // Alert other components
     toast.success("Successfully logged in.");
-    navigate("/otp", { state: { email: data.email } });
+    navigate("/otp", {
+      state: { singleVrification: true, email: data.email },
+    });
   };
 
   return (
