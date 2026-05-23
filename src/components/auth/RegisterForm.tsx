@@ -214,9 +214,9 @@ export function RegisterForm() {
       handlePincodeChange(pinCode);
     }
   }, [pinCode]);
-  useEffect(() => {
-    detectLocation();
-  }, [])
+  // useEffect(() => {
+  //   detectLocation();
+  // }, [])
   // Reset commercial-only fields when switching to individual
   useEffect(() => {
 
@@ -231,6 +231,7 @@ export function RegisterForm() {
     toast.success("Registration saved. Verify your email and mobile.");
     navigate("/otp", {
       state: {
+        singleVerification: false,
         email: values.email,
         phone: values.phone,
         userType: values.userType,
@@ -520,7 +521,7 @@ export function RegisterForm() {
               </AuthFormSelect>
             )}
 
-            <div className="col-span-2">
+            {/* <div className="col-span-2">
               <AuthFormTextarea
                 compact
                 label="Address"
@@ -529,7 +530,7 @@ export function RegisterForm() {
                 error={errors.address?.message}
                 {...register("address", { required: "Required" })}
               />
-            </div>
+            </div> */}
             {/* <div className="col-span-2">
               <input
                 type="hidden"
@@ -551,7 +552,7 @@ export function RegisterForm() {
                 }
               />
             </div> */}
-            <div className="col-span-2">
+            {/* <div className="col-span-2">
               <AuthFormField
                 compact
                 label="Password"
@@ -580,7 +581,7 @@ export function RegisterForm() {
                   minLength: { value: 6, message: "Min 6 chars" },
                 })}
               />
-            </div>
+            </div> */}
             <div className="col-span-2">
               <CaptchaChallenge
                 question={captcha.question}
