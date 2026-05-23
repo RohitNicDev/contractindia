@@ -1,43 +1,8 @@
 import { useState, useRef, useEffect, } from "react";
 import { createPortal } from "react-dom";
-import { motion } from "framer-motion";
-import {  AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
- import {
-  Table,
-  Tag,
-  Input,
-  Select,
-  Button,
-  Dropdown,
-  Space,
-  Tooltip,
-  Modal,
-  Form,
-  Typography,
-  message,
-  Avatar,
-} from "antd";
-
-import {
-  SearchOutlined,
-  MoreOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  EyeOutlined,
-  DownloadOutlined,
-  PlusOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
- 
-import { useMemo } from "react";
-import {
-  ChevronRight,
-  Check,
-  Layers3,
-} from "lucide-react";
 import { toast } from "sonner";
-
 import {
   LayoutDashboard, User, CreditCard, History, Briefcase, Eye,
   List, FileText, Settings, LogOut, Menu, X, Plus, CheckCircle2,
@@ -45,18 +10,11 @@ import {
   TrendingUp, ArrowUpRight, Shield, FolderOpen, Building2,
   Trash2, Bell, Search, CircleDot,
 } from "lucide-react";
-import { SERVICES_HIERARCHY } from "../../data/services_hierarchy";
-import { clientRows, payRows, subRows } from "../../data/json";
-import { CustomInput } from "../../components/CustomInput";
-import { StatusTag } from "../../components/StatusTag";
-import { CustomTable } from "../../components/CustomTable";
- 
+import SettingsPanel from "./SettingsPanel";
 // const glassCard = "rounded-2xl bg-white/70 backdrop-blur-xl border border-white/80 shadow-[0_4px_24px_rgba(99,102,241,0.08)]";
 // const btnGrad = { background: "linear-gradient(135deg, #3b82f6, #6366f1)" };
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
-const { Text } = Typography;
-
 const glass = "rounded-2xl bg-white/80 backdrop-blur-xl border border-white/90 shadow-[0_2px_20px_rgba(99,102,241,0.07)]";
 const btnPrimary = { background: "linear-gradient(135deg,#3b82f6,#6366f1)" };
 
@@ -598,116 +556,35 @@ function Documents() {
 
       {/* ── Step 1 ── */}
       {step === 1 && (
-       <div className="space-y-4">
-  <div className="grid sm:grid-cols-2 gap-4">
-
-    {/* Company Name */}
-    <div>
-      <label className="text-[10.5px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5">
-        Company Name *
-      </label>
-
-      <input
-        className={inp}
-        value={profile.companyName}
-        onChange={(e) =>
-          setProfile((p) => ({
-            ...p,
-            companyName: e.target.value,
-          }))
-        }
-      />
-    </div>
-
-    {/* Company Type */}
-    <div>
-      <label className="text-[10.5px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5">
-        Company Type *
-      </label>
-
-      <select
-        className={inp}
-        value={profile.companyType || ""}
-        onChange={(e) =>
-          setProfile((p) => ({
-            ...p,
-            companyType: e.target.value,
-          }))
-        }
-      >
-        <option value="">Select Company Type</option>
-        <option value="LLP">LLP</option>
-        <option value="Private Limited">Private Limited</option>
-        <option value="Proprietorship">Proprietor</option>
-      </select>
-    </div>
-
-    {/* Remaining Fields */}
-    {[
-      ["Contact Person *", "contactPerson"],
-      ["Email *", "email"],
-      ["Mobile *", "mobile"],
-    ].map(([lbl, key]) => (
-      <div key={key}>
-        <label className="text-[10.5px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5">
-          {lbl}
-        </label>
-
-        <input
-          className={inp}
-          value={profile[key]}
-          onChange={(e) =>
-            setProfile((p) => ({
-              ...p,
-              [key]: e.target.value,
-            }))
-          }
-        />
-      </div>
-    ))}
-
-    {/* Address */}
-    <div className="sm:col-span-2">
-      <label className="text-[10.5px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5">
-        Address
-      </label>
-
-      <textarea
-        className={`${inp} resize-none`}
-        rows={2}
-        value={profile.address}
-        onChange={(e) =>
-          setProfile((p) => ({
-            ...p,
-            address: e.target.value,
-          }))
-        }
-      />
-    </div>
-  </div>
-
-  <div className="flex flex-wrap gap-3">
-    <motion.button
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.97 }}
-      onClick={saveProfile}
-      disabled={!canContinue}
-      className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm text-white shadow-lg disabled:opacity-40 disabled:cursor-not-allowed"
-      style={btnPrimary}
-    >
-      <CheckCircle2 className="w-4 h-4" />
-      Save & Continue
-    </motion.button>
-
-    <button
-      type="button"
-      onClick={() => setStep(2)}
-      className="px-6 py-2.5 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-slate-700 hover:border-blue-200 transition-all"
-    >
-      Skip to Documents
-    </button>
-  </div>
-</div>
+        <div className="space-y-4">
+          <div className="grid sm:grid-cols-2 gap-4">
+            {[["Company Name *","companyName"],["Contact Person *","contactPerson"],
+              ["Email *","email"],["Mobile *","mobile"]].map(([lbl,key]) => (
+              <div key={key}>
+                <label className="text-[10.5px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5">{lbl}</label>
+                <input className={inp} value={profile[key]}
+                  onChange={e => setProfile(p => ({ ...p,[key]:e.target.value }))} />
+              </div>
+            ))}
+            <div className="sm:col-span-2">
+              <label className="text-[10.5px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5">Address</label>
+              <textarea className={`${inp} resize-none`} rows={2} value={profile.address}
+                onChange={e => setProfile(p => ({ ...p, address:e.target.value }))} />
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <motion.button whileHover={{ scale:1.02 }} whileTap={{ scale:0.97 }}
+              onClick={saveProfile} disabled={!canContinue}
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm text-white shadow-lg disabled:opacity-40 disabled:cursor-not-allowed"
+              style={btnPrimary}>
+              <CheckCircle2 className="w-4 h-4"/> Save & Continue
+            </motion.button>
+            <button type="button" onClick={() => setStep(2)}
+              className="px-6 py-2.5 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-slate-700 hover:border-blue-200 transition-all">
+              Skip to Documents
+            </button>
+          </div>
+        </div>
       )}
 
       {/* ── Step 2 ── */}
@@ -824,1262 +701,141 @@ function AddCredits() {
 }
 
 // ─── Generic Data Table ───────────────────────────────────────────────────────
- 
-/* -------------------------------------------------------------------------- */
-/* MAIN TABLE */
-/* -------------------------------------------------------------------------- */
+function DataTable({ title, icon:Icon, cols, rows, accent="blue" }) {
+  const statusColor = {
+    Success:"bg-emerald-50 text-emerald-700 border-emerald-200",
+    Active:"bg-emerald-50 text-emerald-700 border-emerald-200",
+    Failed:"bg-red-50 text-red-600 border-red-200",
+    Expired:"bg-slate-100 text-slate-500 border-slate-200",
+    Inactive:"bg-slate-100 text-slate-500 border-slate-200",
+  };
 
-
-
-/* -------------------------------------------------------------------------- */
-/* PAYMENT TABLE */
-/* -------------------------------------------------------------------------- */
-
-
-export function PaymentHistory() {
   return (
-    <CustomTable
-      title="Payment History"
-      icon={History}
-      accent="#3b82f6"
-      data={payRows}
-      columns={[
-        {
-          title: "Transaction",
-
-          dataIndex: "txnId",
-
-          render: (v) => (
-            <Text strong>{v}</Text>
-          ),
-        },
-
-        {
-          title: "Amount",
-
-          dataIndex: "amount",
-
-          render: (v) => (
-            <Text strong>
-              {v}
-            </Text>
-          ),
-        },
-
-        {
-          title: "Type",
-
-          dataIndex: "type",
-        },
-
-        {
-          title: "Date",
-
-          dataIndex: "date",
-        },
-      ]}
-    />
-  );
-}
-
-/* -------------------------------------------------------------------------- */
-/* SUBSCRIPTION */
-/* -------------------------------------------------------------------------- */
-
-
-export function SubscriptionHistory() {
-  return (
-    <CustomTable
-      title="Subscription History"
-      icon={Briefcase}
-      accent="#8b5cf6"
-      data={subRows}
-      columns={[
-        {
-          title: "Plan",
-
-          dataIndex: "plan",
-
-          render: (v) => (
-            <Text strong>{v}</Text>
-          ),
-        },
-
-        {
-          title: "Price",
-
-          dataIndex: "price",
-        },
-
-        {
-          title: "Start",
-
-          dataIndex: "start",
-        },
-
-        {
-          title: "End",
-
-          dataIndex: "end",
-        },
-      ]}
-    />
-  );
-}
-
-
-/* -------------------------------------------------------------------------- */
-/* CLIENTS */
-/* -------------------------------------------------------------------------- */
-
-
-export function ClientHistory() {
-  return (
-    <CustomTable
-      title="Client History"
-      icon={User}
-      accent="#10b981"
-      data={clientRows}
-      columns={[
-        {
-          title: "Client",
-
-          dataIndex: "name",
-
-          render: (name) => (
-            <div className="flex items-center gap-3">
-              <Avatar
-                icon={
-                  <UserOutlined />
-                }
-              />
-
-              <Text strong>
-                {name}
-              </Text>
-            </div>
-          ),
-        },
-
-        {
-          title: "Email",
-
-          dataIndex: "email",
-        },
-
-        {
-          title: "Service",
-
-          dataIndex: "service",
-        },
-
-        {
-          title: "Date",
-
-          dataIndex: "date",
-        },
-      ]}
-    />
+    <div className={`${glass} p-6`}>
+      <div className="flex items-center gap-2 mb-5">
+        <span className={`w-8 h-8 rounded-xl flex items-center justify-center bg-${accent}-50`}>
+          <Icon className={`w-4 h-4 text-${accent}-500`}/>
+        </span>
+        <h3 className="font-black text-slate-800">{title}</h3>
+      </div>
+      <div className="overflow-x-auto rounded-xl border border-slate-100">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="bg-slate-50/80 border-b border-slate-100">
+              {cols.map(c => (
+                <th key={c} className="text-left py-2.5 px-4 text-[10.5px] font-bold text-slate-500 uppercase tracking-widest">{c}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r,i) => (
+              <tr key={i} className="border-b border-slate-50 hover:bg-blue-50/30 transition-colors">
+                {r.map((cell,j) => (
+                  <td key={j} className="py-3 px-4 text-slate-700">
+                    {j === r.length - 1 && statusColor[cell]
+                      ? <span className={`text-[10.5px] font-bold px-2.5 py-1 rounded-full border ${statusColor[cell]}`}>{cell}</span>
+                      : cell}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }
 
 // ─── Lead Management ──────────────────────────────────────────────────────────
 function LeadManagement() {
-  const [leads, setLeads] = useState([
-    {
-      id: 1,
-      name: "Rajesh Kumar",
-      service: "Consulting",
-      phone: "9876543210",
-      email: "rajesh@gmail.com",
-      date: "2026-05-10",
-      status: "New",
-      notes: "Interested in EPC consultancy",
-    },
-    {
-      id: 2,
-      name: "Priya Sharma",
-      service: "Legal Contracts",
-      phone: "9898989898",
-      email: "priya@gmail.com",
-      date: "2026-05-08",
-      status: "In Progress",
-      notes: "Need contract drafting",
-    },
-    {
-      id: 3,
-      name: "Amit Singh",
-      service: "Tender Services",
-      phone: "9090909090",
-      email: "amit@gmail.com",
-      date: "2026-05-05",
-      status: "Closed",
-      notes: "Tender submitted successfully",
-    },
+  const [leads] = useState([
+    { id:1, name:"Rajesh Kumar",  service:"Consulting",     date:"2026-05-10", status:"New"         },
+    { id:2, name:"Priya Sharma",  service:"Legal Contracts", date:"2026-05-08", status:"In Progress" },
+    { id:3, name:"Amit Singh",    service:"Tender Services", date:"2026-05-05", status:"Closed"      },
+    { id:4, name:"Neha Verma",    service:"Brand Dev",       date:"2026-04-29", status:"New"         },
   ]);
-
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All");
-
-  const [showModal, setShowModal] = useState(false);
-
-  const [editingLead, setEditingLead] = useState(null);
-
-  const [form, setForm] = useState({
-    name: "",
-    service: "",
-    phone: "",
-    email: "",
-    status: "New",
-    notes: "",
-  });
 
   const statusStyle = {
-    New:
-      "bg-blue-50 text-blue-700 border-blue-200",
-
-    "In Progress":
-      "bg-amber-50 text-amber-700 border-amber-200",
-
-    Closed:
-      "bg-emerald-50 text-emerald-700 border-emerald-200",
+    New:         "bg-blue-50 text-blue-700 border-blue-200",
+    "In Progress":"bg-amber-50 text-amber-700 border-amber-200",
+    Closed:      "bg-emerald-50 text-emerald-700 border-emerald-200",
   };
-
-  /* -------------------------------------------------------------------------- */
-  /* OPEN ADD MODAL */
-  /* -------------------------------------------------------------------------- */
-
-  const openAddModal = () => {
-    setEditingLead(null);
-
-    setForm({
-      name: "",
-      service: "",
-      phone: "",
-      email: "",
-      status: "New",
-      notes: "",
-    });
-
-    setShowModal(true);
-  };
-
-  /* -------------------------------------------------------------------------- */
-  /* EDIT LEAD */
-  /* -------------------------------------------------------------------------- */
-
-  const editLead = (lead) => {
-    setEditingLead(lead);
-
-    setForm({
-      name: lead.name,
-      service: lead.service,
-      phone: lead.phone,
-      email: lead.email,
-      status: lead.status,
-      notes: lead.notes,
-    });
-
-    setShowModal(true);
-  };
-
-  /* -------------------------------------------------------------------------- */
-  /* SAVE LEAD */
-  /* -------------------------------------------------------------------------- */
-
-  const saveLead = () => {
-    if (!form.name || !form.phone) {
-      toast.error(
-        "Name and phone are required",
-      );
-
-      return;
-    }
-
-    if (editingLead) {
-      setLeads((prev) =>
-        prev.map((lead) =>
-          lead.id === editingLead.id
-            ? {
-                ...lead,
-                ...form,
-              }
-            : lead,
-        ),
-      );
-
-      toast.success("Lead updated");
-    } else {
-      const newLead = {
-        id: Date.now(),
-        ...form,
-        date: new Date()
-          .toISOString()
-          .split("T")[0],
-      };
-
-      setLeads((prev) => [
-        newLead,
-        ...prev,
-      ]);
-
-      toast.success("Lead created");
-    }
-
-    setShowModal(false);
-  };
-
-  /* -------------------------------------------------------------------------- */
-  /* DELETE LEAD */
-  /* -------------------------------------------------------------------------- */
-
-  const deleteLead = (id) => {
-    setLeads((prev) =>
-      prev.filter((x) => x.id !== id),
-    );
-
-    toast.success("Lead deleted");
-  };
-
-  /* -------------------------------------------------------------------------- */
-  /* FILTER */
-  /* -------------------------------------------------------------------------- */
-
-  const filteredLeads = leads.filter((lead) => {
-    const matchesSearch =
-      lead.name
-        .toLowerCase()
-        .includes(search.toLowerCase()) ||
-      lead.service
-        .toLowerCase()
-        .includes(search.toLowerCase());
-
-    const matchesStatus =
-      statusFilter === "All" ||
-      lead.status === statusFilter;
-
-    return matchesSearch && matchesStatus;
-  });
 
   return (
-    <>
-      {/* MAIN CARD */}
-      <div className={`${glass} p-6`}>
-        {/* HEADER */}
-        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <span
-              className="
-                flex h-10 w-10 items-center justify-center
-                rounded-2xl bg-indigo-50
-              "
-            >
-              <List className="h-5 w-5 text-indigo-500" />
+    <div className={`${glass} p-6`}>
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-2">
+          <span className="w-8 h-8 rounded-xl flex items-center justify-center bg-indigo-50">
+            <List className="w-4 h-4 text-indigo-500"/>
+          </span>
+          <h3 className="font-black text-slate-800">Lead Management</h3>
+        </div>
+        <motion.button whileHover={{ scale:1.03 }} whileTap={{ scale:0.97 }}
+          onClick={() => toast.info("Add lead form (demo)")}
+          className="flex items-center gap-1.5 px-4 py-2 rounded-xl font-bold text-xs text-white shadow-md"
+          style={btnPrimary}>
+          <Plus className="w-3.5 h-3.5"/> Add Lead
+        </motion.button>
+      </div>
+      <div className="space-y-2.5">
+        {leads.map((l,i) => (
+          <motion.div key={l.id} initial={{ opacity:0, x:-8 }} animate={{ opacity:1, x:0 }}
+            transition={{ delay:i*0.06 }}
+            className="flex items-center gap-4 p-4 rounded-xl border border-slate-100 bg-slate-50/60 hover:bg-white hover:shadow-sm transition-all">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white text-xs font-black shrink-0">
+              {l.name.split(" ").map(n=>n[0]).join("").slice(0,2)}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-slate-800">{l.name}</p>
+              <p className="text-xs text-slate-400">{l.service} · {l.date}</p>
+            </div>
+            <span className={`text-[10.5px] font-bold px-2.5 py-1 rounded-full border shrink-0 ${statusStyle[l.status]}`}>
+              {l.status}
             </span>
-
-            <div>
-              <h3 className="text-lg font-black text-slate-800">
-                Lead Management
-              </h3>
-
-              <p className="text-xs text-slate-400">
-                Manage customer leads efficiently
-              </p>
-            </div>
-          </div>
-
-          {/* ADD BUTTON */}
-          <motion.button
-            whileHover={{
-              scale: 1.03,
-            }}
-            whileTap={{
-              scale: 0.97,
-            }}
-            onClick={openAddModal}
-            className="
-              flex items-center gap-2
-              rounded-xl px-4 py-2
-              text-xs font-bold text-white
-              shadow-md
-            "
-            style={btnPrimary}
-          >
-            <Plus className="h-4 w-4" />
-            Add Lead
-          </motion.button>
-        </div>
-
-        {/* FILTERS */}
-        <div className="mb-5 flex flex-wrap gap-3">
-          <input
-            type="text"
-            placeholder="Search leads..."
-            value={search}
-            onChange={(e) =>
-              setSearch(e.target.value)
-            }
-            className="
-              h-11 flex-1 rounded-xl border
-              border-slate-200 px-4
-              text-sm outline-none
-              transition-all
-              focus:border-violet-400
-              focus:ring-4
-              focus:ring-violet-100
-            "
-          />
-
-          <select
-            value={statusFilter}
-            onChange={(e) =>
-              setStatusFilter(e.target.value)
-            }
-            className="
-              h-11 rounded-xl border
-              border-slate-200 px-4
-              text-sm outline-none
-            "
-          >
-            <option value="All">
-              All Status
-            </option>
-
-            <option value="New">
-              New
-            </option>
-
-            <option value="In Progress">
-              In Progress
-            </option>
-
-            <option value="Closed">
-              Closed
-            </option>
-          </select>
-        </div>
-
-        {/* STATS */}
-        <div className="mb-5 grid gap-3 sm:grid-cols-3">
-          <StatCard
-            title="Total Leads"
-            value={leads.length}
-          />
-
-          <StatCard
-            title="New"
-            value={
-              leads.filter(
-                (x) => x.status === "New",
-              ).length
-            }
-          />
-
-          <StatCard
-            title="Closed"
-            value={
-              leads.filter(
-                (x) => x.status === "Closed",
-              ).length
-            }
-          />
-        </div>
-
-        {/* LEADS */}
-        <div className="space-y-3">
-          {filteredLeads.map((lead, i) => (
-            <motion.div
-              key={lead.id}
-              initial={{
-                opacity: 0,
-                y: 10,
-              }}
-              animate={{
-                opacity: 1,
-                y: 0,
-              }}
-              transition={{
-                delay: i * 0.05,
-              }}
-              className="
-                rounded-2xl border border-slate-100
-                bg-slate-50/70 p-4
-                transition-all
-                hover:bg-white
-                hover:shadow-md
-              "
-            >
-              <div className="flex flex-wrap items-start gap-4">
-                {/* AVATAR */}
-                <div
-                  className="
-                    flex h-12 w-12 shrink-0 items-center justify-center
-                    rounded-2xl
-                    bg-gradient-to-br
-                    from-blue-400 to-indigo-500
-                    text-sm font-black text-white
-                  "
-                >
-                  {lead.name
-                    .split(" ")
-                    .map((x) => x[0])
-                    .join("")
-                    .slice(0, 2)}
-                </div>
-
-                {/* INFO */}
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h4 className="text-sm font-black text-slate-800">
-                      {lead.name}
-                    </h4>
-
-                    <span
-                      className={`
-                        rounded-full border px-2.5 py-1
-                        text-[10px] font-bold
-                        ${statusStyle[lead.status]}
-                      `}
-                    >
-                      {lead.status}
-                    </span>
-                  </div>
-
-                  <p className="mt-1 text-xs text-slate-500">
-                    {lead.service}
-                  </p>
-
-                  <div className="mt-2 flex flex-wrap gap-4 text-xs text-slate-400">
-                    <span>
-                      📞 {lead.phone}
-                    </span>
-
-                    <span>
-                      ✉️ {lead.email}
-                    </span>
-
-                    <span>
-                      📅 {lead.date}
-                    </span>
-                  </div>
-
-                  {lead.notes && (
-                    <p className="mt-3 rounded-xl bg-white p-3 text-xs text-slate-500">
-                      {lead.notes}
-                    </p>
-                  )}
-                </div>
-
-                {/* ACTIONS */}
-                <div className="flex gap-2">
-                  <button
-                    onClick={() =>
-                      editLead(lead)
-                    }
-                    className="
-                      rounded-xl border
-                      border-blue-200
-                      bg-blue-50 px-3 py-2
-                      text-xs font-bold text-blue-700
-                    "
-                  >
-                    Edit
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      deleteLead(lead.id)
-                    }
-                    className="
-                      rounded-xl border
-                      border-red-200
-                      bg-red-50 px-3 py-2
-                      text-xs font-bold text-red-700
-                    "
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-
-          {filteredLeads.length === 0 && (
-            <div
-              className="
-                rounded-2xl border border-dashed
-                border-slate-200 p-10
-                text-center
-              "
-            >
-              <p className="text-sm text-slate-400">
-                No leads found
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* MODAL */}
-      {showModal && (
-        <div
-          className="
-            fixed inset-0 z-[999]
-            flex items-center justify-center
-            bg-black/50 p-4
-            backdrop-blur-sm
-          "
-        >
-          <motion.div
-            initial={{
-              opacity: 0,
-              scale: 0.96,
-            }}
-            animate={{
-              opacity: 1,
-              scale: 1,
-            }}
-            className="
-              w-full max-w-2xl
-              rounded-[30px]
-              bg-white p-6
-              shadow-2xl
-            "
-          >
-            {/* HEADER */}
-            <div className="mb-5 flex items-center justify-between">
-              <div>
-                <h3 className="text-xl font-black text-slate-800">
-                  {editingLead
-                    ? "Edit Lead"
-                    : "Add New Lead"}
-                </h3>
-
-                <p className="text-sm text-slate-400">
-                  Manage lead details
-                </p>
-              </div>
-
-              <button
-                onClick={() =>
-                  setShowModal(false)
-                }
-                className="
-                  flex h-10 w-10 items-center justify-center
-                  rounded-xl bg-slate-100
-                "
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* FORM */}
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Input
-                label="Full Name"
-                value={form.name}
-                onChange={(v) =>
-                  setForm((p) => ({
-                    ...p,
-                    name: v,
-                  }))
-                }
-              />
-
-              <Input
-                label="Phone"
-                value={form.phone}
-                onChange={(v) =>
-                  setForm((p) => ({
-                    ...p,
-                    phone: v,
-                  }))
-                }
-              />
-
-              <Input
-                label="Email"
-                value={form.email}
-                onChange={(v) =>
-                  setForm((p) => ({
-                    ...p,
-                    email: v,
-                  }))
-                }
-              />
-
-              <Input
-                label="Service"
-                value={form.service}
-                onChange={(v) =>
-                  setForm((p) => ({
-                    ...p,
-                    service: v,
-                  }))
-                }
-              />
-
-              <div className="sm:col-span-2">
-                <label className="mb-2 block text-xs font-bold text-slate-600">
-                  Status
-                </label>
-
-                <select
-                  value={form.status}
-                  onChange={(e) =>
-                    setForm((p) => ({
-                      ...p,
-                      status: e.target.value,
-                    }))
-                  }
-                  className="
-                    h-12 w-full rounded-xl border
-                    border-slate-200 px-4 text-sm
-                  "
-                >
-                  <option>
-                    New
-                  </option>
-
-                  <option>
-                    In Progress
-                  </option>
-
-                  <option>
-                    Closed
-                  </option>
-                </select>
-              </div>
-
-              <div className="sm:col-span-2">
-                <label className="mb-2 block text-xs font-bold text-slate-600">
-                  Notes
-                </label>
-
-                <textarea
-                  rows={4}
-                  value={form.notes}
-                  onChange={(e) =>
-                    setForm((p) => ({
-                      ...p,
-                      notes:
-                        e.target.value,
-                    }))
-                  }
-                  className="
-                    w-full rounded-xl border
-                    border-slate-200 p-4
-                    text-sm outline-none
-                  "
-                />
-              </div>
-            </div>
-
-            {/* FOOTER */}
-            <div className="mt-6 flex justify-end gap-3">
-              <button
-                onClick={() =>
-                  setShowModal(false)
-                }
-                className="
-                  rounded-xl border border-slate-200
-                  px-5 py-2.5
-                  text-sm font-semibold
-                "
-              >
-                Cancel
-              </button>
-
-              <button
-                onClick={saveLead}
-                className="
-                  rounded-xl bg-violet-600
-                  px-5 py-2.5
-                  text-sm font-semibold text-white
-                "
-              >
-                Save Lead
-              </button>
-            </div>
           </motion.div>
-        </div>
-      )}
-    </>
-  );
-}
-
-/* -------------------------------------------------------------------------- */
-/* SMALL COMPONENTS */
-/* -------------------------------------------------------------------------- */
-
-function StatCard({
-  title,
-  value,
-}) {
-  return (
-    <div
-      className="
-        rounded-2xl border border-slate-100
-        bg-slate-50/70 p-4
-      "
-    >
-      <p className="text-xs text-slate-400">
-        {title}
-      </p>
-
-      <h4 className="mt-1 text-2xl font-black text-slate-800">
-        {value}
-      </h4>
+        ))}
+      </div>
     </div>
   );
 }
 
-function Inputs({
-  label,
-  value,
-  onChange,
-}) {
-  return (
-    <div>
-      <label className="mb-2 block text-xs font-bold text-slate-600">
-        {label}
-      </label>
-
-      <input
-        value={value}
-        onChange={(e) =>
-          onChange(e.target.value)
-        }
-        className="
-          h-12 w-full rounded-xl border
-          border-slate-200 px-4
-          text-sm outline-none
-          transition-all
-          focus:border-violet-400
-          focus:ring-4
-          focus:ring-violet-100
-        "
-      />
-    </div>
-  );
-}
 // ─── Service Listing ──────────────────────────────────────────────────────────
-function  ServiceListing() {
-  const [selectedService, setSelectedService] = useState(null);
-
-  const [activeServices, setActiveServices] = useState([
-    "consultingservice",
-    "legalcontracts",
-  ]);
-
-  const [activeSubServices, setActiveSubServices] = useState([
-    "epcconsultancy",
-    "projectmanagement",
-    "legaldrafting",
-  ]);
-
-  const toggleMainService = (serviceId) => {
-    setActiveServices((prev) => {
-      const exists = prev.includes(serviceId);
-
-      if (exists) {
-        toast.success("Service deactivated");
-
-        return prev.filter((x) => x !== serviceId);
-      }
-
-      toast.success("Service activated");
-
-      return [...prev, serviceId];
-    });
-  };
-
-  const toggleSubService = (subId) => {
-    setActiveSubServices((prev) => {
-      const exists = prev.includes(subId);
-
-      if (exists) {
-        toast.success("Sub-service removed");
-
-        return prev.filter((x) => x !== subId);
-      }
-
-      toast.success("Sub-service activated");
-
-      return [...prev, subId];
-    });
+function ServiceListing() {
+  const [active, setActive] = useState(["Consulting Service","Legal Contracts"]);
+  const toggle = s => {
+    setActive(p => p.includes(s) ? p.filter(x=>x!==s) : [...p,s]);
+    toast.success(`${s} ${active.includes(s)?"removed":"activated"}`);
   };
 
   return (
-    <>
-      {/* MAIN CARD */}
-      <div className={`${glass} p-6`}>
-        {/* HEADER */}
-        <div className="mb-5 flex items-center gap-3">
-          <div
-            className="
-              flex h-11 w-11 items-center justify-center
-              rounded-2xl
-              bg-violet-50
-            "
-          >
-            <Briefcase className="h-5 w-5 text-violet-600" />
-          </div>
-
-          <div>
-            <h3 className="text-lg font-black text-slate-800">
-              Service Listing
-            </h3>
-
-            <p className="text-xs text-slate-400">
-              Activate your business services & sub-services
-            </p>
-          </div>
-        </div>
-
-        {/* SERVICES */}
-        <div className="grid gap-3 sm:grid-cols-2">
-          {SERVICES_HIERARCHY.map((service) => {
-            const isActive = activeServices.includes(service.id);
-
-            return (
-              <div
-                key={service.id}
-                className="
-                  group rounded-2xl border
-                  bg-white p-4
-                  transition-all duration-300
-                  hover:-translate-y-[2px]
-                  hover:shadow-lg
-                "
-                style={{
-                  borderColor: isActive
-                    ? "#c4b5fd"
-                    : "#e5e7eb",
-                }}
-              >
-                {/* TOP */}
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex gap-3">
-                    <div
-                      className={`
-                        mt-0.5 h-3 w-3 rounded-full
-                        ${
-                          isActive
-                            ? "bg-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.6)]"
-                            : "bg-slate-300"
-                        }
-                      `}
-                    />
-
-                    <div>
-                      <h4 className="text-sm font-bold text-slate-800">
-                        {service.name}
-                      </h4>
-
-                      <p className="mt-1 text-xs text-slate-400">
-                        {service.subServices?.length || 0} sub-services
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* ACTIVE BUTTON */}
-                  <button
-                    onClick={() =>
-                      toggleMainService(service.id)
-                    }
-                    className={`
-                      rounded-full border px-3 py-1
-                      text-[11px] font-bold
-                      transition-all
-                      ${
-                        isActive
-                          ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                          : "border-slate-200 bg-slate-50 text-slate-500 hover:border-violet-200"
-                      }
-                    `}
-                  >
-                    {isActive
-                      ? "Active"
-                      : "Inactive"}
-                  </button>
-                </div>
-
-                {/* ACTIONS */}
-                <div className="mt-4 flex items-center justify-between">
-                  <div className="flex items-center gap-1 text-xs text-slate-400">
-                    <Layers3 className="h-3.5 w-3.5" />
-                    Configure Sub-services
-                  </div>
-
-                  <button
-                    onClick={() =>
-                      setSelectedService(service)
-                    }
-                    className="
-                      flex items-center gap-1
-                      rounded-xl
-                      bg-violet-50
-                      px-3 py-2
-                      text-xs font-bold text-violet-700
-                      transition-all
-                      hover:bg-violet-100
-                    "
-                  >
-                    Manage
-                    <ChevronRight className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              </div>
-            );
-          })}
+    <div className={`${glass} p-6`}>
+      <div className="flex items-center gap-2 mb-5">
+        <span className="w-8 h-8 rounded-xl flex items-center justify-center bg-violet-50">
+          <Briefcase className="w-4 h-4 text-violet-500"/>
+        </span>
+        <div>
+          <h3 className="font-black text-slate-800">Service Listing</h3>
+          <p className="text-xs text-slate-400">{active.length} of {ALL_SERVICES.length} active</p>
         </div>
       </div>
-
-      {/* MODAL */}
-      {selectedService && (
-        <ServiceModal
-          service={selectedService}
-          onClose={() =>
-            setSelectedService(null)
-          }
-          activeSubServices={activeSubServices}
-          toggleSubService={toggleSubService}
-        />
-      )}
-    </>
-  );
-}
-
-/* -------------------------------------------------------------------------- */
-/* MODAL */
-/* -------------------------------------------------------------------------- */
-
-function ServiceModal({
-  service,
-  onClose,
-  activeSubServices,
-  toggleSubService,
-}) {
-  return (
-    <div
-      className="
-        fixed inset-0 z-[999]
-        flex items-center justify-center
-        bg-black/60
-        p-4
-        backdrop-blur-md
-      "
-    >
-      {/* CARD */}
-      <div
-        className="
-          relative w-full max-w-3xl
-          overflow-hidden rounded-[30px]
-          border border-white/10
-          bg-white
-          shadow-2xl
-        "
-      >
-        {/* HEADER */}
-        <div
-          className="
-            flex items-center justify-between
-            border-b border-slate-100
-            px-6 py-5
-          "
-        >
-          <div>
-            <h2 className="text-xl font-black text-slate-800">
-              {service.name}
-            </h2>
-
-            <p className="mt-1 text-sm text-slate-400">
-              Activate or deactivate sub-services
-            </p>
+      <div className="grid sm:grid-cols-2 gap-2.5">
+        {ALL_SERVICES.map(s => (
+          <div key={s} className="flex items-center justify-between p-3.5 rounded-xl border bg-white hover:shadow-sm transition-all"
+            style={{ borderColor: active.includes(s) ? "#c4b5fd" : "#e8edf5" }}>
+            <div className="flex items-center gap-2.5">
+              <div className={`w-2 h-2 rounded-full ${active.includes(s) ? "bg-emerald-400" : "bg-slate-200"}`}/>
+              <span className="text-sm font-semibold text-slate-700">{s}</span>
+            </div>
+            <button onClick={() => toggle(s)}
+              className={`text-[10.5px] font-bold px-3 py-1 rounded-full border transition-all ${
+                active.includes(s)
+                  ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                  : "bg-slate-50 text-slate-500 border-slate-200 hover:border-violet-200"
+              }`}>
+              {active.includes(s) ? "Active" : "Inactive"}
+            </button>
           </div>
-
-          <button
-            onClick={onClose}
-            className="
-              flex h-10 w-10 items-center justify-center
-              rounded-xl
-              bg-slate-100
-              text-slate-500
-              transition-all
-              hover:bg-red-50
-              hover:text-red-500
-            "
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-
-        {/* BODY */}
-        <div className="max-h-[70vh] overflow-y-auto p-6">
-          <div className="grid gap-4 sm:grid-cols-2">
-            {service.subServices?.map((sub) => {
-              const active =
-                activeSubServices.includes(sub.id);
-
-              return (
-                <div
-                  key={sub.id}
-                  className="
-                    rounded-2xl border
-                    border-slate-200
-                    bg-slate-50
-                    p-4
-                  "
-                >
-                  {/* TOP */}
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h4 className="text-sm font-bold text-slate-800">
-                        {sub.name}
-                      </h4>
-
-                      {sub.children && (
-                        <p className="mt-1 text-xs text-slate-400">
-                          {
-                            sub.children.length
-                          }{" "}
-                          nested services
-                        </p>
-                      )}
-                    </div>
-
-                    {/* ACTIVE BUTTON */}
-                    <button
-                      onClick={() =>
-                        toggleSubService(sub.id)
-                      }
-                      className={`
-                        rounded-full border px-3 py-1
-                        text-[11px] font-bold
-                        transition-all
-                        ${
-                          active
-                            ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                            : "border-slate-200 bg-white text-slate-500"
-                        }
-                      `}
-                    >
-                      {active
-                        ? "Active"
-                        : "Inactive"}
-                    </button>
-                  </div>
-
-                  {/* CHILDREN */}
-                  {sub.children && (
-                    <div className="mt-4 space-y-2">
-                      {sub.children.map(
-                        (child) => {
-                          const childActive =
-                            activeSubServices.includes(
-                              child.id,
-                            );
-
-                          return (
-                            <div
-                              key={child.id}
-                              className="
-                                flex items-center justify-between
-                                rounded-xl
-                                border border-slate-200
-                                bg-white
-                                px-3 py-2
-                              "
-                            >
-                              <div className="flex items-center gap-2">
-                                <div
-                                  className={`
-                                    h-2.5 w-2.5 rounded-full
-                                    ${
-                                      childActive
-                                        ? "bg-emerald-400"
-                                        : "bg-slate-300"
-                                    }
-                                  `}
-                                />
-
-                                <span className="text-xs font-medium text-slate-700">
-                                  {child.name}
-                                </span>
-                              </div>
-
-                              <button
-                                onClick={() =>
-                                  toggleSubService(
-                                    child.id,
-                                  )
-                                }
-                                className={`
-                                  flex items-center gap-1
-                                  rounded-lg px-2.5 py-1
-                                  text-[10px] font-bold
-                                  ${
-                                    childActive
-                                      ? "bg-emerald-50 text-emerald-700"
-                                      : "bg-slate-100 text-slate-500"
-                                  }
-                                `}
-                              >
-                                {childActive && (
-                                  <Check className="h-3 w-3" />
-                                )}
-
-                                {childActive
-                                  ? "Active"
-                                  : "Inactive"}
-                              </button>
-                            </div>
-                          );
-                        },
-                      )}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* FOOTER */}
-        <div
-          className="
-            flex items-center justify-end gap-3
-            border-t border-slate-100
-            px-6 py-4
-          "
-        >
-          <button
-            onClick={onClose}
-            className="
-              rounded-xl border border-slate-200
-              px-5 py-2.5
-              text-sm font-semibold text-slate-600
-              transition-all hover:bg-slate-50
-            "
-          >
-            Cancel
-          </button>
-
-          <button
-            onClick={onClose}
-            className="
-              rounded-xl
-              bg-violet-600
-              px-5 py-2.5
-              text-sm font-semibold text-white
-              shadow-lg shadow-violet-500/20
-              transition-all hover:bg-violet-700
-            "
-          >
-            Save Changes
-          </button>
-        </div>
+        ))}
       </div>
     </div>
   );
@@ -2277,47 +1033,47 @@ function DocumentUploader({ label, files = [], onChange }) {
 // }
 
 // ─── Settings ─────────────────────────────────────────────────────────────────
-function SettingsPanel() {
-  const [old, setOld] = useState("");
-  const [nw, setNw] = useState("");
-  const [conf, setConf] = useState("");
+// function SettingsPanel() {
+//   const [old, setOld] = useState("");
+//   const [nw, setNw] = useState("");
+//   const [conf, setConf] = useState("");
 
-  const change = () => {
-    if (!old||!nw||!conf) { toast.error("Fill all fields"); return; }
-    if (nw !== conf) { toast.error("Passwords do not match"); return; }
-    setOld(""); setNw(""); setConf("");
-    toast.success("Password updated (demo)");
-  };
+//   const change = () => {
+//     if (!old||!nw||!conf) { toast.error("Fill all fields"); return; }
+//     if (nw !== conf) { toast.error("Passwords do not match"); return; }
+//     setOld(""); setNw(""); setConf("");
+//     toast.success("Password updated (demo)");
+//   };
 
-  const inp2 = "w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100/50 outline-none text-sm bg-white text-slate-800";
+//   const inp2 = "w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100/50 outline-none text-sm bg-white text-slate-800";
 
-  return (
-    <div className={`${glass} p-6 space-y-5`}>
-      <div className="flex items-center gap-2 mb-1">
-        <span className="w-8 h-8 rounded-xl flex items-center justify-center bg-blue-50">
-          <Key className="w-4 h-4 text-blue-500"/>
-        </span>
-        <div>
-          <h3 className="font-black text-slate-800">Change Password</h3>
-          <p className="text-xs text-slate-400">Keep your account secure</p>
-        </div>
-      </div>
-      <div className="space-y-3">
-        {[["Current Password", old, setOld],["New Password", nw, setNw],["Confirm Password", conf, setConf]].map(([lbl,val,setter]) => (
-          <div key={lbl}>
-            <label className="text-[10.5px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5">{lbl}</label>
-            <input type="password" value={val} onChange={e=>setter(e.target.value)} className={inp2}/>
-          </div>
-        ))}
-        <motion.button whileHover={{ scale:1.02 }} whileTap={{ scale:0.97 }} onClick={change}
-          className="flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm text-white shadow-lg"
-          style={btnPrimary}>
-          <Key className="w-4 h-4"/> Update Password
-        </motion.button>
-      </div>
-    </div>
-  );
-}
+//   return (
+//     <div className={`${glass} p-6 space-y-5`}>
+//       <div className="flex items-center gap-2 mb-1">
+//         <span className="w-8 h-8 rounded-xl flex items-center justify-center bg-blue-50">
+//           <Key className="w-4 h-4 text-blue-500"/>
+//         </span>
+//         <div>
+//           <h3 className="font-black text-slate-800">Change Password</h3>
+//           <p className="text-xs text-slate-400">Keep your account secure</p>
+//         </div>
+//       </div>
+//       <div className="space-y-3">
+//         {[["Current Password", old, setOld],["New Password", nw, setNw],["Confirm Password", conf, setConf]].map(([lbl,val,setter]) => (
+//           <div key={lbl}>
+//             <label className="text-[10.5px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5">{lbl}</label>
+//             <input type="password" value={val} onChange={e=>setter(e.target.value)} className={inp2}/>
+//           </div>
+//         ))}
+//         <motion.button whileHover={{ scale:1.02 }} whileTap={{ scale:0.97 }} onClick={change}
+//           className="flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm text-white shadow-lg"
+//           style={btnPrimary}>
+//           <Key className="w-4 h-4"/> Update Password
+//         </motion.button>
+//       </div>
+//     </div>
+//   );
+// }
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
@@ -2342,38 +1098,29 @@ export default function CommercialDashboard() {
     navigate("/login");
   };
 
- 
+  const payRows = [
+    ["#PAY001","₹500","Credits","10 May 2026","Success"],
+    ["#PAY002","₹1,000","Subscription","22 Apr 2026","Success"],
+    ["#PAY003","₹250","Credits","15 Mar 2026","Failed"],
+  ];
+  const subRows = [
+    ["Basic Plan","₹999/mo","01 May 2026","01 Jun 2026","Active"],
+    ["Pro Plan","₹2,499/mo","01 Feb 2026","01 May 2026","Expired"],
+  ];
+  const clientRows = [
+    ["Rajesh Kumar","rajesh@email.com","Consulting","10 May 2026","Active"],
+    ["Priya Sharma","priya@email.com","Legal","22 Apr 2026","Inactive"],
+    ["Amit Singh","amit@email.com","Tender","18 Mar 2026","Active"],
+  ];
 
-
-function StatusTag({ status }) {
-  const config = {
-    Success: "success",
-    Active: "success",
-    Failed: "error",
-    Expired: "default",
-    Inactive: "default",
-  };
-
-  return (
-    <Tag
-      color={config[status]}
-      className="
-        rounded-full px-3 py-[3px]
-        text-[11px] font-bold
-      "
-    >
-      {status}
-    </Tag>
-  );
-}
   const renderContent = () => {
     switch (activeTab) {
       case "dashboard":    return <Dashboard user={user}/>;
       case "profile":      return <Documents/>;
       case "credits":      return <AddCredits/>;
-      case "payments":     return <PaymentHistory/>;
-      case "subscription": return <SubscriptionHistory/>;
-      case "clients":      return <ClientHistory />;
+      case "payments":     return <DataTable title="Payment History" icon={History} accent="blue" cols={["Txn ID","Amount","Type","Date","Status"]} rows={payRows}/>;
+      case "subscription": return <DataTable title="Subscription History" icon={Briefcase} accent="violet" cols={["Plan","Price","Start","End","Status"]} rows={subRows}/>;
+      case "clients":      return <DataTable title="Client History" icon={User} accent="emerald" cols={["Name","Email","Service","Date","Status"]} rows={clientRows}/>;
       case "leads":        return <LeadManagement/>;
       case "services":     return <ServiceListing/>;
       case "settings":     return <SettingsPanel/>;
@@ -2382,11 +1129,11 @@ function StatusTag({ status }) {
       // // case "profile":      return <MyProfile user={user} onUpdate={setUser} />;
       // case "profile":      return <Documents />;
       // case "credits":      return <AddCredits />;
-      // case "payments":     return <CustomTable title="Payment Received" icon={History} color="blue"
+      // case "payments":     return <DataTable title="Payment Received" icon={History} color="blue"
       //                        cols={["Txn ID","Amount","Type","Date","Status"]} rows={payRows} />;
-      // case "subscription": return <CustomTable title="Subscription History" icon={Briefcase} color="violet"
+      // case "subscription": return <DataTable title="Subscription History" icon={Briefcase} color="violet"
       //                        cols={["Plan","Price","Start","End","Status"]} rows={subRows} />;
-      // case "clients":      return <CustomTable title="Client History" icon={User} color="emerald"
+      // case "clients":      return <DataTable title="Client History" icon={User} color="emerald"
       //                        cols={["Name","Email","Service","Date","Status"]} rows={clientRows} />;
       // case "leads":        return <LeadManagement />;
       // case "visibility":   return <MarketplaceVisibility />;
