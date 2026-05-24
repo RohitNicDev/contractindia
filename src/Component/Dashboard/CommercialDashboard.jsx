@@ -30,7 +30,7 @@ const NAV = [
   { id: "subscription", label: "Subscription History", icon: Briefcase },
   { id: "clients", label: "Client History", icon: User },
   { id: "leads", label: "Lead Management", icon: List },
-  { id: "services", label: "Service Listing", icon: Briefcase },
+  // { id: "services", label: "Service Listing", icon: Briefcase },
   { id: "settings", label: "Settings", icon: Settings },
 ];
 

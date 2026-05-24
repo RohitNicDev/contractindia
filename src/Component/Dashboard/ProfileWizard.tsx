@@ -16,9 +16,9 @@ const STEPS = [
   { id: 1, label: "Company Type", icon: Building2, desc: "Organisation Structure" },
   { id: 2, label: "Basic Info", icon: User, desc: "Company Details" },
   { id: 3, label: "Registration", icon: FileText, desc: "Compliance & TAX" },
-  { id: 4, label: "Banking Details", icon: CreditCard, desc: "Fintech Settlement" },
-  { id: 5, label: "Documents", icon: Upload, desc: "Verification Files" },
-  { id: 6, label: "Service Listing", icon: Briefcase, desc: "Marketplace Setup" }
+  { id: 4, label: "Documents", icon: Upload, desc: "Verification Files" },
+  { id: 5, label: "Service Listing", icon: Briefcase, desc: "Marketplace Setup" },
+  { id: 6, label: "Banking Details", icon: CreditCard, desc: "Fintech Settlement" },
 ];
 
 export default function ProfileWizard() {
@@ -33,7 +33,7 @@ export default function ProfileWizard() {
     val: ""
   });
   const [otpVal, setOtpVal] = useState("");
-  const [addressSuggestions, setAddressSuggestions] = useState<string[]>([]);
+  // const [addressSuggestions, setAddressSuggestions] = useState<string[]>([]);
   const [addressInput, setAddressInput] = useState("");
   const [serviceSearch, setServiceSearch] = useState("");
 
@@ -94,18 +94,18 @@ export default function ProfileWizard() {
   });
 
   // Address Autocomplete suggestion simulator
-  useEffect(() => {
-    if (addressInput.length > 3) {
-      setAddressSuggestions([
-        `${addressInput}, Connaught Place, New Delhi, 110001`,
-        `${addressInput}, Bandra Kurla Complex, Mumbai, Maharashtra, 400051`,
-        `${addressInput}, Sector 62, Noida, Uttar Pradesh, 201301`,
-        `${addressInput}, Whitefield, Bengaluru, Karnataka, 560066`
-      ]);
-    } else {
-      setAddressSuggestions([]);
-    }
-  }, [addressInput]);
+  // useEffect(() => {
+  //   if (addressInput.length > 3) {
+  //     setAddressSuggestions([
+  //       `${addressInput}, Connaught Place, New Delhi, 110001`,
+  //       `${addressInput}, Bandra Kurla Complex, Mumbai, Maharashtra, 400051`,
+  //       `${addressInput}, Sector 62, Noida, Uttar Pradesh, 201301`,
+  //       `${addressInput}, Whitefield, Bengaluru, Karnataka, 560066`
+  //     ]);
+  //   } else {
+  //     setAddressSuggestions([]);
+  //   }
+  // }, [addressInput]);
 
   // Sync React Hook Form with Zustand on submit
   const onSaveStep2 = (data: typeof store.basicInfo) => {
@@ -466,7 +466,7 @@ export default function ProfileWizard() {
                 onClick={handleSkip}
                 className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold text-xs shadow-[0_4px_12px_rgba(16,185,129,0.3)] shrink-0 flex items-center justify-center gap-1.5 hover:from-emerald-400 hover:to-teal-400 transition-all border border-emerald-300/20"
               >
-                Skip Remaining Steps <ArrowRight className="w-3.5 h-3.5" />
+                Skip  Steps <ArrowRight className="w-3.5 h-3.5" />
               </motion.button>
             )}
           </div>
@@ -587,11 +587,11 @@ export default function ProfileWizard() {
                       })}
                     </div>
 
-                    <div className="flex justify-end gap-3 pt-6 border-t border-white/5 mt-6">
+                    <div className="flex justify-end gap-3 pt-6 border-t border-white/5 mt-6 " >
                       <button
                         onClick={nextStep}
                         disabled={!store.companyType}
-                        className="px-6 py-2.5 rounded-xl bg-linear-to-r from-blue-600 to-purple-600 text-white font-extrabold text-xs shadow-lg disabled:opacity-40 disabled:cursor-not-allowed hover:from-blue-500 hover:to-purple-500 transition-all flex items-center gap-1"
+                        className="px-6 py-2.5 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg text-white font-extrabold text-xs shadow-lg disabled:opacity-40 disabled:cursor-not-allowed hover:from-blue-500 hover:to-purple-500 transition-all flex items-center gap-1"
                       >
                         Save & Continue <ChevronRight className="w-4 h-4" />
                       </button>
@@ -712,7 +712,7 @@ export default function ProfileWizard() {
                             setValueStep2("address", e.target.value);
                           }}
                         />
-                        {addressSuggestions.length > 0 && (
+                        {/* {addressSuggestions.length > 0 && (
                           <div className="absolute top-[100%] left-0 right-0 mt-1 bg-white border border-slate-200 rounded-2xl shadow-xl z-30 max-h-40 overflow-y-auto overflow-hidden">
                             {addressSuggestions.map((s, idx) => (
                               <button
@@ -729,7 +729,7 @@ export default function ProfileWizard() {
                               </button>
                             ))}
                           </div>
-                        )}
+                        )} */}
                       </div>
                     </div>
 
@@ -744,7 +744,7 @@ export default function ProfileWizard() {
                       </button>
                       <button
                         type="submit"
-                        className="px-6 py-2.5 rounded-xl bg-linear-to-r from-blue-600 to-purple-600 text-white font-extrabold text-xs shadow-lg hover:from-blue-500 hover:to-purple-500 transition-all flex items-center gap-1"
+                        className="px-6 py-2.5 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg text-white font-extrabold text-xs shadow-lg disabled:opacity-40 disabled:cursor-not-allowed hover:from-blue-500 hover:to-purple-500 transition-all flex items-center gap-1"
                       >
                         Save & Continue <ChevronRight className="w-4 h-4" />
                       </button>
@@ -844,26 +844,17 @@ export default function ProfileWizard() {
                           />
                         </div>
 
-                        <div className="flex flex-col gap-1.5">
-                          <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">MSME Number</label>
-                          <input
-                            type="text"
-                            placeholder="e.g. UDYAM-MH-01-0012345"
-                            className="bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100/50 text-slate-800 placeholder-slate-400 shadow-sm"
-                            {...registerStep3("msmeNo")}
-                          />
-                        </div>
-
+                       
                         {/* Udyog Aadhaar Toggle */}
                         <div className="flex items-center justify-between py-2 border-t border-slate-100 mt-2">
-                          <span className="text-[11px] font-bold text-slate-600">Udyog Aadhaar / Registration (Y/N)</span>
+                          <span className="text-[11px] font-bold text-slate-600">MSME (Y/N)</span>
                           <Controller
                             control={controlStep3}
                             name="udyogAadhaarToggle"
                             defaultValue={store.registrationDetails.udyogAadhaarToggle}
                             render={({ field }) => (
                               <Switch
-                                checked={field.value}
+                                checked={field.value ?? false}
                                 onChange={(val) => {
                                   field.onChange(val);
                                   setValueStep3("udyogAadhaarToggle", val);
@@ -872,6 +863,17 @@ export default function ProfileWizard() {
                             )}
                           />
                         </div>
+                         {watchStep3("udyogAadhaarToggle") && (
+                          <div className="flex flex-col gap-1.5">
+                            <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Udyog Aadhaar / Registration</label>
+                            <input
+                              type="text"
+                              placeholder="e.g. UDYAM-MH-01-0012345"
+                              className="bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100/50 text-slate-800 placeholder-slate-400 shadow-sm"
+                              {...registerStep3("msmeNo")}
+                            />
+                          </div>)}
+
                       </div>
                     </div>
 
@@ -948,7 +950,7 @@ export default function ProfileWizard() {
                       </button>
                       <button
                         type="submit"
-                        className="px-6 py-2.5 rounded-xl bg-linear-to-r from-blue-600 to-purple-600 text-white font-extrabold text-xs shadow-lg hover:from-blue-500 hover:to-purple-500 transition-all flex items-center gap-1"
+                        className="px-6 py-2.5 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg text-white font-extrabold text-xs shadow-lg disabled:opacity-40 disabled:cursor-not-allowed hover:from-blue-500 hover:to-purple-500 transition-all flex items-center gap-1"
                       >
                         Save & Continue <ChevronRight className="w-4 h-4" />
                       </button>
@@ -957,7 +959,7 @@ export default function ProfileWizard() {
                 )}
 
                 {/* STEP 4: BANKING DETAILS */}
-                {store.currentStep === 4 && (
+                {store.currentStep === 6 && (
                   <form onSubmit={handleSubmitStep4(onSaveStep4)} className="space-y-6">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
 
@@ -1063,7 +1065,7 @@ export default function ProfileWizard() {
                       </button>
                       <button
                         type="submit"
-                        className="px-6 py-2.5 rounded-xl bg-linear-to-r from-blue-600 to-purple-600 text-white font-extrabold text-xs shadow-lg hover:from-blue-500 hover:to-purple-500 transition-all flex items-center gap-1"
+                        className="px-6 py-2.5 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg text-white font-extrabold text-xs shadow-lg disabled:opacity-40 disabled:cursor-not-allowed hover:from-blue-500 hover:to-purple-500 transition-all flex items-center gap-1"
                       >
                         Save & Continue <ChevronRight className="w-4 h-4" />
                       </button>
@@ -1073,7 +1075,7 @@ export default function ProfileWizard() {
                 )}
 
                 {/* STEP 5: DOCUMENT UPLOAD CENTER */}
-                {store.currentStep === 5 && (
+                {store.currentStep === 4 && (
                   <div className="space-y-6">
                     <p className="text-xs text-slate-505 text-slate-500">Upload your commercial validation documents. Each section represents a different compliance category.</p>
 
@@ -1185,7 +1187,7 @@ export default function ProfileWizard() {
                       </button>
                       <button
                         onClick={nextStep}
-                        className="px-6 py-2.5 rounded-xl bg-linear-to-r from-blue-600 to-purple-600 text-white font-extrabold text-xs shadow-lg hover:from-blue-500 hover:to-purple-500 transition-all flex items-center gap-1"
+                        className="px-6 py-2.5 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg text-white font-extrabold text-xs shadow-lg disabled:opacity-40 disabled:cursor-not-allowed hover:from-blue-500 hover:to-purple-500 transition-all flex items-center gap-1"
                       >
                         Save & Continue <ChevronRight className="w-4 h-4" />
                       </button>
@@ -1348,7 +1350,7 @@ export default function ProfileWizard() {
                       </button>
                       <button
                         type="submit"
-                        className="px-6 py-2.5 rounded-xl bg-linear-to-r from-blue-600 to-purple-600 text-white font-extrabold text-xs shadow-lg hover:from-blue-500 hover:to-purple-500 transition-all flex items-center gap-1"
+                        className="px-6 py-2.5 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg text-white font-extrabold text-xs shadow-lg disabled:opacity-40 disabled:cursor-not-allowed hover:from-blue-500 hover:to-purple-500 transition-all flex items-center gap-1"
                       >
                         Save & Continue <ChevronRight className="w-4 h-4" />
                       </button>
@@ -1357,7 +1359,7 @@ export default function ProfileWizard() {
                 )}
 
                 {/* STEP 6: SERVICE LISTING */}
-                {store.currentStep === 6 && (
+                {store.currentStep === 5 && (
                   <div className="space-y-6">
                     <p className="text-xs text-slate-500">List the services you provide. Clients will see these services when browsing the ContractsIndia™ marketplace.</p>
 
@@ -1372,7 +1374,7 @@ export default function ProfileWizard() {
                           <input
                             type="text"
                             placeholder="e.g. Civil Construction Work"
-                            className="bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100/50 text-slate-800 placeholder-slate-400 shadow-sm"
+                            className=" border border-slate-200 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100/50 text-slate-800 placeholder-slate-400 shadow-sm"
                             value={newService.name}
                             onChange={(e) => setNewService(p => ({ ...p, name: e.target.value }))}
                           />
