@@ -360,7 +360,7 @@ export default function ProfileWizard() {
   const strength = getProfileStrength(progress);
 
   return (
-    <div className="min-h-screen text-slate-800 flex flex-col font-sans select-none relative bg-[#020617] overflow-hidden">
+    <div className="min-h-screen text-slate-800 flex flex-col font-sans select-none relative overflow-hidden">
 
       {/* Background neon blobs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
