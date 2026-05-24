@@ -11,8 +11,8 @@ import {
   Trash2, Bell, Search, CircleDot,
 } from "lucide-react";
 import SettingsPanel from "./SettingsPanel";
-// const glassCard = "rounded-2xl bg-white/70 backdrop-blur-xl border border-white/80 shadow-[0_4px_24px_rgba(99,102,241,0.08)]";
-// const btnGrad = { background: "linear-gradient(135deg, #3b82f6, #6366f1)" };
+import ProfileWizard from "./ProfileWizard";
+import { useProfileWizardStore, calculateProgress } from "../../store/profileWizardStore";
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
 const glass = "rounded-2xl bg-white/80 backdrop-blur-xl border border-white/90 shadow-[0_2px_20px_rgba(99,102,241,0.07)]";
@@ -28,19 +28,6 @@ const NAV = [
   { id: "leads",        label: "Lead Management",       icon: List            },
   { id: "services",     label: "Service Listing",       icon: Briefcase       },
   { id: "settings",     label: "Settings",              icon: Settings        },
-  // { id: "Dashboard",      label: "Dashboard",              icon: LayoutDashboard },
-  // { id: "profile",       label: "My Profile",            icon: User            },
-  //  { id: "services",      label: "Service Listing",       icon: Briefcase       },
-  //  { id: "subscription",  label: "Subscription ",  icon: Briefcase       },
-  // { id: "credits",       label: "Add Credits",           icon: CreditCard      },
-  // { id: "payments",      label: "Payment Received",       icon: History         },
- 
-  // { id: "clients",       label: "Client History",        icon: User            },
-  // // { id: "leads",         label: "Lead Management",       icon: List            },
-  // // { id: "visibility",    label: "Marketplace Visibility",icon: Eye },
- 
-  // // { id: "documents",     label: "Documents",             icon: FileText        } ,
-  // { id: "settings",      label: "Settings",              icon: Settings        },
 ];
 
 const ALL_SERVICES = [
@@ -363,7 +350,7 @@ function DocSectionCard({ section, data, dispatch }) {
                     <button type="button" onClick={() => dispatch({ type:"ADD_OTHER", id })}
                       className="flex items-center gap-1 text-[11px] font-bold px-2.5 py-1.5 rounded-lg border"
                       style={{ background:bg, color, borderColor:border }}>
-                      <Plus className="w-3 h-3" /> Add field
+                      <Plus className="w-3.5 h-3.5" /> Add field
                     </button>
                   </div>
                   <div className="space-y-3">
@@ -460,7 +447,7 @@ function Dashboard({ user }) {
                 <s.icon className="h-5 w-5 text-white"/>
               </span>
               <span className={`flex items-center gap-0.5 text-[10px] font-bold px-2 py-0.5 rounded-full ${s.up ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-500"}`}>
-                <ArrowUpRight className={`w-3 h-3 ${!s.up && "rotate-90"}`}/>{s.up?"+":""}
+                <ArrowUpRight className={`w-3.5 h-3.5 ${!s.up && "rotate-90"}`}/>{s.up?"+":""}
               </span>
             </div>
             <p className="text-[10.5px] font-semibold uppercase tracking-wide text-slate-400">{s.label}</p>
@@ -841,48 +828,6 @@ function ServiceListing() {
   );
 }
 
-// ─── Documents ────────────────────────────────────────────────────────────────
-const DOCUMENT_CATEGORIES = {
-  "Business Registration": [
-    "GST Certificate",  "Trade Licence", "Certificate of Incorporation", "Udyog Aadhar", "Trade Licence","Registered/Notarized Trust Deed", "Shop Act Registration",
-  ],
-  "Identity & Address": [
-    "Proof of Identity", "Proof of Address", "PAN Card", "Passport", "Driving License",
-  ],
-  "Compliance Certificates": [
-    "Bank Certificate",  "Import Export Certificate",
-  ],
-  "Company Profile": [
-      "Company Profile", "Brochure",  
-  ],
-};
-
-function DocumentUploader({ label, files = [], onChange }) {
-  return (
-    <div>
-      <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-1.5">{label}</label>
-      <label className="flex flex-col items-center justify-center gap-1 border-2 border-dashed border-blue-200 rounded-2xl p-4 cursor-pointer hover:border-blue-400 bg-blue-50/30 transition-all min-h-[108px]">
-        <Upload className="w-5 h-5 text-blue-400" />
-        <span className="text-xs text-slate-500 text-center">{files.length ? `${files.length} file(s) selected` : "Drag & drop or click to upload"}</span>
-        {files.length ? <span className="text-[10px] text-emerald-600 font-semibold">✓ Ready to submit</span> : null}
-        <input type="file" className="hidden" multiple onChange={e => onChange(Array.from(e.target.files))} />
-      </label>
-      {files.length > 0 && (
-        <ul className="mt-3 max-h-28 overflow-y-auto text-[11px] text-slate-500 space-y-1">
-          {files.map((file, idx) => (
-            <li key={`${file.name}-${idx}`} className="truncate">• {file.name}</li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-}
-
-// function Documents() {
-//   const raw = localStorage.getItem("commercial_user_v1");
-//   const storedUser = raw ? JSON.parse(raw) : {};
-//   const [step, setStep] = useState(1);
-//   const [profile, setProfile] = useState({
 //     companyName: storedUser.companyName || "",
 //     contactPerson: storedUser.contactPerson || "",
 //     email: storedUser.email || "",
@@ -1081,6 +1026,10 @@ function DocumentUploader({ label, files = [], onChange }) {
 
 export default function CommercialDashboard() {
   const navigate = useNavigate();
+  const store = useProfileWizardStore();
+  const progress = calculateProgress(store);
+  const isLocked = progress < 80 && !store.isSkipped;
+
   const raw = localStorage.getItem("commercial_user_v1");
   const [user, setUser] = useState(raw ? JSON.parse(raw) : {
     companyName:"Demo Company", contactPerson:"Demo User",
@@ -1089,10 +1038,17 @@ export default function CommercialDashboard() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [gstNumber, setGstNumber] = useState(() => localStorage.getItem("commercial_gst_v1") || "");
-  const [showGstModal, setShowGstModal] = useState(() => !localStorage.getItem("commercial_gst_v1"));
+  const [showGstModal, setShowGstModal] = useState(() => !localStorage.getItem("commercial_gst_v1") && !isLocked);
 
   const initials = (user.companyName || user.contactPerson || "C")
     .split(" ").map(n => n[0]).join("").slice(0,2).toUpperCase();
+
+  // Force profile tab if locked
+  useEffect(() => {
+    if (isLocked) {
+      setActiveTab("profile");
+    }
+  }, [isLocked]);
 
   const handleSignOut = () => {
     localStorage.removeItem("commercial_user_v1");
@@ -1103,6 +1059,7 @@ export default function CommercialDashboard() {
     localStorage.removeItem("individual_user_v1");
     localStorage.removeItem("admin_auth_v1");
     localStorage.removeItem("commercial_gst_v1");
+    store.resetStore();
     window.dispatchEvent(new Event("auth_changed"));
     navigate("/login");
   };
@@ -1140,9 +1097,12 @@ export default function CommercialDashboard() {
   ];
 
   const renderContent = () => {
+    if (isLocked) {
+      return <ProfileWizard />;
+    }
     switch (activeTab) {
       case "dashboard":    return <Dashboard user={user}/>;
-      case "profile":      return <Documents/>;
+      case "profile":      return <ProfileWizard/>;
       case "credits":      return <AddCredits/>;
       case "payments":     return <DataTable title="Payment History" icon={History} accent="blue" cols={["Txn ID","Amount","Type","Date","Status"]} rows={payRows}/>;
       case "subscription": return <DataTable title="Subscription History" icon={Briefcase} accent="violet" cols={["Plan","Price","Start","End","Status"]} rows={subRows}/>;
@@ -1151,80 +1111,70 @@ export default function CommercialDashboard() {
       case "services":     return <ServiceListing/>;
       case "settings":     return <SettingsPanel/>;
       default:             return <Dashboard user={user}/>;
-      // case "Dashboard":     return <Dashboard user={user} />;
-      // // case "profile":      return <MyProfile user={user} onUpdate={setUser} />;
-      // case "profile":      return <Documents />;
-      // case "credits":      return <AddCredits />;
-      // case "payments":     return <DataTable title="Payment Received" icon={History} color="blue"
-      //                        cols={["Txn ID","Amount","Type","Date","Status"]} rows={payRows} />;
-      // case "subscription": return <DataTable title="Subscription History" icon={Briefcase} color="violet"
-      //                        cols={["Plan","Price","Start","End","Status"]} rows={subRows} />;
-      // case "clients":      return <DataTable title="Client History" icon={User} color="emerald"
-      //                        cols={["Name","Email","Service","Date","Status"]} rows={clientRows} />;
-      // case "leads":        return <LeadManagement />;
-      // case "visibility":   return <MarketplaceVisibility />;
-      // case "services":     return <ServiceListing />;
-      // // case "documents":    return <Documents />;
-      // case "settings":     return <SettingsPanel user={user} />;
-      // default:             return <Dashboard user={user} />;
     }
   };
 
+  // If locked, render fullscreen ProfileWizard onboarding layout directly
+  if (isLocked) {
+    return <ProfileWizard />;
+  }
+
+  const visibleNav = isLocked ? NAV.filter(n => n.id === "profile") : NAV;
   return (
-    <div className="flex h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/20 to-indigo-50/10">
+    <div className="flex h-screen overflow-hidden bg-[#020617] text-white">
 
       {/* Ambient blobs */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-        <div className="absolute -left-40 -top-20 h-[500px] w-[500px] rounded-full bg-blue-400/8 blur-[120px]"/>
-        <div className="absolute right-[-80px] top-[30%] h-[400px] w-[400px] rounded-full bg-indigo-400/8 blur-[120px]"/>
-        <div className="absolute bottom-[-60px] left-[30%] h-[300px] w-[300px] rounded-full bg-violet-300/6 blur-[100px]"/>
+        <div className="absolute -left-40 -top-20 h-[500px] w-[500px] rounded-full bg-blue-500/10 blur-[120px]"/>
+        <div className="absolute right-[-80px] top-[30%] h-[400px] w-[400px] rounded-full bg-indigo-500/10 blur-[120px]"/>
+        <div className="absolute bottom-[-60px] left-[30%] h-[300px] w-[300px] rounded-full bg-violet-500/5 blur-[100px]"/>
       </div>
 
       {/* Mobile overlay */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}
-            className="fixed inset-0 z-40 bg-slate-900/20 backdrop-blur-sm lg:hidden"
+            className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm lg:hidden"
             onClick={() => setMobileOpen(false)}/>
         )}
       </AnimatePresence>
 
       {/* ── Sidebar ── */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex flex-col bg-white/90 backdrop-blur-2xl border-r border-slate-200/60 shadow-[4px_0_24px_rgba(59,130,246,0.05)] lg:relative transition-transform duration-300 ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
+        className={`fixed inset-y-0 left-0 z-50 flex flex-col bg-slate-950/80 backdrop-blur-2xl border-r border-white/5 shadow-[4px_0_24px_rgba(0,0,0,0.5)] lg:relative transition-transform duration-300 ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
         style={{ width:"15rem" }}>
 
         {/* Logo / user */}
-        <div className="flex h-16 items-center gap-3 border-b border-slate-100 px-4">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-sm font-black text-white shadow-md shrink-0">
+        <div className="flex h-16 items-center gap-3 border-b border-white/5 px-4 bg-slate-950/20">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 text-sm font-black text-white shadow-lg shrink-0">
             {initials}
           </div>
           <div className="min-w-0">
-            <p className="text-[13px] font-bold text-slate-900 truncate">{user.companyName||user.contactPerson}</p>
-            <p className="text-[10px] text-blue-500 font-semibold">Commercial Account</p>
+            <p className="text-[13px] font-bold text-white truncate">{user.companyName||user.contactPerson}</p>
+            <p className="text-[10px] text-blue-400 font-semibold">Commercial Partner</p>
           </div>
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 overflow-y-auto py-4 px-2.5 space-y-0.5">
-          {NAV.map(({ id, label, icon:Icon }) => (
+        <nav className="flex-1 overflow-y-auto py-4 px-2.5 space-y-0.5 [scrollbar-width:none]">
+          {visibleNav.map(({ id, label, icon:Icon }) => (
             <button key={id} onClick={() => { setActiveTab(id); setMobileOpen(false); }}
               className={`w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all ${
                 activeTab===id
-                  ? "bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border border-blue-100/80 shadow-sm"
-                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+                  ? "bg-white/5 text-blue-400 border border-white/10 shadow-inner"
+                  : "text-slate-400 hover:bg-white/5 hover:text-slate-200"
               }`}>
               <Icon className="h-4 w-4 shrink-0"/>
               <span className="truncate">{label}</span>
-              {activeTab===id && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0"/>}
+              {activeTab===id && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0" />}
             </button>
           ))}
         </nav>
 
         {/* Sign out */}
-        <div className="border-t border-slate-100 p-3">
+        <div className="border-t border-white/5 p-3">
           <button onClick={handleSignOut}
-            className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-semibold text-slate-500 hover:bg-red-50 hover:text-red-500 transition-all">
+            className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-semibold text-slate-400 hover:bg-red-950/30 hover:text-red-400 transition-all">
             <LogOut className="h-4 w-4"/> Sign out
           </button>
         </div>
@@ -1234,32 +1184,32 @@ export default function CommercialDashboard() {
       <div className="relative z-10 flex flex-1 flex-col overflow-hidden">
 
         {/* Header */}
-        <header className="flex h-16 items-center gap-4 bg-white/80 backdrop-blur-xl border-b border-slate-200/60 px-4 sm:px-6 shrink-0">
-          <button className="lg:hidden rounded-xl border border-slate-200 bg-white p-2 text-slate-500 hover:bg-slate-50"
+        <header className="flex h-16 items-center gap-4 bg-slate-950/50 backdrop-blur-xl border-b border-white/5 px-4 sm:px-6 shrink-0">
+          <button className="lg:hidden rounded-xl border border-white/5 bg-slate-900 p-2 text-slate-400 hover:bg-white/5"
             onClick={() => setMobileOpen(o => !o)}>
             {mobileOpen ? <X className="h-4 w-4"/> : <Menu className="h-4 w-4"/>}
           </button>
 
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full bg-blue-500"/>
-            <h2 className="text-sm font-bold text-slate-700">
-              {NAV.find(n => n.id===activeTab)?.label || "Dashboard"}
+            <h2 className="text-sm font-bold text-slate-200">
+              {visibleNav.find(n => n.id===activeTab)?.label || "Dashboard"}
             </h2>
           </div>
 
           <div className="ml-auto flex items-center gap-2">
-            <button className="relative p-2 rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 transition-colors">
+            <button className="relative p-2 rounded-xl border border-white/5 bg-slate-900 text-slate-400 hover:bg-white/5 transition-colors">
               <Bell className="h-4 w-4"/>
               <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-400"/>
             </button>
-            <span className="hidden sm:flex items-center gap-2 rounded-xl border border-blue-100 bg-blue-50/60 px-3 py-1.5 text-xs font-bold text-blue-700">
-              <Zap className="h-3.5 w-3.5"/> Commercial
+            <span className="hidden sm:flex items-center gap-2 rounded-xl border border-blue-500/20 bg-blue-950/30 px-3 py-1.5 text-xs font-bold text-blue-400">
+              <Zap className="h-3.5 w-3.5"/> Commercial Partner
             </span>
           </div>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-950/20">
           <AnimatePresence mode="wait">
             <motion.div key={activeTab}
               initial={{ opacity:0, y:10 }}
@@ -1274,9 +1224,9 @@ export default function CommercialDashboard() {
 
       {showGstModal && (
         <div className="fixed inset-0 z-[1000] bg-slate-950/85 flex items-center justify-center px-4 py-6">
-          <div className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl">
-            {/* <h2 className="text-xl font-black text-slate-900 mb-3">GST Number Required</h2>
-            <p className="text-sm text-slate-500 mb-6">
+          <div className="w-full max-w-lg rounded-3xl bg-slate-900 p-6 shadow-2xl border border-white/10">
+            {/* <h2 className="text-xl font-black text-white mb-3">GST Number Required</h2>
+            <p className="text-sm text-slate-400 mb-6">
               Please enter your GST number before using the commercial dashboard. This dialog cannot be closed until the field is completed.
             </p> */}
             <label className="block text-xs font-bold uppercase tracking-[0.24em] text-slate-400 mb-2">
@@ -1286,7 +1236,7 @@ export default function CommercialDashboard() {
               value={gstNumber}
               onChange={e => setGstNumber(e.target.value.toUpperCase())}
               placeholder="Enter GST number"
-              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+              className="w-full rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-sm text-white outline-none focus:border-blue-500"
             />
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
               <button
