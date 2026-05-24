@@ -370,7 +370,7 @@ export default function ProfileWizard() {
       </div>
 
       {/* Progress bar at the very top */}
-      <div className="h-1.5 w-full bg-slate-950/40 shrink-0 relative z-20">
+      <div className="h-1.5 w-full bg-slate-50/40 shrink-0 relative z-20">
         <motion.div
           className="h-full bg-linear-to-r from-blue-500 via-purple-500 to-cyan-400 shadow-[0_0_12px_rgba(56,189,248,0.5)]"
           initial={{ width: 0 }}
@@ -380,7 +380,7 @@ export default function ProfileWizard() {
       </div>
 
       {/* Top Header Section */}
-      <header className="relative z-10 border-b border-white/5 bg-slate-950/50 backdrop-blur-xl px-6 py-4 flex items-center justify-between shrink-0">
+      <header className="relative z-10 border-b border-white/5 bg-slate-50/50 backdrop-blur-xl px-6 py-4 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
           <div className="relative">
             <div className="absolute inset-0 bg-blue-500/20 rounded-xl blur-md" />
@@ -393,7 +393,7 @@ export default function ProfileWizard() {
               <span className="text-[10px] uppercase font-bold tracking-widest text-blue-400">ContractsIndia™</span>
               <span className="text-[10px] bg-white/5 px-2 py-0.5 rounded-full text-slate-400 border border-white/10 font-mono">v1.4</span>
             </div>
-            <h1 className="text-base font-extrabold text-white tracking-tight">Profile Onboarding Wizard</h1>
+            <h1 className="text-base font-extrabold  font-extrabold text-slate-800 tracking-tight ">Profile Onboarding Wizard</h1>
           </div>
         </div>
 
@@ -455,7 +455,7 @@ export default function ProfileWizard() {
                 </span>
               </div>
               <p className="text-xs text-slate-500 mt-1 max-w-xl">
-                Please complete your enterprise profile verification to publish your listings and bid on live contracts. Complete 45% to open all dashboard features.
+                Please complete your enterprise profile verification to publish your listings . Complete 45% to open all dashboard features.
               </p>
             </div>
 

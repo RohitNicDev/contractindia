@@ -2071,47 +2071,48 @@ export default function CommercialDashboard() {
 
   const visibleNav = isLocked ? NAV.filter(n => n.id === "profile") : NAV;
   return (
+    // <div className="flex h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/20 to-indigo-50/10">
     <div className="flex h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/20 to-indigo-50/10">
 
       {/* Ambient blobs */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-        <div className="absolute -left-40 -top-20 h-[500px] w-[500px] rounded-full bg-blue-500/10 blur-[120px]" />
-        <div className="absolute right-[-80px] top-[30%] h-[400px] w-[400px] rounded-full bg-indigo-500/10 blur-[120px]" />
-        <div className="absolute bottom-[-60px] left-[30%] h-[300px] w-[300px] rounded-full bg-violet-500/5 blur-[100px]" />
+        <div className="absolute -left-40 -top-20 h-[500px] w-[500px] rounded-full bg-blue-400/8 blur-[120px]" />
+        <div className="absolute right-[-80px] top-[30%] h-[400px] w-[400px] rounded-full bg-indigo-400/8 blur-[120px]" />
+        <div className="absolute bottom-[-60px] left-[30%] h-[300px] w-[300px] rounded-full bg-violet-300/6 blur-[100px]" />
       </div>
 
       {/* Mobile overlay */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm lg:hidden"
+            className="fixed inset-0 z-40 bg-slate-900/20 backdrop-blur-sm lg:hidden"
             onClick={() => setMobileOpen(false)} />
         )}
       </AnimatePresence>
 
       {/* ── Sidebar ── */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex flex-col bg-slate-950/80 backdrop-blur-2xl border-r border-white/5 shadow-[4px_0_24px_rgba(0,0,0,0.5)] lg:relative transition-transform duration-300 ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
+        className={`fixed inset-y-0 left-0 z-50 flex flex-col bg-white/90 backdrop-blur-2xl border-r border-slate-200/60 shadow-[4px_0_24px_rgba(59,130,246,0.05)] lg:relative transition-transform duration-300 ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
         style={{ width: "15rem" }}>
 
         {/* Logo / user */}
-        <div className="flex h-16 items-center gap-3 border-b border-white/5 px-4 bg-slate-950/20">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 text-sm font-black text-white shadow-lg shrink-0">
+        <div className="flex h-16 items-center gap-3 border-b border-slate-100 px-4">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-sm font-black text-white shadow-md shrink-0">
             {initials}
           </div>
           <div className="min-w-0">
-            <p className="text-[13px] font-bold text-white truncate">{user.companyName || user.contactPerson}</p>
-            <p className="text-[10px] text-blue-400 font-semibold">Commercial Partner</p>
+            <p className="text-[13px] font-bold text-slate-900 truncate">{user.companyName || user.contactPerson}</p>
+            <p className="text-[10px] text-blue-500 font-semibold">Commercial Account</p>
           </div>
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 overflow-y-auto py-4 px-2.5 space-y-0.5 [scrollbar-width:none]">
-          {visibleNav.map(({ id, label, icon: Icon }) => (
+        <nav className="flex-1 overflow-y-auto py-4 px-2.5 space-y-0.5">
+          {NAV.map(({ id, label, icon: Icon }) => (
             <button key={id} onClick={() => { setActiveTab(id); setMobileOpen(false); }}
               className={`w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all ${activeTab === id
-                ? "bg-white/5 text-blue-400 border border-white/10 shadow-inner"
-                : "text-slate-400 hover:bg-white/5 hover:text-slate-200"
+                  ? "bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border border-blue-100/80 shadow-sm"
+                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
                 }`}>
               <Icon className="h-4 w-4 shrink-0" />
               <span className="truncate">{label}</span>
@@ -2121,44 +2122,45 @@ export default function CommercialDashboard() {
         </nav>
 
         {/* Sign out */}
-        <div className="border-t border-white/5 p-3">
+        <div className="border-t border-slate-100 p-3">
           <button onClick={handleSignOut}
-            className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-semibold text-slate-400 hover:bg-red-950/30 hover:text-red-400 transition-all">
+            className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-semibold text-slate-500 hover:bg-red-50 hover:text-red-500 transition-all">
             <LogOut className="h-4 w-4" /> Sign out
           </button>
         </div>
       </aside>
 
       {/* ── Main area ── */}
+      {/* ── Main area ── */}
       <div className="relative z-10 flex flex-1 flex-col overflow-hidden">
 
         {/* Header */}
-        <header className="flex h-16 items-center gap-4 bg-slate-950/50 backdrop-blur-xl border-b border-white/5 px-4 sm:px-6 shrink-0">
-          <button className="lg:hidden rounded-xl border border-white/5 bg-slate-900 p-2 text-slate-400 hover:bg-white/5"
+        <header className="flex h-16 items-center gap-4 bg-white/80 backdrop-blur-xl border-b border-slate-200/60 px-4 sm:px-6 shrink-0">
+          <button className="lg:hidden rounded-xl border border-slate-200 bg-white p-2 text-slate-500 hover:bg-slate-50"
             onClick={() => setMobileOpen(o => !o)}>
             {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
 
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-            <h2 className="text-sm font-bold text-slate-200">
-              {visibleNav.find(n => n.id === activeTab)?.label || "Dashboard"}
+            <h2 className="text-sm font-bold text-slate-700">
+              {NAV.find(n => n.id === activeTab)?.label || "Dashboard"}
             </h2>
           </div>
 
           <div className="ml-auto flex items-center gap-2">
-            <button className="relative p-2 rounded-xl border border-white/5 bg-slate-900 text-slate-400 hover:bg-white/5 transition-colors">
+            <button className="relative p-2 rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 transition-colors">
               <Bell className="h-4 w-4" />
               <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-400" />
             </button>
-            <span className="hidden sm:flex items-center gap-2 rounded-xl border border-blue-500/20 bg-blue-950/30 px-3 py-1.5 text-xs font-bold text-blue-400">
-              <Zap className="h-3.5 w-3.5" /> Commercial Partner
+            <span className="hidden sm:flex items-center gap-2 rounded-xl border border-blue-100 bg-blue-50/60 px-3 py-1.5 text-xs font-bold text-blue-700">
+              <Zap className="h-3.5 w-3.5" /> Commercial
             </span>
           </div>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-950/20">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6">
           <AnimatePresence mode="wait">
             <motion.div key={activeTab}
               initial={{ opacity: 0, y: 10 }}
