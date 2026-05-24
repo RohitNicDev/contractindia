@@ -46,17 +46,70 @@ export function LoginForm() {
   };
 
   const onSubmit = (data: LoginValues) => {
-    console.log(data);
+    // Admin shortcut: allow admin@gmail.com to log in without password lookup
+    if (data.email === "admin@gmail.com") {
+      if (data.captcha.trim() !== captcha.answer) {
+        toast.error("Invalid captcha answer.");
+        return;
+      }
 
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem(
+        "login_mock_v1",
+        JSON.stringify({
+          email: data.email,
+          remember: data.remember,
+          userType: "admin",
+        })
+      );
+      window.dispatchEvent(new Event("auth_changed"));
+      toast.success("Successfully logged in as admin.");
+      navigate("/admin/dashboard");
+      return;
+    }
+
+    // Validate credentials against saved registration data
+    const savedCredentials = localStorage.getItem(
+      "user_credentials_" + data.email
+    );
+
+    if (!savedCredentials) {
+      toast.error("Email not registered. Please register first.");
+      return;
+    }
+
+    const userAccount = JSON.parse(savedCredentials);
+
+    // Verify password
+    if (userAccount.password !== data.password) {
+      toast.error("Invalid email or password.");
+      return;
+    }
+
+    // Validate captcha
+    if (data.captcha.trim() !== captcha.answer) {
+      toast.error("Invalid captcha answer.");
+      return;
+    }
+
+    // Login successful - save user info with userType flag
     localStorage.setItem("isLoggedIn", "true");
     localStorage.setItem(
       "login_mock_v1",
-      JSON.stringify({ email: data.email, remember: data.remember }),
+      JSON.stringify({
+        email: data.email,
+        remember: data.remember,
+        userType: userAccount.userType,
+      })
     );
     window.dispatchEvent(new Event("auth_changed")); // Alert other components
     toast.success("Successfully logged in.");
     navigate("/otp", {
-      state: { singleVrification: true, email: data.email },
+      state: {
+        singleVerification: true,
+        email: data.email,
+        userType: userAccount.userType,
+      },
     });
   };
 

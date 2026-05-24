@@ -355,9 +355,14 @@ const menuItems = [
                       </div>
 
                       
-                      <button className="w-full bg-slate-900 hover:bg-blue-600 text-white py-2 rounded-xl text-[11px] font-bold transition-all transform active:scale-95 shadow-sm">
-                        View Details
-                      </button>
+                    <div className="flex gap-2">
+                        <button className="flex-1 bg-slate-900 hover:bg-blue-600 text-white py-2 rounded-xl text-[11px] font-bold transition-all transform active:scale-95 shadow-sm">
+                          View Details
+                        </button>
+                        <a href={`tel:${item.phone || "+911234567890"}`} className="flex-1 inline-flex items-center justify-center gap-2 border border-emerald-200 text-emerald-700 py-2 rounded-xl text-[11px] font-bold bg-white hover:bg-emerald-50 transition-all">
+                          <PhoneCall className="w-4 h-4" /> Call Leter
+                        </a>
+                      </div>
                     </div>
                   </motion.div>
                 ))}

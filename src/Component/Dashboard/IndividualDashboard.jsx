@@ -527,12 +527,16 @@ export default function IndividualDashboard() {
   const [user, setUser] = useState(rawUser ? JSON.parse(rawUser) : { name: "Demo User", email: "demo@example.com", mobile: "9876543210" });
 
   const initials = (user.name || "U").split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase();
-
+console.log(rawUser)
   const handleSignOut = () => {
     localStorage.removeItem("individual_user_v1");
     localStorage.removeItem("login_mock_v1");
-            localStorage.setItem("isLoggedIn", false);
-
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("otp_verified_v1");
+    localStorage.removeItem("registration_form_v1");
+    localStorage.removeItem("commercial_user_v1");
+    localStorage.removeItem("admin_auth_v1");
+    window.dispatchEvent(new Event("auth_changed"));
     navigate("/login");
   };
 

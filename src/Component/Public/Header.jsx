@@ -156,6 +156,24 @@ const Header = () => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("login_mock_v1") || "{}");
 
+  const goToDashboard = () => {
+    const userType = user?.userType;
+    if (userType === "commercial") {
+      navigate("/commercial/dashboard");
+      return;
+    }
+    if (userType === "individual") {
+      navigate("/individual/dashboard");
+      return;
+    }
+    if (user.email === "admin@gmail.com" || userType === "admin") {
+      navigate("/admin/dashboard");
+      return;
+    }
+    // Fallback route
+    navigate("/home");
+  };
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
@@ -324,16 +342,7 @@ const Header = () => {
                   <Button
                     type="primary"
                     className="!bg-[#162646] !rounded-lg !h-8 sm:!h-10 !px-4 sm:!px-6 !font-bold flex items-center gap-2"
-                    onClick={() =>
-                      // console.log(user)
-                      user.email === "commercial@gmail.com"
-                        ? navigate("/commercial/dashboard")
-                        : user.email === "individual@gmail.com"
-                          ? navigate("/individual/dashboard")
-                          : user.email === "admin@gmail.com"
-                            ? navigate("/admin/dashboard")
-                            : navigate("/home")
-                    }
+                      onClick={goToDashboard}
                   >
                     <Layout size={14} />
                     <span className="text-xs sm:text-sm">Dashboard</span>
@@ -568,7 +577,7 @@ const Header = () => {
                   className="!bg-[#162646] !rounded-xl flex items-center justify-center gap-2"
                   onClick={() => {
                     setIsDrawerOpen(false);
-                    navigate("/dashboard");
+                    goToDashboard();
                   }}
                 >
                   <Layout size={18} />

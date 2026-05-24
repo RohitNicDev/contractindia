@@ -19,9 +19,31 @@ export default function CommercialRegister() {
   const [showPass, setShowPass] = useState(false);
   const [mobileOtp, setMobileOtp] = useState("");
   const [emailOtp, setEmailOtp] = useState("");
-  const [form, setForm] = useState({
-    companyName: "", contactPersonName: "", email: "",
-    mobile1: "", mobile2: "", password: "", businessType: "",
+  const [form, setForm] = useState(() => {
+    const stored = localStorage.getItem("commercial_user_v1");
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      return {
+        companyName: parsed.companyName || "",
+        contactPersonName: parsed.contactPersonName || "",
+        email: parsed.email || "",
+        mobile1: parsed.mobile || "",
+        mobile2: parsed.mobile2 || "",
+        password: parsed.password || "",
+        businessType: parsed.businessType || "",
+        address: parsed.address || "",
+      };
+    }
+    return {
+      companyName: "",
+      contactPersonName: "",
+      email: "",
+      mobile1: "",
+      mobile2: "",
+      password: "",
+      businessType: "",
+      address: "",
+    };
   });
   const [errors, setErrors] = useState({});
 
@@ -34,6 +56,7 @@ export default function CommercialRegister() {
     if (!form.email.match(/^\S+@\S+\.\S+$/)) e.email = "Valid email required";
     if (!form.mobile1.match(/^[0-9]{10}$/)) e.mobile1 = "10-digit mobile required";
     if (form.mobile2 && !form.mobile2.match(/^[0-9]{10}$/)) e.mobile2 = "10-digit mobile required";
+    if (!form.address.trim()) e.address = "Address required";
     if (form.password.length < 6) e.password = "Min 6 characters";
     if (!form.businessType) e.businessType = "Select business type";
     setErrors(e);
@@ -55,7 +78,18 @@ export default function CommercialRegister() {
 
   const verifyEmail = () => {
     if (emailOtp.length !== 6) { toast.error("Enter 6-digit OTP"); return; }
-    localStorage.setItem("commercial_user_v1", JSON.stringify({ ...form, userType: "commercial", verified: true }));
+    localStorage.setItem("commercial_user_v1", JSON.stringify({
+      companyName: form.companyName,
+      contactPersonName: form.contactPersonName,
+      email: form.email,
+      mobile: form.mobile1,
+      mobile2: form.mobile2,
+      address: form.address,
+      password: form.password,
+      businessType: form.businessType,
+      userType: "commercial",
+      verified: true,
+    }));
     toast.success("Account verified! Redirecting to Commercial Dashboard…");
     setTimeout(() => navigate("/commercial/dashboard"), 900);
   };
@@ -160,6 +194,15 @@ export default function CommercialRegister() {
                       </div>
                       {errors.mobile2 && <p className="text-xs text-red-500 mt-0.5">{errors.mobile2}</p>}
                     </div>
+                  </div>
+
+                  {/* Address */}
+                  <div>
+                    <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-1">Address *</label>
+                    <textarea value={form.address} onChange={e => set("address", e.target.value)}
+                      placeholder="Company address" rows={2}
+                      className={`${inputCls("address")} resize-none`} />
+                    {errors.address && <p className="text-xs text-red-500 mt-0.5">{errors.address}</p>}
                   </div>
 
                   {/* Business Type */}

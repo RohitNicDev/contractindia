@@ -126,7 +126,7 @@ const AboutUs = () => {
                 ContractsIndia™
               </h4>
 
-              <div className="w-15 h-1 bg-[#28354D] rounded-full"></div>
+              <div className="w-[60px] h-1 bg-[#28354D] rounded-full"></div>
             </div>
 
             {/* CONTENT */}

@@ -1,17 +1,18 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 
 const cats = [
-  { name: "Consulting Services",          image: "https://5.imimg.com/data5/SELLER/Default/2021/10/JB/EA/LS/8271659/civil-engineering-consultant-service.jpg",                                                                                                count: "2,840 Companies" },
-  { name: "Contractor Services",          image: "https://5.imimg.com/data5/SELLER/Default/2024/7/433106499/MX/HO/RU/57976404/civil-construction-contractor-service.jpg",                                                                                    count: "1,230 Firms"     },
-  { name: "Tender Services",              image: "https://5.imimg.com/data5/SELLER/Default/2026/3/588860952/XX/AP/XV/257074973/civil-engineering-services-500x500.jpg",                                                                                       count: "4,200 Designers" },
-  { name: "Assets Management",            image: "https://www.ice.org.uk/media/4uqp5eho/guiding-principles-of-asset-management-realising-a-world-class-infrastructure.jpg",                                                                                   count: "2,600 Firms"     },
-  { name: "Legal Contracts Services",     image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxKIwcO2VCrmiZ-GbLOYc8OwDjYe_y5DEugA&s",                                                                                                           count: "1,900 Projects"  },
-  { name: "Procurement Services",         image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbIAl1Kayn3rgdtNTg3qsEXS8JGKFqGVIr6w&s",                                                                                                           count: "980 Providers"   },
-  { name: "Brand Development Management", image: "https://cdn.thebrandingjournal.com/wp-content/uploads/2024/02/Branding-Process-The-Branding-Journal-1024x704.png",                                                                                         count: "2,200 Vendors"   },
-  { name: "Marketing Management",         image: "https://media.geeksforgeeks.org/wp-content/uploads/20240222165724/marketing-management-copy.webp",                                                                                                          count: "620 Experts"     },
-  { name: "Construction Audit",           image: "https://prosoftnet.com/cdn/shop/articles/6-ways-land-surveying-shapes-infrastructure-planning.jpg?v=1705445625",                                                                                            count: "620 Experts"     },
+  { name: "Consulting Services",          image: "https://5.imimg.com/data5/SELLER/Default/2021/10/JB/EA/LS/8271659/civil-engineering-consultant-service.jpg",                                                                                                count: "2,840 Companies", link: "/services/consulting" },
+  { name: "Contractor Services",          image: "https://5.imimg.com/data5/SELLER/Default/2024/7/433106499/MX/HO/RU/57976404/civil-construction-contractor-service.jpg",                                                                                    count: "1,230 Firms", link: "/services/contractor" },
+  { name: "Tender Services",              image: "https://5.imimg.com/data5/SELLER/Default/2026/3/588860952/XX/AP/XV/257074973/civil-engineering-services-500x500.jpg",                                                                                       count: "4,200 Designers", link: "/services/tender" },
+  { name: "Assets Management",            image: "https://www.ice.org.uk/media/4uqp5eho/guiding-principles-of-asset-management-realising-a-world-class-infrastructure.jpg",                                                                                   count: "2,600 Firms", link: "/services/assets-management" },
+  { name: "Legal Contracts Services",     image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxKIwcO2VCrmiZ-GbLOYc8OwDjYe_y5DEugA&s",                                                                                                           count: "1,900 Projects", link: "/services/legal-contracts" },
+  { name: "Procurement Services",         image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbIAl1Kayn3rgdtNTg3qsEXS8JGKFqGVIr6w&s",                                                                                                           count: "980 Providers", link: "/services/material-supply" },
+  { name: "Brand Development Management", image: "https://cdn.thebrandingjournal.com/wp-content/uploads/2024/02/Branding-Process-The-Branding-Journal-1024x704.png",                                                                                         count: "2,200 Vendors", link: "/services/brand-development" },
+  { name: "Marketing Management",         image: "https://media.geeksforgeeks.org/wp-content/uploads/20240222165724/marketing-management-copy.webp",                                                                                                          count: "620 Experts", link: "/services/marketing" },
+  { name: "Construction Audit",           image: "https://prosoftnet.com/cdn/shop/articles/6-ways-land-surveying-shapes-infrastructure-planning.jpg?v=1705445625",                                                                                            count: "620 Experts", link: "/services/contraction-audit" },
 ];
 
 const valueItems = [
@@ -138,16 +139,15 @@ export function Categories() {
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {visibleCats.map((c, index) => (
-            <motion.a
-              key={index}
-              href="#"
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.06, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              viewport={{ once: true }}
-              whileHover={{ y: -7, transition: { duration: 0.25 } }}
-              className="group relative flex flex-col bg-white rounded-2xl overflow-hidden border border-slate-200/80 hover:border-indigo-300 shadow-sm hover:shadow-2xl transition-all duration-400"
-            >
+            <Link key={index} to={c.link} className="group relative flex flex-col bg-white rounded-2xl overflow-hidden border border-slate-200/80 hover:border-indigo-300 shadow-sm hover:shadow-2xl transition-all duration-400">
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.06, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                viewport={{ once: true }}
+                whileHover={{ y: -7, transition: { duration: 0.25 } }}
+                className="h-full"
+              >
               {/* Image */}
               <div className="relative h-36 overflow-hidden">
                 <img
@@ -180,7 +180,8 @@ export function Categories() {
 
               {/* Bottom accent line */}
               <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-blue-500 to-indigo-500 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-400" />
-            </motion.a>
+            </motion.div>
+            </Link>
           ))}
         </div>
       </div>

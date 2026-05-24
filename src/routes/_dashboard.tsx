@@ -41,7 +41,13 @@ export default function DashboardLayout() {
 
   const handleSignOut = () => {
     localStorage.removeItem("login_mock_v1");
-    localStorage.removeItem("otp_mock_verified_v1");
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("otp_verified_v1");
+    localStorage.removeItem("registration_form_v1");
+    localStorage.removeItem("individual_user_v1");
+    localStorage.removeItem("commercial_user_v1");
+    localStorage.removeItem("admin_auth_v1");
+    window.dispatchEvent(new Event("auth_changed"));
     navigate("/login");
   };
 

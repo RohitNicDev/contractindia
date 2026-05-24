@@ -314,7 +314,7 @@ export function RegisterForm() {
               <span>
                 <span className="block leading-tight">Commercial</span>
                 <span className="block text-[10px] font-normal opacity-70">
-                  Business / GST
+                  Business  
                 </span>
               </span>
             </button>
@@ -344,7 +344,7 @@ export function RegisterForm() {
                     <div className="h-px flex-1 bg-[var(--auth-section-border)]" />
                   </div>
 
-                  <AuthFormField
+                  {/* <AuthFormField
                     compact
                     label="Business name"
                     placeholder="Company / firm name"
@@ -368,11 +368,22 @@ export function RegisterForm() {
                         message: "Invalid GST format",
                       },
                     })}
-                  />
+                  /> */}
                 </motion.div>
               )}
             </AnimatePresence>
             {/* ── Common fields (both types) ── */}
+            {isCommercial && (
+              <AuthFormField
+                    compact
+                    label="Business name"
+                    placeholder="Company / firm name"
+                    icon={Building2}
+                    error={errors.businessName?.message}
+                    {...register("businessName", {
+                      required: isCommercial ? "Required" : false,
+                    })}
+                  />)}
             <AuthFormField
               compact
               label={isCommercial ? "Contact Person Name" : "Full name"}

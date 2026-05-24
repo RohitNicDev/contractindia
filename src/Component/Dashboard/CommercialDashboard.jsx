@@ -1078,6 +1078,7 @@ function DocumentUploader({ label, files = [], onChange }) {
 // ═══════════════════════════════════════════════════════════════════════════════
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════════════
+
 export default function CommercialDashboard() {
   const navigate = useNavigate();
   const raw = localStorage.getItem("commercial_user_v1");
@@ -1087,6 +1088,8 @@ export default function CommercialDashboard() {
   });
   const [activeTab, setActiveTab] = useState("dashboard");
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [gstNumber, setGstNumber] = useState(() => localStorage.getItem("commercial_gst_v1") || "");
+  const [showGstModal, setShowGstModal] = useState(() => !localStorage.getItem("commercial_gst_v1"));
 
   const initials = (user.companyName || user.contactPerson || "C")
     .split(" ").map(n => n[0]).join("").slice(0,2).toUpperCase();
@@ -1094,8 +1097,31 @@ export default function CommercialDashboard() {
   const handleSignOut = () => {
     localStorage.removeItem("commercial_user_v1");
     localStorage.removeItem("login_mock_v1");
-    localStorage.setItem("isLoggedIn", false);
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("otp_verified_v1");
+    localStorage.removeItem("registration_form_v1");
+    localStorage.removeItem("individual_user_v1");
+    localStorage.removeItem("admin_auth_v1");
+    localStorage.removeItem("commercial_gst_v1");
+    window.dispatchEvent(new Event("auth_changed"));
     navigate("/login");
+  };
+
+  const saveGstNumber = () => {
+    const gst = gstNumber.trim().toUpperCase();
+    const gstRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[0-9A-Z]{1}$/;
+    if (!gst) {
+      toast.error("GST number is required to continue.");
+      return;
+    }
+    if (!gstRegex.test(gst)) {
+      toast.error("Please enter a valid GST number.");
+      return;
+    }
+    localStorage.setItem("commercial_gst_v1", gst);
+    setShowGstModal(false);
+    setUser(prev => ({ ...prev, gst }));
+    toast.success("GST number saved.");
   };
 
   const payRows = [
@@ -1245,6 +1271,35 @@ export default function CommercialDashboard() {
           </AnimatePresence>
         </main>
       </div>
+
+      {showGstModal && (
+        <div className="fixed inset-0 z-[1000] bg-slate-950/85 flex items-center justify-center px-4 py-6">
+          <div className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl">
+            {/* <h2 className="text-xl font-black text-slate-900 mb-3">GST Number Required</h2>
+            <p className="text-sm text-slate-500 mb-6">
+              Please enter your GST number before using the commercial dashboard. This dialog cannot be closed until the field is completed.
+            </p> */}
+            <label className="block text-xs font-bold uppercase tracking-[0.24em] text-slate-400 mb-2">
+              GST Number
+            </label>
+            <input
+              value={gstNumber}
+              onChange={e => setGstNumber(e.target.value.toUpperCase())}
+              placeholder="Enter GST number"
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+            />
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+              <button
+                type="button"
+                onClick={saveGstNumber}
+                className="w-full sm:w-auto inline-flex items-center justify-center rounded-2xl bg-blue-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-blue-700"
+              >
+                Save GST Number
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -62,11 +62,21 @@ export function OtpVerification() {
   }, [seconds]);
 
   const redirectUser = () => {
-    if (user.email === "commercial@gmail.com") {
-      navigate("/commercial/dashboard");
-    } else if (user.email === "admin@gmail.com") {
+    // Admin email always goes to admin dashboard
+    if (user.email === "admin@gmail.com") {
       navigate("/admin/dashboard");
+      return;
+    }
+
+    // Route based on userType flag from registration
+    const userType = user.userType || state?.userType;
+    
+    if (userType === "commercial") {
+      navigate("/commercial/dashboard");
+    } else if (userType === "individual") {
+      navigate("/home");
     } else {
+      // Fallback if userType not found
       navigate("/home");
     }
   };
