@@ -1994,11 +1994,11 @@ export default function CommercialDashboard() {
     .split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase();
 
   // Force profile tab if locked
-  useEffect(() => {
-    if (isLocked) {
-      setActiveTab("profile");
-    }
-  }, [isLocked]);
+  // useEffect(() => {
+  //   if (isLocked) {
+  //     setActiveTab("profile");
+  //   }
+  // }, [isLocked]);
 
   const handleSignOut = () => {
     localStorage.removeItem("commercial_user_v1");

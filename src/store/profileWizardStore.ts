@@ -32,6 +32,8 @@ export interface ProfileWizardState {
     address: string;
     emailVerified: boolean;
     mobileVerified: boolean;
+    password?: string; // Optional field for password setup in the future
+    // confirmPassword?: string; // Optional field for password confirmation in the future
   };
   registrationDetails: {
     gstNo: string;
@@ -85,6 +87,8 @@ const initialStoreState = {
     address: "",
     emailVerified: false,
     mobileVerified: false,
+    password: "",
+    // confirmPassword: "",
   },
   registrationDetails: {
     gstNo: "",

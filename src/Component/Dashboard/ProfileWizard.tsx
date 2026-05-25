@@ -24,6 +24,7 @@ const STEPS = [
 export default function ProfileWizard() {
   const store = useProfileWizardStore();
   const progress = calculateProgress(store);
+  const { getValues } = useForm();
   const suggestions = getProfileSuggestions(store);
   const isDark = true; // Premium dark SaaS mode is default, we'll style with rich dark colors
   const navigation = useNavigate();
@@ -454,9 +455,9 @@ export default function ProfileWizard() {
                   {strength.label}
                 </span>
               </div>
-              <p className="text-xs text-slate-500 mt-1 max-w-xl">
+              {/* <p className="text-xs text-slate-500 mt-1 max-w-xl">
                 Please complete your enterprise profile verification to publish your listings . Complete 45% to open all dashboard features.
-              </p>
+              </p> */}
             </div>
 
             {progress >= 45 && (
@@ -488,7 +489,7 @@ export default function ProfileWizard() {
                     >
                       <div
                         className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all ${isActive
-                          ? "bg-linear-to-br from-blue-500 to-purple-500 border-blue-400 text-white shadow-[0_0_12px_rgba(59,130,246,0.4)]"
+                          ? "bg-linear-to-br from-blue-500 to-purple-500 border-blue-400   shadow-[0_0_12px_rgba(59,130,246,0.4)]"
                           : isCompleted
                             ? "bg-blue-50 border-blue-200 text-blue-600"
                             : "bg-slate-50 border-slate-200 text-slate-400 group-hover:border-slate-300"
@@ -698,6 +699,38 @@ export default function ProfileWizard() {
                         </div>
                         {errorsStep2.mobile && <span className="text-red-500 text-[10px] flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errorsStep2.mobile.message}</span>}
                       </div>
+                        {/* password       */}
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Password *</label>
+                        <input
+                          type="password"
+                          placeholder="Create a strong password"
+                          className="bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100/50 text-slate-800 placeholder-slate-400 shadow-sm"
+                          {...registerStep2("password", {
+                            required: "Password is required",
+                            minLength: { value: 8, message: "Minimum 8 characters" },
+                            pattern: {
+                              value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                              message: "Must include uppercase, lowercase, number, and special character"
+                            }
+                          })}
+                        />
+                        {errorsStep2.password && <span className="text-red-500 text-[10px] flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errorsStep2.password.message}</span>}
+                      </div>
+                          {/* confirm password */}
+                      {/* <div className="flex flex-col gap-1.5">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Confirm Password *</label>
+                        <input
+                          type="password"
+                          placeholder="Confirm your password"
+                          className="bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100/50 text-slate-800 placeholder-slate-400 shadow-sm"
+                          {...registerStep2("confirmPassword", {
+                            required: "Please confirm your password",
+                            validate: (value) => value === getValues("password") || "Passwords do not match"
+                          })}
+                        />
+                        {errorsStep2.confirmPassword && <span className="text-red-500 text-[10px] flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errorsStep2.confirmPassword.message}</span>}
+                      </div> */}
 
                       {/* Address with suggestions */}
                       <div className="flex flex-col gap-1.5 md:col-span-2 relative">
@@ -1061,13 +1094,22 @@ export default function ProfileWizard() {
                         onClick={prevStep}
                         className="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-extrabold text-xs hover:bg-slate-50 transition-all flex items-center gap-1"
                       >
-                        <ChevronLeft className="w-4 h-4" /> Back
+                        <ChevronLeft className="w-4 h-4" /> Back 
                       </button>
                       <button
-                        type="submit"
+                        // type="submit"
+                         onClick={() => {
+                          if (progress < 45) {
+                            message.error("You need at least 45% profile completion to save and finish.");
+                            return;
+                          }
+                          store.setIsSkipped(true);
+                          message.success("Congratulations! Your commercial profile is completed. Dashboard unlocked!");
+                          navigation("/commercial/dashboard");
+                        }} 
                         className="px-6 py-2.5 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg text-white font-extrabold text-xs shadow-lg disabled:opacity-40 disabled:cursor-not-allowed hover:from-blue-500 hover:to-purple-500 transition-all flex items-center gap-1"
                       >
-                        Save & Continue <ChevronRight className="w-4 h-4" />
+                        Save & Continue <Check className="w-4 h-4" />
                       </button>
                     </div>
 
@@ -1196,13 +1238,13 @@ export default function ProfileWizard() {
                 )}
 
                 {/* STEP 6: SERVICE LISTING */}
-                {store.currentStep === 6 && (
+                {/* {store.currentStep === 6 && (
                   <div className="space-y-6">
                     <p className="text-xs text-slate-400">List the services you provide. Clients will see these services when browsing the ContractsIndia™ marketplace.</p>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-                      {/* Left: Add Service Form */}
+               
                       <div className="bg-white/[0.01] border border-white/5 rounded-2xl p-5 space-y-4">
                         <h4 className="text-xs uppercase font-extrabold tracking-widest text-blue-400 border-b border-white/5 pb-2">Add New Service</h4>
 
@@ -1275,7 +1317,7 @@ export default function ProfileWizard() {
                         </button>
                       </div>
 
-                      {/* Right: Service List & Search */}
+                      
                       <div className="bg-white/[0.01] border border-white/5 rounded-2xl p-5 space-y-4">
                         <div className="flex items-center justify-between border-b border-white/5 pb-2">
                           <h4 className="text-xs uppercase font-extrabold tracking-widest text-blue-400">Active Listing ({store.services.length})</h4>
@@ -1338,8 +1380,7 @@ export default function ProfileWizard() {
                         )}
                       </div>
                     </div>
-
-                    {/* Actions */}
+ 
                     <div className="flex justify-between gap-3 pt-6 border-t border-slate-100 mt-6">
                       <button
                         type="button"
@@ -1352,11 +1393,11 @@ export default function ProfileWizard() {
                         type="submit"
                         className="px-6 py-2.5 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg text-white font-extrabold text-xs shadow-lg disabled:opacity-40 disabled:cursor-not-allowed hover:from-blue-500 hover:to-purple-500 transition-all flex items-center gap-1"
                       >
-                        Save & Continue <ChevronRight className="w-4 h-4" />
+                        Save & Continue5 <ChevronRight className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
-                )}
+                )} */}
 
                 {/* STEP 6: SERVICE LISTING */}
                 {store.currentStep === 5 && (
@@ -1503,27 +1544,19 @@ export default function ProfileWizard() {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex justify-between gap-3 pt-6 border-t border-slate-100 mt-6">
+                    <div className="flex justify-between gap-3 pt-6 border-t border-white/5 mt-6">
                       <button
                         type="button"
                         onClick={prevStep}
-                        className="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-extrabold text-xs hover:bg-slate-50 transition-all flex items-center gap-1"
+                        className="px-5 py-2.5 rounded-xl border border-white/10 text-slate-300 font-extrabold text-xs hover:bg-white/5 transition-all flex items-center gap-1"
                       >
                         <ChevronLeft className="w-4 h-4" /> Back
                       </button>
                       <button
-                        onClick={() => {
-                          if (progress < 45) {
-                            message.error("You need at least 45% profile completion to save and finish.");
-                            return;
-                          }
-                          store.setIsSkipped(true);
-                          message.success("Congratulations! Your commercial profile is completed. Dashboard unlocked!");
-                          navigation("/commercial/dashboard");
-                        }}
-                        className="px-6 py-2.5 rounded-xl bg-linear-to-r from-blue-600 via-purple-600 to-cyan-500 text-white font-extrabold text-xs shadow-lg transition-all flex items-center gap-1"
+                        onClick={nextStep}
+                        className="px-6 py-2.5 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg text-white font-extrabold text-xs shadow-lg disabled:opacity-40 disabled:cursor-not-allowed hover:from-blue-500 hover:to-purple-500 transition-all flex items-center gap-1"
                       >
-                        Complete Onboarding <Check className="w-4 h-4" />
+                        Save & Continue <ChevronRight className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
@@ -1651,7 +1684,7 @@ export default function ProfileWizard() {
             />
             <button
               onClick={verifyOtp}
-              className="w-full py-3 rounded-xl bg-linear-to-r from-blue-600 to-purple-600 text-white font-extrabold text-xs shadow-md"
+              className="w-full py-3 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg text-white font-extrabold text-xs shadow-lg disabled:opacity-40 disabled:cursor-not-allowed hover:from-blue-500 hover:to-purple-500 transition-all flex items-center justify-center gap-2"
             >
               Verify & Complete
             </button>
