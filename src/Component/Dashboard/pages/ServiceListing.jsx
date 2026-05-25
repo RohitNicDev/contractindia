@@ -619,10 +619,10 @@ export default function ServiceListing({
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(99,102,241,0.15),_transparent_20%),radial-gradient(circle_at_bottom_right,_rgba(168,85,247,0.12),_transparent_25%),#f8fafc] text-slate-900 p-1 sm:p-2">
       <div className="mx-auto max-w-6xl">
        {!(onSave || showSaveButton || onBack) && (
-          <header className="mb-2 rounded-[28px] border border-white/60 bg-white/40 backdrop-blur-3xl p-2 shadow-2xl shadow-slate-200/10">
+          <header className="mb-1 rounded-[28px] border bg-white/70 backdrop-blur-xl p-1 shadow-sm shadow-slate-200/20">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div className="flex items-center gap-3 bg-white">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 text-white shadow-sm">
+              <div className="p-2 pl-2 flex items-center gap-3 bg-white">
+                <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 text-white shadow-sm">
                   <Briefcase className="h-5 w-5" />
                 </div>
                 <div>
