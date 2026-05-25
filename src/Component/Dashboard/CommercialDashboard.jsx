@@ -11,12 +11,14 @@ import {
   Trash2, Bell, Search, CircleDot,
   Layers3,
   ChevronRight,
+  Check,
 } from "lucide-react";
 import SettingsPanel from "./SettingsPanel";
 import ProfileWizard from "./ProfileWizard";
 import { useProfileWizardStore, calculateProgress } from "../../store/profileWizardStore";
 import { SERVICES_HIERARCHY } from "../../data/services_hierarchy";
 import { Input } from "antd";
+import ServiceListing from "./pages/ServiceListing";
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
 const glass = "rounded-2xl bg-white/80 backdrop-blur-xl border border-white/90 shadow-[0_2px_20px_rgba(99,102,241,0.07)]";
@@ -30,7 +32,7 @@ const NAV = [
   { id: "subscription", label: "Subscription History", icon: Briefcase },
   { id: "clients", label: "Client History", icon: User },
   { id: "leads", label: "Lead Management", icon: List },
-  // { id: "services", label: "Service Listing", icon: Briefcase },
+  { id: "services", label: "Service Listing", icon: Briefcase },
   { id: "settings", label: "Settings", icon: Settings },
 ];
 
@@ -1362,190 +1364,190 @@ function LeadManagement() {
 // ─── Service Listing ──────────────────────────────────────────────────────────
 
 // ─── Service Listing ──────────────────────────────────────────────────────────
-function ServiceListing() {
-  const [selectedService, setSelectedService] = useState(null);
+// function ServiceListing() {
+//   const [selectedService, setSelectedService] = useState(null);
 
-  const [activeServices, setActiveServices] = useState([
-    "consultingservice",
-    "legalcontracts",
-  ]);
+//   const [activeServices, setActiveServices] = useState([
+//     "consultingservice",
+//     "legalcontracts",
+//   ]);
 
-  const [activeSubServices, setActiveSubServices] = useState([
-    "epcconsultancy",
-    "projectmanagement",
-    "legaldrafting",
-  ]);
+//   const [activeSubServices, setActiveSubServices] = useState([
+//     "epcconsultancy",
+//     "projectmanagement",
+//     "legaldrafting",
+//   ]);
 
-  const toggleMainService = (serviceId) => {
-    setActiveServices((prev) => {
-      const exists = prev.includes(serviceId);
+//   const toggleMainService = (serviceId) => {
+//     setActiveServices((prev) => {
+//       const exists = prev.includes(serviceId);
 
-      if (exists) {
-        toast.success("Service deactivated");
+//       if (exists) {
+//         toast.success("Service deactivated");
 
-        return prev.filter((x) => x !== serviceId);
-      }
+//         return prev.filter((x) => x !== serviceId);
+//       }
 
-      toast.success("Service activated");
+//       toast.success("Service activated");
 
-      return [...prev, serviceId];
-    });
-  };
+//       return [...prev, serviceId];
+//     });
+//   };
 
-  const toggleSubService = (subId) => {
-    setActiveSubServices((prev) => {
-      const exists = prev.includes(subId);
+//   const toggleSubService = (subId) => {
+//     setActiveSubServices((prev) => {
+//       const exists = prev.includes(subId);
 
-      if (exists) {
-        toast.success("Sub-service removed");
+//       if (exists) {
+//         toast.success("Sub-service removed");
 
-        return prev.filter((x) => x !== subId);
-      }
+//         return prev.filter((x) => x !== subId);
+//       }
 
-      toast.success("Sub-service activated");
+//       toast.success("Sub-service activated");
 
-      return [...prev, subId];
-    });
-  };
+//       return [...prev, subId];
+//     });
+//   };
 
-  return (
-    <>
-      {/* MAIN CARD */}
-      <div className={`${glass} p-6`}>
-        {/* HEADER */}
-        <div className="mb-5 flex items-center gap-3">
-          <div
-            className="
-              flex h-11 w-11 items-center justify-center
-              rounded-2xl
-              bg-violet-50
-            "
-          >
-            <Briefcase className="h-5 w-5 text-violet-600" />
-          </div>
+//   return (
+//     <>
+//       {/* MAIN CARD */}
+//       <div className={`${glass} p-6`}>
+//         {/* HEADER */}
+//         <div className="mb-5 flex items-center gap-3">
+//           <div
+//             className="
+//               flex h-11 w-11 items-center justify-center
+//               rounded-2xl
+//               bg-violet-50
+//             "
+//           >
+//             <Briefcase className="h-5 w-5 text-violet-600" />
+//           </div>
 
-          <div>
-            <h3 className="text-lg font-black text-slate-800">
-              Service Listing
-            </h3>
+//           <div>
+//             <h3 className="text-lg font-black text-slate-800">
+//               Service Listing
+//             </h3>
 
-            <p className="text-xs text-slate-400">
-              Activate your business services & sub-services
-            </p>
-          </div>
-        </div>
+//             <p className="text-xs text-slate-400">
+//               Activate your business services & sub-services
+//             </p>
+//           </div>
+//         </div>
 
-        {/* SERVICES */}
-        <div className="grid gap-3 sm:grid-cols-2">
-          {SERVICES_HIERARCHY.map((service) => {
-            const isActive = activeServices.includes(service.id);
+//         {/* SERVICES */}
+//         <div className="grid gap-3 sm:grid-cols-2">
+//           {SERVICES_HIERARCHY.map((service) => {
+//             const isActive = activeServices.includes(service.id);
 
-            return (
-              <div
-                key={service.id}
-                className="
-                  group rounded-2xl border
-                  bg-white p-4
-                  transition-all duration-300
-                  hover:-translate-y-[2px]
-                  hover:shadow-lg
-                "
-                style={{
-                  borderColor: isActive
-                    ? "#c4b5fd"
-                    : "#e5e7eb",
-                }}
-              >
-                {/* TOP */}
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex gap-3">
-                    <div
-                      className={`
-                        mt-0.5 h-3 w-3 rounded-full
-                        ${isActive
-                          ? "bg-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.6)]"
-                          : "bg-slate-300"
-                        }
-                      `}
-                    />
+//             return (
+//               <div
+//                 key={service.id}
+//                 className="
+//                   group rounded-2xl border
+//                   bg-white p-4
+//                   transition-all duration-300
+//                   hover:-translate-y-[2px]
+//                   hover:shadow-lg
+//                 "
+//                 style={{
+//                   borderColor: isActive
+//                     ? "#c4b5fd"
+//                     : "#e5e7eb",
+//                 }}
+//               >
+//                 {/* TOP */}
+//                 <div className="flex items-start justify-between gap-3">
+//                   <div className="flex gap-3">
+//                     <div
+//                       className={`
+//                         mt-0.5 h-3 w-3 rounded-full
+//                         ${isActive
+//                           ? "bg-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.6)]"
+//                           : "bg-slate-300"
+//                         }
+//                       `}
+//                     />
 
-                    <div>
-                      <h4 className="text-sm font-bold text-slate-800">
-                        {service.name}
-                      </h4>
+//                     <div>
+//                       <h4 className="text-sm font-bold text-slate-800">
+//                         {service.name}
+//                       </h4>
 
-                      <p className="mt-1 text-xs text-slate-400">
-                        {service.subServices?.length || 0} sub-services
-                      </p>
-                    </div>
-                  </div>
+//                       <p className="mt-1 text-xs text-slate-400">
+//                         {service.subServices?.length || 0} sub-services
+//                       </p>
+//                     </div>
+//                   </div>
 
-                  {/* ACTIVE BUTTON */}
-                  <button
-                    onClick={() =>
-                      toggleMainService(service.id)
-                    }
-                    className={`
-                      rounded-full border px-3 py-1
-                      text-[11px] font-bold
-                      transition-all
-                      ${isActive
-                        ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                        : "border-slate-200 bg-slate-50 text-slate-500 hover:border-violet-200"
-                      }
-                    `}
-                  >
-                    {isActive
-                      ? "Active"
-                      : "Inactive"}
-                  </button>
-                </div>
+//                   {/* ACTIVE BUTTON */}
+//                   <button
+//                     onClick={() =>
+//                       toggleMainService(service.id)
+//                     }
+//                     className={`
+//                       rounded-full border px-3 py-1
+//                       text-[11px] font-bold
+//                       transition-all
+//                       ${isActive
+//                         ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+//                         : "border-slate-200 bg-slate-50 text-slate-500 hover:border-violet-200"
+//                       }
+//                     `}
+//                   >
+//                     {isActive
+//                       ? "Active"
+//                       : "Inactive"}
+//                   </button>
+//                 </div>
 
-                {/* ACTIONS */}
-                <div className="mt-4 flex items-center justify-between">
-                  <div className="flex items-center gap-1 text-xs text-slate-400">
-                    <Layers3 className="h-3.5 w-3.5" />
-                    Configure Sub-services
-                  </div>
+//                 {/* ACTIONS */}
+//                 <div className="mt-4 flex items-center justify-between">
+//                   <div className="flex items-center gap-1 text-xs text-slate-400">
+//                     <Layers3 className="h-3.5 w-3.5" />
+//                     Configure Sub-services
+//                   </div>
 
-                  <button
-                    onClick={() =>
-                      setSelectedService(service)
-                    }
-                    className="
-                      flex items-center gap-1
-                      rounded-xl
-                      bg-violet-50
-                      px-3 py-2
-                      text-xs font-bold text-violet-700
-                      transition-all
-                      hover:bg-violet-100
-                    "
-                  >
-                    Manage
-                    <ChevronRight className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+//                   <button
+//                     onClick={() =>
+//                       setSelectedService(service)
+//                     }
+//                     className="
+//                       flex items-center gap-1
+//                       rounded-xl
+//                       bg-violet-50
+//                       px-3 py-2
+//                       text-xs font-bold text-violet-700
+//                       transition-all
+//                       hover:bg-violet-100
+//                     "
+//                   >
+//                     Manage
+//                     <ChevronRight className="h-3.5 w-3.5" />
+//                   </button>
+//                 </div>
+//               </div>
+//             );
+//           })}
+//         </div>
+//       </div>
 
-      {/* MODAL */}
-      {selectedService && (
-        <ServiceModal
-          service={selectedService}
-          onClose={() =>
-            setSelectedService(null)
-          }
-          activeSubServices={activeSubServices}
-          toggleSubService={toggleSubService}
-        />
-      )}
-    </>
-  );
-}
+//       {/* MODAL */}
+//       {selectedService && (
+//         <ServiceModal
+//           service={selectedService}
+//           onClose={() =>
+//             setSelectedService(null)
+//           }
+//           activeSubServices={activeSubServices}
+//           toggleSubService={toggleSubService}
+//         />
+//       )}
+//     </>
+//   );
+// }
 
 /* -------------------------------------------------------------------------- */
 /* MODAL */
@@ -2058,7 +2060,7 @@ export default function CommercialDashboard() {
       case "subscription": return <DataTable title="Subscription History" icon={Briefcase} accent="violet" cols={["Plan", "Price", "Start", "End", "Status"]} rows={subRows} />;
       case "clients": return <DataTable title="Client History" icon={User} accent="emerald" cols={["Name", "Email", "Service", "Date", "Status"]} rows={clientRows} />;
       case "leads": return <LeadManagement />;
-      case "services": return <ServiceListing />;
+      case "services": return <ServiceListing  />;
       case "settings": return <SettingsPanel />;
       default: return <Dashboard user={user} />;
     }
