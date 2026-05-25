@@ -1092,7 +1092,7 @@ export default function ProfileWizard() {
                       <button
                         type="button"
                         onClick={prevStep}
-                        className="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-extrabold text-xs hover:bg-slate-50 transition-all flex items-center gap-1"
+                        className="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-extrabold text-xs hover:bg-slate-50 transition-all flex items-center gap-1  "
                       >
                         <ChevronLeft className="w-4 h-4" /> Back 
                       </button>
@@ -1223,7 +1223,7 @@ export default function ProfileWizard() {
                       <button
                         type="button"
                         onClick={prevStep}
-                        className="px-5 py-2.5 rounded-xl border border-white/10 text-slate-300 font-extrabold text-xs hover:bg-white/5 transition-all flex items-center gap-1"
+                        className="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-extrabold text-xs hover:bg-slate-50 transition-all flex items-center gap-1"
                       >
                         <ChevronLeft className="w-4 h-4" /> Back
                       </button>
@@ -1548,7 +1548,7 @@ export default function ProfileWizard() {
                       <button
                         type="button"
                         onClick={prevStep}
-                        className="px-5 py-2.5 rounded-xl border border-white/10 text-slate-300 font-extrabold text-xs hover:bg-white/5 transition-all flex items-center gap-1"
+                        className="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-extrabold text-xs hover:bg-slate-50 transition-all flex items-center gap-1"
                       >
                         <ChevronLeft className="w-4 h-4" /> Back
                       </button>
