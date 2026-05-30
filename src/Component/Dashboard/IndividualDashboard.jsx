@@ -593,7 +593,9 @@ console.log(rawUser)
           ))}
         </nav>
         <div className="border-t border-indigo-100/60 p-3">
-          <button onClick={handleSignOut} className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 hover:bg-red-50 hover:text-red-500 transition-all">
+          <button
+           onClick={handleSignOut}
+            className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 hover:bg-red-50 hover:text-red-500 transition-all">
             <LogOut className="h-4 w-4" /> Sign out
           </button>
         </div>

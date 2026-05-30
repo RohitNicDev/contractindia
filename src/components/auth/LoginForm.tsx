@@ -10,7 +10,7 @@ import { GradientButton } from "./GradientButton";
 
 type LoginValues = {
   email: string;
-  password: string;
+  password?: string;
   remember: boolean;
   captcha: string;
 };
@@ -73,19 +73,56 @@ export function LoginForm() {
       "user_credentials_" + data.email
     );
 
-    if (!savedCredentials) {
+    let userAccount = savedCredentials ? JSON.parse(savedCredentials) : null;
+    if (!userAccount) {
+      const registrationData = localStorage.getItem("registration_form_v1");
+      if (registrationData) {
+        try {
+          const parsed = JSON.parse(registrationData);
+          if (parsed?.email === data.email) {
+            userAccount = parsed;
+            localStorage.setItem(
+              "user_credentials_" + data.email,
+              JSON.stringify(parsed)
+            );
+          }
+        } catch {
+          userAccount = null;
+        }
+      }
+    }
+
+    if (!userAccount) {
+      const individual = localStorage.getItem("individual_user_v1");
+      const commercial = localStorage.getItem("commercial_user_v1");
+      try {
+        if (individual) {
+          const parsed = JSON.parse(individual);
+          if (parsed?.email === data.email) {
+            userAccount = parsed;
+          }
+        }
+      } catch {
+        userAccount = userAccount || null;
+      }
+      try {
+        if (!userAccount && commercial) {
+          const parsed = JSON.parse(commercial);
+          if (parsed?.email === data.email) {
+            userAccount = parsed;
+          }
+        }
+      } catch {
+        userAccount = userAccount || null;
+      }
+    }
+
+    if (!userAccount) {
       toast.error("Email not registered. Please register first.");
       return;
     }
 
-    const userAccount = JSON.parse(savedCredentials);
-
-    // Verify password
-    if (userAccount.password !== data.password) {
-      toast.error("Invalid email or password.");
-      return;
-    }
-
+    // Skip password verification: login accepted if email is registered
     // Validate captcha
     if (data.captcha.trim() !== captcha.answer) {
       toast.error("Invalid captcha answer.");
@@ -123,7 +160,7 @@ export function LoginForm() {
           Sign in
         </h2>
         <p className="mt-1 text-xs leading-snug text-[var(--auth-text-body)] lg:text-sm">
-          Email, password, then OTP.
+          Email only login, then OTP.
         </p>
       </header>
 
@@ -143,16 +180,15 @@ export function LoginForm() {
         />
         <AuthFormField
           compact
-          label="Password"
+          label="Password "
           type="password"
           autoComplete="current-password"
           placeholder="Password"
           icon={Lock}
           error={errors.password?.message}
-          {...register("password", {
-            required: "Required",
-            minLength: { value: 6, message: "Min 6 characters" },
-          })}
+          {...register("password",{ required: "Required",})
+            
+          }
         />
 
         <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] lg:text-xs">

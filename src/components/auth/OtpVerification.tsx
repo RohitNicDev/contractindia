@@ -7,15 +7,17 @@ import {
   ArrowRight,
   Mail,
   Phone,
+  Lock,
 } from "lucide-react";
 
 import { AuthCard } from "./AuthCard";
+import { AuthFormField } from "./AuthFormField";
 import { OtpInput } from "./OtpInput";
 import { GradientButton } from "./GradientButton";
 
 const RESEND_SEC = 60;
 
-type VerificationStep = "email" | "mobile" | "complete";
+type VerificationStep = "email" | "mobile" | "password" | "complete";
 
 export function OtpVerification() {
   const navigate = useNavigate();
@@ -25,6 +27,8 @@ export function OtpVerification() {
 
   const [emailCode, setEmailCode] = useState("");
   const [mobileCode, setMobileCode] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [seconds, setSeconds] = useState(RESEND_SEC);
   const [successPulse, setSuccessPulse] = useState(false);
 
@@ -39,10 +43,15 @@ export function OtpVerification() {
 
   const emailComplete = /^\d{6}$/.test(emailCode);
   const mobileComplete = /^\d{6}$/.test(mobileCode);
+  const passwordComplete =
+    step === "password" &&
+    password.length >= 6 &&
+    password === confirmPassword;
 
   const isComplete =
     (step === "email" && emailComplete) ||
-    (step === "mobile" && mobileComplete);
+    (step === "mobile" && mobileComplete) ||
+    passwordComplete;
 
   useEffect(() => {
     if (seconds <= 0) return;
@@ -119,6 +128,15 @@ export function OtpVerification() {
 
     // MOBILE VERIFICATION STEP
     if (step === "mobile") {
+      if (!state?.singleVerification) {
+        const registrationData = localStorage.getItem("registration_form_v1");
+        if (registrationData) {
+          toast.success("Mobile verified! Set your password to continue.");
+          setStep("password");
+          return;
+        }
+      }
+
       localStorage.setItem(
         "otp_verified_v1",
         JSON.stringify({
@@ -136,6 +154,53 @@ export function OtpVerification() {
       setTimeout(() => {
         redirectUser();
       }, 600);
+    }
+
+    // PASSWORD STEP (registration only)
+    if (step === "password") {
+      if (password.length < 6) {
+        toast.error("Password must be at least 6 characters.");
+        return;
+      }
+      if (password !== confirmPassword) {
+        toast.error("Passwords do not match.");
+        return;
+      }
+
+      try {
+        const registrationData = localStorage.getItem("registration_form_v1");
+        const parsed = registrationData ? JSON.parse(registrationData) : {};
+        const updated = {
+          ...parsed,
+          password,
+          confirmPassword,
+        };
+        localStorage.setItem("registration_form_v1", JSON.stringify(updated));
+        if (updated.email) {
+          localStorage.setItem(
+            "user_credentials_" + updated.email,
+            JSON.stringify(updated)
+          );
+        }
+        localStorage.setItem(
+          "otp_verified_v1",
+          JSON.stringify({
+            emailCode,
+            mobileCode,
+            at: Date.now(),
+          })
+        );
+
+        toast.success("Registration completed successfully!");
+        setSuccessPulse(true);
+        setStep("complete");
+
+        setTimeout(() => {
+          redirectUser();
+        }, 600);
+      } catch {
+        toast.error("Failed to complete registration.");
+      }
     }
   };
 
@@ -166,6 +231,7 @@ export function OtpVerification() {
           <h2 className="text-lg font-black tracking-tight text-[var(--auth-heading-display)] lg:text-xl">
             {step === "email" && "Verify Email"}
             {step === "mobile" && "Verify Mobile"}
+            {step === "password" && "Create Password"}
             {step === "complete" && "All Set!"}
           </h2>
 
@@ -182,78 +248,108 @@ export function OtpVerification() {
                 "your mobile"
               }`}
 
+            {step === "password" &&
+              "Create a password to secure your account"}
+
             {step === "complete" &&
               "Account verified successfully"}
           </p>
         </div>
       </header>
 
-      {/* OTP SECTION */}
+      {/* OTP / PASSWORD SECTION */}
       {step !== "complete" && (
         <>
-          <OtpInput
-            key={step}
-            compact
-            length={6}
-            disabled={successPulse}
-            onCodeChange={
-              step === "email"
-                ? setEmailCode
-                : setMobileCode
-            }
-          />
-
-          {/* TIMER */}
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
-            <div className="relative h-11 w-11">
-              <svg
-                className="-rotate-90"
-                width="44"
-                height="44"
-                viewBox="0 0 48 48"
-              >
-                <circle
-                  cx="24"
-                  cy="24"
-                  r="18"
-                  fill="none"
-                  stroke="var(--auth-step-inactive)"
-                  strokeWidth="3"
-                />
-
-                <circle
-                  cx="24"
-                  cy="24"
-                  r="18"
-                  fill="none"
-                  stroke="var(--auth-accent-strong)"
-                  strokeWidth="3"
-                  strokeDasharray={`${ringProgress} ${
-                    2 * Math.PI * 18
-                  }`}
-                  strokeLinecap="round"
-                  className={
-                    seconds === 0
-                      ? "animate-pulse-ring"
-                      : ""
-                  }
-                />
-              </svg>
-
-              <span className="absolute inset-0 flex items-center justify-center text-[11px] font-black text-[var(--auth-text-input)]">
-                {seconds}
-              </span>
+          {step === "password" ? (
+            <div className="space-y-3">
+              <AuthFormField
+                compact
+                label="Password"
+                type="password"
+                autoComplete="new-password"
+                placeholder="Min. 6 characters"
+                icon={Lock}
+                value={password}
+                onChange={(e) => setPassword(e.currentTarget.value)}
+              />
+              <AuthFormField
+                compact
+                label="Confirm password"
+                type="password"
+                autoComplete="new-password"
+                placeholder="Repeat password"
+                icon={Lock}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.currentTarget.value)}
+              />
             </div>
+          ) : (
+            <>
+              <OtpInput
+                key={step}
+                compact
+                length={6}
+                disabled={successPulse}
+                onCodeChange={
+                  step === "email"
+                    ? setEmailCode
+                    : setMobileCode
+                }
+              />
 
-            <button
-              type="button"
-              onClick={resend}
-              disabled={seconds > 0}
-              className="text-xs font-semibold text-[var(--auth-link)] disabled:cursor-not-allowed disabled:opacity-45 hover:text-[var(--auth-link-hover)]"
-            >
-              Resend code
-            </button>
-          </div>
+              {/* TIMER */}
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+                <div className="relative h-11 w-11">
+                  <svg
+                    className="-rotate-90"
+                    width="44"
+                    height="44"
+                    viewBox="0 0 48 48"
+                  >
+                    <circle
+                      cx="24"
+                      cy="24"
+                      r="18"
+                      fill="none"
+                      stroke="var(--auth-step-inactive)"
+                      strokeWidth="3"
+                    />
+
+                    <circle
+                      cx="24"
+                      cy="24"
+                      r="18"
+                      fill="none"
+                      stroke="var(--auth-accent-strong)"
+                      strokeWidth="3"
+                      strokeDasharray={`${ringProgress} ${
+                        2 * Math.PI * 18
+                      }`}
+                      strokeLinecap="round"
+                      className={
+                        seconds === 0
+                          ? "animate-pulse-ring"
+                          : ""
+                      }
+                    />
+                  </svg>
+
+                  <span className="absolute inset-0 flex items-center justify-center text-[11px] font-black text-[var(--auth-text-input)]">
+                    {seconds}
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={resend}
+                  disabled={seconds > 0}
+                  className="text-xs font-semibold text-[var(--auth-link)] disabled:cursor-not-allowed disabled:opacity-45 hover:text-[var(--auth-link-hover)]"
+                >
+                  Resend code
+                </button>
+              </div>
+            </>
+          )}
 
           {/* VERIFY BUTTON */}
           <motion.div
@@ -278,7 +374,9 @@ export function OtpVerification() {
               {step === "mobile" &&
                 (state?.singleVerification
                   ? "Verify Mobile"
-                  : "Complete Verification")}
+                  : "Continue")}
+
+              {step === "password" && "Set Password & Complete"}
             </GradientButton>
           </motion.div>
         </>
