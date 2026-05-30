@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { LayoutDashboard, ShieldCheck, Briefcase, Users, CreditCard, Lock, BarChart3, LogOut, CheckCircle, XCircle, Plus, Edit2, Trash2, ChevronRight, Activity, TrendingUp } from "lucide-react";
+import ServiceListing from "./pages/ServiceListing";
 
 const glass = { background: "rgba(255,255,255,0.72)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.85)", borderRadius: "16px" };
 const gradBtn = { background: "linear-gradient(135deg,#6366f1,#8b5cf6)", color: "#fff", border: "none", borderRadius: "10px", padding: "8px 18px", fontWeight: 600, fontSize: "13px", cursor: "pointer" };
@@ -462,7 +463,7 @@ const navItems = [
   { key: "security", label: "Security", icon: Lock },
   { key: "analytics", label: "Analytics", icon: BarChart3 },
 ];
-const sectionMap = { overview: Overview, verification: UserVerification, services: ServiceManagement, users: UserControl, plans: BusinessPlans, security: Security, analytics: Analytics };
+const sectionMap = { overview: Overview, verification: UserVerification, services: ServiceListing, users: UserControl, plans: BusinessPlans, security: Security, analytics: Analytics };
 
 export default function AdminDashboard() {
   const [active, setActive] = useState("overview");

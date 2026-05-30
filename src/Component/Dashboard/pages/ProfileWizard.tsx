@@ -39,9 +39,9 @@ import {
   getProfileSuggestions,
   ServiceItem,
   FileItem,
-} from "../../store/profileWizardStore";
+} from "../../../store/profileWizardStore";
 import { useNavigate } from "react-router-dom";
-import ServiceListing from "./pages/ServiceListing";
+import ServiceListing from "./ServiceListing";
 
 // Steps definition
 const STEPS = [
@@ -1011,24 +1011,17 @@ export default function ProfileWizard() {
                       {/* password       */}
                       <div className="flex flex-col gap-1.5">
                         <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
-                          Password *
+                          Update Password <span className="text-[9px] font-medium text-slate-400">(optional)</span>
                         </label>
                         <input
                           type="password"
                           placeholder="Create a strong password"
                           className="bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100/50 text-slate-800 placeholder-slate-400 shadow-sm"
                           {...registerStep2("password", {
-                            required: "Password is required",
-                            minLength: {
-                              value: 8,
-                              message: "Minimum 8 characters",
-                            },
-                            pattern: {
-                              value:
-                                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                              message:
-                                "Must include uppercase, lowercase, number, and special character",
-                            },
+                            validate: (value) =>
+                              !value ||
+                              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value) ||
+                              "Password must be at least 8 chars and include uppercase, lowercase, number, and special character",
                           })}
                         />
                         {errorsStep2.password && (
@@ -1738,7 +1731,7 @@ export default function ProfileWizard() {
                 {/* STEP 5: SERVICE LISTING */}
                 {store.currentStep === 5 && (
                   <div className="space-y-6">
-                    <ServiceListing onSave={handleSaveServiceStep} onBack={prevStep} />
+                    <ServiceListing onSave={handleSaveServiceStep} onBack={prevStep} dashboardMode={true} />
                   </div>
                 )}
               </motion.div>

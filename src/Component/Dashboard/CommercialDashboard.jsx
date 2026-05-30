@@ -14,7 +14,7 @@ import {
   Check,
 } from "lucide-react";
 import SettingsPanel from "./SettingsPanel";
-import ProfileWizard from "./ProfileWizard";
+import ProfileWizard from "./pages/ProfileWizard";
 import { useProfileWizardStore, calculateProgress } from "../../store/profileWizardStore";
 import { SERVICES_HIERARCHY } from "../../data/services_hierarchy";
 import { Input } from "antd";
@@ -27,7 +27,6 @@ const btnPrimary = { background: "linear-gradient(135deg,#3b82f6,#6366f1)" };
 const NAV = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "profile", label: "My Profile", icon: User },
-  { id: "credits", label: "Add Credits", icon: CreditCard },
   { id: "payments", label: "Payment History", icon: History },
   { id: "subscription", label: "Subscription History", icon: Briefcase },
   { id: "clients", label: "Client History", icon: User },

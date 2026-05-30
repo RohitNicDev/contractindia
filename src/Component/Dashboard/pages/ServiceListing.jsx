@@ -301,6 +301,7 @@ export default function ServiceListing({
   onSave,
   onBack,
   showSaveButton = false,
+  dashboardMode = false,
 }) {
   const [services, setServices] = useState(
     () => initialServices || INITIAL_SERVICES_DATA,
@@ -474,7 +475,7 @@ export default function ServiceListing({
           const isExpanded = expandedNodeIds.includes(node.id);
           const isActivated = activeNodeIds.includes(node.id);
           const hasChildren = node.children && node.children.length > 0;
-          const isRenaming = editingNodeId === node.id;
+          const isRenaming = !dashboardMode && editingNodeId === node.id;
           const nodeStyle = getNodeStyle(depth, node.isSearchHighlight);
 
           return (
@@ -559,8 +560,8 @@ export default function ServiceListing({
                         ) : (
                           <>
                             <h4
-                              className="text-sm font-semibold text-slate-900 sm:text-base cursor-pointer"
-                              onClick={() => {
+                              className={`text-sm font-semibold text-slate-900 sm:text-base ${dashboardMode ? "cursor-default" : "cursor-pointer"}`}
+                              onClick={dashboardMode ? undefined : () => {
                                 setEditingNodeId(node.id);
                                 setInlineEditName(node.name);
                               }}
@@ -574,7 +575,6 @@ export default function ServiceListing({
                         )}
                       </div>
                     </div>
-                  </div>
 
                   <div className="flex items-center justify-end gap-1.5">
                     <button
@@ -587,20 +587,25 @@ export default function ServiceListing({
                     >
                       {isActivated ? "Active" : "Inactive"}
                     </button>
-                    <button
-                      onClick={() => appendChildService(node.id)}
-                      className="flex h-6 w-6 items-center justify-center rounded border border-slate-200 bg-white text-slate-500"
-                    >
-                      <Plus className="h-3.5 w-3.5" />
-                    </button>
-                    <button
-                      onClick={() => removeServiceNode(node.id)}
-                      className="flex h-6 w-6 items-center justify-center rounded border border-slate-100 bg-slate-50 text-slate-400 hover:text-red-600"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
+                    {!dashboardMode && (
+                      <>
+                        <button
+                          onClick={() => appendChildService(node.id)}
+                          className="flex h-6 w-6 items-center justify-center rounded border border-slate-200 bg-white text-slate-500"
+                        >
+                          <Plus className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          onClick={() => removeServiceNode(node.id)}
+                          className="flex h-6 w-6 items-center justify-center rounded border border-slate-100 bg-slate-50 text-slate-400 hover:text-red-600"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
+              </div>
               </div>
 
               {isExpanded && hasChildren && (
@@ -618,10 +623,10 @@ export default function ServiceListing({
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(99,102,241,0.15),_transparent_20%),radial-gradient(circle_at_bottom_right,_rgba(168,85,247,0.12),_transparent_25%),#f8fafc] text-slate-900 p-1 sm:p-2">
       <div className="mx-auto max-w-6xl">
-       {!(onSave || showSaveButton || onBack) && (
+        {!(dashboardMode || onSave || showSaveButton || onBack) && (
           <header className="mb-1 rounded-[28px] border bg-white/70 backdrop-blur-xl p-1 shadow-sm shadow-slate-200/20">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div className="p-2 pl-2 flex items-center gap-3 bg-white">
+              <div className="p-2 pl-2 flex items-center gap-3 ">
                 <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 text-white shadow-sm">
                   <Briefcase className="h-5 w-5" />
                 </div>
@@ -637,176 +642,179 @@ export default function ServiceListing({
               </div>
             </div>
           </header>
-        )  }
-        <div className="mb-5 flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
-          {/* LEFT SECTION */}
-          <div className="flex flex-1 flex-col gap-3 lg:flex-row lg:items-center">
-            {/* SEARCH */}
-            <div className="relative w-full lg:max-w-[260px]">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+        )}
 
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                placeholder="Search services..."
-                className="
-          h-9 w-full rounded-full
-          border border-slate-200
-          bg-slate-50/90
-          px-10 pr-4
-          text-xs font-medium
-          outline-none shadow-sm
-          transition-all
-          focus:border-violet-400
-          focus:bg-white
-        "
-              />
-            </div>
+        {!dashboardMode && (
+          <div className="mb-5 flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+            {/* LEFT SECTION */}
+            <div className="flex flex-1 flex-col gap-3 lg:flex-row lg:items-center">
+              {/* SEARCH */}
+              <div className="relative w-full lg:max-w-[260px]">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
 
-            {/* STATS */}
-            <div className="grid flex-1 grid-cols-2 gap-3">
-              {/* TOTAL */}
-              <div
-                className="
-          flex items-center gap-3
-          rounded-2xl border border-slate-200
-          bg-white p-3 shadow-sm
-        "
-              >
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  placeholder="Search services..."
+                  className="
+              h-9 w-full rounded-full
+              border border-slate-200
+              bg-slate-50/90
+              px-10 pr-4
+              text-xs font-medium
+              outline-none shadow-sm
+              transition-all
+              focus:border-violet-400
+              focus:bg-white
+            "
+                />
+              </div>
+
+              {/* STATS */}
+              <div className="grid flex-1 grid-cols-2 gap-3">
+                {/* TOTAL */}
                 <div
                   className="
-            flex h-8 w-8 shrink-0
-            items-center justify-center
-            rounded-xl
-            bg-violet-50 text-violet-600
-          "
+              flex items-center gap-3
+              rounded-2xl border border-slate-200
+              bg-white p-3 shadow-sm
+            "
                 >
-                  <FolderTree className="h-4 w-4" />
-                </div>
-
-                <div className="min-w-0">
-                  <div className="truncate text-[10px] font-bold uppercase text-slate-400">
-                    Total Services
+                  <div
+                    className="
+                flex h-8 w-8 shrink-0
+                items-center justify-center
+                rounded-xl
+                bg-violet-50 text-violet-600
+              "
+                  >
+                    <FolderTree className="h-4 w-4" />
                   </div>
 
-                  <div className="text-sm font-black text-slate-800">
-                    {totalAvailableMetrics}
+                  <div className="min-w-0">
+                    <div className="truncate text-[10px] font-bold uppercase text-slate-400">
+                      Total Services
+                    </div>
+
+                    <div className="text-sm font-black text-slate-800">
+                      {totalAvailableMetrics}
+                    </div>
+                  </div>
+                </div>
+
+                {/* ACTIVE */}
+                <div
+                  className="
+              flex items-center gap-3
+              rounded-2xl border border-slate-200
+              bg-white p-3 shadow-sm
+            "
+                >
+                  <div
+                    className="
+                flex h-8 w-8 shrink-0
+                items-center justify-center
+                rounded-xl
+                bg-emerald-50 text-emerald-600
+              "
+                  >
+                    <Activity className="h-4 w-4" />
+                  </div>
+
+                  <div className="min-w-0">
+                    <div className="truncate text-[10px] font-bold uppercase text-slate-400">
+                      Active Allocations
+                    </div>
+
+                    <div className="text-sm font-black text-slate-800">
+                      {activeNodeIds.length}
+                    </div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* ACTIVE */}
-              <div
-                className="
-          flex items-center gap-3
-          rounded-2xl border border-slate-200
-          bg-white p-3 shadow-sm
-        "
-              >
-                <div
+            {/* RIGHT ACTIONS */}
+            <div
+              className="
+        flex flex-wrap items-center
+        justify-start xl:justify-end
+        gap-2
+      "
+            >
+              {/* UNDO REDO */}
+              <div className="  flex items-center   rounded-2xl border border-slate-200/70 bg-white/80 p-1 shadow-sm">
+                <button
+                  onClick={handleUndo}
+                  disabled={history.length === 0}
                   className="
-            flex h-8 w-8 shrink-0
-            items-center justify-center
+            flex h-8 w-8 items-center justify-center
             rounded-xl
-            bg-emerald-50 text-emerald-600
+            text-slate-600
+            transition-all
+            hover:bg-slate-100
+            disabled:opacity-30
           "
                 >
-                  <Activity className="h-4 w-4" />
-                </div>
+                  <Undo2 className="h-4 w-4" />
+                </button>
 
-                <div className="min-w-0">
-                  <div className="truncate text-[10px] font-bold uppercase text-slate-400">
-                    Active Allocations
-                  </div>
-
-                  <div className="text-sm font-black text-slate-800">
-                    {activeNodeIds.length}
-                  </div>
-                </div>
+                <button
+                  onClick={handleRedo}
+                  disabled={future.length === 0}
+                  className="
+            flex h-8 w-8 items-center justify-center
+            rounded-xl
+            text-slate-600
+            transition-all
+            hover:bg-slate-100
+            disabled:opacity-30
+          "
+                >
+                  <Redo2 className="h-4 w-4" />
+                </button>
               </div>
-            </div>
-          </div>
 
-          {/* RIGHT ACTIONS */}
-          <div
-            className="
-      flex flex-wrap items-center
-      justify-start xl:justify-end
-      gap-2
-    "
-          >
-            {/* UNDO REDO */}
-            <div className="  flex items-center   rounded-2xl border border-slate-200/70 bg-white/80 p-1 shadow-sm">
+              {/* COLLAPSE */}
               <button
-                onClick={handleUndo}
-                disabled={history.length === 0}
+                onClick={() => setExpandedNodeIds([])}
                 className="
-          flex h-8 w-8 items-center justify-center
-          rounded-xl
+          h-9 rounded-2xl border
+          border-slate-200
+          bg-white/90
+          px-4
+          text-[11px] font-bold
           text-slate-600
           transition-all
-          hover:bg-slate-100
-          disabled:opacity-30
+          hover:bg-slate-50
         "
               >
-                <Undo2 className="h-4 w-4" />
+                Collapse
               </button>
 
+              {/* ADD ROOT */}
               <button
-                onClick={handleRedo}
-                disabled={future.length === 0}
+                onClick={appendRootService}
                 className="
-          flex h-8 w-8 items-center justify-center
-          rounded-xl
-          text-slate-600
+          flex h-9 items-center gap-1.5
+          rounded-2xl
+          bg-gradient-to-r
+          from-violet-600 to-fuchsia-600
+          px-4
+          text-[11px] font-bold
+          text-white
+          shadow-lg shadow-violet-500/10
           transition-all
-          hover:bg-slate-100
-          disabled:opacity-30
+          hover:scale-[1.02]
         "
               >
-                <Redo2 className="h-4 w-4" />
+                <Plus className="h-3.5 w-3.5" />
+                Add Root
               </button>
             </div>
-
-            {/* COLLAPSE */}
-            <button
-              onClick={() => setExpandedNodeIds([])}
-              className="
-        h-9 rounded-2xl border
-        border-slate-200
-        bg-white/90
-        px-4
-        text-[11px] font-bold
-        text-slate-600
-        transition-all
-        hover:bg-slate-50
-      "
-            >
-              Collapse
-            </button>
-
-            {/* ADD ROOT */}
-            <button
-              onClick={appendRootService}
-              className="
-        flex h-9 items-center gap-1.5
-        rounded-2xl
-        bg-gradient-to-r
-        from-violet-600 to-fuchsia-600
-        px-4
-        text-[11px] font-bold
-        text-white
-        shadow-lg shadow-violet-500/10
-        transition-all
-        hover:scale-[1.02]
-      "
-            >
-              <Plus className="h-3.5 w-3.5" />
-              Add Root
-            </button>
           </div>
-        </div>
+        )}
 
         <main className="rounded-2xl border border-slate-200/70 bg-white/70 backdrop-blur-xl p-3 shadow-sm shadow-slate-200/20">
           {processedDataTree.length > 0 ? (
