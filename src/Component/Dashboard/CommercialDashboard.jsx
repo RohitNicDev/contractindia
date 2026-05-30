@@ -2059,7 +2059,7 @@ export default function CommercialDashboard() {
       case "subscription": return <DataTable title="Subscription History" icon={Briefcase} accent="violet" cols={["Plan", "Price", "Start", "End", "Status"]} rows={subRows} />;
       case "clients": return <DataTable title="Client History" icon={User} accent="emerald" cols={["Name", "Email", "Service", "Date", "Status"]} rows={clientRows} />;
       case "leads": return <LeadManagement />;
-      case "services": return <ServiceListing  />;
+      case "services": return <ServiceListing dashboardMode={true} />;
       case "settings": return <SettingsPanel />;
       default: return <Dashboard user={user} />;
     }
