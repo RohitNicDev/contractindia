@@ -2124,7 +2124,8 @@ export default function CommercialDashboard() {
 
         {/* Sign out */}
         <div className="border-t border-slate-100 p-3">
-          <button onClick={handleSignOut}
+          <button 
+          onClick={handleSignOut}
             className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-semibold text-slate-500 hover:bg-red-50 hover:text-red-500 transition-all">
             <LogOut className="h-4 w-4" /> Sign out
           </button>
@@ -2174,13 +2175,10 @@ export default function CommercialDashboard() {
         </main>
       </div>
 
-      {showGstModal && (
+      {/* {showGstModal && (
         <div className="fixed inset-0 z-[1000] bg-slate-950/85 flex items-center justify-center px-4 py-6">
-          <div className="w-full max-w-lg rounded-3xl bg-slate-900 p-6 shadow-2xl border border-white/10">
-            {/* <h2 className="text-xl font-black text-white mb-3">GST Number Required</h2>
-            <p className="text-sm text-slate-400 mb-6">
-              Please enter your GST number before using the commercial dashboard. This dialog cannot be closed until the field is completed.
-            </p> */}
+          <div className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl">
+          
             <label className="block text-xs font-bold uppercase tracking-[0.24em] text-slate-400 mb-2">
               GST Number
             </label>
@@ -2201,7 +2199,7 @@ export default function CommercialDashboard() {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }
