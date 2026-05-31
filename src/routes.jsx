@@ -24,11 +24,7 @@ import MaterialManufacture from "./Component/Public/Services/MaterialManufacture
 import MaterialSuppler from "./Component/Public/Services/MaterialSuppler";
 import TenderServices from "./Component/Public/Services/TenderServices";
 import ContractionAudit from "./Component/Public/Services/ContractionAudit";
-
-// Auth (existing)
-import { LoginForm } from "./components/auth/LoginForm";
-import { OtpVerification } from "./components/auth/OtpVerification";
-import { RegisterForm } from "./components/auth/RegisterForm";
+ 
 
 // // Auth (new standalone)
 // import IndividualRegister from "./Component/Auth/IndividualRegister";
@@ -50,6 +46,9 @@ import CommercialDashboard from "./Component/Dashboard/CommercialDashboard";
 // Admin
 // import AdminLogin from "./Component/Admin/AdminLogin";
 import AdminDashboard from "./Component/Dashboard/AdminDashboard";
+import LoginForm from "./components/auth/LoginForm";
+import { RegisterForm } from "./components/auth/RegisterForm";
+import OtpVerification from "./components/auth/OtpVerification";
 
 export const router = createBrowserRouter([
   // ── Public routes (with Header + Footer) ───────────────────

@@ -9,7 +9,7 @@ import {
   type ReactElement,
 } from "react";
 import { createPortal } from "react-dom";
-import { ChevronDown, Check } from "lucide-react";
+import { ChevronDown, Check, Search, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export type AuthFormSelectProps = SelectHTMLAttributes<HTMLSelectElement> & {
@@ -25,39 +25,26 @@ function parseOptions(children: React.ReactNode): { value: string; label: string
 
   function traverse(nodes: React.ReactNode) {
     if (nodes === null || nodes === undefined || typeof nodes === "boolean") return;
-
-    // Flat array or React fragment children
-    if (Array.isArray(nodes)) {
-      nodes.forEach(traverse);
-      return;
-    }
-
+    if (Array.isArray(nodes)) { nodes.forEach(traverse); return; }
     if (typeof nodes !== "object") return;
 
     const el = nodes as ReactElement<{ value?: string; children?: React.ReactNode }>;
 
-    // It's an <option>
     if (el.type === "option") {
       const val = String(el.props.value ?? "");
-      const lbl =
-        typeof el.props.children === "string"
-          ? el.props.children
-          : val;
+      const lbl = typeof el.props.children === "string" ? el.props.children : val;
       opts.push({ value: val, label: lbl });
       return;
     }
 
-    // It might be a fragment or wrapper — recurse into its children
-    if (el.props?.children) {
-      traverse(el.props.children);
-    }
+    if (el.props?.children) traverse(el.props.children);
   }
 
   traverse(children);
   return opts;
 }
 
-type DropdownPos = { top: number; left: number; width: number };
+type DropdownPos = { top: number; left: number; width: number; openUp: boolean };
 
 export const AuthFormSelect = forwardRef<HTMLSelectElement, AuthFormSelectProps>(
   function AuthFormSelect(
@@ -75,48 +62,96 @@ export const AuthFormSelect = forwardRef<HTMLSelectElement, AuthFormSelectProps>
 
     const [open, setOpen] = useState(false);
     const [selected, setSelected] = useState<string>(String(value ?? defaultValue ?? ""));
-    const [dropPos, setDropPos] = useState<DropdownPos>({ top: 0, left: 0, width: 0 });
+    const [dropPos, setDropPos] = useState<DropdownPos>({ top: 0, left: 0, width: 0, openUp: false });
+    const [search, setSearch] = useState("");
 
     const triggerRef = useRef<HTMLButtonElement>(null);
-    const panelRef = useRef<HTMLUListElement>(null);
+    const panelRef = useRef<HTMLDivElement>(null);
+    const searchRef = useRef<HTMLInputElement>(null);
 
     // Sync controlled value from outside (RHF reset / watch)
     useEffect(() => {
       if (value !== undefined) setSelected(String(value));
     }, [value]);
 
-    // Calculate portal position when opening
+    // Recalculate position (called on open and on window scroll/resize)
+    const calcPosition = useCallback(() => {
+      const rect = triggerRef.current?.getBoundingClientRect();
+      if (!rect) return;
+
+      const PANEL_HEIGHT = 280; // max expected height
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      const openUp = spaceBelow < PANEL_HEIGHT && spaceAbove > spaceBelow;
+
+      setDropPos({
+        top: openUp
+          ? rect.top + window.scrollY - PANEL_HEIGHT - 4
+          : rect.bottom + window.scrollY + 4,
+        left: rect.left + window.scrollX,
+        width: rect.width,
+        openUp,
+      });
+    }, []);
+
     const openDropdown = useCallback(() => {
       if (disabled) return;
-      const rect = triggerRef.current?.getBoundingClientRect();
-      if (rect) {
-        setDropPos({
-          top: rect.bottom + window.scrollY + 4,
-          left: rect.left + window.scrollX,
-          width: rect.width,
-        });
-      }
+      calcPosition();
       setOpen(true);
-    }, [disabled]);
+      setSearch("");
+      // Focus search input after dropdown renders
+      setTimeout(() => searchRef.current?.focus(), 50);
+    }, [disabled, calcPosition]);
 
-    // Close on outside click or scroll
+    // Close only on outside click — NOT on scroll
     useEffect(() => {
       if (!open) return;
-      const close = (e: MouseEvent) => {
+
+      const handleMouseDown = (e: MouseEvent) => {
+        const target = e.target as Node;
         if (
-          triggerRef.current?.contains(e.target as Node) ||
-          panelRef.current?.contains(e.target as Node)
+          triggerRef.current?.contains(target) ||
+          panelRef.current?.contains(target)
         ) return;
         setOpen(false);
       };
-      const closeOnScroll = () => setOpen(false);
-      document.addEventListener("mousedown", close);
-      window.addEventListener("scroll", closeOnScroll, true);
-      return () => {
-        document.removeEventListener("mousedown", close);
-        window.removeEventListener("scroll", closeOnScroll, true);
+
+      // Reposition (don't close) on scroll
+      const handleScroll = (e: Event) => {
+        // If scroll happens inside the panel itself, do nothing
+        if (panelRef.current?.contains(e.target as Node)) return;
+        calcPosition();
       };
+
+      // Close on resize (layout shift)
+      const handleResize = () => setOpen(false);
+
+      document.addEventListener("mousedown", handleMouseDown);
+      window.addEventListener("scroll", handleScroll, true);
+      window.addEventListener("resize", handleResize);
+
+      return () => {
+        document.removeEventListener("mousedown", handleMouseDown);
+        window.removeEventListener("scroll", handleScroll, true);
+        window.removeEventListener("resize", handleResize);
+      };
+    }, [open, calcPosition]);
+
+    // Keyboard navigation
+    useEffect(() => {
+      if (!open) return;
+      const handleKey = (e: KeyboardEvent) => {
+        if (e.key === "Escape") setOpen(false);
+      };
+      document.addEventListener("keydown", handleKey);
+      return () => document.removeEventListener("keydown", handleKey);
     }, [open]);
+
+    const filteredOptions = options.filter(
+      (o) =>
+        o.value !== "" &&
+        o.label.toLowerCase().includes(search.toLowerCase())
+    );
 
     const selectedLabel = options.find((o) => o.value === selected)?.label ?? "";
     const placeholder = options.find((o) => o.value === "")?.label ?? `${label}…`;
@@ -126,7 +161,7 @@ export const AuthFormSelect = forwardRef<HTMLSelectElement, AuthFormSelectProps>
       (val: string) => {
         setSelected(val);
         setOpen(false);
-        // Sync the hidden <select> value and fire RHF's onChange
+        setSearch("");
         if (onChange) {
           const nativeEvent = {
             target: { value: val, name: props.name ?? "" },
@@ -142,13 +177,11 @@ export const AuthFormSelect = forwardRef<HTMLSelectElement, AuthFormSelectProps>
     const dropdownPanel = (
       <AnimatePresence>
         {open && (
-          <motion.ul
+          <motion.div
             ref={panelRef}
-            role="listbox"
-            aria-label={label}
-            initial={{ opacity: 0, y: -6, scale: 0.98 }}
+            initial={{ opacity: 0, y: dropPos.openUp ? 6 : -6, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -4, scale: 0.98 }}
+            exit={{ opacity: 0, y: dropPos.openUp ? 4 : -4, scale: 0.98 }}
             transition={{ duration: 0.15, ease: "easeOut" }}
             style={{
               position: "absolute",
@@ -157,16 +190,46 @@ export const AuthFormSelect = forwardRef<HTMLSelectElement, AuthFormSelectProps>
               width: dropPos.width,
               zIndex: 9999,
             }}
-            className="
-              overflow-hidden rounded-xl
-              border border-indigo-100 bg-white
-              shadow-[0_8px_32px_rgba(99,102,241,0.18),0_2px_8px_rgba(0,0,0,0.10)]
-            "
+            className="overflow-hidden rounded-xl border border-indigo-100 bg-white shadow-[0_8px_32px_rgba(99,102,241,0.18),0_2px_8px_rgba(0,0,0,0.10)]"
           >
-            <div className="max-h-52 overflow-y-auto [scrollbar-width:thin]">
-              {options
-                .filter((o) => o.value !== "")
-                .map((opt) => {
+            {/* Search bar */}
+            <div className="flex items-center gap-2 border-b border-slate-100 px-3 py-2">
+              <Search className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+              <input
+                ref={searchRef}
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={`Search ${label.toLowerCase()}…`}
+                className="flex-1 bg-transparent text-xs font-medium text-slate-700 placeholder-slate-400 outline-none"
+                // Prevent the select from closing when typing
+                onMouseDown={(e) => e.stopPropagation()}
+              />
+              {search && (
+                <button
+                  type="button"
+                  onMouseDown={(e) => { e.preventDefault(); setSearch(""); searchRef.current?.focus(); }}
+                  className="text-slate-400 hover:text-slate-600"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              )}
+            </div>
+
+            {/* Options list — scrollable, won't close dropdown */}
+            <ul
+              role="listbox"
+              aria-label={label}
+              className="max-h-52 overflow-y-auto [scrollbar-width:thin]"
+              // Stop scroll events from bubbling to window (prevents repositioning loop)
+              onScroll={(e) => e.stopPropagation()}
+            >
+              {filteredOptions.length === 0 ? (
+                <li className="px-3 py-3 text-center text-xs text-slate-400">
+                  No results for "{search}"
+                </li>
+              ) : (
+                filteredOptions.map((opt) => {
                   const isActive = opt.value === selected;
                   return (
                     <li
@@ -174,7 +237,7 @@ export const AuthFormSelect = forwardRef<HTMLSelectElement, AuthFormSelectProps>
                       role="option"
                       aria-selected={isActive}
                       onMouseDown={(e) => {
-                        e.preventDefault(); // prevent blur before click registers
+                        e.preventDefault();
                         handleSelect(opt.value);
                       }}
                       className={`
@@ -196,9 +259,10 @@ export const AuthFormSelect = forwardRef<HTMLSelectElement, AuthFormSelectProps>
                       {isActive && <Check className="h-3.5 w-3.5 shrink-0 text-indigo-500" />}
                     </li>
                   );
-                })}
-            </div>
-          </motion.ul>
+                })
+              )}
+            </ul>
+          </motion.div>
         )}
       </AnimatePresence>
     );
