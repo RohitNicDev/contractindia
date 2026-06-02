@@ -1,6 +1,3 @@
-import React, { useState, useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { motion, AnimatePresence } from "framer-motion";
 import { message, Progress, Tooltip, Switch } from "antd";
 import {
   Building2,
@@ -37,12 +34,13 @@ import {
   useProfileWizardStore,
   calculateProgress,
   getProfileSuggestions,
-  ServiceItem,
-  FileItem,
 } from "../../../store/profileWizardStore";
 import { useNavigate } from "react-router-dom";
 import ServiceListing from "./ServiceListing";
-
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { motion, AnimatePresence } from "framer-motion";
+import React from "react";
 // Steps definition
 const STEPS = [
   {
@@ -75,11 +73,7 @@ export default function ProfileWizard() {
   const suggestions = getProfileSuggestions(store);
   const isDark = true; // Premium dark SaaS mode is default, we'll style with rich dark colors
   const navigation = useNavigate();
-  const [otpModal, setOtpModal] = useState<{
-    isOpen: boolean;
-    type: "email" | "mobile";
-    val: string;
-  }>({
+  const [otpModal, setOtpModal] = useState ({
     isOpen: false,
     type: "email",
     val: "",
@@ -96,7 +90,7 @@ export default function ProfileWizard() {
     price: "",
     description: "",
     tagsInput: "",
-    status: "Active" as const,
+    status: "Active"  ,
   });
 
   const nextStep = () => {
@@ -111,7 +105,7 @@ export default function ProfileWizard() {
     }
   };
 
-  const handleSaveServiceStep = (services: ServiceItem[]) => {
+  const handleSaveServiceStep = (services ) => {
     store.updateServiceOrder(services);
     // message.success("Service listing saved. Proceeding to banking setup.");
     nextStep();
@@ -189,26 +183,26 @@ export default function ProfileWizard() {
   // }, [addressInput]);
 
   // Sync React Hook Form with Zustand on submit
-  const onSaveStep2 = (data: typeof store.basicInfo) => {
+  const onSaveStep2 = (data ) => {
     store.setBasicInfo(data);
     message.success("Basic Info saved successfully!");
     nextStep();
   };
 
-  const onSaveStep3 = (data: any) => {
+  const onSaveStep3 = (data) => {
     store.setRegistrationDetails(data);
     message.success("Registration & Compliance details saved!");
     nextStep();
   };
 
-  const onSaveStep4 = (data: typeof store.bankingDetails) => {
+  const onSaveStep4 = (data ) => {
     store.setBankingDetails(data);
     message.success("Banking Details saved!");
     nextStep();
   };
 
   // Simulated OTP verification trigger
-  const triggerOtpSend = (type: "email" | "mobile", val: string) => {
+  const triggerOtpSend = (type , val) => {
     if (!val) {
       message.error(`Please enter a valid ${type} before sending OTP.`);
       return;
@@ -238,7 +232,7 @@ export default function ProfileWizard() {
 
   // Step 3 Document drag-and-drop
   const [dragActive, setDragActive] = useState(false);
-  const handleDrag = (e: React.DragEvent) => {
+  const handleDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
     if (e.type === "dragenter" || e.type === "dragover") {
@@ -248,7 +242,7 @@ export default function ProfileWizard() {
     }
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
@@ -259,7 +253,7 @@ export default function ProfileWizard() {
     }
   };
 
-  const uploadStep3Files = (files: File[]) => {
+  const uploadStep3Files = (files) => {
     // Validate file sizes (< 5MB)
     const validFiles = files.filter((f) => {
       if (f.size > 5 * 1024 * 1024) {
@@ -274,7 +268,7 @@ export default function ProfileWizard() {
     // Simulate progress upload
     const updatedFiles = [...store.registrationDetails.importExportCertFiles];
     validFiles.forEach((file) => {
-      const newFileObj: FileItem = {
+      const newFileObj   = {
         name: file.name,
         size: file.size,
         progress: 0,
@@ -299,7 +293,7 @@ export default function ProfileWizard() {
 
   // Bank name auto-detection from IFSC code
   const watchIfsc = watchStep4("ifscCode") || "";
-  const getBankLogo = (ifsc: string) => {
+  const getBankLogo = (ifsc) => {
     const code = ifsc.substring(0, 4).toUpperCase();
     if (code === "SBIN")
       return {
@@ -340,9 +334,7 @@ export default function ProfileWizard() {
   const detectedBank = getBankLogo(watchIfsc);
 
   // Step 4: Document Category upload
-  const [selectedDocType, setSelectedDocType] = useState<
-    Record<string, string>
-  >({
+  const [selectedDocType, setSelectedDocType] = useState ({
     businessRegistration: "GST Certificate",
     identityAddress: "PAN Card",
     complianceCertificates: "Bank Certificate",
@@ -350,12 +342,8 @@ export default function ProfileWizard() {
   });
 
   const handleDocCategoryDrop = (
-    e: React.DragEvent,
-    category:
-      | "businessRegistration"
-      | "identityAddress"
-      | "complianceCertificates"
-      | "otherDocuments",
+    e,
+    category 
   ) => {
     e.preventDefault();
     e.stopPropagation();
@@ -367,12 +355,8 @@ export default function ProfileWizard() {
   };
 
   const uploadCategoryFiles = (
-    files: File[],
-    category:
-      | "businessRegistration"
-      | "identityAddress"
-      | "complianceCertificates"
-      | "otherDocuments",
+    files,
+    category
   ) => {
     const type = selectedDocType[category];
     const existingSections = [...(store.documents[category] || [])];
@@ -390,12 +374,12 @@ export default function ProfileWizard() {
         return;
       }
 
-      const fileObj: FileItem = {
+      const fileObj  = {
         name: file.name,
         size: file.size,
         progress: 0,
       };
-      section!.files.push(fileObj);
+     section?.files?.push(fileObj);
 
       let prog = 0;
       const interval = setInterval(() => {
@@ -410,13 +394,9 @@ export default function ProfileWizard() {
   };
 
   const removeCategoryFile = (
-    category:
-      | "businessRegistration"
-      | "identityAddress"
-      | "complianceCertificates"
-      | "otherDocuments",
-    sectionIndex: number,
-    fileIndex: number,
+    category ,
+    sectionIndex,
+    fileIndex,
   ) => {
     const existingSections = [...(store.documents[category] || [])];
     const section = existingSections[sectionIndex];
@@ -466,15 +446,15 @@ export default function ProfileWizard() {
   };
 
   // Service list reordering (drag & drop)
-  const [draggedServiceIndex, setDraggedServiceIndex] = useState<number | null>(
+  const [draggedServiceIndex, setDraggedServiceIndex] = useState (
     null,
   );
 
-  const handleServiceDragStart = (idx: number) => {
+  const handleServiceDragStart = (idx) => {
     setDraggedServiceIndex(idx);
   };
 
-  const handleServiceDragOver = (e: React.DragEvent, idx: number) => {
+  const handleServiceDragOver = (e , idx ) => {
     e.preventDefault();
     if (draggedServiceIndex === null || draggedServiceIndex === idx) return;
 
@@ -504,7 +484,7 @@ export default function ProfileWizard() {
   };
 
   // Determine Profile Strength label and color
-  const getProfileStrength = (p: number) => {
+  const getProfileStrength = (p) => {
     if (p < 40)
       return { label: "Weak", color: "text-red-600 bg-red-50 border-red-200" };
     if (p < 80)
@@ -1596,7 +1576,7 @@ export default function ProfileWizard() {
                       ].map((cat) => {
                         const uploadedSections =
                           store.documents[
-                            cat.id as keyof typeof store.documents
+                            cat.id  
                           ] || [];
                         const totalFilesCount = uploadedSections.reduce(
                           (a, b) => a + b.files.length,
@@ -1642,7 +1622,7 @@ export default function ProfileWizard() {
                             <div
                               onDragOver={(e) => e.preventDefault()}
                               onDrop={(e) =>
-                                handleDocCategoryDrop(e, cat.id as any)
+                                handleDocCategoryDrop(e, cat.id )
                               }
                               className="relative py-6 border border-dashed border-slate-200 hover:border-blue-400 rounded-xl flex flex-col items-center justify-center bg-white/50 cursor-pointer shadow-inner"
                             >
@@ -1652,7 +1632,7 @@ export default function ProfileWizard() {
                                   if (e.target.files)
                                     uploadCategoryFiles(
                                       Array.from(e.target.files),
-                                      cat.id as any,
+                                      cat.id ,
                                     );
                                 }}
                                 className="absolute inset-0 opacity-0 cursor-pointer"
@@ -1689,7 +1669,7 @@ export default function ProfileWizard() {
                                         <button
                                           onClick={() =>
                                             removeCategoryFile(
-                                              cat.id as any,
+                                              cat.id  ,
                                               secIdx,
                                               fileIdx,
                                             )

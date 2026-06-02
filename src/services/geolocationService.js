@@ -3,42 +3,10 @@
  * Fetches location data (state, city, pincode) from latitude/longitude
  */
 
-interface LocationData {
-  state: string;
-  city: string;
-  pincode: string;
-  address: string;
-  latitude: number;
-  longitude: number;
-}
-
-interface ReverseGeocodeResponse {
-  results: Array<{
-    address_components: Array<{
-      long_name: string;
-      short_name: string;
-      types: string[];
-    }>;
-  }>;
-}
-
-interface PincodeResponse {
-  Status: number;
-  PostOffices?: Array<{
-    State: string;
-    District: string;
-    Division: string;
-    PostOfficeName: string;
-  }>;
-}
-
 /**
  * Get current user location via browser Geolocation API
  */
-export const getCurrentLocation = (): Promise<{
-  latitude: number;
-  longitude: number;
-}> => {
+export const getCurrentLocation = () => {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
       reject(new Error("Geolocation is not supported by this browser"));
@@ -64,9 +32,9 @@ export const getCurrentLocation = (): Promise<{
  * Tries multiple approaches to find pincode
  */
 export const getLocationFromCoordinates = async (
-  latitude: number,
-  longitude: number,
-): Promise<LocationData> => {
+  latitude,
+  longitude,
+) => {
   try {
     // First try: Use OpenStreetMap Nominatim (free, no API key needed)
     const nominatimResponse = await fetch(
@@ -107,7 +75,7 @@ console.log(address,"12");
       );
 
       if (pincodeResponse.ok) {
-        const pincodeData = (await pincodeResponse.json()) as PincodeResponse;
+        const pincodeData = await pincodeResponse.json();
 
         if (
           pincodeData.Status === 200 &&
@@ -154,7 +122,7 @@ console.log(address,"12");
 /**
  * Combined function to get current location and fetch location data
  */
-export const detectLocationFromCoordinates = async (): Promise<LocationData> => {
+export const detectLocationFromCoordinates = async () => {
   const { latitude, longitude } = await getCurrentLocation();
   return getLocationFromCoordinates(latitude, longitude);
 };
@@ -162,6 +130,6 @@ export const detectLocationFromCoordinates = async (): Promise<LocationData> => 
 /**
  * Format location data for display
  */
-export const formatLocationData = (data: LocationData): string => {
+export const formatLocationData = (data) => {
   return `${data.city}, ${data.state} - ${data.pincode}`;
 };
