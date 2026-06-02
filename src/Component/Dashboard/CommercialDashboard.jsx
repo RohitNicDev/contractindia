@@ -410,6 +410,8 @@ function DocSectionCard({ section, data, dispatch }) {
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 function Dashboard({ user }) {
   const name = user.companyName || user.contactPerson || "there";
+  
+  
   const stats = [
     { label:"Credits",      value:"₹500",  sub:"+₹200 this month",  grad:"from-blue-500 to-indigo-500",    icon:CreditCard,  up:true  },
     { label:"Active Leads", value:"12",    sub:"3 new this week",    grad:"from-emerald-500 to-teal-500",   icon:List,        up:true  },
@@ -429,12 +431,14 @@ function Dashboard({ user }) {
           <div>
             <p className="text-[10.5px] font-bold uppercase tracking-[0.22em] text-blue-500">Welcome back</p>
             <h1 className="mt-1 text-2xl font-black bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-700 bg-clip-text text-transparent">
-              Hello, {name} 👋
+              Hello,
+               {/* {name}  */}
+               👋
             </h1>
-            <p className="mt-1.5 text-sm text-slate-500">
+            {/* <p className="mt-1.5 text-sm text-slate-500">
               {user.email && <span className="mr-3">📧 {user.email}</span>}
               {user.mobile && <span>📱 {user.mobile}</span>}
-            </p>
+            </p> */}
             {user.services?.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-1.5">
                 {(Array.isArray(user.services)?user.services:[user.services]).map(s => (
@@ -512,7 +516,7 @@ function Documents() {
   const [docsState, setDocsState] = useState(initDocState);
   const dispatch = action => setDocsState(s => docsReducer(s, action));
 
-  const canContinue = profile.companyName && profile.contactPerson && profile.email && profile.mobile;
+  const canContinue = profile.companyName && profile.companyType && profile.contactPerson && profile.email && profile.mobile;
   const totalFiles = Object.values(docsState).reduce((t,sec) =>
     t + Object.values(sec.files).flat().length + sec.otherFields.reduce((a,f) => a+f.files.length, 0), 0);
   const activeSections = DOC_SECTIONS.filter(s => {
@@ -539,9 +543,9 @@ function Documents() {
       {/* Step tabs */}
       <div className="grid grid-cols-2 gap-3 p-3 rounded-2xl bg-slate-50/80 border border-slate-100">
         {[{ n:1, title:"Profile", sub:"Company details" },{ n:2, title:"Documents", sub:"Upload files" }].map(item => (
-          <button key={item.n} type="button" onClick={() => setStep(item.n)}
+          <button key={item.n} type="button" onClick={() => setStep(item.n)} disabled={item.n === 2 && !canContinue}
             className={`flex items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all ${
-              step===item.n ? "border-blue-200 bg-white shadow-sm" : "border-transparent hover:bg-white/60"
+              step===item.n ? "border-blue-200 bg-white shadow-sm" : item.n === 2 && !canContinue ? "border-slate-200 bg-slate-50 opacity-50 cursor-not-allowed" : "border-transparent hover:bg-white/60"
             }`}>
             <span className={`grid h-8 w-8 place-items-center rounded-lg text-sm font-black shrink-0 ${
               step===item.n ? "bg-gradient-to-br from-blue-500 to-indigo-500 text-white" : "bg-slate-200 text-slate-600"
@@ -558,7 +562,23 @@ function Documents() {
       {step === 1 && (
         <div className="space-y-4">
           <div className="grid sm:grid-cols-2 gap-4">
-            {[["Company Name *","companyName"],["Contact Person *","contactPerson"],
+            <div>
+              <label className="text-[10.5px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5">Company Name *</label>
+              <input className={inp} value={profile.companyName}
+                onChange={e => setProfile(p => ({ ...p, companyName: e.target.value }))} />
+            </div>
+            <div>
+              <label className="text-[10.5px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5">Company Type *</label>
+              <select className={inp} value={profile.companyType || ""}
+                onChange={e => setProfile(p => ({ ...p, companyType: e.target.value }))}>
+                <option value="">Select Company Type</option>
+                <option value="proprietor">Proprietor</option>
+                <option value="partnership">Partnership</option>
+                <option value="PVTLLP">PVT,LLP Public, OPC</option>
+             
+              </select>
+            </div>
+            {[["Contact Person *","contactPerson"],
               ["Email *","email"],["Mobile *","mobile"]].map(([lbl,key]) => (
               <div key={key}>
                 <label className="text-[10.5px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5">{lbl}</label>
@@ -577,12 +597,12 @@ function Documents() {
               onClick={saveProfile} disabled={!canContinue}
               className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm text-white shadow-lg disabled:opacity-40 disabled:cursor-not-allowed"
               style={btnPrimary}>
-              <CheckCircle2 className="w-4 h-4"/> Save & Continue
+              <CheckCircle2 className="w-4 h-4"/> Save & Next
             </motion.button>
-            <button type="button" onClick={() => setStep(2)}
-              className="px-6 py-2.5 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-slate-700 hover:border-blue-200 transition-all">
+            {/* <button type="button" onClick={() => setStep(2)} disabled={!canContinue}
+              className="px-6 py-2.5 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-slate-700 hover:border-blue-200 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
               Skip to Documents
-            </button>
+            </button> */}
           </div>
         </div>
       )}
@@ -1083,7 +1103,7 @@ export default function CommercialDashboard() {
   const navigate = useNavigate();
   const raw = localStorage.getItem("commercial_user_v1");
   const [user, setUser] = useState(raw ? JSON.parse(raw) : {
-    companyName:"Demo Company", contactPerson:"Demo User",
+    companyName:"Demo Company ", contactPerson:"Demo User",
     email:"demo@company.com", mobile:"9876543210",
   });
   const [activeTab, setActiveTab] = useState("dashboard");
