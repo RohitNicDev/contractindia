@@ -14,10 +14,16 @@ import {
   Shield,
   Wrench,
   Building2,
+  LogOut,
+  LayoutDashboard,
+  User,
+  User2Icon,
+  User2,
+  ChevronDownCircle,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate, Link } from "react-router-dom";
-import { Button, Badge, Drawer, Collapse } from "antd";
+import { Button, Badge, Drawer, Collapse, Dropdown, Avatar } from "antd";
 import logo from "../../assets/IMG/logo_con1.png";
 const { Panel } = Collapse;
 
@@ -98,6 +104,7 @@ const NAV_ITEMS = [
   { name: "Contact Us", path: "/contact" },
 ];
 
+
 // ─── Services Dropdown Menu ──────────────────────────────────────
 const DropdownMenu = ({ columns, visible }) => (
   <div
@@ -172,7 +179,23 @@ const Header = () => {
     }
     // Fallback route
     navigate("/home");
+  }; 
+  
+  const handleSignOut = () => {
+    localStorage.removeItem("commercial_user_v1");
+    localStorage.removeItem("login_mock_v1");
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("otp_verified_v1");
+    localStorage.removeItem("registration_form_v1");
+    localStorage.removeItem("individual_user_v1");
+    localStorage.removeItem("admin_auth_v1");
+    localStorage.removeItem("commercial_gst_v1");
+    window.dispatchEvent(new Event("auth_changed"));
+    navigate("/login");
   };
+
+
+
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -205,6 +228,21 @@ const Header = () => {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+const dashboarditems = [
+  {
+    key: "dashboard",
+    icon: <LayoutDashboard size={16} />,
+    label: "Dashboard",
+    onClick: goToDashboard,
+  },
+  {
+    key: "logout",
+    icon: <LogOut size={16} />,
+    label: "Logout",
+    danger: true,
+     onClick: handleSignOut,
+  },
+];
 
   return (
     <header
@@ -339,14 +377,27 @@ const Header = () => {
                     </Button>
                   </>
                 ) : (
-                  <Button
-                    type="primary"
-                    className="!bg-[#162646] !rounded-lg !h-8 sm:!h-10 !px-4 sm:!px-6 !font-bold flex items-center gap-2"
-                      onClick={goToDashboard}
-                  >
-                    <Layout size={14} />
-                    <span className="text-xs sm:text-sm">Dashboard</span>
-                  </Button>
+                <>
+                
+             <div className="flex items-center gap-3">
+<Dropdown
+  menu={{ items: dashboarditems }}
+  trigger={["click"]}
+  placement="bottomRight"
+>
+  <div className="flex items-center gap-1 cursor-pointer">
+    <Avatar
+      size={38}
+      icon={<User2 size={18} />}
+      className="!bg-[#162646]"
+    />
+    <ChevronDownCircle size={16} className="text-slate-500" />
+  </div>
+</Dropdown>
+</div>
+                
+                
+                </>
                 )}
               </div>
             </div>
