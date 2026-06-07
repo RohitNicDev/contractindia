@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "http://97.74.91.115/contractsindiamainapi/api/:path*"
+      "destination": "http://97.74.91.115/contractsindiamainapi/:path*"
     }
   ]
 }
