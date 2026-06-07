@@ -66,4 +66,7 @@ export const ServiceMasterGet = async () => {
 export const ServiceMasterGetById = async (planId) => {
   return await api.get(`/ServiceMaster/get/${planId}`);
 };
+export const subscriptionHistoryGet = async () => {
+  return await api.get(`/UserSubscriptionDetail/get`);
+};
 

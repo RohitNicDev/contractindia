@@ -19,6 +19,7 @@ import { useProfileWizardStore, calculateProgress } from "../../store/profileWiz
 import { SERVICES_HIERARCHY } from "../../data/services_hierarchy";
 import { Input } from "antd";
 import ServiceListing from "./pages/ServiceListing";
+import SubscriptionHistory from "./pages/SubscriptionHistory";
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
 const glass = "rounded-2xl bg-white/80 backdrop-blur-xl border border-white/90 shadow-[0_2px_20px_rgba(99,102,241,0.07)]";
@@ -2078,7 +2079,7 @@ export default function CommercialDashboard() {
       case "profile": return <ProfileWizard />;
       case "credits": return <AddCredits />;
       // case "payments": return <DataTable title="Payment History" icon={History} accent="blue" cols={["Txn ID", "Amount", "Type", "Date", "Status"]} rows={payRows} />;
-      case "subscription": return <DataTable title="Subscription History" icon={Briefcase} accent="violet" cols={["Plan", "Price","Payment type","Payment Date", "Start", "End", "Status"]} rows={subRows} />;
+      case "subscription": return <SubscriptionHistory />;
       case "clients": return <DataTable title="Client History" icon={User} accent="emerald" cols={["Name", "Email", "Service", "Date", "Status"]} rows={clientRows} />;
       case "leads": return <LeadManagement />;
       case "services": return <ServiceListing dashboardMode={true} />;

@@ -34,7 +34,7 @@ const STATUS_STYLES = {
 /* ==========================================================================
    HELPERS
    ========================================================================== */
-function StatusBadge({ value }) {
+export function StatusBadge({ value }) {
   const cls = STATUS_STYLES[value];
   if (!cls) return <span className="text-slate-700 text-sm">{value}</span>;
   return (
@@ -54,14 +54,14 @@ function SortIcon({ direction }) {
 /* ==========================================================================
    COLUMN FILTER POPOVER
    ========================================================================== */
-function ColumnFilterPopover({ col, value, onChange, onClose, anchorRef }) {
+function ColumnFilterPopover({ colTitle, value, onChange, onClose }) {
   return (
     <div
       className="absolute z-50 mt-1 w-52 rounded-2xl bg-white border border-slate-200 shadow-xl shadow-slate-200/60 p-3"
       style={{ top: "100%", left: 0 }}
     >
       <div className="flex items-center justify-between mb-2">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Filter: {col}</span>
+        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Filter: {colTitle}</span>
         <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
           <X className="w-3.5 h-3.5" />
         </button>
@@ -70,7 +70,7 @@ function ColumnFilterPopover({ col, value, onChange, onClose, anchorRef }) {
         autoFocus
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder={`Filter ${col}...`}
+        placeholder={`Filter ${colTitle}...`}
         className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs outline-none focus:border-indigo-400 focus:bg-white transition-all"
       />
       {value && (
@@ -99,15 +99,16 @@ function ColumnVisibilityPanel({ cols, hidden, onToggle, onClose }) {
       </div>
       <div className="space-y-1">
         {cols.map((col) => {
-          const isVisible = !hidden.includes(col);
+          const colKey = col.key || col.dataIndex;
+          const isVisible = !hidden.includes(colKey);
           return (
             <label
-              key={col}
+              key={colKey}
               className={`flex cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold transition-all ${
                 isVisible ? "bg-indigo-50 text-indigo-700" : "bg-slate-50 text-slate-400"
               }`}
             >
-              <input type="checkbox" checked={isVisible} onChange={() => onToggle(col)} className="sr-only" />
+              <input type="checkbox" checked={isVisible} onChange={() => onToggle(colKey)} className="sr-only" />
               <div
                 className={`w-4 h-4 rounded-md border flex items-center justify-center transition-all ${
                   isVisible ? "border-indigo-400 bg-indigo-400" : "border-slate-300 bg-white"
@@ -119,7 +120,7 @@ function ColumnVisibilityPanel({ cols, hidden, onToggle, onClose }) {
                   </svg>
                 )}
               </div>
-              {col}
+              {col.title}
             </label>
           );
         })}
@@ -134,7 +135,7 @@ function ColumnVisibilityPanel({ cols, hidden, onToggle, onClose }) {
 
 const PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
 
- const  DataTableComponent=({
+const DataTableComponent = ({
   title,
   icon: Icon,
   cols = [],
@@ -143,12 +144,22 @@ const PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
   onRefresh,
   onExport,
   loading = false,
-}) =>{
+}) => {
+  // Normalize columns for backward compatibility
+  const normalizedCols = useMemo(() => {
+    return cols.map(c => {
+      if (typeof c === 'string') {
+        return { title: c, dataIndex: c, key: c };
+      }
+      return { ...c, key: c.key || c.dataIndex };
+    });
+  }, [cols]);
+
   // ── State ──────────────────────────────────────────────────────────────────
   const [globalFilter, setGlobalFilter]   = useState("");
-  const [colFilters, setColFilters]       = useState({});       // { colName: filterStr }
-  const [activeColFilter, setActiveColFilter] = useState(null); // colName | null
-  const [sortCol, setSortCol]             = useState(null);
+  const [colFilters, setColFilters]       = useState({});       // { colKey: filterStr }
+  const [activeColFilter, setActiveColFilter] = useState(null); // colKey | null
+  const [sortColKey, setSortColKey]       = useState(null);
   const [sortDir, setSortDir]             = useState("asc");    // "asc" | "desc"
   const [page, setPage]                   = useState(1);
   const [pageSize, setPageSize]           = useState(10);
@@ -157,45 +168,59 @@ const PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
   const [showColPanel, setShowColPanel]   = useState(false);
   const [densityMode, setDensityMode]     = useState("normal"); // "compact" | "normal" | "relaxed"
 
-  const visibleCols = cols.filter((c) => !hiddenCols.includes(c));
+  const visibleCols = normalizedCols.filter((c) => !hiddenCols.includes(c.key));
+
+  // Helper to extract cell value
+  const getCellValue = (row, col) => {
+    if (!row) return null;
+    if (Array.isArray(row)) {
+      const idx = normalizedCols.findIndex(c => c.key === col.key);
+      return row[idx];
+    }
+    return row[col.dataIndex];
+  };
 
   // ── Filtering ──────────────────────────────────────────────────────────────
   const filteredRows = useMemo(() => {
-    let result = rows;
+    let result = Array.isArray(rows) ? rows : [];
 
     // Global search
     if (globalFilter.trim()) {
       const term = globalFilter.toLowerCase();
       result = result.filter((row) =>
-        row.some((cell) => String(cell ?? "").toLowerCase().includes(term)),
+        normalizedCols.some((col) => {
+          const val = getCellValue(row, col);
+          return String(val ?? "").toLowerCase().includes(term);
+        })
       );
     }
 
     // Per-column filters
-    Object.entries(colFilters).forEach(([colName, term]) => {
-      if (!term.trim()) return;
-      const colIdx = cols.indexOf(colName);
-      if (colIdx === -1) return;
-      result = result.filter((row) =>
-        String(row[colIdx] ?? "").toLowerCase().includes(term.toLowerCase()),
-      );
+    Object.entries(colFilters).forEach(([colKey, term]) => {
+      if (!term?.trim()) return;
+      const col = normalizedCols.find(c => c.key === colKey);
+      if (!col) return;
+      result = result.filter((row) => {
+        const val = getCellValue(row, col);
+        return String(val ?? "").toLowerCase().includes(term.toLowerCase());
+      });
     });
 
     return result;
-  }, [rows, globalFilter, colFilters, cols]);
+  }, [rows, globalFilter, colFilters, normalizedCols]);
 
   // ── Sorting ────────────────────────────────────────────────────────────────
   const sortedRows = useMemo(() => {
-    if (!sortCol) return filteredRows;
-    const colIdx = cols.indexOf(sortCol);
-    if (colIdx === -1) return filteredRows;
+    if (!sortColKey) return filteredRows;
+    const col = normalizedCols.find(c => c.key === sortColKey);
+    if (!col) return filteredRows;
     return [...filteredRows].sort((a, b) => {
-      const av = a[colIdx] ?? "";
-      const bv = b[colIdx] ?? "";
+      const av = getCellValue(a, col) ?? "";
+      const bv = getCellValue(b, col) ?? "";
       const cmp = String(av).localeCompare(String(bv), undefined, { numeric: true });
       return sortDir === "asc" ? cmp : -cmp;
     });
-  }, [filteredRows, sortCol, sortDir, cols]);
+  }, [filteredRows, sortColKey, sortDir, normalizedCols]);
 
   // ── Pagination ─────────────────────────────────────────────────────────────
   const totalPages = Math.max(1, Math.ceil(sortedRows.length / pageSize));
@@ -207,11 +232,11 @@ const PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
   }, [sortedRows, page, pageSize]);
 
   // ── Handlers ──────────────────────────────────────────────────────────────
-  const handleSort = (col) => {
-    if (sortCol === col) {
+  const handleSort = (colKey) => {
+    if (sortColKey === colKey) {
       setSortDir((d) => (d === "asc" ? "desc" : "asc"));
     } else {
-      setSortCol(col);
+      setSortColKey(colKey);
       setSortDir("asc");
     }
     setPage(1);
@@ -227,18 +252,18 @@ const PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
     setPage(1);
   };
 
-  const toggleColFilter = (col) => {
-    setActiveColFilter((prev) => (prev === col ? null : col));
+  const toggleColFilter = (colKey) => {
+    setActiveColFilter((prev) => (prev === colKey ? null : colKey));
   };
 
-  const setColFilter = (col, val) => {
-    setColFilters((prev) => ({ ...prev, [col]: val }));
+  const setColFilter = (colKey, val) => {
+    setColFilters((prev) => ({ ...prev, [colKey]: val }));
     setPage(1);
   };
 
-  const toggleColVisibility = (col) => {
+  const toggleColVisibility = (colKey) => {
     setHiddenCols((prev) =>
-      prev.includes(col) ? prev.filter((c) => c !== col) : [...prev, col],
+      prev.includes(colKey) ? prev.filter((c) => c !== colKey) : [...prev, colKey]
     );
   };
 
@@ -262,14 +287,14 @@ const PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
   const clearAllFilters = () => {
     setGlobalFilter("");
     setColFilters({});
-    setSortCol(null);
+    setSortColKey(null);
     setPage(1);
   };
 
   const hasActiveFilters =
     globalFilter.trim() ||
-    Object.values(colFilters).some((v) => v.trim()) ||
-    sortCol;
+    Object.values(colFilters).some((v) => v?.trim()) ||
+    sortColKey;
 
   const densityPadding = {
     compact:  "py-1.5 px-3",
@@ -288,10 +313,10 @@ const PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
   // ── Export CSV ─────────────────────────────────────────────────────────────
   const handleExport = () => {
     if (onExport) { onExport(sortedRows); return; }
-    const header = visibleCols.join(",");
+    const header = visibleCols.map(c => c.title).join(",");
     const body = sortedRows.map((row) =>
       visibleCols.map((c) => {
-        const val = row[cols.indexOf(c)] ?? "";
+        const val = getCellValue(row, c) ?? "";
         return `"${String(val).replace(/"/g, '""')}"`;
       }).join(",")
     ).join("\n");
@@ -332,7 +357,7 @@ const PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
           <div>
             <h3 className="font-black text-slate-800 text-base leading-tight">{title}</h3>
             <p className="text-[11px] text-slate-400 mt-0.5">
-              {filteredRows.length} of {rows.length} record{rows.length !== 1 ? "s" : ""}
+              {filteredRows.length} of {Array.isArray(rows) ? rows.length : 0} record{Array.isArray(rows) && rows.length !== 1 ? "s" : ""}
               {selectedRows.size > 0 && (
                 <span className="ml-2 font-bold text-indigo-500">· {selectedRows.size} selected</span>
               )}
@@ -426,7 +451,7 @@ const PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
             </button>
             {showColPanel && (
               <ColumnVisibilityPanel
-                cols={cols}
+                cols={normalizedCols}
                 hidden={hiddenCols}
                 onToggle={toggleColVisibility}
                 onClose={() => setShowColPanel(false)}
@@ -472,22 +497,22 @@ const PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
                 <th className="py-2.5 px-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest w-10">#</th>
 
                 {visibleCols.map((col) => {
-                  const isSorted   = sortCol === col;
-                  const hasFilter  = !!(colFilters[col]?.trim());
-                  const filterOpen = activeColFilter === col;
+                  const isSorted   = sortColKey === col.key;
+                  const hasFilter  = !!(colFilters[col.key]?.trim());
+                  const filterOpen = activeColFilter === col.key;
                   return (
-                    <th key={col} className="py-2.5 px-4 text-left relative">
+                    <th key={col.key} className="py-2.5 px-4 text-left relative">
                       <div className="flex items-center gap-1.5">
                         <button
-                          onClick={() => handleSort(col)}
+                          onClick={() => handleSort(col.key)}
                           className="group flex items-center gap-1 text-[10.5px] font-bold text-slate-500 uppercase tracking-widest hover:text-slate-800 transition-colors"
                         >
-                          {col}
+                          {col.title}
                           <SortIcon direction={isSorted ? sortDir : null} />
                         </button>
                         {/* Column filter trigger */}
                         <button
-                          onClick={() => toggleColFilter(col)}
+                          onClick={() => toggleColFilter(col.key)}
                           className={`flex h-5 w-5 items-center justify-center rounded-md transition-all ${
                             hasFilter
                               ? "bg-indigo-100 text-indigo-600"
@@ -495,7 +520,7 @@ const PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
                               ? "bg-slate-200 text-slate-600"
                               : "text-slate-300 hover:text-slate-500 hover:bg-slate-100"
                           }`}
-                          title={`Filter by ${col}`}
+                          title={`Filter by ${col.title}`}
                         >
                           <Filter className="w-2.5 h-2.5" />
                         </button>
@@ -504,9 +529,9 @@ const PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
                       {/* Column filter popover */}
                       {filterOpen && (
                         <ColumnFilterPopover
-                          col={col}
-                          value={colFilters[col] ?? ""}
-                          onChange={(val) => setColFilter(col, val)}
+                          colTitle={col.title}
+                          value={colFilters[col.key] ?? ""}
+                          onChange={(val) => setColFilter(col.key, val)}
                           onClose={() => setActiveColFilter(null)}
                         />
                       )}
@@ -535,7 +560,7 @@ const PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
                   const isSelected  = selectedRows.has(absoluteIdx);
                   return (
                     <tr
-                      key={rowIdx}
+                      key={row?.id || rowIdx}
                       onClick={() => toggleSelectRow(absoluteIdx)}
                       className={`border-b border-slate-50 cursor-pointer transition-colors ${
                         isSelected
@@ -567,13 +592,13 @@ const PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
                       </td>
 
                       {visibleCols.map((col) => {
-                        const colIdx = cols.indexOf(col);
-                        const cell   = row[colIdx] ?? "—";
+                        const cellValue = getCellValue(row, col);
+                        const displayValue = col.render ? col.render(cellValue, row, absoluteIdx) : (cellValue ?? "—");
                         return (
-                          <td key={col} className={`${densityPadding} text-slate-700`}>
-                            {STATUS_STYLES[cell]
-                              ? <StatusBadge value={cell} />
-                              : <span className="text-sm">{cell}</span>}
+                          <td key={col.key} className={`${densityPadding} text-slate-700`}>
+                            {(!col.render && typeof displayValue === 'string' && STATUS_STYLES[displayValue])
+                              ? <StatusBadge value={displayValue} />
+                              : <span className="text-sm">{displayValue}</span>}
                           </td>
                         );
                       })}
@@ -665,5 +690,5 @@ const PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
       )}
     </div>
   );
-}
+};
 export default DataTableComponent;

@@ -84,3 +84,33 @@ body {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
+#your-scroll-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+#your-scroll-container::-webkit-scrollbar-track {
+  background: #eeedfe;
+  border-radius: 999px;
+}
+
+#your-scroll-container::-webkit-scrollbar-thumb {
+  background: #7f77dd;
+  border-radius: 999px;
+}
+
+#your-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #6159bf;
+}
+/* index.css or globals.css */
+
+/* Apply to every scrollable element */
+* {
+  scrollbar-width: thin;           /* Firefox */
+  scrollbar-color: #7F77DD transparent; /* Firefox: thumb track */
+}
+
+/* Chrome / Safari / Edge */
+*::-webkit-scrollbar { width: 6px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: #7F77DD; border-radius: 999px; }
+*::-webkit-scrollbar-thumb:hover { background: #534AB7; }
