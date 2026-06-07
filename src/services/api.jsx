@@ -35,3 +35,35 @@ export const getState = async (payload) => {
 export const getCities = async (StateId) => {
   return await api.get(`/Common/getcity/${StateId}`);
 };
+export const planMasterSave = async (payload) => {
+  return await api.post(`/PlanMaster/save`, payload);
+};
+export const planMasterUpdate = async (payload) => {
+  return await api.put(`/PlanMaster/update`, payload);
+};
+export const planMasterDelete = async (planId) => {
+  return await api.delete(`/PlanMaster/delete/${planId}`);
+};
+export const planMasterGet = async () => {
+  return await api.get(`/PlanMaster/get`);
+};
+export const planMasterGetById = async (planId) => {
+  return await api.get(`/PlanMaster/get/${planId}`);
+};
+export const ServiceMasterSave = async (payload) => {
+  return await api.post(`/ServiceMaster/save`, payload);
+};
+export const ServiceMasterUpdate = async (payload) => {
+  return await api.put(`/ServiceMaster/update`, payload);
+};
+export const ServiceMasterDelete = async (planId) => {
+  return await api.delete(`/ServiceMaster/delete/${planId}`);
+};
+export const ServiceMasterGet = async () => {
+
+  return await api.get(`/ServiceMaster/get`);
+};
+export const ServiceMasterGetById = async (planId) => {
+  return await api.get(`/ServiceMaster/get/${planId}`);
+};
+

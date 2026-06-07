@@ -76,3 +76,10 @@ export const clientRows = [
     status: "Active",
   },
 ];
+export const existingPlans = [
+  { name: "Basic", price: "0/mo", features: "5 Services, 100 Credits, Email Support", credits: 100 },
+  { name: "Pro", price: "2,499/mo", features: "All Services, 500 Credits, Priority Support", credits: 500 },
+  { name: "Enterprise", price: "9,999/mo", features: "Unlimited, 2000 Credits, Dedicated Manager", credits: 2000 },
+];
+export const userOptions = ["Rahul Sharma", "Sharma Builders", "Priya Mehta", "Gupta Contractors", "Amit Verma"];
+ 

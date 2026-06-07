@@ -27,7 +27,7 @@ const btnPrimary = { background: "linear-gradient(135deg,#3b82f6,#6366f1)" };
 const NAV = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "profile", label: "My Profile", icon: User },
-  { id: "payments", label: "Payment History", icon: History },
+  // { id: "payments", label: "Payment History", icon: History },
   { id: "subscription", label: "Subscription History", icon: Briefcase },
   { id: "clients", label: "Client History", icon: User },
   { id: "leads", label: "Lead Management", icon: List },
@@ -2077,8 +2077,8 @@ export default function CommercialDashboard() {
       case "dashboard": return <Dashboard user={user} />;
       case "profile": return <ProfileWizard />;
       case "credits": return <AddCredits />;
-      case "payments": return <DataTable title="Payment History" icon={History} accent="blue" cols={["Txn ID", "Amount", "Type", "Date", "Status"]} rows={payRows} />;
-      case "subscription": return <DataTable title="Subscription History" icon={Briefcase} accent="violet" cols={["Plan", "Price", "Start", "End", "Status"]} rows={subRows} />;
+      // case "payments": return <DataTable title="Payment History" icon={History} accent="blue" cols={["Txn ID", "Amount", "Type", "Date", "Status"]} rows={payRows} />;
+      case "subscription": return <DataTable title="Subscription History" icon={Briefcase} accent="violet" cols={["Plan", "Price","Payment type","Payment Date", "Start", "End", "Status"]} rows={subRows} />;
       case "clients": return <DataTable title="Client History" icon={User} accent="emerald" cols={["Name", "Email", "Service", "Date", "Status"]} rows={clientRows} />;
       case "leads": return <LeadManagement />;
       case "services": return <ServiceListing dashboardMode={true} />;

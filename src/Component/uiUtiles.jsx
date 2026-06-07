@@ -1,0 +1,5 @@
+export const glass = { background: "rgba(255,255,255,0.72)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.85)", borderRadius: "16px" };
+export const gradBtn = { background: "linear-gradient(135deg,#6366f1,#8b5cf6)", color: "#fff", border: "none", borderRadius: "10px", padding: "8px 18px", fontWeight: 600, fontSize: "13px", cursor: "pointer" };
+export const Badge = ({ color, children }) => (
+  <span style={{ background: color === "green" ? "#dcfce7" : color === "red" ? "#fee2e2" : color === "yellow" ? "#fef9c3" : "#e0e7ff", color: color === "green" ? "#16a34a" : color === "red" ? "#dc2626" : color === "yellow" ? "#ca8a04" : "#4f46e5", borderRadius: "999px", padding: "2px 10px", fontSize: "11px", fontWeight: 700 }}>{children}</span>
+);

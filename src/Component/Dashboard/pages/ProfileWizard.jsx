@@ -1243,7 +1243,7 @@ export default function ProfileWizard() {
                     </div>
 
                     {/* Import & Export Upload Zone */}
-                    <div className="bg-slate-50/50 border border-slate-200/60 rounded-2xl p-5 space-y-4 mt-6">
+                    {/* <div className="bg-slate-50/50 border border-slate-200/60 rounded-2xl p-5 space-y-4 mt-6">
                       <h4 className="text-xs uppercase font-extrabold tracking-widest text-blue-600 border-b border-slate-100 pb-2">
                         Import & Export Certificate Upload
                       </h4>
@@ -1279,7 +1279,7 @@ export default function ProfileWizard() {
                         </p>
                       </div>
 
-                      {/* Display Uploaded files */}
+                       
                       {store.registrationDetails.importExportCertFiles?.length >
                         0 && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
@@ -1330,7 +1330,7 @@ export default function ProfileWizard() {
                           )}
                         </div>
                       )}
-                    </div>
+                    </div> */}
 
                     {/* Actions */}
                     <div className="flex justify-between gap-3 pt-6 border-t border-slate-100 mt-6">

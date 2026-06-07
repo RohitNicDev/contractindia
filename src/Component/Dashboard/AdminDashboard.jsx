@@ -4,12 +4,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { LayoutDashboard, ShieldCheck, Briefcase, Users, CreditCard, Lock, BarChart3, LogOut, CheckCircle, XCircle, Plus, Edit2, Trash2, ChevronRight, Activity, TrendingUp } from "lucide-react";
 import ServiceListing from "./pages/ServiceListing";
+import BusinessPlans from "./pages/BusinessPlans";
+import { Badge, gradBtn,glass } from "../uiUtiles";
 
-const glass = { background: "rgba(255,255,255,0.72)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.85)", borderRadius: "16px" };
-const gradBtn = { background: "linear-gradient(135deg,#6366f1,#8b5cf6)", color: "#fff", border: "none", borderRadius: "10px", padding: "8px 18px", fontWeight: 600, fontSize: "13px", cursor: "pointer" };
-const Badge = ({ color, children }) => (
-  <span style={{ background: color === "green" ? "#dcfce7" : color === "red" ? "#fee2e2" : color === "yellow" ? "#fef9c3" : "#e0e7ff", color: color === "green" ? "#16a34a" : color === "red" ? "#dc2626" : color === "yellow" ? "#ca8a04" : "#4f46e5", borderRadius: "999px", padding: "2px 10px", fontSize: "11px", fontWeight: 700 }}>{children}</span>
-);
+ 
 
 const stats = [
   { label: "Total Users", value: "4,821", grad: "linear-gradient(135deg,#6366f1,#8b5cf6)", icon: Users },
@@ -249,73 +247,6 @@ function UserControl() {
   );
 }
 
-const existingPlans = [
-  { name: "Basic", price: "0/mo", features: "5 Services, 100 Credits, Email Support", credits: 100 },
-  { name: "Pro", price: "2,499/mo", features: "All Services, 500 Credits, Priority Support", credits: 500 },
-  { name: "Enterprise", price: "9,999/mo", features: "Unlimited, 2000 Credits, Dedicated Manager", credits: 2000 },
-];
-const userOptions = ["Rahul Sharma", "Sharma Builders", "Priya Mehta", "Gupta Contractors", "Amit Verma"];
-function BusinessPlans() {
-  const [plan, setPlan] = useState({ name: "", price: "", duration: "Monthly", features: "", credits: "" });
-  const [alloc, setAlloc] = useState({ user: userOptions[0], credits: "" });
-  const savePlan = () => { if (!plan.name) { toast.error("Plan name required"); return; } toast.success(`Plan created!`); setPlan({ name: "", price: "", duration: "Monthly", features: "", credits: "" }); };
-  const allocate = () => { if (!alloc.credits) { toast.error("Enter credits"); return; } toast.success(`${alloc.credits} credits allocated to ${alloc.user}`); setAlloc({ ...alloc, credits: "" }); };
-  return (
-    <div className="space-y-6">
-      <h2 className="text-xl font-bold text-slate-800">Business Plans</h2>
-      <div style={{ ...glass, padding: "20px" }}>
-        <h3 className="font-semibold text-slate-700 mb-4">Current Plans</h3>
-        <div className="grid grid-cols-3 gap-4">
-          {existingPlans.map(p => (
-            <div key={p.name} style={{ background: "linear-gradient(135deg,rgba(99,102,241,0.08),rgba(139,92,246,0.08))", border: "1px solid rgba(99,102,241,0.15)", borderRadius: "12px", padding: "16px" }}>
-              <p className="font-bold text-slate-800 text-lg">{p.name}</p>
-              <p style={{ background: "linear-gradient(135deg,#6366f1,#8b5cf6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontWeight: 700, fontSize: "18px" }}>Rs.{p.price}</p>
-              <p className="text-xs text-slate-500 mt-1">{p.features}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div style={{ ...glass, padding: "20px" }}>
-        <h3 className="font-semibold text-slate-700 mb-4">Create New Plan</h3>
-        <div className="grid grid-cols-2 gap-4">
-          {[["Plan Name", "name"], ["Price", "price"], ["Credits Included", "credits"]].map(([label, key]) => (
-            <div key={key}>
-              <label className="text-xs font-medium text-slate-500 block mb-1">{label}</label>
-              <input value={plan[key]} onChange={e => setPlan({ ...plan, [key]: e.target.value })} className="w-full px-3 py-2 rounded-lg text-sm border border-slate-200 outline-none focus:border-indigo-400" />
-            </div>
-          ))}
-          <div>
-            <label className="text-xs font-medium text-slate-500 block mb-1">Duration</label>
-            <select value={plan.duration} onChange={e => setPlan({ ...plan, duration: e.target.value })} className="w-full px-3 py-2 rounded-lg text-sm border border-slate-200 outline-none focus:border-indigo-400">
-              <option>Monthly</option><option>Yearly</option>
-            </select>
-          </div>
-          <div className="col-span-2">
-            <label className="text-xs font-medium text-slate-500 block mb-1">Features</label>
-            <textarea value={plan.features} onChange={e => setPlan({ ...plan, features: e.target.value })} rows={2} className="w-full px-3 py-2 rounded-lg text-sm border border-slate-200 outline-none focus:border-indigo-400 resize-none" />
-          </div>
-        </div>
-        <button onClick={savePlan} style={{ ...gradBtn, marginTop: "12px" }}>Create Plan</button>
-      </div>
-      <div style={{ ...glass, padding: "20px" }}>
-        <h3 className="font-semibold text-slate-700 mb-4">Credit Allocation</h3>
-        <div className="flex gap-4 items-end">
-          <div className="flex-1">
-            <label className="text-xs font-medium text-slate-500 block mb-1">Select User</label>
-            <select value={alloc.user} onChange={e => setAlloc({ ...alloc, user: e.target.value })} className="w-full px-3 py-2 rounded-lg text-sm border border-slate-200 outline-none focus:border-indigo-400">
-              {userOptions.map(u => <option key={u}>{u}</option>)}
-            </select>
-          </div>
-          <div className="flex-1">
-            <label className="text-xs font-medium text-slate-500 block mb-1">Credits</label>
-            <input type="number" value={alloc.credits} onChange={e => setAlloc({ ...alloc, credits: e.target.value })} className="w-full px-3 py-2 rounded-lg text-sm border border-slate-200 outline-none focus:border-indigo-400" />
-          </div>
-          <button onClick={allocate} style={gradBtn}>Allocate</button>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 const adminRoles = [
   { name: "Super Admin", email: "admin@contractsindia.com", role: "Super Admin" },
