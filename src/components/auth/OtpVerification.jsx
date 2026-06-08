@@ -2,9 +2,16 @@ import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { toast } from "sonner";
-import { useMutation } from "@tanstack/react-query";
-import { ShieldCheck, ArrowRight, Mail, Phone, Lock, CheckCircle2 } from "lucide-react";
-
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  ShieldCheck,
+  ArrowRight,
+  Mail,
+  Phone,
+  Lock,
+  CheckCircle2,
+} from "lucide-react";
+import CryptoJS from "crypto-js";
 import { AuthCard } from "./AuthCard";
 import { AuthFormField } from "./AuthFormField";
 import { OtpInput } from "./OtpInput";
@@ -21,48 +28,56 @@ import {
 const RESEND_SEC = 60;
 
 // ─── Component ───────────────────────────────────────────────────────────────
-
+const getMobileOtpApi = async (mobileNo) => {
+  const response = await getMobileOtp({ mobileNo: mobileNo });
+  return response;
+};
 const verifyMobileApi = async (payload) => {
   console.log("Verifying email with payload:", payload);
   const response = await verifyMobile({
-    mobileNo: payload.mobileNo,
-    otp: payload.otp,
+    id: payload?.id,
+    otp: payload?.otp,
   });
   return response;
-}
+};
 
 const verifyEmailApi = async (payload) => {
+  console.log("Verifying   with payload:", payload);
   const response = await verifyEmail({
-    emailId: payload.emailId,
-    otp: payload.otp,
+    id: payload?.id,
+    otp: payload?.otp,
   });
   return response;
-}
+};
 
 const setPasswordApi = async (payload) => {
   const response = await setPassword({
-    emailId: payload.emailId,
-    password: payload.password,
-    confirmPassword: payload.confirmPassword,
+    id: payload.id,
+    password: CryptoJS.SHA256(payload.password).toString(),
   });
   return response;
-}
+};
 const resendOtpApi = async (payload) => {
   const response = await resendOtp({
-    type: payload.type, 
-    emailId: payload.emailId,
-    mobileNo: payload.mobileNo,
+    type: payload.type,
+    id: payload.id,
   });
   return response;
-} 
+};
+// const getOtpApi = async (payload) => {
+//   const response = await getOtp({
+//     type: payload.type,
+//     emailId: payload.emailId,
+//     mobileNo: payload.mobileNo,
+//   });
 
-
-
+//   return response;
+// };
 const OtpVerification = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const state = location?.state || {};
-console.log(location,"location");
+  console.log(location, "location");
 
   const [emailCode, setEmailCode] = useState("");
   const [mobileCode, setMobileCode] = useState("");
@@ -72,7 +87,7 @@ console.log(location,"location");
   const [successPulse, setSuccessPulse] = useState(false);
 
   const [step, setStep] = useState(
-    state?.singleVerification ? "mobile" : "email"
+    state?.singleVerification ? "mobile" : "email",
   );
 
   const user = useMemo(() => {
@@ -86,9 +101,7 @@ console.log(location,"location");
   const emailComplete = /^\d{6}$/.test(emailCode);
   const mobileComplete = /^\d{6}$/.test(mobileCode);
   const passwordComplete =
-    step === "password" &&
-    password.length >= 6 &&
-    password === confirmPassword;
+    step === "password" && password.length >= 6 && password === confirmPassword;
 
   const isComplete =
     (step === "email" && emailComplete) ||
@@ -114,17 +127,29 @@ console.log(location,"location");
       return;
     }
     const userType = user.userType || state?.userType;
-    if (userType === "commercial") navigate("/commercial/dashboard");
+    if (userType === 2) navigate("/commercial/dashboard");
     else navigate("/home");
   };
 
   // ── Mutations ────────────────────────────────────────────────────────────
+  // const { data: userOtp, isLoading: userOptLoading } = useQuery({
+  //   queryKey: ["userOtp", step, state?.email, state?.phone],
+  //   queryFn: () =>
+  //     getOtpApi({
+  //       type: step,
+  //       emailId: state?.email,
+  //       mobileNo: state?.phone,
+  //     }),
+  //   enabled: !!state?.email && !!state?.phone,
+  //   retry: 1,
+  // });
+  //   console.log(userOtp,"userOtp");
 
   const { mutate: doVerifyEmail, isPending: emailPending } = useMutation({
     mutationFn: verifyEmailApi,
     onSuccess: (res) => {
-      console.log(res,"Cannot ");
-      
+      console.log(res, "Cannot ");
+
       if (!res.status) {
         toast.error(res.message || res.error || "Email verification failed");
         return;
@@ -148,32 +173,34 @@ console.log(location,"location");
       }
 
       if (state?.singleVerification) {
-        localStorage.setItem(
-          "otp_verified_v1",
-          JSON.stringify({ mobileCode, at: Date.now() })
-        );
+        // localStorage.setItem(
+        //   "otp_verified_v1",
+        //   JSON.stringify({ mobileCode, at: Date.now() }),
+        // );
         toast.success(res.message || "Mobile verified!");
         setSuccessPulse(true);
         setStep("complete");
         setTimeout(redirectUser, 600);
         return;
+      } else {
+        setStep("password");
       }
 
       // Check if registration flow → need password step
-      const registrationData = localStorage.getItem("registration_form_v1");
-      if (registrationData) {
-        toast.success(res.message || "Mobile verified! Set your password.");
-        setStep("password");
-      } else {
-        localStorage.setItem(
-          "otp_verified_v1",
-          JSON.stringify({ emailCode, mobileCode, at: Date.now() })
-        );
-        toast.success(res.message || "Both verified!");
-        setSuccessPulse(true);
-        setStep("complete");
-        setTimeout(redirectUser, 600);
-      }
+      // const registrationData = localStorage.getItem("registration_form_v1");
+      // if (registrationData) {
+      //   toast.success(res.message || "Mobile verified! Set your password.");
+      //   setStep("password");
+      // } else {
+      //   // localStorage.setItem(
+      //   //   "otp_verified_v1",
+      //   //   JSON.stringify({ emailCode, mobileCode, at: Date.now() }),
+      //   // );
+      //   toast.success(res.message || "Both verified!");
+      //   setSuccessPulse(true);
+      //   setStep("complete");
+      //   setTimeout(redirectUser, 600);
+      // }
     },
     onError: (err) => {
       toast.error(err?.message || "Mobile verification failed");
@@ -188,29 +215,31 @@ console.log(location,"location");
         return;
       }
 
-      try {
-        const registrationData = localStorage.getItem("registration_form_v1");
-        const parsed = registrationData ? JSON.parse(registrationData) : {};
-        const updated = { ...parsed, password, confirmPassword };
-        localStorage.setItem("registration_form_v1", JSON.stringify(updated));
-        if (updated.email) {
-          localStorage.setItem(
-            "user_credentials_" + updated.email,
-            JSON.stringify(updated)
-          );
-        }
-        localStorage.setItem(
-          "otp_verified_v1",
-          JSON.stringify({ emailCode, mobileCode, at: Date.now() })
-        );
-      } catch {
-        // silently ignore local storage errors
-      }
+      // try {
+      //   const registrationData = localStorage.getItem("registration_form_v1");
+      //   const parsed = registrationData ? JSON.parse(registrationData) : {};
+      //   const updated = { ...parsed, password, confirmPassword };
+      //   // localStorage.setItem("registration_form_v1", JSON.stringify(updated));
+      //   // if (updated.email) {
+      //   //   localStorage.setItem(
+      //   //     "user_credentials_" + updated.email,
+      //   //     JSON.stringify(updated),
+      //   //   );
+      //   // }
+      //   // localStorage.setItem(
+      //   //   "otp_verified_v1",
+      //   //   JSON.stringify({ emailCode, mobileCode, at: Date.now() }),
+      //   // );
+      // } catch {
+      //   // silently ignore local storage errors
+      // }
 
       toast.success(res.message || "Registration complete!");
       setSuccessPulse(true);
       setStep("complete");
       setTimeout(redirectUser, 600);
+      if (userType === 2) navigate("/commercial/dashboard");
+      else navigate("/individual/dashboard");
     },
     onError: (err) => {
       toast.error(err?.message || "Failed to set password");
@@ -224,13 +253,13 @@ console.log(location,"location");
     if (!isComplete || isLoading) return;
 
     if (step === "email") {
-      doVerifyEmail({ emailId: state?.email, otp: emailCode });
+      doVerifyEmail({ otp: emailCode, id: state?.guId });
       return;
     }
 
     if (step === "mobile") {
       doVerifyMobile({
-        mobileNo: state?.phone || state?.mobile,
+        id: state?.guId,
         otp: mobileCode,
       });
       return;
@@ -246,9 +275,8 @@ console.log(location,"location");
         return;
       }
       doSetPassword({
-        emailId: state?.email,
+        id: state?.guId,
         password,
-        confirmPassword,
       });
     }
   };
@@ -324,12 +352,13 @@ console.log(location,"location");
             return (
               <div key={s} className="flex flex-1 items-center gap-1.5">
                 <div
-                  className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${done
-                    ? "bg-[var(--auth-accent-strong)]"
-                    : active
-                      ? "bg-[var(--auth-accent-strong)] opacity-60"
-                      : "bg-[var(--auth-step-inactive)]"
-                    }`}
+                  className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${
+                    done
+                      ? "bg-[var(--auth-accent-strong)]"
+                      : active
+                        ? "bg-[var(--auth-accent-strong)] opacity-60"
+                        : "bg-[var(--auth-step-inactive)]"
+                  }`}
                 />
               </div>
             );
@@ -532,5 +561,5 @@ console.log(location,"location");
       </p>
     </AuthCard>
   );
-}
+};
 export default OtpVerification;

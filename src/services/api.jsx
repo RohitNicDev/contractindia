@@ -3,6 +3,9 @@ import api from "./apiInterceptor";
 export const authentication = async (payload) => {
   return await api.post("/Authentication/authenticate", payload);
 };
+export const userType = async () => {
+  return await api.get(`/Common/commonlist/userType`);
+};
 
 export const saveUserRegistration = async (payload) => {
   return await api.post("/UserRegistration/save", payload);
@@ -17,7 +20,7 @@ export const verifyMobile = async (payload) => {
 };
 
 export const setPassword = async (payload) => {
-  return await api.post("/UserRegistration/password", payload);
+  return await api.post("/UserRegistration/userpassword", payload);
 };
 
 export const resendOtp = async (payload) => {
@@ -29,6 +32,7 @@ export const resendOtp = async (payload) => {
   const body = type === "email" ? { emailId } : { mobileNo };
   return await api.post(endpoint, body);
 };
+ 
 export const getState = async (payload) => {
   return await api.get("/Common/getstate/2");
 };
@@ -61,6 +65,9 @@ export const ServiceMasterDelete = async (planId) => {
 };
 export const ServiceMasterGet = async () => {
   return await api.get(`/ServiceMaster/get`);
+};
+export const ServiceRootGet = async () => {
+  return await api.get(`/ServiceMaster/rootservice`);
 };
 export const ServiceMasterGetById = async (planId) => {
   return await api.get(`/ServiceMaster/get/${planId}`);

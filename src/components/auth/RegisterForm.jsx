@@ -23,7 +23,13 @@ import { AuthFormField } from "./AuthFormField";
 import { AuthFormSelect } from "./AuthFormSelect";
 import { CaptchaChallenge } from "./CaptchaChallenge";
 import { GradientButton } from "./GradientButton";
-import { getState, getCities, saveUserRegistration } from "../../services/api";
+import {
+  getState,
+  getCities,
+  saveUserRegistration,
+  ServiceRootGet,
+  userType,
+} from "../../services/api";
 
 // ─── Captcha helper ───────────────────────────────────────────────────────────
 
@@ -40,22 +46,30 @@ const createAlphabetCaptcha = () => {
 
 const registerApi = async (payload) => {
   const response = await saveUserRegistration(payload);
-  return response.data;
+  return response;
 };
 
 const getStateApi = async () => {
   const response = await getState();
-  console.log(response,"response");
-  
+  console.log(response, "response");
+
   // response.data.table = [{ value, name, label, nameHindi, type }]
+  return response ?? [];
+};
+const getRootServiceApi = async () => {
+  const response = await ServiceRootGet();
+  console.log(response, "response");
   return response ?? [];
 };
 
 const getCitiesApi = async (stateId) => {
   const response = await getCities(stateId);
-  // Adjust shape to whatever your cities API returns
-  console.log(response,"response");
-  
+  console.log(response, "response");
+  return response ?? [];
+};
+const getuserTypeApi = async () => {
+  const response = await userType();
+  console.log(response, "response");
   return response ?? [];
 };
 
@@ -72,15 +86,15 @@ export function RegisterForm() {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      userType: "individual",
+      userType: 1,
       fullName: "",
       email: "",
       phone: "",
       businessName: "",
-      state: "",       // stores stateId (number)
-      stateName: "",   // stores state label (string) — hidden
-      city: "",        // stores city value/id
-      cityName: "",    // stores city label — hidden
+      state: "", // stores stateId (number)
+      stateName: "", // stores state label (string) — hidden
+      city: "", // stores city value/id
+      cityName: "", // stores city label — hidden
       pinCode: "",
       serviceGroup: "",
       captcha: "",
@@ -88,29 +102,38 @@ export function RegisterForm() {
   });
 
   const [captcha, setCaptcha] = useState(createAlphabetCaptcha);
-
+  const selectedUserType = watch("userType");
+  const isCommercial = Number(selectedUserType) === 2;
   const refreshCaptcha = () => {
     setCaptcha(createAlphabetCaptcha());
     setValue("captcha", "", { shouldValidate: false });
   };
 
   const userType = watch("userType");
-  const isCommercial = userType === "commercial";
-  const selectedStateId = watch("state");       // numeric id from API
+  // const isCommercial = userType === "commercial";
+  const selectedStateId = watch("state"); // numeric id from API
   const selectedServiceGroup = watch("serviceGroup");
   const email = watch("email");
   const phone = watch("phone");
 
   // ── 1. Fetch states on mount ───────────────────────────────────────────────
-  const {
-    data: stateList = [],
-    isLoading: statesLoading,
-  } = useQuery({
+  const { data: stateList = [], isLoading: statesLoading } = useQuery({
     queryKey: ["states"],
     queryFn: getStateApi,
     staleTime: Infinity, // states rarely change
   });
-
+  const { data: rootServiceList = [], isLoading: rootServicesLoading } =
+    useQuery({
+      queryKey: ["RootServiceApi"],
+      queryFn: getRootServiceApi,
+      retry: false,
+      staleTime: Infinity, // states rarely change
+    });
+  const { data: userTypeList = [], isLoading: userTypeLoading } = useQuery({
+    queryKey: ["userType"],
+    queryFn: getuserTypeApi,
+    staleTime: Infinity,
+  });
   // ── 2. Fetch cities when state changes (mutation so we can call on demand) ─
   const {
     mutate: fetchCities,
@@ -139,7 +162,7 @@ export function RegisterForm() {
   // Keep stateName in sync with the selected state label
   useEffect(() => {
     const matched = stateList.find(
-      (s) => String(s.value) === String(selectedStateId)
+      (s) => String(s.value) === String(selectedStateId),
     );
     setValue("stateName", matched?.label ?? "");
   }, [selectedStateId, stateList, setValue]);
@@ -148,18 +171,20 @@ export function RegisterForm() {
   const { mutate: registerUser, isPending } = useMutation({
     mutationFn: registerApi,
     onSuccess: (response) => {
+      console.log(response, "register response");
       if (!response?.status) {
         toast.error(response?.message || "Registration failed");
         refreshCaptcha();
         return;
       }
-      toast.success(response?.message || "Registration successful");
+      toast.success(response?.remark || "Registration successful");
       navigate("/otp", {
         state: {
           singleVerification: false,
           email,
           phone,
           userType,
+          guId: response?.value || null, // Pass the entire data object for OTP screen to use (if needed)
         },
       });
     },
@@ -172,7 +197,7 @@ export function RegisterForm() {
   // ── 4. Service sub-options ─────────────────────────────────────────────────
   const subServiceOptions = useMemo(() => {
     const g = registrationConfig.serviceGroups.find(
-      (x) => x.value === selectedServiceGroup
+      (x) => x.value === selectedServiceGroup,
     );
     return g?.subServices ?? [];
   }, [selectedServiceGroup]);
@@ -187,15 +212,12 @@ export function RegisterForm() {
 
   // ── 6. Submit ──────────────────────────────────────────────────────────────
   const onSubmit = (values) => {
-    const serviceName =
-      registrationConfig.serviceGroups.find(
-        (group) => group.value === values.serviceGroup
-      )?.label || "";
-
     // Find the numeric stateId
     const stateObj = stateList.find(
-      (s) => String(s.value) === String(values.state)
+      (s) => String(s.value) === String(values.state),
     );
+    console.log(values, "123");
+    console.log(rootServiceList, "123");
 
     registerUser({
       name: values.fullName,
@@ -205,10 +227,11 @@ export function RegisterForm() {
       stateName: stateObj?.label ?? values.state,
       cityName: values.cityName,
       pinCode: values.pinCode,
-      userType: values.userType,
-      companyName: values.businessName || "",
-      serviceId: 0,
-      serviceName,
+       userType: Number(values.userType),
+      companyName: isCommercial ? values.businessName || "" : "",
+      serviceId: isCommercial ? values.serviceGroup || 0 : 0,
+      serviceName: isCommercial ? rootServiceList?.find((elm) => elm?.name == values?.serviceGroup)
+        ?.label || "" : "",
     });
   };
 
@@ -236,71 +259,51 @@ export function RegisterForm() {
             I am registering as
           </p>
           <div className="grid grid-cols-2 gap-2">
-            {/* Individual */}
-            <button
-              type="button"
-              onClick={() =>
-                setValue("userType", "individual", { shouldValidate: true })
-              }
-              className={`
-                flex items-center gap-2.5 rounded-xl border-2 px-3 py-2.5
-                text-left text-xs font-semibold transition-all duration-200
-                ${
-                  !isCommercial
-                    ? "border-[var(--auth-input-border-focus)] bg-indigo-50 text-indigo-700 shadow-sm"
-                    : "border-[var(--auth-input-border)] bg-white/60 text-[var(--auth-text-body)] hover:border-indigo-200 hover:bg-white"
-                }
-              `}
-            >
-              <span
-                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
-                  !isCommercial
-                    ? "bg-indigo-600 text-white"
-                    : "bg-slate-100 text-slate-400"
-                }`}
-              >
-                <UserCircle className="h-4 w-4" />
-              </span>
-              <span>
-                <span className="block leading-tight">Individual</span>
-                <span className="block text-[10px] font-normal opacity-70">
-                  Personal use
-                </span>
-              </span>
-            </button>
+            {userTypeList?.map((type) => {
+              const active = Number(selectedUserType) === Number(type.value);
 
-            {/* Commercial */}
-            <button
-              type="button"
-              onClick={() =>
-                setValue("userType", "commercial", { shouldValidate: true })
-              }
-              className={`
-                flex items-center gap-2.5 rounded-xl border-2 px-3 py-2.5
-                text-left text-xs font-semibold transition-all duration-200
-                ${
-                  isCommercial
-                    ? "border-[var(--auth-input-border-focus)] bg-indigo-50 text-indigo-700 shadow-sm"
-                    : "border-[var(--auth-input-border)] bg-white/60 text-[var(--auth-text-body)] hover:border-indigo-200 hover:bg-white"
-                }
-              `}
-            >
-              <span
-                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
-                  isCommercial
-                    ? "bg-indigo-600 text-white"
-                    : "bg-slate-100 text-slate-400"
-                }`}
-              >
-                <BadgeCheck className="h-4 w-4" />
-              </span>
-              <span>
-                <span className="block leading-tight">Commercial</span>
-                <span className="block text-[10px] font-normal opacity-70">
-                  Business
-                </span>
-              </span>
-            </button>
+              return (
+                <button
+                  key={type.value}
+                  type="button"
+                  onClick={() =>
+                    setValue("userType", type.value, {
+                      shouldValidate: true,
+                    })
+                  }
+                  className={`
+          flex items-center gap-2.5 rounded-xl border-2 px-3 py-2.5
+          text-left text-xs font-semibold transition-all duration-200
+          ${
+            active
+              ? "border-[var(--auth-input-border-focus)] bg-indigo-50 text-indigo-700 shadow-sm"
+              : "border-[var(--auth-input-border)] bg-white/60 text-[var(--auth-text-body)] hover:border-indigo-200 hover:bg-white"
+          }
+        `}
+                >
+                  <span
+                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
+                      active
+                        ? "bg-indigo-600 text-white"
+                        : "bg-slate-100 text-slate-400"
+                    }`}
+                  >
+                    {Number(type.value) === 1 ? (
+                      <UserCircle className="h-4 w-4" />
+                    ) : (
+                      <BadgeCheck className="h-4 w-4" />
+                    )}
+                  </span>
+
+                  <span>
+                    <span className="block leading-tight">{type.label}</span>
+                    <span className="block text-[10px] font-normal opacity-70">
+                      {Number(type.value) === 1 ? "Personal use" : "Business"}
+                    </span>
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -311,7 +314,6 @@ export function RegisterForm() {
         {/* ── Scrollable fields ── */}
         <div className="min-h-0 flex-1 overflow-y-auto overflow-x-visible [scrollbar-width:thin]">
           <div className="relative grid grid-cols-2 gap-x-3 gap-y-2 pb-1">
-
             {/* ── Commercial fields ── */}
             <AnimatePresence>
               {isCommercial && (
@@ -352,9 +354,9 @@ export function RegisterForm() {
                     })}
                   >
                     <option value="">Category…</option>
-                    {registrationConfig.serviceGroups.map((x) => (
-                      <option key={x.value} value={x.value}>
-                        {x.label}
+                    {rootServiceList?.map((elm) => (
+                      <option key={elm?.value} value={elm.value}>
+                        {elm.label}
                       </option>
                     ))}
                   </AuthFormSelect>
@@ -433,12 +435,11 @@ export function RegisterForm() {
                 onChange: (e) => {
                   // Keep cityName in sync
                   const matched = cityList.find(
-                    (c) =>
-                      String(c.value ?? c) === String(e.target.value)
+                    (c) => String(c.value ?? c) === String(e.target.value),
                   );
                   setValue(
                     "cityName",
-                    matched?.label ?? matched?.name ?? e.target.value
+                    matched?.label ?? matched?.name ?? e.target.value,
                   );
                 },
               })}
@@ -447,10 +448,10 @@ export function RegisterForm() {
                 {citiesLoading
                   ? "Loading cities…"
                   : !selectedStateId
-                  ? "Select state first"
-                  : "City…"}
+                    ? "Select state first"
+                    : "City…"}
               </option>
-              {cityList.map((c) => {
+              {cityList?.map((c) => {
                 // Support both flat string arrays and object arrays
                 const val = c?.value ?? c;
                 const label = c?.label ?? c?.name ?? c;
@@ -487,7 +488,8 @@ export function RegisterForm() {
                 {...register("captcha", {
                   required: "Required",
                   validate: (value) =>
-                    value.trim() === captcha.answer || "Incorrect captcha answer",
+                    value.trim() === captcha.answer ||
+                    "Incorrect captcha answer",
                 })}
               />
             </div>

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
@@ -11,8 +10,6 @@ import { CaptchaChallenge } from "./CaptchaChallenge";
 import { GradientButton } from "./GradientButton";
 import { authentication } from "../../services/api";
 import { useMutation } from "@tanstack/react-query";
-
-
 
 const createAlphabetCaptcha = () => {
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -32,7 +29,7 @@ const LoginApi = async (payload) => {
   const response = await authentication(payload);
 
   return response;
-}
+};
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -50,55 +47,40 @@ const LoginForm = () => {
     setValue("captcha", "", { shouldValidate: false });
   };
 
-  const {
-    mutate: login,
-    isPending,
-  } = useMutation({
+  const { mutate: login, isPending } = useMutation({
     mutationFn: LoginApi,
 
     onSuccess: (response, variables) => {
       console.log("Login Success", response);
 
-      localStorage.setItem(
-        "accessToken",
-        response.accessToken
-      );
+      localStorage.setItem("accessToken", response.accessToken);
 
-      localStorage.setItem(
-        "refreshToken",
-        response.refreshToken
-      );
+      localStorage.setItem("refreshToken", response.refreshToken);
 
-      localStorage.setItem(
-        "isLoggedIn",
-        "true"
-      );
+      localStorage.setItem("isLoggedIn", "true");
 
-      localStorage.setItem(
-        "login_user",
-        JSON.stringify(response.user)
-      );
+      localStorage.setItem("login_user", JSON.stringify(response.user));
 
-      window.dispatchEvent(
-        new Event("auth_changed")
-      );
+      // window.dispatchEvent(new Event("auth_changed"));
 
       toast.success("Login successful");
 
-      navigate("/otp", {
-        state: {
-          email: variables.email,
-          userType: response.user?.userType,
-          singleVerification: true,
+      navigate(
+        response?.userRole === 2
+          ? "/commercial/dashboard"
+          : "/individual/dashboard",
+        {
+          state: {
+            email: variables.email,
+            userType: response.userRole,
+            singleVerification: true,
+          },
         },
-      });
+      );
     },
 
     onError: (error) => {
-      toast.error(
-        error?.message ||
-        "Unable to login. Please try again."
-      );
+      toast.error(error?.message || "Unable to login. Please try again.");
 
       refreshCaptcha();
     },
@@ -106,10 +88,7 @@ const LoginForm = () => {
 
   const onSubmit = (data) => {
     // captcha validation
-    if (
-      data.captcha.trim().toUpperCase() !==
-      captcha.answer.toUpperCase()
-    ) {
+    if (data.captcha.trim().toUpperCase() !== captcha.answer.toUpperCase()) {
       toast.error("Invalid captcha answer");
       refreshCaptcha();
       return;
@@ -137,10 +116,7 @@ const LoginForm = () => {
         </p>
       </header>
 
-      <form
-        className="flex flex-col gap-3"
-        onSubmit={handleSubmit(onSubmit)}
-      >
+      <form className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>
         <AuthFormField
           compact
           label="Email"
@@ -170,8 +146,7 @@ const LoginForm = () => {
             required: "Password is required",
             minLength: {
               value: 6,
-              message:
-                "Password must be at least 6 characters",
+              message: "Password must be at least 6 characters",
             },
           })}
         />
@@ -212,8 +187,6 @@ const LoginForm = () => {
         >
           {isPending ? "Signing In..." : "Sign In"}
         </GradientButton>
-
-
       </form>
 
       <p className="mt-4 border-t border-[var(--auth-section-border)] pt-3 text-center text-[11px] text-[var(--auth-text-body)] lg:text-xs">
@@ -227,5 +200,5 @@ const LoginForm = () => {
       </p>
     </AuthCard>
   );
-}
+};
 export default LoginForm;
