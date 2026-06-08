@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Mail, Lock, ArrowRight } from "lucide-react";
-
+import { Mail, Lock, ArrowRight, Guitar } from "lucide-react";
+import { SHA256 } from "crypto-js";
 import { AuthCard } from "./AuthCard";
 import { AuthFormField } from "./AuthFormField";
 import { CaptchaChallenge } from "./CaptchaChallenge";
@@ -64,19 +64,20 @@ const LoginForm = () => {
       // window.dispatchEvent(new Event("auth_changed"));
 
       toast.success("Login successful");
-
-      navigate(
-        response?.userRole === 2
-          ? "/commercial/dashboard"
-          : "/individual/dashboard",
-        {
-          state: {
-            email: variables.email,
-            userType: response.userRole,
-            singleVerification: true,
-          },
+      // response?.userType === 2
+      // ? "/commercial/dashboard"
+      // : response?.userType === 1
+      //   ? "/individual/dashboard"
+      //   : "/admin/dashboard",
+      navigate("/otp", {
+        state: {
+          email: variables.email,
+          userType: response.userType,
+          singleVerification: true,
+          mobile: response.mobileNo || null,
+          guId: response?.value || null, // Pass the entire data object for OTP screen to use (if needed)
         },
-      );
+      });
     },
 
     onError: (error) => {
@@ -95,8 +96,8 @@ const LoginForm = () => {
     }
 
     login({
-      email: data.email,
-      password: data.password,
+      emailId: data.email,
+      password: SHA256(data.password).toString(),
     });
   };
 

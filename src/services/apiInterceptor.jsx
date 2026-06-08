@@ -189,7 +189,7 @@ api.interceptors.response.use(
 
         localStorage.clear();
 
-        window.location.href = "/login";
+        // window.location.href = "/login";
 
         return Promise.reject(
           refreshError
@@ -211,8 +211,8 @@ api.interceptors.response.use(
       case 403:
         console.error("Forbidden");
 
-        window.location.href =
-          "/forbidden";
+        // window.location.href =
+        //   "/forbidden";
 
         break;
 
@@ -227,8 +227,8 @@ api.interceptors.response.use(
         break;
 
       case 503:
-        window.location.href =
-          "/maintenance";
+        // window.location.href =
+        //   "/maintenance";
         break;
 
       default:

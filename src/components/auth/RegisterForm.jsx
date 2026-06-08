@@ -182,7 +182,7 @@ export function RegisterForm() {
         state: {
           singleVerification: false,
           email,
-          phone,
+          phone,  
           userType,
           guId: response?.value || null, // Pass the entire data object for OTP screen to use (if needed)
         },

@@ -11,7 +11,7 @@ import {
   Lock,
   CheckCircle2,
 } from "lucide-react";
-import CryptoJS from "crypto-js";
+import { SHA256 } from "crypto-js";
 import { AuthCard } from "./AuthCard";
 import { AuthFormField } from "./AuthFormField";
 import { OtpInput } from "./OtpInput";
@@ -28,10 +28,7 @@ import {
 const RESEND_SEC = 60;
 
 // ─── Component ───────────────────────────────────────────────────────────────
-const getMobileOtpApi = async (mobileNo) => {
-  const response = await getMobileOtp({ mobileNo: mobileNo });
-  return response;
-};
+
 const verifyMobileApi = async (payload) => {
   console.log("Verifying email with payload:", payload);
   const response = await verifyMobile({
@@ -53,7 +50,7 @@ const verifyEmailApi = async (payload) => {
 const setPasswordApi = async (payload) => {
   const response = await setPassword({
     id: payload.id,
-    password: CryptoJS.SHA256(payload.password).toString(),
+    password: SHA256(payload.password).toString(),
   });
   return response;
 };
@@ -127,8 +124,11 @@ const OtpVerification = () => {
       return;
     }
     const userType = user.userType || state?.userType;
-    if (userType === 2) navigate("/commercial/dashboard");
-    else navigate("/home");
+    userType === 2
+      ? navigate("/commercial/dashboard")
+      : userType === 1
+        ? navigate("/individual/dashboard")
+        : navigate("/admin/dashboard");
   };
 
   // ── Mutations ────────────────────────────────────────────────────────────
