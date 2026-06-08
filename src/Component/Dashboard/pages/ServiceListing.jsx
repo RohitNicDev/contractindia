@@ -17,7 +17,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ServiceMasterDelete, ServiceMasterGet,
   ServiceMasterSave, ServiceMasterUpdate,
-} from "../../../services/api"; 
+} from "../../../services/api";
 import CustomHeading from "../../../components/CustomHeading";
 
 /* ==========================================================================
@@ -233,8 +233,8 @@ function ServiceFormModal({ isOpen, onClose, onSubmit, mode, parentName, initial
                 <ModalSection label="Display Flags" icon={<Eye className="h-3.5 w-3.5" />}>
                   <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                     {[{ key: "isActive", label: "Active" }, { key: "isFeatured", label: "Featured" },
-                      { key: "displayOnHomePage", label: "On Homepage" }, { key: "isPopular", label: "Popular" },
-                      { key: "isVerifiedRequired", label: "Verified Required" }].map(({ key, label }) => (
+                    { key: "displayOnHomePage", label: "On Homepage" }, { key: "isPopular", label: "Popular" },
+                    { key: "isVerifiedRequired", label: "Verified Required" }].map(({ key, label }) => (
                       <label key={key} className={`flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold transition-all ${form[key] ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-slate-200 bg-slate-50 text-slate-500"}`}>
                         <input type="checkbox" checked={!!form[key]} onChange={(e) => set(key, e.target.checked ? 1 : 0)} className="sr-only" />
                         <div className={`h-3.5 w-3.5 rounded-sm border flex items-center justify-center transition-all ${form[key] ? "border-emerald-400 bg-emerald-400" : "border-slate-300 bg-white"}`}>
@@ -319,32 +319,32 @@ function DeleteConfirmModal({ isOpen, onClose, onConfirm, nodeName, isLoading })
    8. DEPTH COLOR PALETTE  ← NEW: replaces heavy card borders
    ========================================================================== */
 const DEPTH_COLORS = [
-  { dot: "bg-violet-500",  line: "#8b5cf6", badge: "bg-violet-50 text-violet-700 border-violet-200"  },
-  { dot: "bg-sky-500",     line: "#0ea5e9", badge: "bg-sky-50    text-sky-700    border-sky-200"    },
+  { dot: "bg-violet-500", line: "#8b5cf6", badge: "bg-violet-50 text-violet-700 border-violet-200" },
+  { dot: "bg-sky-500", line: "#0ea5e9", badge: "bg-sky-50    text-sky-700    border-sky-200" },
   { dot: "bg-emerald-500", line: "#22c55e", badge: "bg-emerald-50 text-emerald-700 border-emerald-200" },
-  { dot: "bg-amber-500",   line: "#f59e0b", badge: "bg-amber-50  text-amber-700  border-amber-200"  },
-  { dot: "bg-rose-500",    line: "#f43f5e", badge: "bg-rose-50   text-rose-700   border-rose-200"   },
+  { dot: "bg-amber-500", line: "#f59e0b", badge: "bg-amber-50  text-amber-700  border-amber-200" },
+  { dot: "bg-rose-500", line: "#f43f5e", badge: "bg-rose-50   text-rose-700   border-rose-200" },
 ];
 const dc = (depth) => DEPTH_COLORS[depth % DEPTH_COLORS.length];
 
 /* ==========================================================================
    9. CORE COMPONENT
    ========================================================================== */
-export default function ServiceListing({
+const ServiceListing = ({
   onSave, onBack, showSaveButton = false, dashboardMode = false,
-}) {
+}) => {
   const [expandedNodeIds, setExpandedNodeIds] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [pendingApiNodeId, setPendingApiNodeId] = useState(null);
   const [modal, setModal] = useState({ open: false, mode: "addRoot", targetNode: null });
   const [deleteModal, setDeleteModal] = useState({ open: false, targetNode: null });
 
-  const closeModal  = () => setModal({ open: false, mode: "addRoot", targetNode: null });
-  const openAddRoot  = () => setModal({ open: true, mode: "addRoot",  targetNode: null });
+  const closeModal = () => setModal({ open: false, mode: "addRoot", targetNode: null });
+  const openAddRoot = () => setModal({ open: true, mode: "addRoot", targetNode: null });
   const openAddChild = (n) => setModal({ open: true, mode: "addChild", targetNode: n });
-  const openEdit     = (n) => setModal({ open: true, mode: "edit",     targetNode: n });
-  const openDelete   = (n) => setDeleteModal({ open: true, targetNode: n });
-  const closeDelete  = () => setDeleteModal({ open: false, targetNode: null });
+  const openEdit = (n) => setModal({ open: true, mode: "edit", targetNode: n });
+  const openDelete = (n) => setDeleteModal({ open: true, targetNode: n });
+  const closeDelete = () => setDeleteModal({ open: false, targetNode: null });
 
   /* ── Fetch ── */
   const { data: apiServicesList, isLoading: isLoadingServices, error: fetchError, refetch } =
@@ -428,7 +428,7 @@ export default function ServiceListing({
     nodes.flatMap((node) => {
       const cat = parentLabel || node.name || "General";
       return [{ id: node.id, apiId: node.apiId, name: node.name, category: cat, status: node.isActive ? "Active" : "Draft" },
-        ...(node.children?.length ? flattenServiceTree(node.children, node.name) : [])];
+      ...(node.children?.length ? flattenServiceTree(node.children, node.name) : [])];
     });
   const handleSave = () => onSave?.(flattenServiceTree(services));
 
@@ -438,7 +438,7 @@ export default function ServiceListing({
   const renderRecursiveTree = (nodes, depth = 0) => (
     <AnimatePresence mode="popLayout">
       {nodes.map((node, idx) => {
-        const isExpanded  = expandedNodeIds.includes(node.id);
+        const isExpanded = expandedNodeIds.includes(node.id);
         const hasChildren = node.children?.length > 0;
         const isNodePending = pendingApiNodeId === node.id;
         const color = dc(depth);
@@ -533,11 +533,10 @@ export default function ServiceListing({
                 <button
                   onClick={() => toggleActivationState(node)}
                   disabled={isNodePending}
-                  className={`h-5 rounded-full border px-2 text-[9px] font-bold uppercase tracking-wide transition-all disabled:opacity-50 ${
-                    node.isActive
-                      ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                      : "border-slate-200 bg-white text-slate-400"
-                  }`}
+                  className={`h-5 rounded-full border px-2 text-[9px] font-bold uppercase tracking-wide transition-all disabled:opacity-50 ${node.isActive
+                    ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                    : "border-slate-200 bg-white text-slate-400"
+                    }`}
                 >
                   {node.isActive ? "on" : "off"}
                 </button>
@@ -586,7 +585,7 @@ export default function ServiceListing({
         isLoading={isDeleting} />
 
       <div className="min-h-screen bg-slate-50/80 p-3 sm:p-5">
-        <div className="mx-auto max-w-5xl space-y-4">
+        <div className="mx-auto max-w-1xl space-y-4">
 
           {/* ── PAGE HEADING (uses PageHeading component) ── */}
           {!(dashboardMode || onSave || showSaveButton || onBack) && (
@@ -601,11 +600,11 @@ export default function ServiceListing({
               actions={
                 !dashboardMode && (
                   <div className="flex items-center gap-2">
-                    {!isLoadingServices && !fetchError && (
+                    {/* {!isLoadingServices && !fetchError && (
                       <span className="flex items-center gap-1.5 h-8 px-3 rounded-full border border-emerald-200 bg-emerald-50 text-[11px] font-bold text-emerald-700">
                         <Zap className="h-3 w-3" /> Live
                       </span>
-                    )}
+                    )} */}
                     <button onClick={() => refetch()} disabled={isLoadingServices}
                       className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 disabled:opacity-40 transition-all" title="Refresh">
                       <RefreshCw className={`h-3.5 w-3.5 ${isLoadingServices ? "animate-spin" : ""}`} />
@@ -743,3 +742,4 @@ export default function ServiceListing({
     </>
   );
 }
+export default ServiceListing
