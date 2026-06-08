@@ -63,7 +63,7 @@ const LoginForm = () => {
 
       // window.dispatchEvent(new Event("auth_changed"));
 
-      toast.success("Login successful");
+      toast.success(response?.remark||"Login successful");
       // response?.userType === 2
       // ? "/commercial/dashboard"
       // : response?.userType === 1
