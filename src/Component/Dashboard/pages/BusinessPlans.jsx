@@ -42,7 +42,7 @@ const BusinessPlans = () => {
     const { data: fetchedPlans = [], isLoading, refetch, isFetching } = useQuery({
         queryKey: ["planMasterList"],
         queryFn: planMasterGetApi,
-        staleTime: 1000 * 60 * 5,
+
         retry: 1,
     });
 

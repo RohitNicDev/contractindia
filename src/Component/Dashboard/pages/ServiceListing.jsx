@@ -1,7 +1,7 @@
 /**
- * ServiceListing v4 — redesigned tree UI
- * All logic identical to v3. Only the tree node rendering + page shell changed.
- * Uses PageHeading component from ../components/PageHeading
+ * ServiceListing v5 — data-source toggle
+ * Toggle between live API data and local SERVICES_HIERARCHY constant.
+ * All logic identical to v4. Only addition: useLocalData state + toggle UI.
  */
 
 import { useMemo, useState, useRef, useEffect } from "react";
@@ -11,7 +11,7 @@ import {
   Briefcase, ChevronDown, ChevronRight, Plus, Trash2, Check,
   X, Search, FolderTree, Activity, LayoutGrid, ChevronLeft,
   RefreshCw, Loader2, Pencil, Tag, Link, Hash, Eye,
-  AlertCircle, Layers, Zap,
+  AlertCircle, Layers, Zap, Database, HardDrive,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -19,6 +19,7 @@ import {
   ServiceMasterSave, ServiceMasterUpdate,
 } from "../../../services/api";
 import CustomHeading from "../../../components/CustomHeading";
+import { SERVICES_HIERARCHY } from "../../../data/services_hierarchy";
 
 /* ==========================================================================
    1. API ADAPTERS  (unchanged)
@@ -123,7 +124,7 @@ const EMPTY_FORM = {
 };
 
 /* ==========================================================================
-   5. MODAL HELPERS  (unchanged logic, identical JSX)
+   5. MODAL HELPERS  (unchanged)
    ========================================================================== */
 function ModalSection({ label, icon, children }) {
   return (
@@ -146,8 +147,72 @@ function ModalField({ label, children, span }) {
 }
 
 /* ==========================================================================
-   6. SERVICE FORM MODAL  (unchanged)
+   6. DATA SOURCE TOGGLE  ← NEW
    ========================================================================== */
+function DataSourceToggle({ useLocal, onChange }) {
+  return (
+    <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-100 border border-slate-200">
+      {/* API option */}
+      <button
+        type="button"
+        onClick={() => onChange(false)}
+        className={`flex items-center gap-1.5 h-7 px-3 rounded-lg text-[11px] font-bold transition-all duration-200
+          ${!useLocal
+            ? "bg-white text-violet-700 shadow-sm border border-violet-200"
+            : "text-slate-500 hover:text-slate-700"
+          }`}
+      >
+        <Database className="h-3 w-3" />
+        Live API
+      </button>
+
+      {/* Local option */}
+      <button
+        type="button"
+        onClick={() => onChange(true)}
+        className={`flex items-center gap-1.5 h-7 px-3 rounded-lg text-[11px] font-bold transition-all duration-200
+          ${useLocal
+            ? "bg-white text-amber-700 shadow-sm border border-amber-200"
+            : "text-slate-500 hover:text-slate-700"
+          }`}
+      >
+        <HardDrive className="h-3 w-3" />
+        Local Data
+      </button>
+    </div>
+  );
+}
+
+/* ==========================================================================
+    6. LOCAL DATA CONVERTER  ← NEW
+    ========================================================================== */
+function convertLocalDataToTree(nodes) {
+  return nodes.map(node => {
+    const converted = {
+      id: node.id,
+      apiId: 0, // dummy value for local mode
+      parentApiId: 0, // dummy value for local mode
+      name: node.name,
+      isActive: true, // assume active
+      displayOrder: 0, // dummy value
+      serviceCode: "", // dummy value
+      _raw: {}, // dummy raw data
+      children: []
+    };
+
+    // Handle both subServices and children properties for compatibility
+    const kids = node.subServices || node.children || [];
+    if (Array.isArray(kids)) {
+      converted.children = convertLocalDataToTree(kids);
+    }
+
+    return converted;
+  });
+}
+
+/* ==========================================================================
+    7. SERVICE FORM MODAL  (unchanged)
+    ========================================================================== */
 function ServiceFormModal({ isOpen, onClose, onSubmit, mode, parentName, initialData, isLoading }) {
   const [form, setForm] = useState(EMPTY_FORM);
   const firstInputRef = useRef(null);
@@ -277,7 +342,7 @@ function ServiceFormModal({ isOpen, onClose, onSubmit, mode, parentName, initial
 }
 
 /* ==========================================================================
-   7. DELETE CONFIRM MODAL  (unchanged)
+   8. DELETE CONFIRM MODAL  (unchanged)
    ========================================================================== */
 function DeleteConfirmModal({ isOpen, onClose, onConfirm, nodeName, isLoading }) {
   return (
@@ -316,47 +381,75 @@ function DeleteConfirmModal({ isOpen, onClose, onConfirm, nodeName, isLoading })
 }
 
 /* ==========================================================================
-   8. DEPTH COLOR PALETTE  ← NEW: replaces heavy card borders
+   9. DEPTH COLOR PALETTE  (unchanged)
    ========================================================================== */
 const DEPTH_COLORS = [
   { dot: "bg-violet-500", line: "#8b5cf6", badge: "bg-violet-50 text-violet-700 border-violet-200" },
-  { dot: "bg-sky-500", line: "#0ea5e9", badge: "bg-sky-50    text-sky-700    border-sky-200" },
-  { dot: "bg-emerald-500", line: "#22c55e", badge: "bg-emerald-50 text-emerald-700 border-emerald-200" },
-  { dot: "bg-amber-500", line: "#f59e0b", badge: "bg-amber-50  text-amber-700  border-amber-200" },
-  { dot: "bg-rose-500", line: "#f43f5e", badge: "bg-rose-50   text-rose-700   border-rose-200" },
+  { dot: "bg-sky-500",    line: "#0ea5e9", badge: "bg-sky-50    text-sky-700    border-sky-200" },
+  { dot: "bg-emerald-500",line: "#22c55e", badge: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+  { dot: "bg-amber-500",  line: "#f59e0b", badge: "bg-amber-50  text-amber-700  border-amber-200" },
+  { dot: "bg-rose-500",   line: "#f43f5e", badge: "bg-rose-50   text-rose-700   border-rose-200" },
 ];
 const dc = (depth) => DEPTH_COLORS[depth % DEPTH_COLORS.length];
 
 /* ==========================================================================
-   9. CORE COMPONENT
+   10. CORE COMPONENT
    ========================================================================== */
 const ServiceListing = ({
   onSave, onBack, showSaveButton = false, dashboardMode = false,
 }) => {
-  const [expandedNodeIds, setExpandedNodeIds] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [expandedNodeIds,  setExpandedNodeIds]  = useState([]);
+  const [searchQuery,      setSearchQuery]      = useState("");
   const [pendingApiNodeId, setPendingApiNodeId] = useState(null);
-  const [modal, setModal] = useState({ open: false, mode: "addRoot", targetNode: null });
-  const [deleteModal, setDeleteModal] = useState({ open: false, targetNode: null });
+  const [modal,            setModal]            = useState({ open: false, mode: "addRoot", targetNode: null });
+  const [deleteModal,      setDeleteModal]      = useState({ open: false, targetNode: null });
 
-  const closeModal = () => setModal({ open: false, mode: "addRoot", targetNode: null });
-  const openAddRoot = () => setModal({ open: true, mode: "addRoot", targetNode: null });
+  /* ── NEW: data-source toggle ── */
+  const [useLocalData, setUseLocalData] = useState(false);
+
+  const handleDataSourceChange = (val) => {
+    setUseLocalData(val);
+    setSearchQuery("");
+    setExpandedNodeIds([]);
+  };
+
+  const closeModal  = () => setModal({ open: false, mode: "addRoot", targetNode: null });
+  const openAddRoot = () => setModal({ open: true,  mode: "addRoot",  targetNode: null });
   const openAddChild = (n) => setModal({ open: true, mode: "addChild", targetNode: n });
-  const openEdit = (n) => setModal({ open: true, mode: "edit", targetNode: n });
-  const openDelete = (n) => setDeleteModal({ open: true, targetNode: n });
-  const closeDelete = () => setDeleteModal({ open: false, targetNode: null });
+  const openEdit     = (n) => setModal({ open: true, mode: "edit",     targetNode: n });
+  const openDelete   = (n) => setDeleteModal({ open: true,  targetNode: n });
+  const closeDelete  = ()  => setDeleteModal({ open: false, targetNode: null });
 
-  /* ── Fetch ── */
-  const { data: apiServicesList, isLoading: isLoadingServices, error: fetchError, refetch } =
-    useQuery({ queryKey: ["serviceMasterList"], queryFn: serviceMasterGetApi, staleTime: 1000 * 60 * 5, retry: 2 });
+  /* ── Fetch — disabled when useLocalData is true ── */
+  const {
+    data: apiServicesList,
+    isLoading: isLoadingServices,
+    error: fetchError,
+    refetch,
+  } = useQuery({
+    queryKey: ["serviceMasterList"],
+    queryFn: serviceMasterGetApi,
+    retry: 2,
+    enabled: !useLocalData,   // ← skip API call when local mode is on
+  });
 
-  const services = useMemo(() => {
-    if (!apiServicesList) return [];
-    let list = apiServicesList;
-    if (typeof list === "string") { try { list = JSON.parse(list); } catch { return []; } }
-    if (!Array.isArray(list)) return [];
-    return buildTreeFromFlat(list);
-  }, [apiServicesList]);
+  /* ── Build tree from either source ── */
+      const services = useMemo(() => {
+        if (useLocalData) {
+          if (!Array.isArray(SERVICES_HIERARCHY) || !SERVICES_HIERARCHY.length) return [];
+          const isFlat = SERVICES_HIERARCHY[0]?.serviceID !== undefined;
+          if (isFlat) {
+            return buildTreeFromFlat(SERVICES_HIERARCHY);
+          }
+          // Convert nested local data to expected tree format
+          return convertLocalDataToTree(SERVICES_HIERARCHY);
+        }
+        if (!apiServicesList) return [];
+        let list = apiServicesList;
+        if (typeof list === "string") { try { list = JSON.parse(list); } catch { return []; } }
+        if (!Array.isArray(list)) return [];
+        return buildTreeFromFlat(list);
+      }, [apiServicesList, useLocalData]);
 
   const activeNodeIds = useMemo(() => {
     const collect = (n) => [
@@ -366,21 +459,21 @@ const ServiceListing = ({
     return services.flatMap(collect);
   }, [services]);
 
-  /* ── Mutations ── */
+  /* ── Mutations (unchanged) ── */
   const { mutate: saveServiceMutate, isPending: isSaving } = useMutation({
     mutationFn: serviceMasterSaveApi,
     onSuccess: (r) => { if (!r?.status) { toast.error(r?.message || "Failed."); return; } toast.success(r?.message || "Created."); setPendingApiNodeId(null); closeModal(); refetch(); },
-    onError: (e) => { toast.error(e?.message || "Unable to save."); setPendingApiNodeId(null); },
+    onError:   (e) => { toast.error(e?.message || "Unable to save."); setPendingApiNodeId(null); },
   });
   const { mutate: updateServiceMutate, isPending: isUpdating } = useMutation({
     mutationFn: serviceMasterUpdateApi,
     onSuccess: (r) => { if (!r?.status) { toast.error(r?.message || "Failed."); return; } toast.success(r?.message || "Updated."); setPendingApiNodeId(null); closeModal(); refetch(); },
-    onError: (e) => { toast.error(e?.message || "Unable to update."); setPendingApiNodeId(null); },
+    onError:   (e) => { toast.error(e?.message || "Unable to update."); setPendingApiNodeId(null); },
   });
   const { mutate: deleteServiceMutate, isPending: isDeleting } = useMutation({
     mutationFn: serviceMasterDeleteApi,
     onSuccess: (r) => { if (!r?.status) { toast.error(r?.message || "Failed."); return; } toast.success(r?.message || "Deleted."); setPendingApiNodeId(null); closeDelete(); refetch(); },
-    onError: (e) => { toast.error(e?.message || "Unable to delete."); setPendingApiNodeId(null); },
+    onError:   (e) => { toast.error(e?.message || "Unable to delete."); setPendingApiNodeId(null); },
   });
 
   /* ── Search ── */
@@ -394,6 +487,7 @@ const ServiceListing = ({
 
   /* ── Toggle Active ── */
   const toggleActivationState = (node) => {
+    if (useLocalData) { toast.info("Switch to Live API to edit services."); return; }
     setPendingApiNodeId(node.id);
     updateServiceMutate({ ...node._raw, serviceID: node.apiId, isActive: node.isActive ? 0 : 1, updatedDate: new Date().toISOString() });
   };
@@ -401,7 +495,7 @@ const ServiceListing = ({
   /* ── Modal submit ── */
   const handleModalSubmit = (formData) => {
     const { mode, targetNode } = modal;
-    if (mode === "addRoot") saveServiceMutate({ ...formData, parentServiceID: 0, displayOrder: services.length + 1 });
+    if (mode === "addRoot")  saveServiceMutate({ ...formData, parentServiceID: 0, displayOrder: services.length + 1 });
     if (mode === "addChild") {
       setPendingApiNodeId(targetNode.id);
       saveServiceMutate({ ...formData, parentServiceID: targetNode.apiId, displayOrder: (targetNode.children?.length ?? 0) + 1 });
@@ -421,159 +515,187 @@ const ServiceListing = ({
 
   /* ── Derived ── */
   const totalAvailableMetrics = useMemo(() => countTotalNodes(services), [services]);
-  const processedDataTree = useMemo(() =>
+  const processedDataTree     = useMemo(() =>
     searchQuery.trim() ? filterTreeHierarchy(services, searchQuery) : services,
     [searchQuery, services]);
   const flattenServiceTree = (nodes, parentLabel = "") =>
     nodes.flatMap((node) => {
       const cat = parentLabel || node.name || "General";
       return [{ id: node.id, apiId: node.apiId, name: node.name, category: cat, status: node.isActive ? "Active" : "Draft" },
-      ...(node.children?.length ? flattenServiceTree(node.children, node.name) : [])];
+              ...(node.children?.length ? flattenServiceTree(node.children, node.name) : [])];
     });
   const handleSave = () => onSave?.(flattenServiceTree(services));
 
+  /* ── whether the loading spinner should show ── */
+  const showLoading = !useLocalData && isLoadingServices;
+
   /* ==========================================================================
-     10. ── NEW TREE RENDERER ── clean table-row style
+     11. TREE RENDERER  — hover state via React, not broken CSS selector
      ========================================================================== */
+  const TreeNode = ({ node, depth }) => {
+    const [isHovered, setIsHovered] = useState(false);
+    const isExpanded    = expandedNodeIds.includes(node.id);
+    const hasChildren   = node.children?.length > 0;
+    const isNodePending = pendingApiNodeId === node.id;
+    const color         = dc(depth);
+
+    return (
+      <motion.div
+        layout
+        initial={{ opacity: 0, x: -6 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -6 }}
+        transition={{ duration: 0.18 }}
+        className="relative"
+      >
+        {/* vertical tree guide line */}
+        {depth > 0 && (
+          <div className="absolute top-0 bottom-0 w-px"
+            style={{ left: `${depth * 24 - 12}px`, background: `${color.line}30` }} />
+        )}
+        {/* horizontal connector */}
+        {depth > 0 && (
+          <div className="absolute top-[22px] h-px w-3"
+            style={{ left: `${depth * 24 - 12}px`, background: `${color.line}50` }} />
+        )}
+
+        {/* NODE ROW */}
+        <div
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          className={`relative flex items-center gap-2 rounded-xl px-3 py-2.5 mb-1 transition-all
+            ${node.isSearchHighlight ? "ring-1 ring-violet-300 bg-violet-50/60" : isHovered ? "bg-slate-50" : ""}
+            ${isNodePending ? "pointer-events-none opacity-60" : ""}
+          `}
+          style={{ marginLeft: `${depth * 24}px` }}
+        >
+          {isNodePending && (
+            <div className="absolute inset-0 rounded-xl flex items-center justify-center bg-white/70">
+              <Loader2 className="h-4 w-4 animate-spin text-violet-500" />
+            </div>
+          )}
+
+          {/* expand / leaf */}
+          <button
+            onClick={() => setExpandedNodeIds((p) =>
+              p.includes(node.id) ? p.filter((x) => x !== node.id) : [...p, node.id]
+            )}
+            className={`flex h-5 w-5 shrink-0 items-center justify-center rounded transition-colors
+              ${hasChildren ? "text-slate-400 hover:text-slate-700 hover:bg-slate-100" : "cursor-default"}`}
+          >
+            {hasChildren
+              ? isExpanded
+                ? <ChevronDown className="h-3.5 w-3.5" />
+                : <ChevronRight className="h-3.5 w-3.5" />
+              : <div className={`h-1.5 w-1.5 rounded-full ${color.dot} opacity-60`} />}
+          </button>
+
+          {/* depth dot */}
+          <div className={`h-2 w-2 rounded-full shrink-0 ${color.dot}`} />
+
+          {/* name */}
+          <span className={`flex-1 min-w-0 text-sm font-semibold text-slate-800 truncate
+            ${node.isSearchHighlight ? "text-violet-800" : ""}`}>
+            {node.name}
+          </span>
+
+          {/* level / code / id badges */}
+          <div className="hidden sm:flex items-center gap-1.5 shrink-0">
+            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${color.badge}`}>
+              L{depth + 1}
+            </span>
+            {node.serviceCode && (
+              <span className="text-[10px] font-mono text-slate-400 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-full">
+                {node.serviceCode}
+              </span>
+            )}
+            <span className="text-[10px] text-slate-300 font-mono">#{node.apiId}</span>
+          </div>
+
+          {/* child count pill */}
+          {hasChildren && !isExpanded && (
+            <span className="hidden sm:inline-flex text-[10px] font-bold text-slate-400 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full shrink-0">
+              {node.children.length} sub
+            </span>
+          )}
+
+          {/* ── ACTIONS ── */}
+          <div className="flex items-center gap-1 shrink-0 ml-1">
+
+            {/* active toggle — always visible */}
+            <button
+              onClick={() => toggleActivationState(node)}
+              disabled={isNodePending || useLocalData}
+              title={useLocalData ? "Switch to Live API to edit" : (node.isActive ? "Deactivate" : "Activate")}
+              className={`h-6 rounded-full border px-2.5 text-[9px] font-bold uppercase tracking-wide transition-all
+                disabled:opacity-40 disabled:cursor-not-allowed
+                ${node.isActive
+                  ? "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                  : "border-slate-200 bg-white text-slate-400 hover:bg-slate-50"
+                }`}
+            >
+              {node.isActive ? "on" : "off"}
+            </button>
+
+            {/* edit / add-child / delete — visible on hover */}
+            {!dashboardMode && !useLocalData && (
+              <div
+                className="flex items-center gap-0.5 transition-all duration-150"
+                style={{ opacity: isHovered ? 1 : 0, pointerEvents: isHovered ? "auto" : "none" }}
+              >
+                <button
+                  onClick={() => openEdit(node)}
+                  disabled={isNodePending}
+                  title="Edit service"
+                  className="flex h-7 w-7 items-center justify-center rounded-lg border border-transparent text-slate-400 hover:text-amber-600 hover:bg-amber-50 hover:border-amber-200 transition-colors disabled:opacity-40"
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  onClick={() => openAddChild(node)}
+                  disabled={isSaving || isNodePending}
+                  title="Add child service"
+                  className="flex h-7 w-7 items-center justify-center rounded-lg border border-transparent text-slate-400 hover:text-sky-600 hover:bg-sky-50 hover:border-sky-200 transition-colors disabled:opacity-40"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  onClick={() => openDelete(node)}
+                  disabled={isDeleting || isNodePending}
+                  title="Delete service"
+                  className="flex h-7 w-7 items-center justify-center rounded-lg border border-transparent text-slate-400 hover:text-red-600 hover:bg-red-50 hover:border-red-200 transition-colors disabled:opacity-40"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* children */}
+        {isExpanded && hasChildren && (
+          <div className="relative">
+            <AnimatePresence mode="popLayout">
+              {node.children.map((child) => (
+                <TreeNode key={child.id} node={child} depth={depth + 1} />
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
+      </motion.div>
+    );
+  };
+
   const renderRecursiveTree = (nodes, depth = 0) => (
     <AnimatePresence mode="popLayout">
-      {nodes.map((node, idx) => {
-        const isExpanded = expandedNodeIds.includes(node.id);
-        const hasChildren = node.children?.length > 0;
-        const isNodePending = pendingApiNodeId === node.id;
-        const color = dc(depth);
-        const isLast = idx === nodes.length - 1;
-
-        return (
-          <motion.div
-            key={node.id}
-            layout
-            initial={{ opacity: 0, x: -6 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -6 }}
-            transition={{ duration: 0.18 }}
-            className="relative"
-          >
-            {/* ── vertical tree guide line from parent ── */}
-            {depth > 0 && (
-              <div
-                className="absolute top-0 bottom-0 w-px"
-                style={{ left: `${depth * 24 - 12}px`, background: `${color.line}30` }}
-              />
-            )}
-            {/* ── horizontal connector to this node ── */}
-            {depth > 0 && (
-              <div
-                className="absolute top-[22px] h-px w-3"
-                style={{ left: `${depth * 24 - 12}px`, background: `${color.line}50` }}
-              />
-            )}
-
-            {/* ── NODE ROW ── */}
-            <div
-              className={`relative flex items-center gap-2 rounded-xl px-3 py-2.5 mb-1 transition-all
-                ${node.isSearchHighlight ? "ring-1 ring-violet-300 bg-violet-50/60" : "hover:bg-slate-50"}
-                ${isNodePending ? "pointer-events-none opacity-60" : ""}
-              `}
-              style={{ marginLeft: `${depth * 24}px` }}
-            >
-              {isNodePending && (
-                <div className="absolute inset-0 rounded-xl flex items-center justify-center bg-white/70">
-                  <Loader2 className="h-4 w-4 animate-spin text-violet-500" />
-                </div>
-              )}
-
-              {/* expand / leaf indicator */}
-              <button
-                onClick={() => setExpandedNodeIds((p) =>
-                  p.includes(node.id) ? p.filter((x) => x !== node.id) : [...p, node.id]
-                )}
-                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded transition-colors
-                  ${hasChildren ? "text-slate-400 hover:text-slate-700 hover:bg-slate-100" : "cursor-default"}`}
-              >
-                {hasChildren
-                  ? isExpanded
-                    ? <ChevronDown className="h-3.5 w-3.5" />
-                    : <ChevronRight className="h-3.5 w-3.5" />
-                  : <div className={`h-1.5 w-1.5 rounded-full ${color.dot} opacity-60`} />}
-              </button>
-
-              {/* color dot for depth */}
-              <div className={`h-2 w-2 rounded-full shrink-0 ${color.dot}`} />
-
-              {/* service name */}
-              <span className={`flex-1 min-w-0 text-sm font-semibold text-slate-800 truncate
-                ${node.isSearchHighlight ? "text-violet-800" : ""}`}>
-                {node.name}
-              </span>
-
-              {/* level + ID badges */}
-              <div className="hidden sm:flex items-center gap-1.5 shrink-0">
-                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${color.badge}`}>
-                  L{depth + 1}
-                </span>
-                {node.serviceCode && (
-                  <span className="text-[10px] font-mono text-slate-400 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-full">
-                    {node.serviceCode}
-                  </span>
-                )}
-                <span className="text-[10px] text-slate-300 font-mono">#{node.apiId}</span>
-              </div>
-
-              {/* child count pill */}
-              {hasChildren && !isExpanded && (
-                <span className="hidden sm:inline-flex text-[10px] font-bold text-slate-400 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full shrink-0">
-                  {node.children.length} sub
-                </span>
-              )}
-
-              {/* actions */}
-              <div className="flex items-center gap-1 shrink-0 ml-1">
-                {/* active toggle */}
-                <button
-                  onClick={() => toggleActivationState(node)}
-                  disabled={isNodePending}
-                  className={`h-5 rounded-full border px-2 text-[9px] font-bold uppercase tracking-wide transition-all disabled:opacity-50 ${node.isActive
-                    ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                    : "border-slate-200 bg-white text-slate-400"
-                    }`}
-                >
-                  {node.isActive ? "on" : "off"}
-                </button>
-
-                {!dashboardMode && (
-                  <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity [.relative:hover_&]:opacity-100">
-                    <button onClick={() => openEdit(node)} disabled={isNodePending} title="Edit"
-                      className="flex h-6 w-6 items-center justify-center rounded-lg text-slate-400 hover:text-amber-500 hover:bg-amber-50 transition-colors disabled:opacity-50">
-                      <Pencil className="h-3 w-3" />
-                    </button>
-                    <button onClick={() => openAddChild(node)} disabled={isSaving || isNodePending} title="Add child"
-                      className="flex h-6 w-6 items-center justify-center rounded-lg text-slate-400 hover:text-sky-500 hover:bg-sky-50 transition-colors disabled:opacity-50">
-                      <Plus className="h-3 w-3" />
-                    </button>
-                    <button onClick={() => openDelete(node)} disabled={isDeleting || isNodePending} title="Delete"
-                      className="flex h-6 w-6 items-center justify-center rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors disabled:opacity-50">
-                      <Trash2 className="h-3 w-3" />
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* ── children ── */}
-            {isExpanded && hasChildren && (
-              <div className="relative">
-                {renderRecursiveTree(node.children, depth + 1)}
-              </div>
-            )}
-          </motion.div>
-        );
-      })}
+      {nodes.map((node) => (
+        <TreeNode key={node.id} node={node} depth={depth} />
+      ))}
     </AnimatePresence>
   );
 
   /* ==========================================================================
-     11. MAIN RENDER  — uses PageHeading
+     12. MAIN RENDER
      ========================================================================== */
   return (
     <>
@@ -587,57 +709,58 @@ const ServiceListing = ({
       <div className="min-h-screen bg-slate-50/80 p-3 sm:p-5">
         <div className="mx-auto max-w-1xl space-y-4">
 
-          {/* ── PAGE HEADING (uses PageHeading component) ── */}
-          {!(dashboardMode || onSave || showSaveButton || onBack) && (
-            <CustomHeading
-              title="Service Listing"
-              subtitle="Manage the full hierarchy of marketplace service categories."
-              icon={Layers}
-              badge={isLoadingServices ? undefined : `${totalAvailableMetrics} services`}
-              badgeColor="violet"
-              variant="default"
-              size="md"
-              actions={
-                !dashboardMode && (
-                  <div className="flex items-center gap-2">
-                    {/* {!isLoadingServices && !fetchError && (
-                      <span className="flex items-center gap-1.5 h-8 px-3 rounded-full border border-emerald-200 bg-emerald-50 text-[11px] font-bold text-emerald-700">
-                        <Zap className="h-3 w-3" /> Live
-                      </span>
-                    )} */}
-                    <button onClick={() => refetch()} disabled={isLoadingServices}
-                      className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 disabled:opacity-40 transition-all" title="Refresh">
-                      <RefreshCw className={`h-3.5 w-3.5 ${isLoadingServices ? "animate-spin" : ""}`} />
-                    </button>
-                    <button onClick={() => setExpandedNodeIds([])}
-                      className="h-8 px-3 rounded-xl border border-slate-200 bg-white text-[11px] font-bold text-slate-600 hover:bg-slate-50 transition-all">
-                      Collapse
-                    </button>
-                    <button onClick={openAddRoot} disabled={isSaving}
-                      className="flex h-8 items-center gap-1.5 rounded-xl bg-violet-600 hover:bg-violet-700 px-3 text-[11px] font-bold text-white transition-all disabled:opacity-60">
-                      {isSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Plus className="h-3.5 w-3.5" />}
-                      Add Root
-                    </button>
-                  </div>
-                )
-              }
-            />
-          )}
+          {/* PAGE HEADING */}
+          <CustomHeading
+            title="Service Listing"
+            subtitle="Manage the full hierarchy of marketplace service categories."
+            icon={Layers}
+            badge={showLoading ? undefined : `${totalAvailableMetrics} services`}
+            badgeColor="violet"
+            variant="default"
+            size="md"
+            actions={
+              !dashboardMode && (
+                <div className="flex items-center gap-2 flex-wrap">
+                  {/* ── DATA SOURCE TOGGLE ── */}
+                  <DataSourceToggle useLocal={useLocalData} onChange={handleDataSourceChange} />
 
-          {/* ── toolbar when used as sub-component ── */}
+                  <button onClick={() => refetch()} disabled={showLoading || useLocalData}
+                    title={useLocalData ? "Not applicable in local mode" : "Refresh from API"}
+                    className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 disabled:opacity-40 transition-all">
+                    <RefreshCw className={`h-3.5 w-3.5 ${showLoading ? "animate-spin" : ""}`} />
+                  </button>
+                  <button onClick={() => setExpandedNodeIds([])}
+                    className="h-8 px-3 rounded-xl border border-slate-200 bg-white text-[11px] font-bold text-slate-600 hover:bg-slate-50 transition-all">
+                    Collapse
+                  </button>
+                  <button
+                    onClick={openAddRoot}
+                    disabled={isSaving || useLocalData}
+                    title={useLocalData ? "Switch to Live API to add services" : undefined}
+                    className="flex h-8 items-center gap-1.5 rounded-xl bg-violet-600 hover:bg-violet-700 px-3 text-[11px] font-bold text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+                    {isSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Plus className="h-3.5 w-3.5" />}
+                    Add Root
+                  </button>
+                </div>
+              )
+            }
+          />
+
+          {/* toolbar when used as sub-component */}
           {(dashboardMode || onSave || showSaveButton || onBack) && !dashboardMode && (
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <button onClick={() => refetch()} disabled={isLoadingServices}
+                <DataSourceToggle useLocal={useLocalData} onChange={handleDataSourceChange} />
+                <button onClick={() => refetch()} disabled={showLoading || useLocalData}
                   className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 disabled:opacity-40 transition-all">
-                  <RefreshCw className={`h-3.5 w-3.5 ${isLoadingServices ? "animate-spin" : ""}`} />
+                  <RefreshCw className={`h-3.5 w-3.5 ${showLoading ? "animate-spin" : ""}`} />
                 </button>
                 <button onClick={() => setExpandedNodeIds([])}
                   className="h-8 px-3 rounded-xl border border-slate-200 bg-white text-[11px] font-bold text-slate-600 hover:bg-slate-50 transition-all">
                   Collapse
                 </button>
-                <button onClick={openAddRoot} disabled={isSaving}
-                  className="flex h-8 items-center gap-1.5 rounded-xl bg-violet-600 hover:bg-violet-700 px-3 text-[11px] font-bold text-white transition-all disabled:opacity-60">
+                <button onClick={openAddRoot} disabled={isSaving || useLocalData}
+                  className="flex h-8 items-center gap-1.5 rounded-xl bg-violet-600 hover:bg-violet-700 px-3 text-[11px] font-bold text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed">
                   {isSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Plus className="h-3.5 w-3.5" />}
                   Add Root
                 </button>
@@ -645,33 +768,54 @@ const ServiceListing = ({
             </div>
           )}
 
-          {/* ── search + stats bar ── */}
+          {/* search + stats bar */}
           {!dashboardMode && (
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-              {/* search */}
               <div className="relative flex-1 max-w-xs">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
                 <input type="text" value={searchQuery} onChange={handleSearchChange}
                   placeholder="Search services..."
                   className="h-8 w-full rounded-full border border-slate-200 bg-white pl-9 pr-4 text-xs font-medium outline-none transition-all focus:border-violet-400 shadow-sm" />
               </div>
-
-              {/* stat pills */}
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1.5 h-8 px-3 rounded-full border border-slate-200 bg-white text-[11px] font-semibold text-slate-600">
                   <FolderTree className="h-3.5 w-3.5 text-violet-500" />
-                  {isLoadingServices ? "…" : totalAvailableMetrics} total
+                  {showLoading ? "…" : totalAvailableMetrics} total
                 </div>
                 <div className="flex items-center gap-1.5 h-8 px-3 rounded-full border border-emerald-200 bg-emerald-50 text-[11px] font-semibold text-emerald-700">
                   <Activity className="h-3.5 w-3.5" />
                   {activeNodeIds.length} active
                 </div>
+                {/* source indicator pill */}
+                <div className={`flex items-center gap-1.5 h-8 px-3 rounded-full border text-[11px] font-semibold
+                  ${useLocalData
+                    ? "border-amber-200 bg-amber-50 text-amber-700"
+                    : "border-violet-200 bg-violet-50 text-violet-700"
+                  }`}>
+                  {useLocalData ? <HardDrive className="h-3.5 w-3.5" /> : <Database className="h-3.5 w-3.5" />}
+                  {useLocalData ? "Local" : "API"}
+                </div>
               </div>
             </div>
           )}
 
-          {/* ── error banner ── */}
-          {fetchError && (
+          {/* local-mode read-only notice */}
+          {useLocalData && !dashboardMode && (
+            <div className="flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-xs text-amber-700">
+              <HardDrive className="h-4 w-4 shrink-0" />
+              <span>
+                <strong>Local data mode</strong> — showing <code className="font-mono text-[11px]">SERVICES_HIERARCHY</code>.
+                Tree is read-only. Switch to <strong>Live API</strong> to add, edit, or delete services.
+              </span>
+              <button onClick={() => handleDataSourceChange(false)}
+                className="ml-auto shrink-0 h-6 px-2.5 rounded-lg bg-amber-600 text-white font-bold text-[10px] hover:bg-amber-700 transition-all">
+                Switch to API
+              </button>
+            </div>
+          )}
+
+          {/* error banner (only relevant in API mode) */}
+          {!useLocalData && fetchError && (
             <div className="flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
               <AlertCircle className="h-4 w-4 shrink-0" />
               <span><strong>Failed to load services.</strong> {fetchError?.message}</span>
@@ -679,24 +823,26 @@ const ServiceListing = ({
             </div>
           )}
 
-          {/* ── TREE PANEL ── */}
+          {/* TREE PANEL */}
           <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-            {/* panel header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50/60">
               <div className="flex items-center gap-2">
                 <Layers className="h-4 w-4 text-violet-500" />
                 <span className="text-xs font-bold text-slate-700 uppercase tracking-widest">Service Hierarchy</span>
               </div>
-              <div className="flex items-center gap-1 text-[10px] text-slate-400 font-medium">
-                <span className="w-2 h-2 rounded-full bg-violet-400" /> L1
-                <span className="w-2 h-2 rounded-full bg-sky-400 ml-2" /> L2
-                <span className="w-2 h-2 rounded-full bg-emerald-400 ml-2" /> L3
-                <span className="w-2 h-2 rounded-full bg-amber-400 ml-2" /> L4+
+              <div className="flex items-center gap-3">
+                {/* depth legend */}
+                <div className="flex items-center gap-1 text-[10px] text-slate-400 font-medium">
+                  <span className="w-2 h-2 rounded-full bg-violet-400" /> L1
+                  <span className="w-2 h-2 rounded-full bg-sky-400 ml-2" /> L2
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 ml-2" /> L3
+                  <span className="w-2 h-2 rounded-full bg-amber-400 ml-2" /> L4+
+                </div>
               </div>
             </div>
 
             <div className="p-3">
-              {isLoadingServices ? (
+              {showLoading ? (
                 <div className="flex flex-col items-center justify-center py-16 gap-3">
                   <Loader2 className="h-7 w-7 animate-spin text-violet-400" />
                   <p className="text-xs text-slate-400 font-medium">Loading services…</p>
@@ -709,17 +855,22 @@ const ServiceListing = ({
                     <LayoutGrid className="h-5 w-5" />
                   </div>
                   <p className="text-xs font-bold text-slate-500">
-                    {fetchError ? "Could not load services" : "No services found"}
+                    {!useLocalData && fetchError ? "Could not load services" : "No services found"}
                   </p>
-                  {!fetchError && (
+                  {!fetchError && !useLocalData && (
                     <p className="text-[11px] text-slate-400">Click "Add Root" to create your first service.</p>
+                  )}
+                  {useLocalData && (
+                    <p className="text-[11px] text-slate-400">
+                      <code className="font-mono">SERVICES_HIERARCHY</code> appears to be empty.
+                    </p>
                   )}
                 </div>
               )}
             </div>
           </div>
 
-          {/* ── bottom back/save bar ── */}
+          {/* bottom back/save bar */}
           {(onSave || showSaveButton || onBack) && (
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               {onBack && (
@@ -741,5 +892,6 @@ const ServiceListing = ({
       </div>
     </>
   );
-}
-export default ServiceListing
+};
+
+export default ServiceListing;

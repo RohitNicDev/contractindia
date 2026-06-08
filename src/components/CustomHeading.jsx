@@ -21,44 +21,44 @@ import { ChevronRight, ArrowLeft } from "lucide-react";
 
 /* ── Badge variants ──────────────────────────────────────────────────────── */
 const BADGE = {
-  blue:   "bg-blue-50   text-blue-700   border-blue-200",
-  green:  "bg-emerald-50 text-emerald-700 border-emerald-200",
-  amber:  "bg-amber-50  text-amber-700  border-amber-200",
-  red:    "bg-red-50    text-red-700    border-red-200",
+  blue: "bg-blue-50   text-blue-700   border-blue-200",
+  green: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  amber: "bg-amber-50  text-amber-700  border-amber-200",
+  red: "bg-red-50    text-red-700    border-red-200",
   violet: "bg-violet-50 text-violet-700 border-violet-200",
-  slate:  "bg-slate-100 text-slate-600  border-slate-200",
+  slate: "bg-slate-100 text-slate-600  border-slate-200",
 };
 
 /* ── Size tokens ─────────────────────────────────────────────────────────── */
 const SIZE = {
   sm: {
-    wrap:     "py-3 px-4",
-    title:    "text-base font-bold",
+    wrap: "pt-3 px-4",
+    title: "text-base font-bold",
     subtitle: "text-xs mt-0.5",
-    icon:     "h-8 w-8 rounded-xl",
-    iconSz:   "h-4 w-4",
+    icon: "h-8 w-8 rounded-xl",
+    iconSz: "h-4 w-4",
   },
   md: {
-    wrap:     "py-4 px-5",
-    title:    "text-xl font-black",
+    wrap: "pt-4 px-5",
+    title: "text-xl font-black",
     subtitle: "text-sm mt-1",
-    icon:     "h-9 w-9 rounded-2xl",
-    iconSz:   "h-[18px] w-[18px]",
+    icon: "h-9 w-9 rounded-2xl",
+    iconSz: "h-[18px] w-[18px]",
   },
   lg: {
-    wrap:     "py-5 px-6",
-    title:    "text-2xl font-black",
+    wrap: "pt-5 px-6",
+    title: "text-2xl font-black",
     subtitle: "text-sm mt-1.5",
-    icon:     "h-11 w-11 rounded-2xl",
-    iconSz:   "h-5 w-5",
+    icon: "h-11 w-11 rounded-2xl",
+    iconSz: "h-5 w-5",
   },
 };
 
 /* ── Variant wrappers ────────────────────────────────────────────────────── */
 const VARIANT = {
-  default:  "bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/70 shadow-sm",
+  default: "bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/70 shadow-sm",
   bordered: "bg-white rounded-2xl border border-slate-200",
-  flush:    "",
+  flush: "",
 };
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -69,17 +69,17 @@ export default function CustomHeading({
   subtitle,
   icon: Icon,
   badge,
-  badgeColor  = "blue",
+  badgeColor = "blue",
   actions,
   breadcrumbs,
   back,
-  variant     = "default",
-  size        = "md",
-  divider     = true,
-  className   = "",
+  variant = "default",
+  size = "md",
+  divider = true,
+  className = "",
 }) {
-  const s  = SIZE[size]    ?? SIZE.md;
-  const v  = VARIANT[variant] ?? VARIANT.default;
+  const s = SIZE[size] ?? SIZE.md;
+  const v = VARIANT[variant] ?? VARIANT.default;
   const bc = BADGE[badgeColor] ?? BADGE.blue;
 
   const showDivider = divider && variant !== "flush";
@@ -150,7 +150,7 @@ export default function CustomHeading({
               <h1 className={`${s.title} truncate text-slate-900`}>{title}</h1>
               {badge && (
                 <span
-                  className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10.5px] font-bold tracking-wide ${bc}`}
+                  className={`inline-flex items-center rounded-full border px-2.5 pt-0.5 text-[10.5px] font-bold tracking-wide ${bc}`}
                 >
                   {badge}
                 </span>

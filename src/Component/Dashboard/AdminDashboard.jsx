@@ -1,10 +1,12 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { LayoutDashboard, ShieldCheck, Briefcase, Users, CreditCard, Lock, BarChart3, LogOut, CheckCircle, XCircle, Plus, Edit2, Trash2, ChevronRight, Activity, TrendingUp } from "lucide-react";
 import ServiceListing from "./pages/ServiceListing";
 import BusinessPlans from "./pages/BusinessPlans";
+import UserControl from "./pages/UserControl";
+import UserVerification from "./pages/UserVerification";
 import { Badge, gradBtn,glass } from "../uiUtiles";
 
  
@@ -59,66 +61,7 @@ function Overview() {
   );
 }
 
-const initIndividual = [
-  { id: 1, name: "Rahul Sharma", email: "rahul@gmail.com", mobile: "9876543210", date: "2025-06-01", status: "Pending" },
-  { id: 2, name: "Priya Mehta", email: "priya@gmail.com", mobile: "9123456789", date: "2025-06-03", status: "Pending" },
-  { id: 3, name: "Amit Verma", email: "amit@gmail.com", mobile: "9988776655", date: "2025-06-05", status: "Verified" },
-  { id: 4, name: "Sunita Rao", email: "sunita@gmail.com", mobile: "9001122334", date: "2025-06-07", status: "Rejected" },
-];
-const initCommercial = [
-  { id: 1, name: "Shapoorji Pallonji & Co.", email: "shapoorjipallonji@gmail.com", mobile: "9811223344", date: "2025-05-28", status: "Verified" },
-  { id: 2, name: "Design Arc Architects", email: "designarcarchitects@gmail.com", mobile: "9922334455", date: "2025-06-02", status: "Verified" },
-  { id: 3, name: "UrbanSpace Interiors", email: "urbanSpaceinteriors@gmail.com", mobile: "9033445566", date: "2025-06-06", status: "Verified" },
-  { id: 4, name: "Volt & Wire Electrical", email: "vote@voltwireelectrical.com", mobile: "9033446532", date: "2025-02-06", status: "Verified" },
-  { id: 5, name: "Shivam Brothers", email: "shivam@patelinteriors.com", mobile: "9033446589", date: "2025-01-06", status: "Pending" },
-];
 
-function UserVerification() {
-  const [tab, setTab] = useState("individual");
-  const [indUsers, setIndUsers] = useState(initIndividual);
-  const [comUsers, setComUsers] = useState(initCommercial);
-  const users = tab === "individual" ? indUsers : comUsers;
-  const setUsers = tab === "individual" ? setIndUsers : setComUsers;
-  const updateStatus = (id, status) => { setUsers(prev => prev.map(u => u.id === id ? { ...u, status } : u)); toast.success(`User ${status.toLowerCase()} successfully`); };
-  return (
-    <div>
-      <h2 className="text-xl font-bold text-slate-800 mb-5">User Verification</h2>
-      <div className="flex gap-2 mb-5">
-        {["individual", "commercial"].map(t => (
-          <button key={t} onClick={() => setTab(t)} style={{ ...gradBtn, background: tab === t ? "linear-gradient(135deg,#6366f1,#8b5cf6)" : "rgba(255,255,255,0.7)", color: tab === t ? "#fff" : "#64748b", border: tab === t ? "none" : "1px solid #e2e8f0" }}>
-            {t === "individual" ? "Individual Users" : "Commercial Users"}
-          </button>
-        ))}
-      </div>
-      <div style={{ ...glass, overflow: "hidden" }}>
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
-            <thead><tr style={{ background: "rgba(99,102,241,0.07)" }}>
-              {["Name", "Email", "Mobile", "Registered", "Status", "Actions"].map(h => <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontWeight: 600, color: "#475569", whiteSpace: "nowrap" }}>{h}</th>)}
-            </tr></thead>
-            <tbody>
-              {users.map(u => (
-                <tr key={u.id} style={{ borderTop: "1px solid rgba(0,0,0,0.05)" }}>
-                  <td style={{ padding: "12px 16px", fontWeight: 500, color: "#1e293b" }}>{u.name}</td>
-                  <td style={{ padding: "12px 16px", color: "#64748b" }}>{u.email}</td>
-                  <td style={{ padding: "12px 16px", color: "#64748b" }}>{u.mobile}</td>
-                  <td style={{ padding: "12px 16px", color: "#64748b" }}>{u.date}</td>
-                  <td style={{ padding: "12px 16px" }}><Badge color={u.status === "Verified" ? "green" : u.status === "Rejected" ? "red" : "yellow"}>{u.status}</Badge></td>
-                  <td style={{ padding: "12px 16px" }}>
-                    <div className="flex gap-2">
-                      <button onClick={() => updateStatus(u.id, "Verified")} style={{ ...gradBtn, padding: "5px 12px", fontSize: "12px", background: "linear-gradient(135deg,#10b981,#059669)" }}><CheckCircle className="w-3 h-3 inline mr-1" />Verify</button>
-                      <button onClick={() => updateStatus(u.id, "Rejected")} style={{ ...gradBtn, padding: "5px 12px", fontSize: "12px", background: "linear-gradient(135deg,#ef4444,#dc2626)" }}><XCircle className="w-3 h-3 inline mr-1" />Reject</button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 const initServices = [
   { id: 1, name: "Consulting", category: "Consultant", desc: "Expert business consulting", subs: ["Strategy", "Finance", "Operations"] },
@@ -206,46 +149,7 @@ function ServiceManagement() {
   );
 }
 
-const initAllUsers = [
-  { id: 1, name: "Rahul Sharma", email: "rahul@gmail.com", type: "Individual", status: "Active" },
-  { id: 2, name: "Sharma Builders", email: "info@sharmabuilders.com", type: "Commercial", status: "Active" },
-  { id: 3, name: "Priya Mehta", email: "priya@gmail.com", type: "Individual", status: "Blocked" },
-  { id: 4, name: "Gupta Contractors", email: "contact@guptacontractors.com", type: "Commercial", status: "Active" },
-  { id: 5, name: "Amit Verma", email: "amit@gmail.com", type: "Individual", status: "Active" },
-];
-function UserControl() {
-  const [users, setUsers] = useState(initAllUsers);
-  const toggle = (id) => { setUsers(prev => prev.map(u => u.id === id ? { ...u, status: u.status === "Active" ? "Blocked" : "Active" } : u)); toast.success("User status updated"); };
-  return (
-    <div>
-      <h2 className="text-xl font-bold text-slate-800 mb-5">User Control</h2>
-      <div style={{ ...glass, overflow: "hidden" }}>
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
-            <thead><tr style={{ background: "rgba(99,102,241,0.07)" }}>
-              {["Name", "Email", "Type", "Status", "Action"].map(h => <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontWeight: 600, color: "#475569" }}>{h}</th>)}
-            </tr></thead>
-            <tbody>
-              {users.map(u => (
-                <tr key={u.id} style={{ borderTop: "1px solid rgba(0,0,0,0.05)" }}>
-                  <td style={{ padding: "12px 16px", fontWeight: 500, color: "#1e293b" }}>{u.name}</td>
-                  <td style={{ padding: "12px 16px", color: "#64748b" }}>{u.email}</td>
-                  <td style={{ padding: "12px 16px" }}><Badge color={u.type === "Commercial" ? "indigo" : ""}>{u.type}</Badge></td>
-                  <td style={{ padding: "12px 16px" }}><Badge color={u.status === "Active" ? "green" : "red"}>{u.status}</Badge></td>
-                  <td style={{ padding: "12px 16px" }}>
-                    <button onClick={() => toggle(u.id)} style={{ ...gradBtn, padding: "5px 14px", fontSize: "12px", background: u.status === "Active" ? "linear-gradient(135deg,#ef4444,#dc2626)" : "linear-gradient(135deg,#10b981,#059669)" }}>
-                      {u.status === "Active" ? "Block" : "Unblock"}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
-}
+
 
 
 const adminRoles = [

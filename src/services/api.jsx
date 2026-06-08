@@ -9,15 +9,15 @@ export const saveUserRegistration = async (payload) => {
 };
 
 export const verifyEmail = async (payload) => {
-  return await api.post("/UserRegistration/verify/email",payload);
+  return await api.post("/UserRegistration/verify/email", payload);
 };
 
 export const verifyMobile = async (payload) => {
-  return await api.post("/UserRegistration/verify/mobile",payload);
+  return await api.post("/UserRegistration/verify/mobile", payload);
 };
 
 export const setPassword = async (payload) => {
-  return await api.post("/UserRegistration/password",payload);
+  return await api.post("/UserRegistration/password", payload);
 };
 
 export const resendOtp = async (payload) => {
@@ -60,7 +60,6 @@ export const ServiceMasterDelete = async (planId) => {
   return await api.delete(`/ServiceMaster/delete/${planId}`);
 };
 export const ServiceMasterGet = async () => {
-
   return await api.get(`/ServiceMaster/get`);
 };
 export const ServiceMasterGetById = async (planId) => {
@@ -69,4 +68,19 @@ export const ServiceMasterGetById = async (planId) => {
 export const subscriptionHistoryGet = async () => {
   return await api.get(`/UserSubscriptionDetail/get`);
 };
+export const clientHistoryGet = async () => {
+  return await api.get(`/ClientMaster/get`);
+};
 
+export const leadSave = async (payload) => {
+  return await api.post(`/LeadMaster/save`, payload);
+};
+export const leadUpdate = async (payload) => {
+  return await api.put(`/LeadMaster/update`, payload);
+};
+export const leadDelete = async (leadId) => {
+  return await api.delete(`/LeadMaster/delete/${leadId}`);
+};
+export const leadGet = async () => {
+  return await api.get(`/LeadMaster/get`);
+};

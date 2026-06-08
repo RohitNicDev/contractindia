@@ -1,20 +1,15 @@
 /**
- * SubscriptionHistory page
+ * ClientsHistory page
  *
  * Depends on:
  *  - DataTable   — ../components/DataTable
  *  - PageHeading — ../components/PageHeading
- *
- * API shape expected from subscriptionHistoryGet():
- *  [{ subscriptionID, planName, price, paymentType, paymentDate,
- *     startDate, endDate, isActive, durationType, remark }]
  */
 
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
-  Briefcase,
-  CreditCard,
+  Users,
   CheckCircle2,
   Clock,
   TrendingUp,
@@ -22,9 +17,10 @@ import {
   RefreshCw,
   Loader2,
   AlertCircle,
+  Briefcase,
 } from "lucide-react";
 
-import { subscriptionHistoryGet } from "../../../services/api";
+import { clientHistoryGet } from "../../../services/api";
 import DataTableComponent from "../../dataTable";
 import CustomHeading from "../../../components/CustomHeading";
 import { handleExport } from "../../uiUtiles";
@@ -32,8 +28,8 @@ import { handleExport } from "../../uiUtiles";
 /* ═══════════════════════════════════════════════════════════════════════════
    1. API ADAPTER
 ═══════════════════════════════════════════════════════════════════════════ */
-const fetchSubscriptionHistory = async () => {
-  const response = await subscriptionHistoryGet();
+const fetchClientHistory = async () => {
+  const response = await clientHistoryGet();
   let list = response;
   if (typeof list === "string") {
     try {
@@ -48,28 +44,21 @@ const fetchSubscriptionHistory = async () => {
 /* ═══════════════════════════════════════════════════════════════════════════
    2. DATA FORMATTERS
 ═══════════════════════════════════════════════════════════════════════════ */
-const formatDate = (iso) => {
-  if (!iso) return "—";
+const formatDate = (val) => {
+  if (!val) return "—";
+  // If it's already a formatted string like "10 May 2026", just return it
+  if (isNaN(Date.parse(val))) return val;
   try {
-    return new Date(iso).toLocaleDateString("en-IN", {
+    return new Date(val).toLocaleDateString("en-IN", {
       day: "2-digit", month: "short", year: "numeric",
     });
-  } catch { return iso; }
-};
-
-const formatPrice = (price) => {
-  if (price == null || price === "") return "—";
-  const num = Number(price);
-  return isNaN(num) ? price : `₹${num.toLocaleString("en-IN")}`;
+  } catch { return val; }
 };
 
 const resolveStatus = (row) => {
-  if (row.isActive === 1 || row.isActive === true) return "Active";
-  if (row.endDate && new Date(row.endDate) < new Date()) return "Expired";
+  if (row.isActive === 1 || row.isActive === true || row.status?.toLowerCase() === "active") return "Active";
   return "Inactive";
 };
-
-
 
 /* ═══════════════════════════════════════════════════════════════════════════
    3. SUMMARY STAT CARD
@@ -101,19 +90,17 @@ function StatCard({ icon: Icon, label, value, sub, color }) {
    4. TABLE COLUMNS
 ═══════════════════════════════════════════════════════════════════════════ */
 const columns = [
-  { title: "Plan", dataIndex: "planName", key: "planName", render: (val) => val ?? "—" },
-  { title: "Price", dataIndex: "price", key: "price", render: (val) => formatPrice(val) },
-  { title: "Payment Type", dataIndex: "paymentType", key: "paymentType", render: (val, row) => val ?? row?.durationType ?? "—" },
-  { title: "Payment Date", dataIndex: "paymentDate", key: "paymentDate", render: (val) => formatDate(val) },
-  { title: "Start", dataIndex: "startDate", key: "startDate", render: (val) => formatDate(val) },
-  { title: "End", dataIndex: "endDate", key: "endDate", render: (val) => formatDate(val) },
-  { title: "Status", dataIndex: "isActive", key: "status", render: (_, row) => resolveStatus(row) },
+  { title: "Name", dataIndex: "name", key: "name", render: (val) => val ?? "—" },
+  { title: "Email", dataIndex: "email", key: "email", render: (val) => val ?? "—" },
+  { title: "Service", dataIndex: "service", key: "service", render: (val) => val ?? "—" },
+  { title: "Date", dataIndex: "date", key: "date", render: (val) => formatDate(val) },
+  { title: "Status", dataIndex: "status", key: "status", render: (_, row) => resolveStatus(row) },
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════════
    5. MAIN PAGE
 ═══════════════════════════════════════════════════════════════════════════ */
-export default function SubscriptionHistory() {
+export default function ClientsHistory() {
   /* ── Fetch ── */
   const {
     data: rawList = [],
@@ -122,40 +109,37 @@ export default function SubscriptionHistory() {
     refetch,
     isFetching,
   } = useQuery({
-    queryKey: ["subscriptionHistory"],
-    queryFn: fetchSubscriptionHistory,
+    queryKey: ["clientsHistory"],
+    queryFn: fetchClientHistory,
 
     retry: 2,
-    onError: () => toast.error("Failed to load subscription history."),
+    onError: () => toast.error("Failed to load client history."),
   });
 
   /* ── Derived table rows ── */
   const safeList = rawList || [];
 
   /* ── Summary stats ── */
-  const totalPlans = safeList.length;
-  const activePlans = safeList.filter((r) => r?.isActive === 1 || r?.isActive === true).length;
-  const expiredPlans = safeList.filter(
-    (r) => r?.endDate && new Date(r.endDate) < new Date() && !r?.isActive
-  ).length;
-  const totalSpend = safeList.reduce((acc, r) => acc + (Number(r?.price) || 0), 0);
+  const totalClients = safeList.length;
+  const activeClients = safeList.filter((r) => resolveStatus(r) === "Active").length;
+  const inactiveClients = totalClients - activeClients;
 
-  /* ── CSV export helper ── */
+
 
   /* ══════════════════════════════════════════════════════════════════════
      RENDER
   ══════════════════════════════════════════════════════════════════════ */
   return (
-    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_rgba(139,92,246,0.07),_transparent_55%),#f8fafc] p-4 sm:p-6">
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_rgba(16,185,129,0.07),_transparent_55%),#f8fafc] p-4 sm:p-6">
       <div className="mx-auto max-w-7xl space-y-6">
 
         {/* ── Page heading ── */}
         <CustomHeading
-          title="Subscription History"
-          subtitle="Track all your plan purchases, renewals, and payment records."
-          icon={Briefcase}
-          badge={isLoading ? undefined : `${totalPlans} record${totalPlans !== 1 ? "s" : ""}`}
-          badgeColor="violet"
+          title="Client History"
+          subtitle="View and manage all registered clients and their details."
+          icon={Users}
+          badge={isLoading ? undefined : `${totalClients} record${totalClients !== 1 ? "s" : ""}`}
+          badgeColor="emerald"
           variant="default"
           size="md"
           actions={
@@ -198,40 +182,33 @@ export default function SubscriptionHistory() {
 
         {/* ── Summary stats ── */}
         {isLoading ? (
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-            {[...Array(4)].map((_, i) => (
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+            {[...Array(3)].map((_, i) => (
               <div key={i} className="h-20 animate-pulse rounded-2xl bg-slate-100" />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
             <StatCard
               icon={TrendingUp}
-              label="Total Plans"
-              value={totalPlans}
+              label="Total Clients"
+              value={totalClients}
               sub="all time"
-              color="violet"
-            />
-            <StatCard
-              icon={CheckCircle2}
-              label="Active Plans"
-              value={activePlans}
-              sub={activePlans === 0 ? "none currently" : "currently running"}
               color="emerald"
             />
             <StatCard
-              icon={Clock}
-              label="Expired"
-              value={expiredPlans}
-              sub="past plans"
-              color="amber"
+              icon={CheckCircle2}
+              label="Active Clients"
+              value={activeClients}
+              sub={activeClients === 0 ? "none currently" : "currently active"}
+              color="blue"
             />
             <StatCard
-              icon={CreditCard}
-              label="Total Spend"
-              value={`₹${totalSpend.toLocaleString("en-IN")}`}
-              sub="across all plans"
-              color="blue"
+              icon={Clock}
+              label="Inactive Clients"
+              value={inactiveClients}
+              sub="past or suspended"
+              color="amber"
             />
           </div>
         )}
@@ -239,16 +216,16 @@ export default function SubscriptionHistory() {
         {/* ── Data table ── */}
         {isLoading ? (
           <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-slate-200/70 bg-white py-20">
-            <Loader2 className="h-8 w-8 animate-spin text-violet-400" />
+            <Loader2 className="h-8 w-8 animate-spin text-emerald-400" />
             <p className="text-xs font-medium text-slate-400">
-              Loading subscription records…
+              Loading client records…
             </p>
           </div>
         ) : (
           <DataTableComponent
-            title="Subscription History"
-            icon={Briefcase}
-            accent="violet"
+            title="Client History"
+            icon={Users}
+            accent="emerald"
             cols={columns}
             rows={safeList}
             onRefresh={refetch}
