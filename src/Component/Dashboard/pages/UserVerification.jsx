@@ -92,28 +92,28 @@ export default function UserVerification() {
                 icon={ShieldCheck}
                 badge={`${users.length} records`}
                 badgeColor="indigo"
-                actions={
-                    <div className="flex items-center gap-2">
-                        <button
-                            type="button"
-                            onClick={refetch}
-                            disabled={isFetching}
-                            title="Refresh"
-                            className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-sm transition-all hover:bg-slate-50 disabled:opacity-40"
-                        >
-                            <RefreshCw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => handleExport(users)}
-                            disabled={users.length === 0}
-                            className="flex h-9 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 text-xs font-bold text-slate-600 shadow-sm transition-all hover:bg-slate-50 disabled:opacity-40"
-                        >
-                            <Download className="h-3.5 w-3.5" />
-                            Export CSV
-                        </button>
-                    </div>
-                }
+                // actions={
+                //     <div className="flex items-center gap-2">
+                //         <button
+                //             type="button"
+                //             onClick={refetch}
+                //             disabled={isFetching}
+                //             title="Refresh"
+                //             className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-sm transition-all hover:bg-slate-50 disabled:opacity-40"
+                //         >
+                //             <RefreshCw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
+                //         </button>
+                //         <button
+                //             type="button"
+                //             onClick={() => handleExport(users)}
+                //             disabled={users.length === 0}
+                //             className="flex h-9 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 text-xs font-bold text-slate-600 shadow-sm transition-all hover:bg-slate-50 disabled:opacity-40"
+                //         >
+                //             <Download className="h-3.5 w-3.5" />
+                //             Export CSV
+                //         </button>
+                //     </div>
+                // }
             />
 
             {/* Tabs */}

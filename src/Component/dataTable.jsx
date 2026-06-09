@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import {
   ChevronUp,
   ChevronDown,
@@ -12,24 +12,66 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
-  Eye,
-  EyeOff,
   Settings2,
-  ArrowUpDown,
+  MoreHorizontal,
+  Trash2,
+  CheckCircle,
+  XCircle,
+  FileDown,
 } from "lucide-react";
 
 /* ==========================================================================
-   STATUS CONFIG — extend as needed
+   STATUS CONFIG
    ========================================================================== */
 const STATUS_STYLES = {
   Success:  "bg-emerald-50 text-emerald-700 border-emerald-200",
   Active:   "bg-emerald-50 text-emerald-700 border-emerald-200",
-  Failed:   "bg-red-50   text-red-600   border-red-200",
+  Failed:   "bg-red-50 text-red-600 border-red-200",
   Expired:  "bg-slate-100 text-slate-500 border-slate-200",
   Inactive: "bg-slate-100 text-slate-500 border-slate-200",
   Pending:  "bg-amber-50 text-amber-700 border-amber-200",
   Warning:  "bg-amber-50 text-amber-700 border-amber-200",
 };
+
+/* ==========================================================================
+   DEMO DATA — used when no rows/cols prop is passed
+   ========================================================================== */
+export const DEMO_COLS = [
+  { key: "name",       title: "Name",       dataIndex: "name" },
+  { key: "email",      title: "Email",      dataIndex: "email" },
+  { key: "role",       title: "Role",       dataIndex: "role" },
+  { key: "department", title: "Department", dataIndex: "department" },
+  { key: "status",     title: "Status",     dataIndex: "status" },
+  {
+    key: "salary", title: "Salary", dataIndex: "salary",
+    render: (v) => `$${Number(v).toLocaleString()}`,
+  },
+  { key: "joined",   title: "Joined",   dataIndex: "joined" },
+  { key: "projects", title: "Projects", dataIndex: "projects" },
+];
+
+export const DEMO_ROWS = [
+  { id: 1,  name: "Ava Chen",       email: "ava.chen@synapse.io",       role: "Engineering Lead",   department: "Engineering",  status: "Active",   salary: 142000, joined: "2021-03-15", projects: 8  },
+  { id: 2,  name: "Marcus Webb",    email: "m.webb@synapse.io",         role: "Product Manager",    department: "Product",      status: "Active",   salary: 128000, joined: "2020-07-01", projects: 12 },
+  { id: 3,  name: "Priya Nair",     email: "p.nair@synapse.io",         role: "UX Designer",        department: "Design",       status: "Active",   salary: 115000, joined: "2022-01-10", projects: 6  },
+  { id: 4,  name: "James Okafor",   email: "j.okafor@synapse.io",       role: "Backend Engineer",   department: "Engineering",  status: "Pending",  salary: 132000, joined: "2023-06-20", projects: 3  },
+  { id: 5,  name: "Sofia Reyes",    email: "s.reyes@synapse.io",        role: "Data Scientist",     department: "Analytics",    status: "Active",   salary: 138000, joined: "2021-09-05", projects: 10 },
+  { id: 6,  name: "Tom Hargreaves", email: "t.hargreaves@synapse.io",   role: "DevOps Engineer",    department: "Engineering",  status: "Inactive", salary: 119000, joined: "2019-11-22", projects: 0  },
+  { id: 7,  name: "Leila Mansouri", email: "l.mansouri@synapse.io",     role: "Sales Director",     department: "Sales",        status: "Active",   salary: 155000, joined: "2020-02-14", projects: 15 },
+  { id: 8,  name: "Raj Patel",      email: "r.patel@synapse.io",        role: "Frontend Engineer",  department: "Engineering",  status: "Active",   salary: 126000, joined: "2022-08-30", projects: 7  },
+  { id: 9,  name: "Nina Petrov",    email: "n.petrov@synapse.io",       role: "Legal Counsel",      department: "Legal",        status: "Active",   salary: 162000, joined: "2018-04-11", projects: 4  },
+  { id: 10, name: "Carlos Vega",    email: "c.vega@synapse.io",         role: "ML Engineer",        department: "Analytics",    status: "Pending",  salary: 144000, joined: "2023-09-01", projects: 2  },
+  { id: 11, name: "Amy Laurent",    email: "a.laurent@synapse.io",      role: "HR Manager",         department: "HR",           status: "Active",   salary: 108000, joined: "2020-12-01", projects: 5  },
+  { id: 12, name: "Derek Stone",    email: "d.stone@synapse.io",        role: "Security Engineer",  department: "Engineering",  status: "Failed",   salary: 134000, joined: "2021-05-18", projects: 6  },
+  { id: 13, name: "Yuki Tanaka",    email: "y.tanaka@synapse.io",       role: "Cloud Architect",    department: "Engineering",  status: "Active",   salary: 158000, joined: "2019-08-27", projects: 11 },
+  { id: 14, name: "Hannah Brooks",  email: "h.brooks@synapse.io",       role: "Content Strategist", department: "Marketing",    status: "Active",   salary: 97000,  joined: "2022-03-07", projects: 9  },
+  { id: 15, name: "Ethan Cole",     email: "e.cole@synapse.io",         role: "Finance Analyst",    department: "Finance",      status: "Inactive", salary: 112000, joined: "2020-10-15", projects: 0  },
+  { id: 16, name: "Mei Lin",        email: "m.lin@synapse.io",          role: "QA Engineer",        department: "Engineering",  status: "Active",   salary: 118000, joined: "2023-02-14", projects: 4  },
+  { id: 17, name: "Oliver Grant",   email: "o.grant@synapse.io",        role: "Growth Manager",     department: "Marketing",    status: "Pending",  salary: 122000, joined: "2023-11-01", projects: 1  },
+  { id: 18, name: "Sara Kim",       email: "s.kim@synapse.io",          role: "iOS Engineer",       department: "Engineering",  status: "Active",   salary: 131000, joined: "2021-07-22", projects: 8  },
+  { id: 19, name: "Finn O'Brien",   email: "f.obrien@synapse.io",       role: "Platform Engineer",  department: "Engineering",  status: "Active",   salary: 140000, joined: "2020-05-30", projects: 9  },
+  { id: 20, name: "Zara Ahmed",     email: "z.ahmed@synapse.io",        role: "Chief of Staff",     department: "Operations",   status: "Active",   salary: 168000, joined: "2018-01-08", projects: 18 },
+];
 
 /* ==========================================================================
    HELPERS
@@ -52,11 +94,72 @@ function SortIcon({ direction }) {
 }
 
 /* ==========================================================================
+   EXPORT UTILITIES — fixed CSV + Excel
+   ========================================================================== */
+function getRawCellValue(row, col) {
+  return row[col.dataIndex ?? col.key] ?? "";
+}
+
+function exportToCSV(cols, rows, filename) {
+  const header = cols.map((c) => `"${c.title}"`).join(",");
+  const body = rows
+    .map((row) =>
+      cols
+        .map((col) => {
+          const val = getRawCellValue(row, col);
+          return `"${String(val).replace(/"/g, '""')}"`;
+        })
+        .join(",")
+    )
+    .join("\n");
+  const blob = new Blob([header + "\n" + body], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${filename}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportToExcel(cols, rows, filename) {
+  const header = cols.map((c) => `<th>${c.title}</th>`).join("");
+  const body = rows
+    .map(
+      (row) =>
+        `<tr>${cols
+          .map((col) => `<td>${getRawCellValue(row, col)}</td>`)
+          .join("")}</tr>`
+    )
+    .join("");
+  const html = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:excel'>
+    <head><meta charset='UTF-8'><style>th{font-weight:bold;background:#f0f0f0;}td,th{border:1px solid #ccc;padding:6px;}</style></head>
+    <body><table><tr>${header}</tr>${body}</table></body></html>`;
+  const blob = new Blob([html], { type: "application/vnd.ms-excel;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${filename}.xls`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ==========================================================================
    COLUMN FILTER POPOVER
    ========================================================================== */
 function ColumnFilterPopover({ colTitle, value, onChange, onClose }) {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) onClose();
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [onClose]);
+
   return (
     <div
+      ref={ref}
       className="absolute z-50 mt-1 w-52 rounded-2xl bg-white border border-slate-200 shadow-xl shadow-slate-200/60 p-3"
       style={{ top: "100%", left: 0 }}
     >
@@ -89,8 +192,21 @@ function ColumnFilterPopover({ colTitle, value, onChange, onClose }) {
    COLUMN VISIBILITY PANEL
    ========================================================================== */
 function ColumnVisibilityPanel({ cols, hidden, onToggle, onClose }) {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) onClose();
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [onClose]);
+
   return (
-    <div className="absolute right-0 z-50 mt-1 w-52 rounded-2xl bg-white border border-slate-200 shadow-xl shadow-slate-200/60 p-3">
+    <div
+      ref={ref}
+      className="absolute right-0 z-50 mt-1 w-52 rounded-2xl bg-white border border-slate-200 shadow-xl shadow-slate-200/60 p-3"
+    >
       <div className="flex items-center justify-between mb-3">
         <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Columns</span>
         <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
@@ -130,89 +246,255 @@ function ColumnVisibilityPanel({ cols, hidden, onToggle, onClose }) {
 }
 
 /* ==========================================================================
+   EXPORT DROPDOWN
+   ========================================================================== */
+function ExportDropdown({ onCSV, onExcel }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen((p) => !p)}
+        className={`flex h-8 w-8 items-center justify-center rounded-xl border transition-all ${
+          open
+            ? "border-indigo-300 bg-indigo-50 text-indigo-600"
+            : "border-slate-200 bg-white text-slate-500 hover:bg-slate-50"
+        }`}
+        title="Export"
+      >
+        <Download className="w-3.5 h-3.5" />
+      </button>
+      {open && (
+        <div className="absolute right-0 z-50 mt-1 w-48 rounded-2xl bg-white border border-slate-200 shadow-xl shadow-slate-200/60 py-1.5">
+          <button
+            onClick={() => { onCSV(); setOpen(false); }}
+            className="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors"
+          >
+            <FileDown className="w-3.5 h-3.5 text-slate-400" />
+            Export all as CSV
+          </button>
+          <button
+            onClick={() => { onExcel(); setOpen(false); }}
+            className="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors"
+          >
+            <FileDown className="w-3.5 h-3.5 text-emerald-500" />
+            Export all as Excel
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ==========================================================================
+   BULK ACTION TOOLBAR — only renders when selectedRows.size > 0
+   ========================================================================== */
+function BulkActionToolbar({ count, onAction, onClear }) {
+  if (count === 0) return null;
+  return (
+    <div className="mx-5 mb-0 flex items-center gap-3 flex-wrap rounded-2xl bg-indigo-600 px-4 py-2.5 text-white shadow-lg shadow-indigo-500/25">
+      <span className="flex items-center gap-2 text-xs font-bold flex-shrink-0">
+        <span className="flex h-5 min-w-[20px] items-center justify-center rounded-md bg-white/20 px-1.5 text-[10px] font-extrabold">
+          {count}
+        </span>
+        {count === 1 ? "item" : "items"} selected
+      </span>
+      <div className="flex items-center gap-2 flex-wrap">
+        {/* <button
+          onClick={() => onAction("approve")}
+          className="flex items-center gap-1.5 rounded-lg bg-white/10 px-2.5 py-1 text-[11px] font-semibold hover:bg-white/20 transition-colors"
+        >
+          <CheckCircle className="w-3 h-3" /> Approve Selected
+        </button>
+        <button
+          onClick={() => onAction("reject")}
+          className="flex items-center gap-1.5 rounded-lg bg-white/10 px-2.5 py-1 text-[11px] font-semibold hover:bg-white/20 transition-colors"
+        >
+          <XCircle className="w-3 h-3" /> Reject Selected
+        </button> */}
+        <button
+          onClick={() => onAction("export-csv")}
+          className="flex items-center gap-1.5 rounded-lg bg-white/10 px-2.5 py-1 text-[11px] font-semibold hover:bg-white/20 transition-colors"
+        >
+          <FileDown className="w-3 h-3" /> Export Selected
+        </button>
+        {/* <button
+          onClick={() => onAction("delete")}
+          className="flex items-center gap-1.5 rounded-lg bg-red-500/50 px-2.5 py-1 text-[11px] font-semibold hover:bg-red-500/70 transition-colors"
+        >
+          <Trash2 className="w-3 h-3" /> Delete Selected
+        </button> */}
+      </div>
+      <button onClick={onClear} className="ml-auto text-white/60 hover:text-white transition-colors" title="Clear selection">
+        <X className="w-4 h-4" />
+      </button>
+    </div>
+  );
+}
+
+/* ==========================================================================
+   ROW ACTION MENU — stopPropagation prevents row selection
+   ========================================================================== */
+function RowActionMenu({ row, onAction }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
+
+  const handleTrigger = (e) => {
+    e.stopPropagation(); // prevents row click / toggleSelectRow
+    setOpen((p) => !p);
+  };
+
+  const handleAction = (e, action) => {
+    e.stopPropagation();
+    onAction?.(action, row);
+    setOpen(false);
+  };
+
+  return (
+    <div ref={ref} className="relative" onClick={(e) => e.stopPropagation()}>
+      <button
+        onClick={handleTrigger}
+        className={`flex h-7 w-7 items-center justify-center rounded-lg border transition-all opacity-0 group-hover:opacity-100 ${
+          open
+            ? "border-indigo-300 bg-indigo-50 text-indigo-600 opacity-100"
+            : "border-slate-200 bg-white text-slate-400 hover:text-slate-700 hover:border-slate-300"
+        }`}
+      >
+        <MoreHorizontal className="w-4 h-4" />
+      </button>
+      {open && (
+        <div className="absolute right-0 top-full mt-1 z-50 w-44 rounded-2xl bg-white border border-slate-200 shadow-xl shadow-slate-200/60 py-1.5 overflow-hidden">
+          <button
+            onClick={(e) => handleAction(e, "view")}
+            className="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors"
+          >
+            <Search className="w-3.5 h-3.5" /> View Details
+          </button>
+          <button
+            onClick={(e) => handleAction(e, "approve")}
+            className="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors"
+          >
+            <CheckCircle className="w-3.5 h-3.5 text-emerald-500" /> Approve
+          </button>
+          <button
+            onClick={(e) => handleAction(e, "reject")}
+            className="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors"
+          >
+            <XCircle className="w-3.5 h-3.5 text-amber-500" /> Reject
+          </button>
+          <button
+            onClick={(e) => handleAction(e, "delete")}
+            className="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors"
+          >
+            <Trash2 className="w-3.5 h-3.5" /> Delete
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ==========================================================================
    MAIN DATA TABLE COMPONENT
    ========================================================================== */
-
 const PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
 
 const DataTableComponent = ({
   title,
   icon: Icon,
-  cols = [],
-  rows = [],
-  accent = "blue",
+  cols = DEMO_COLS,
+  rows = DEMO_ROWS,
+  accent = "indigo",
   onRefresh,
   onExport,
+  onBulkAction,
+  onRowAction,
   loading = false,
 }) => {
-  // Normalize columns for backward compatibility
+  // ── Normalize columns ────────────────────────────────────────────────────
   const normalizedCols = useMemo(() => {
-    return cols.map(c => {
-      if (typeof c === 'string') {
-        return { title: c, dataIndex: c, key: c };
-      }
+    return cols.map((c) => {
+      if (typeof c === "string") return { title: c, dataIndex: c, key: c };
       return { ...c, key: c.key || c.dataIndex };
     });
   }, [cols]);
 
-  // ── State ──────────────────────────────────────────────────────────────────
-  const [globalFilter, setGlobalFilter]   = useState("");
-  const [colFilters, setColFilters]       = useState({});       // { colKey: filterStr }
-  const [activeColFilter, setActiveColFilter] = useState(null); // colKey | null
-  const [sortColKey, setSortColKey]       = useState(null);
-  const [sortDir, setSortDir]             = useState("asc");    // "asc" | "desc"
-  const [page, setPage]                   = useState(1);
-  const [pageSize, setPageSize]           = useState(10);
-  const [selectedRows, setSelectedRows]   = useState(new Set());
-  const [hiddenCols, setHiddenCols]       = useState([]);
-  const [showColPanel, setShowColPanel]   = useState(false);
-  const [densityMode, setDensityMode]     = useState("normal"); // "compact" | "normal" | "relaxed"
+  // ── State ────────────────────────────────────────────────────────────────
+  const [globalFilter, setGlobalFilter]       = useState("");
+  const [colFilters, setColFilters]           = useState({});
+  const [activeColFilter, setActiveColFilter] = useState(null);
+  const [sortColKey, setSortColKey]           = useState(null);
+  const [sortDir, setSortDir]                 = useState("asc");
+  const [page, setPage]                       = useState(1);
+  const [pageSize, setPageSize]               = useState(10);
+  const [selectedIds, setSelectedIds]         = useState(new Set()); // tracks by row.id
+  const [hiddenCols, setHiddenCols]           = useState([]);
+  const [showColPanel, setShowColPanel]       = useState(false);
+  const [densityMode]                         = useState("normal");
 
-  const visibleCols = normalizedCols.filter((c) => !hiddenCols.includes(c.key));
+  const visibleCols = useMemo(
+    () => normalizedCols.filter((c) => !hiddenCols.includes(c.key)),
+    [normalizedCols, hiddenCols]
+  );
 
-  // Helper to extract cell value
-  const getCellValue = (row, col) => {
-    if (!row) return null;
-    if (Array.isArray(row)) {
-      const idx = normalizedCols.findIndex(c => c.key === col.key);
-      return row[idx];
-    }
-    return row[col.dataIndex];
-  };
+  // ── Cell value helper ────────────────────────────────────────────────────
+  const getCellValue = useCallback(
+    (row, col) => {
+      if (!row) return null;
+      if (Array.isArray(row)) {
+        const idx = normalizedCols.findIndex((c) => c.key === col.key);
+        return row[idx];
+      }
+      return row[col.dataIndex] ?? row[col.key] ?? null;
+    },
+    [normalizedCols]
+  );
 
-  // ── Filtering ──────────────────────────────────────────────────────────────
+  // ── Filtering ────────────────────────────────────────────────────────────
   const filteredRows = useMemo(() => {
     let result = Array.isArray(rows) ? rows : [];
-
-    // Global search
     if (globalFilter.trim()) {
       const term = globalFilter.toLowerCase();
       result = result.filter((row) =>
-        normalizedCols.some((col) => {
-          const val = getCellValue(row, col);
-          return String(val ?? "").toLowerCase().includes(term);
-        })
+        normalizedCols.some((col) =>
+          String(getCellValue(row, col) ?? "").toLowerCase().includes(term)
+        )
       );
     }
-
-    // Per-column filters
     Object.entries(colFilters).forEach(([colKey, term]) => {
       if (!term?.trim()) return;
-      const col = normalizedCols.find(c => c.key === colKey);
+      const col = normalizedCols.find((c) => c.key === colKey);
       if (!col) return;
-      result = result.filter((row) => {
-        const val = getCellValue(row, col);
-        return String(val ?? "").toLowerCase().includes(term.toLowerCase());
-      });
+      result = result.filter((row) =>
+        String(getCellValue(row, col) ?? "").toLowerCase().includes(term.toLowerCase())
+      );
     });
-
     return result;
-  }, [rows, globalFilter, colFilters, normalizedCols]);
+  }, [rows, globalFilter, colFilters, normalizedCols, getCellValue]);
 
-  // ── Sorting ────────────────────────────────────────────────────────────────
+  // ── Sorting ──────────────────────────────────────────────────────────────
   const sortedRows = useMemo(() => {
     if (!sortColKey) return filteredRows;
-    const col = normalizedCols.find(c => c.key === sortColKey);
+    const col = normalizedCols.find((c) => c.key === sortColKey);
     if (!col) return filteredRows;
     return [...filteredRows].sort((a, b) => {
       const av = getCellValue(a, col) ?? "";
@@ -220,18 +502,24 @@ const DataTableComponent = ({
       const cmp = String(av).localeCompare(String(bv), undefined, { numeric: true });
       return sortDir === "asc" ? cmp : -cmp;
     });
-  }, [filteredRows, sortColKey, sortDir, normalizedCols]);
+  }, [filteredRows, sortColKey, sortDir, normalizedCols, getCellValue]);
 
-  // ── Pagination ─────────────────────────────────────────────────────────────
-  const totalPages = Math.max(1, Math.ceil(sortedRows.length / pageSize));
-  const safePageSize = pageSize === "all" ? sortedRows.length : pageSize;
+  // ── Pagination ───────────────────────────────────────────────────────────
+  const totalPages = Math.max(1, Math.ceil(sortedRows.length / (pageSize === "all" ? sortedRows.length : pageSize)));
+
   const paginatedRows = useMemo(() => {
     if (pageSize === "all") return sortedRows;
     const start = (page - 1) * pageSize;
     return sortedRows.slice(start, start + pageSize);
   }, [sortedRows, page, pageSize]);
 
-  // ── Handlers ──────────────────────────────────────────────────────────────
+  // ── Selected rows (by id) ────────────────────────────────────────────────
+  const selectedRowObjects = useMemo(
+    () => sortedRows.filter((r) => selectedIds.has(r?.id)),
+    [sortedRows, selectedIds]
+  );
+
+  // ── Handlers ─────────────────────────────────────────────────────────────
   const handleSort = (colKey) => {
     if (sortColKey === colKey) {
       setSortDir((d) => (d === "asc" ? "desc" : "asc"));
@@ -267,19 +555,28 @@ const DataTableComponent = ({
     );
   };
 
-  const toggleSelectAll = () => {
-    if (selectedRows.size === paginatedRows.length) {
-      setSelectedRows(new Set());
-    } else {
-      setSelectedRows(new Set(paginatedRows.map((_, i) => (page - 1) * pageSize + i)));
-    }
+  // Row selection persists across pages using row.id
+  const toggleSelectRow = (row) => {
+    const id = row?.id ?? row;
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
   };
 
-  const toggleSelectRow = (absoluteIdx) => {
-    setSelectedRows((prev) => {
+  const allOnPageSelected =
+    paginatedRows.length > 0 && paginatedRows.every((r) => selectedIds.has(r?.id));
+  const someOnPageSelected = paginatedRows.some((r) => selectedIds.has(r?.id));
+
+  const toggleSelectAll = () => {
+    setSelectedIds((prev) => {
       const next = new Set(prev);
-      if (next.has(absoluteIdx)) next.delete(absoluteIdx);
-      else next.add(absoluteIdx);
+      if (allOnPageSelected) {
+        paginatedRows.forEach((r) => next.delete(r?.id));
+      } else {
+        paginatedRows.forEach((r) => r?.id != null && next.add(r.id));
+      }
       return next;
     });
   };
@@ -297,39 +594,49 @@ const DataTableComponent = ({
     sortColKey;
 
   const densityPadding = {
-    compact:  "py-1.5 px-3",
-    normal:   "py-3   px-4",
-    relaxed:  "py-4   px-4",
+    compact: "py-1.5 px-3",
+    normal:  "py-3 px-4",
+    relaxed: "py-4 px-4",
   }[densityMode];
 
   const accentMap = {
-    blue:   { ring: "focus:border-blue-400",   icon: "text-blue-500",   bg: "bg-blue-50",   check: "border-blue-400 bg-blue-400" },
-    indigo: { ring: "focus:border-indigo-400", icon: "text-indigo-500", bg: "bg-indigo-50", check: "border-indigo-400 bg-indigo-400" },
-    violet: { ring: "focus:border-violet-400", icon: "text-violet-500", bg: "bg-violet-50", check: "border-violet-400 bg-violet-400" },
-    emerald:{ ring: "focus:border-emerald-400",icon: "text-emerald-500",bg: "bg-emerald-50",check: "border-emerald-400 bg-emerald-400" },
+    blue:    { ring: "focus:border-blue-400",    icon: "text-blue-500",    bg: "bg-blue-50",    check: "border-blue-400 bg-blue-400" },
+    indigo:  { ring: "focus:border-indigo-400",  icon: "text-indigo-500",  bg: "bg-indigo-50",  check: "border-indigo-400 bg-indigo-400" },
+    violet:  { ring: "focus:border-violet-400",  icon: "text-violet-500",  bg: "bg-violet-50",  check: "border-violet-400 bg-violet-400" },
+    emerald: { ring: "focus:border-emerald-400", icon: "text-emerald-500", bg: "bg-emerald-50", check: "border-emerald-400 bg-emerald-400" },
   };
-  const ac = accentMap[accent] ?? accentMap.blue;
+  const ac = accentMap[accent] ?? accentMap.indigo;
 
-  // ── Export CSV ─────────────────────────────────────────────────────────────
-  const handleExport = () => {
+  // ── Export ───────────────────────────────────────────────────────────────
+  const exportCols = visibleCols; // only export visible columns
+
+  const handleExportCSVAll = () => {
     if (onExport) { onExport(sortedRows); return; }
-    const header = visibleCols.map(c => c.title).join(",");
-    const body = sortedRows.map((row) =>
-      visibleCols.map((c) => {
-        const val = getCellValue(row, c) ?? "";
-        return `"${String(val).replace(/"/g, '""')}"`;
-      }).join(",")
-    ).join("\n");
-    const blob = new Blob([header + "\n" + body], { type: "text/csv" });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement("a");
-    a.href     = url;
-    a.download = `${title ?? "export"}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    exportToCSV(exportCols, sortedRows, title ?? "export");
   };
 
-  // ── Pagination range helper ────────────────────────────────────────────────
+  const handleExportExcelAll = () => {
+    exportToExcel(exportCols, sortedRows, title ?? "export");
+  };
+
+  // ── Bulk action handler ───────────────────────────────────────────────────
+  const handleBulkAction = (action) => {
+    if (action === "export-csv") {
+      exportToCSV(exportCols, selectedRowObjects, `${title ?? "export"}-selected`);
+      return;
+    }
+    if (action === "delete") {
+      setSelectedIds(new Set());
+    }
+    onBulkAction?.(action, selectedRowObjects);
+  };
+
+  // ── Row action handler ────────────────────────────────────────────────────
+  const handleRowAction = (action, row) => {
+    onRowAction?.(action, row);
+  };
+
+  // ── Pagination range ─────────────────────────────────────────────────────
   const pageRange = useMemo(() => {
     const delta = 2;
     const range = [];
@@ -346,6 +653,7 @@ const DataTableComponent = ({
   /* ── Render ─────────────────────────────────────────────────────────────── */
   return (
     <div className="rounded-3xl border border-slate-200/80 bg-white shadow-sm shadow-slate-200/40 overflow-hidden">
+
       {/* ── Header ── */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between px-5 pt-5 pb-4 border-b border-slate-100">
         <div className="flex items-center gap-2.5">
@@ -357,9 +665,10 @@ const DataTableComponent = ({
           <div>
             <h3 className="font-black text-slate-800 text-base leading-tight">{title}</h3>
             <p className="text-[11px] text-slate-400 mt-0.5">
-              {filteredRows.length} of {Array.isArray(rows) ? rows.length : 0} record{Array.isArray(rows) && rows.length !== 1 ? "s" : ""}
-              {selectedRows.size > 0 && (
-                <span className="ml-2 font-bold text-indigo-500">· {selectedRows.size} selected</span>
+              {filteredRows.length} of {Array.isArray(rows) ? rows.length : 0} record
+              {Array.isArray(rows) && rows.length !== 1 ? "s" : ""}
+              {selectedIds.size > 0 && (
+                <span className="ml-2 font-bold text-indigo-500">· {selectedIds.size} selected</span>
               )}
             </p>
           </div>
@@ -386,24 +695,6 @@ const DataTableComponent = ({
             )}
           </div>
 
-          {/* Density toggle */}
-          <div className="flex items-center rounded-xl border border-slate-200 bg-slate-50 p-0.5 gap-0.5">
-            {["compact", "normal", "relaxed"].map((d) => (
-              <button
-                key={d}
-                onClick={() => setDensityMode(d)}
-                title={d}
-                className={`h-7 px-2 rounded-lg text-[10px] font-bold transition-all capitalize ${
-                  densityMode === d
-                    ? "bg-white text-slate-700 shadow-sm"
-                    : "text-slate-400 hover:text-slate-600"
-                }`}
-              >
-                {d[0].toUpperCase()}
-              </button>
-            ))}
-          </div>
-
           {/* Clear filters */}
           {hasActiveFilters && (
             <button
@@ -427,14 +718,8 @@ const DataTableComponent = ({
             </button>
           )}
 
-          {/* Export CSV */}
-          <button
-            onClick={handleExport}
-            className="flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 transition-all"
-            title="Export CSV"
-          >
-            <Download className="w-3.5 h-3.5" />
-          </button>
+          {/* Export — fixed dropdown with CSV + Excel */}
+          <ExportDropdown onCSV={handleExportCSVAll} onExcel={handleExportExcelAll} />
 
           {/* Column visibility */}
           <div className="relative">
@@ -461,6 +746,17 @@ const DataTableComponent = ({
         </div>
       </div>
 
+      {/* ── Bulk Action Toolbar — only shown when rows are selected ── */}
+      {selectedIds.size > 0 && (
+        <div className="pt-3">
+          <BulkActionToolbar
+            count={selectedIds.size}
+            onAction={handleBulkAction}
+            onClear={() => setSelectedIds(new Set())}
+          />
+        </div>
+      )}
+
       {/* ── Table ── */}
       <div className="overflow-x-auto">
         {loading ? (
@@ -472,29 +768,29 @@ const DataTableComponent = ({
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-slate-50/80 border-b border-slate-100">
-                {/* Select all */}
-                <th className="py-2.5 px-4 w-10">
+                {/* Select all checkbox */}
+                {/* <th className="py-2.5 px-4 w-10">
                   <div
                     className={`w-4 h-4 rounded-md border flex items-center justify-center cursor-pointer transition-all ${
-                      selectedRows.size === paginatedRows.length && paginatedRows.length > 0
-                        ? `${ac.check} border-opacity-100`
+                      allOnPageSelected
+                        ? `${ac.check}`
                         : "border-slate-300 bg-white hover:border-slate-400"
                     }`}
                     onClick={toggleSelectAll}
                   >
-                    {selectedRows.size === paginatedRows.length && paginatedRows.length > 0 && (
+                    {allOnPageSelected && (
                       <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 12 12">
                         <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     )}
-                    {selectedRows.size > 0 && selectedRows.size < paginatedRows.length && (
-                      <div className="w-2 h-0.5 bg-slate-400 rounded" />
+                    {!allOnPageSelected && someOnPageSelected && (
+                      <div className="w-2 h-0.5 bg-indigo-500 rounded" />
                     )}
                   </div>
-                </th>
+                </th> */}
 
-                {/* # */}
-                <th className="py-2.5 px-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest w-10">#</th>
+                {/* Row number */}
+                <th className="py-2.5 px-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest w-10">S.NO</th>
 
                 {visibleCols.map((col) => {
                   const isSorted   = sortColKey === col.key;
@@ -510,7 +806,6 @@ const DataTableComponent = ({
                           {col.title}
                           <SortIcon direction={isSorted ? sortDir : null} />
                         </button>
-                        {/* Column filter trigger */}
                         <button
                           onClick={() => toggleColFilter(col.key)}
                           className={`flex h-5 w-5 items-center justify-center rounded-md transition-all ${
@@ -525,8 +820,6 @@ const DataTableComponent = ({
                           <Filter className="w-2.5 h-2.5" />
                         </button>
                       </div>
-
-                      {/* Column filter popover */}
                       {filterOpen && (
                         <ColumnFilterPopover
                           colTitle={col.title}
@@ -538,6 +831,9 @@ const DataTableComponent = ({
                     </th>
                   );
                 })}
+
+                {/* Actions column header */}
+                <th className="py-2.5 px-4 w-12" />
               </tr>
             </thead>
 
@@ -545,7 +841,7 @@ const DataTableComponent = ({
               {paginatedRows.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={visibleCols.length + 2}
+                    colSpan={visibleCols.length + 3}
                     className="text-center py-16 text-slate-400 text-xs font-medium"
                   >
                     <div className="flex flex-col items-center gap-2">
@@ -556,22 +852,22 @@ const DataTableComponent = ({
                 </tr>
               ) : (
                 paginatedRows.map((row, rowIdx) => {
-                  const absoluteIdx = (page - 1) * (pageSize === "all" ? 0 : pageSize) + rowIdx;
-                  const isSelected  = selectedRows.has(absoluteIdx);
+                  const isSelected = selectedIds.has(row?.id);
+                  const rowNum =
+                    (page - 1) * (pageSize === "all" ? 0 : pageSize) + rowIdx + 1;
+
                   return (
                     <tr
-                      key={row?.id || rowIdx}
-                      onClick={() => toggleSelectRow(absoluteIdx)}
-                      className={`border-b border-slate-50 cursor-pointer transition-colors ${
-                        isSelected
-                          ? "bg-indigo-50/60"
-                          : "hover:bg-slate-50/70"
+                      key={row?.id ?? rowIdx}
+                      onClick={() => toggleSelectRow(row)}
+                      className={`group border-b border-slate-50 cursor-pointer transition-colors ${
+                        isSelected ? "bg-indigo-50/60" : "hover:bg-slate-50/70"
                       }`}
                     >
-                      {/* Checkbox */}
-                      <td className="py-3 px-4 w-10" onClick={(e) => e.stopPropagation()}>
+                      {/* Checkbox — stopPropagation so it doesn't double-fire */}
+                      {/* <td className="py-3 px-4 w-10" onClick={(e) => e.stopPropagation()}>
                         <div
-                          onClick={() => toggleSelectRow(absoluteIdx)}
+                          onClick={() => toggleSelectRow(row)}
                           className={`w-4 h-4 rounded-md border flex items-center justify-center cursor-pointer transition-all ${
                             isSelected
                               ? `${ac.check}`
@@ -584,24 +880,39 @@ const DataTableComponent = ({
                             </svg>
                           )}
                         </div>
-                      </td>
+                      </td> */}
 
                       {/* Row number */}
                       <td className={`${densityPadding} text-[11px] text-slate-400 font-mono w-10`}>
-                        {(page - 1) * (pageSize === "all" ? 0 : pageSize) + rowIdx + 1}
+                        {rowNum}
                       </td>
 
+                      {/* Data cells */}
                       {visibleCols.map((col) => {
-                        const cellValue = getCellValue(row, col);
-                        const displayValue = col.render ? col.render(cellValue, row, absoluteIdx) : (cellValue ?? "—");
+                        const cellValue    = getCellValue(row, col);
+                        const displayValue = col.render
+                          ? col.render(cellValue, row, rowIdx)
+                          : (cellValue ?? "—");
                         return (
                           <td key={col.key} className={`${densityPadding} text-slate-700`}>
-                            {(!col.render && typeof displayValue === 'string' && STATUS_STYLES[displayValue])
-                              ? <StatusBadge value={displayValue} />
-                              : <span className="text-sm">{displayValue}</span>}
+                            {!col.render &&
+                            typeof displayValue === "string" &&
+                            STATUS_STYLES[displayValue] ? (
+                              <StatusBadge value={displayValue} />
+                            ) : (
+                              <span className="text-sm">{displayValue}</span>
+                            )}
                           </td>
                         );
                       })}
+
+                      {/* Row action menu — clicking does NOT select the row */}
+                      <td
+                        className={`${densityPadding} text-right`}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <RowActionMenu row={row} onAction={handleRowAction} />
+                      </td>
                     </tr>
                   );
                 })
@@ -614,7 +925,6 @@ const DataTableComponent = ({
       {/* ── Footer / Pagination ── */}
       {!loading && (
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between px-5 py-4 border-t border-slate-100 bg-slate-50/40">
-          {/* Page size selector */}
           <div className="flex items-center gap-2">
             <span className="text-[11px] text-slate-400 font-medium">Rows per page</span>
             <select
@@ -630,11 +940,13 @@ const DataTableComponent = ({
             <span className="text-[11px] text-slate-400">
               {pageSize === "all"
                 ? `${sortedRows.length} total`
-                : `${Math.min((page - 1) * pageSize + 1, sortedRows.length)}–${Math.min(page * pageSize, sortedRows.length)} of ${sortedRows.length}`}
+                : `${Math.min((page - 1) * pageSize + 1, sortedRows.length)}–${Math.min(
+                    page * pageSize,
+                    sortedRows.length
+                  )} of ${sortedRows.length}`}
             </span>
           </div>
 
-          {/* Page buttons */}
           {pageSize !== "all" && totalPages > 1 && (
             <div className="flex items-center gap-1">
               <button
@@ -667,7 +979,7 @@ const DataTableComponent = ({
                   >
                     {p}
                   </button>
-                ),
+                )
               )}
 
               <button
@@ -691,4 +1003,5 @@ const DataTableComponent = ({
     </div>
   );
 };
+
 export default DataTableComponent;

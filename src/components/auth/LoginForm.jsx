@@ -51,33 +51,37 @@ const LoginForm = () => {
     mutationFn: LoginApi,
 
     onSuccess: (response, variables) => {
-      console.log("Login Success", response);
+      if (response?.isLoginSuccessful == true) {
+        console.log("Login Success", response);
 
-      localStorage.setItem("accessToken", response.accessToken);
+        // localStorage.setItem("accessToken", response.accessToken);
 
-      localStorage.setItem("refreshToken", response.refreshToken);
+        // localStorage.setItem("refreshToken", response.refreshToken);
 
-      localStorage.setItem("isLoggedIn", "true");
+        // localStorage.setItem("isLoggedIn", "true");
 
-      localStorage.setItem("login_user", JSON.stringify(response.user));
+        // localStorage.setItem("login_user", JSON.stringify(response.user));
 
-      // window.dispatchEvent(new Event("auth_changed"));
+        // window.dispatchEvent(new Event("auth_changed"));
 
-      toast.success(response?.remark||"Login successful");
-      // response?.userType === 2
-      // ? "/commercial/dashboard"
-      // : response?.userType === 1
-      //   ? "/individual/dashboard"
-      //   : "/admin/dashboard",
-      navigate("/otp", {
-        state: {
-          email: variables.email,
-          userType: response.userType,
-          singleVerification: true,
-          mobile: response.mobileNo || null,
-          guId: response?.value || null, // Pass the entire data object for OTP screen to use (if needed)
-        },
-      });
+        toast.success(response?.remark || "Login successful");
+        // response?.userType === 2
+        // ? "/commercial/dashboard"
+        // : response?.userType === 1
+        //   ? "/individual/dashboard"
+        //   : "/admin/dashboard",
+        navigate("/otp", {
+          state: {
+            email: variables.email,
+            userType: response.userType,
+            singleVerification: true,
+            mobile: response.mobileNo || null,
+            guId: response?.value || null, // Pass the entire data object for OTP screen to use (if needed)
+          },
+        });
+      }
+        else {
+        toast.error(response?.message || "Login failed. Please check your credentials.");}
     },
 
     onError: (error) => {
