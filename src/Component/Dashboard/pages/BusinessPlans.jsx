@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Badge, gradBtn, glass } from "../../uiUtiles";
@@ -16,7 +16,7 @@ import {
 
 const planMasterGetApi = async () => {
     const response = await planMasterGet();
-    return response ?? [];
+    return response?.data ?? [];
 };
 
 const planMasterDeleteApi = async (planId) => {
@@ -45,6 +45,7 @@ const BusinessPlans = () => {
 
         retry: 1,
     });
+ 
 
     const plans = fetchedPlans && fetchedPlans.length > 0 ? fetchedPlans : [];
 
@@ -171,33 +172,33 @@ const BusinessPlans = () => {
     const columns = [
         {
             title: "Plan Name",
-            dataIndex: "planName",
-            key: "planName",
+            dataIndex: "PlanName",
+            key: "PlanName",
             render: (text) => <span className="font-semibold text-slate-800">{text}</span>,
         },
         {
             title: "Price",
-            dataIndex: "price",
-            key: "price",
+            dataIndex: "Price",
+            key: "Price",
             render: (price) => `₹${price ?? 0}`,
         },
         {
             title: "Credits",
-            dataIndex: "creditsIncluded",
-            key: "creditsIncluded",
-            render: (_, record) => record.creditsIncluded ?? record.credits ?? 0,
+            dataIndex: "CreditsIncluded",
+            key: "CreditsIncluded",
+            render: (_, record) => record?.CreditsIncluded  ?? 0,
         },
         {
             title: "Duration",
-            dataIndex: "durationType",
-            key: "durationType",
-            render: (_, record) => record.durationType ?? record.duration ?? "Monthly",
+            dataIndex: "DurationType",
+            key: "DurationType",
+            render: (_, record) => record.DurationType   ?? "",
         },
-        {
-            title: "Remark",
-            dataIndex: "remark",
-            key: "remark",
-        },
+        // {
+        //     title: "Remark",
+        //     dataIndex: "remark",
+        //     key: "remark",
+        // },
         {
             title: "Status",
             dataIndex: "isActive",

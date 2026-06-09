@@ -24,7 +24,13 @@ import { SERVICES_HIERARCHY } from "../../../data/services_hierarchy";
 /* ==========================================================================
    1. API ADAPTERS  (unchanged)
    ========================================================================== */
-const serviceMasterGetApi = async () => (await ServiceMasterGet()) ?? [];
+const serviceMasterGetApi = async () => 
+  
+  {
+      const response = await ServiceMasterGet();
+      return response?.data ?? [];
+  };
+   
 
 const serviceMasterSaveApi = async (payload) =>
   (await ServiceMasterSave({

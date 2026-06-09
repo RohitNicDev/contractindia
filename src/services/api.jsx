@@ -91,3 +91,26 @@ export const leadDelete = async (leadId) => {
 export const leadGet = async () => {
   return await api.get(`/LeadMaster/get`);
 };
+export const UserVerificationGet = async (type, usertype) => {
+  const params = new URLSearchParams();
+
+  // Only append if 'type' is provided and not null/undefined
+  if (type !== undefined && type !== null && type !== "") {
+    params.append("isVerifiedByAdmin", type);
+  }
+
+  // Only append if 'usertype' is provided and not null/undefined
+  if (usertype !== undefined && usertype !== null && usertype !== "") {
+    params.append("userType", usertype);
+  }
+
+  // Convert params to string (e.g., "isVerifiedByAdmin=true&userType=2")
+  const queryString = params.toString();
+  
+  // Append the query string to the base endpoint if any parameters exist
+  const url = queryString 
+    ? `/UserRegistration/get?${queryString}` 
+    : `/UserRegistration/get`;
+
+  return await api.get(url);
+};
