@@ -24,13 +24,11 @@ import { SERVICES_HIERARCHY } from "../../../data/services_hierarchy";
 /* ==========================================================================
    1. API ADAPTERS  (unchanged)
    ========================================================================== */
-const serviceMasterGetApi = async () => 
-  
-  {
-      const response = await ServiceMasterGet();
-      return response?.data ?? [];
-  };
-   
+const serviceMasterGetApi = async () => {
+  const response = await ServiceMasterGet();
+  return response?.data ?? [];
+};
+
 
 const serviceMasterSaveApi = async (payload) =>
   (await ServiceMasterSave({
@@ -52,19 +50,16 @@ const serviceMasterSaveApi = async (payload) =>
 
 const serviceMasterUpdateApi = async (payload) =>
   (await ServiceMasterUpdate({
-    serviceID: payload?.serviceID, parentServiceID: payload?.parentServiceID ?? 0,
-    serviceCode: payload?.serviceCode ?? "", serviceName: payload?.serviceName ?? "",
-    serviceDescription: payload?.serviceDescription ?? "", serviceIcon: payload?.serviceIcon ?? "",
-    serviceImage: payload?.serviceImage ?? "", metaTitle: payload?.metaTitle ?? "",
-    metaKeywords: payload?.metaKeywords ?? "", metaDescription: payload?.metaDescription ?? "",
-    isFeatured: payload?.isFeatured ?? 0, displayOnHomePage: payload?.displayOnHomePage ?? 0,
-    displayOrder: payload?.displayOrder ?? 0, isActive: payload?.isActive ?? 1,
-    updatedBy: 0, updatedDate: new Date().toISOString(),
-    bannerImage: payload?.bannerImage ?? "", thumbnailImage: payload?.thumbnailImage ?? "",
-    serviceURL: payload?.serviceURL ?? "", isPopular: payload?.isPopular ?? 0,
-    isVerifiedRequired: payload?.isVerifiedRequired ?? 0,
-    minSubscriptionLevel: payload?.minSubscriptionLevel ?? 0,
-    searchKeywords: payload?.searchKeywords ?? "",
+    ServiceID: payload?.ServiceID ?? payload?.serviceID,
+    ParentServiceID: payload?.ParentServiceID ?? payload?.parentServiceID ?? 0,
+    ServiceCode: payload?.ServiceCode ?? payload?.serviceCode ?? "",
+    ServiceName: payload?.ServiceName ?? payload?.serviceName ?? "",
+    ServiceDescription: payload?.ServiceDescription ?? payload?.serviceDescription ?? "",
+    // ... rest of fields following the same pattern
+    IsActive: payload?.IsActive ?? payload?.isActive ?? 1,
+    DisplayOrder: payload?.DisplayOrder ?? payload?.displayOrder ?? 0,
+    UpdatedBy: 0,
+    UpdatedDate: new Date().toISOString(),
   })) ?? {};
 
 const serviceMasterDeleteApi = async (serviceId) =>
@@ -77,20 +72,31 @@ const buildTreeFromFlat = (flatList) => {
   if (!Array.isArray(flatList) || !flatList.length) return [];
   const map = {};
   const roots = [];
-  flatList.forEach((item) => {
-    map[item.serviceID] = {
-      id: String(item.serviceID), apiId: item.serviceID,
-      parentApiId: item.parentServiceID ?? 0, name: item.serviceName,
-      isActive: item.isActive === 1 || item.isActive === true,
-      displayOrder: item.displayOrder ?? 0, serviceCode: item.serviceCode ?? "",
-      children: [], _raw: item,
-    };
-  });
-  flatList.forEach((item) => {
-    const node = map[item.serviceID];
-    const pid = item.parentServiceID;
-    (!pid || pid === 0 || !map[pid]) ? roots.push(node) : map[pid].children.push(node);
-  });
+
+  // AFTER — handles both PascalCase and camelCase
+flatList.forEach((item) => {
+  const id     = item.ServiceID      ?? item.serviceID;
+  const pid    = item.ParentServiceID ?? item.parentServiceID ?? 0;
+  const name   = item.ServiceName    ?? item.serviceName ?? "";
+  const active = item.IsActive       ?? item.isActive;
+  const order  = item.DisplayOrder   ?? item.displayOrder ?? 0;
+  const code   = item.ServiceCode    ?? item.serviceCode ?? "";
+
+  map[id] = {
+    id: String(id), apiId: id,
+    parentApiId: pid, name,
+    isActive: active === 1 || active === true,
+    displayOrder: order, serviceCode: code,
+    children: [], _raw: item,
+  };
+});
+flatList.forEach((item) => {
+  const id  = item.ServiceID      ?? item.serviceID;
+  const pid = item.ParentServiceID ?? item.parentServiceID ?? 0;
+  const node = map[id];
+  (!pid || pid === 0 || !map[pid]) ? roots.push(node) : map[pid].children.push(node);
+});
+
   const sort = (nodes) => {
     nodes.sort((a, b) => a.displayOrder - b.displayOrder);
     nodes.forEach((n) => sort(n.children));
@@ -391,10 +397,10 @@ function DeleteConfirmModal({ isOpen, onClose, onConfirm, nodeName, isLoading })
    ========================================================================== */
 const DEPTH_COLORS = [
   { dot: "bg-violet-500", line: "#8b5cf6", badge: "bg-violet-50 text-violet-700 border-violet-200" },
-  { dot: "bg-sky-500",    line: "#0ea5e9", badge: "bg-sky-50    text-sky-700    border-sky-200" },
-  { dot: "bg-emerald-500",line: "#22c55e", badge: "bg-emerald-50 text-emerald-700 border-emerald-200" },
-  { dot: "bg-amber-500",  line: "#f59e0b", badge: "bg-amber-50  text-amber-700  border-amber-200" },
-  { dot: "bg-rose-500",   line: "#f43f5e", badge: "bg-rose-50   text-rose-700   border-rose-200" },
+  { dot: "bg-sky-500", line: "#0ea5e9", badge: "bg-sky-50    text-sky-700    border-sky-200" },
+  { dot: "bg-emerald-500", line: "#22c55e", badge: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+  { dot: "bg-amber-500", line: "#f59e0b", badge: "bg-amber-50  text-amber-700  border-amber-200" },
+  { dot: "bg-rose-500", line: "#f43f5e", badge: "bg-rose-50   text-rose-700   border-rose-200" },
 ];
 const dc = (depth) => DEPTH_COLORS[depth % DEPTH_COLORS.length];
 
@@ -404,11 +410,11 @@ const dc = (depth) => DEPTH_COLORS[depth % DEPTH_COLORS.length];
 const ServiceListing = ({
   onSave, onBack, showSaveButton = false, dashboardMode = false,
 }) => {
-  const [expandedNodeIds,  setExpandedNodeIds]  = useState([]);
-  const [searchQuery,      setSearchQuery]      = useState("");
+  const [expandedNodeIds, setExpandedNodeIds] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [pendingApiNodeId, setPendingApiNodeId] = useState(null);
-  const [modal,            setModal]            = useState({ open: false, mode: "addRoot", targetNode: null });
-  const [deleteModal,      setDeleteModal]      = useState({ open: false, targetNode: null });
+  const [modal, setModal] = useState({ open: false, mode: "addRoot", targetNode: null });
+  const [deleteModal, setDeleteModal] = useState({ open: false, targetNode: null });
 
   /* ── NEW: data-source toggle ── */
   const [useLocalData, setUseLocalData] = useState(false);
@@ -419,12 +425,12 @@ const ServiceListing = ({
     setExpandedNodeIds([]);
   };
 
-  const closeModal  = () => setModal({ open: false, mode: "addRoot", targetNode: null });
-  const openAddRoot = () => setModal({ open: true,  mode: "addRoot",  targetNode: null });
+  const closeModal = () => setModal({ open: false, mode: "addRoot", targetNode: null });
+  const openAddRoot = () => setModal({ open: true, mode: "addRoot", targetNode: null });
   const openAddChild = (n) => setModal({ open: true, mode: "addChild", targetNode: n });
-  const openEdit     = (n) => setModal({ open: true, mode: "edit",     targetNode: n });
-  const openDelete   = (n) => setDeleteModal({ open: true,  targetNode: n });
-  const closeDelete  = ()  => setDeleteModal({ open: false, targetNode: null });
+  const openEdit = (n) => setModal({ open: true, mode: "edit", targetNode: n });
+  const openDelete = (n) => setDeleteModal({ open: true, targetNode: n });
+  const closeDelete = () => setDeleteModal({ open: false, targetNode: null });
 
   /* ── Fetch — disabled when useLocalData is true ── */
   const {
@@ -440,22 +446,22 @@ const ServiceListing = ({
   });
 
   /* ── Build tree from either source ── */
-      const services = useMemo(() => {
-        if (useLocalData) {
-          if (!Array.isArray(SERVICES_HIERARCHY) || !SERVICES_HIERARCHY.length) return [];
-          const isFlat = SERVICES_HIERARCHY[0]?.serviceID !== undefined;
-          if (isFlat) {
-            return buildTreeFromFlat(SERVICES_HIERARCHY);
-          }
-          // Convert nested local data to expected tree format
-          return convertLocalDataToTree(SERVICES_HIERARCHY);
-        }
-        if (!apiServicesList) return [];
-        let list = apiServicesList;
-        if (typeof list === "string") { try { list = JSON.parse(list); } catch { return []; } }
-        if (!Array.isArray(list)) return [];
-        return buildTreeFromFlat(list);
-      }, [apiServicesList, useLocalData]);
+  const services = useMemo(() => {
+    if (useLocalData) {
+      if (!Array.isArray(SERVICES_HIERARCHY) || !SERVICES_HIERARCHY.length) return [];
+      const isFlat = SERVICES_HIERARCHY[0]?.serviceID !== undefined;
+      if (isFlat) {
+        return buildTreeFromFlat(SERVICES_HIERARCHY);
+      }
+      // Convert nested local data to expected tree format
+      return convertLocalDataToTree(SERVICES_HIERARCHY);
+    }
+    if (!apiServicesList) return [];
+    let list = apiServicesList;
+    if (typeof list === "string") { try { list = JSON.parse(list); } catch { return []; } }
+    if (!Array.isArray(list)) return [];
+    return buildTreeFromFlat(list);
+  }, [apiServicesList, useLocalData]);
 
   const activeNodeIds = useMemo(() => {
     const collect = (n) => [
@@ -469,17 +475,17 @@ const ServiceListing = ({
   const { mutate: saveServiceMutate, isPending: isSaving } = useMutation({
     mutationFn: serviceMasterSaveApi,
     onSuccess: (r) => { if (!r?.status) { toast.error(r?.message || "Failed."); return; } toast.success(r?.message || "Created."); setPendingApiNodeId(null); closeModal(); refetch(); },
-    onError:   (e) => { toast.error(e?.message || "Unable to save."); setPendingApiNodeId(null); },
+    onError: (e) => { toast.error(e?.message || "Unable to save."); setPendingApiNodeId(null); },
   });
   const { mutate: updateServiceMutate, isPending: isUpdating } = useMutation({
     mutationFn: serviceMasterUpdateApi,
     onSuccess: (r) => { if (!r?.status) { toast.error(r?.message || "Failed."); return; } toast.success(r?.message || "Updated."); setPendingApiNodeId(null); closeModal(); refetch(); },
-    onError:   (e) => { toast.error(e?.message || "Unable to update."); setPendingApiNodeId(null); },
+    onError: (e) => { toast.error(e?.message || "Unable to update."); setPendingApiNodeId(null); },
   });
   const { mutate: deleteServiceMutate, isPending: isDeleting } = useMutation({
     mutationFn: serviceMasterDeleteApi,
     onSuccess: (r) => { if (!r?.status) { toast.error(r?.message || "Failed."); return; } toast.success(r?.message || "Deleted."); setPendingApiNodeId(null); closeDelete(); refetch(); },
-    onError:   (e) => { toast.error(e?.message || "Unable to delete."); setPendingApiNodeId(null); },
+    onError: (e) => { toast.error(e?.message || "Unable to delete."); setPendingApiNodeId(null); },
   });
 
   /* ── Search ── */
@@ -495,13 +501,18 @@ const ServiceListing = ({
   const toggleActivationState = (node) => {
     if (useLocalData) { toast.info("Switch to Live API to edit services."); return; }
     setPendingApiNodeId(node.id);
-    updateServiceMutate({ ...node._raw, serviceID: node.apiId, isActive: node.isActive ? 0 : 1, updatedDate: new Date().toISOString() });
+    updateServiceMutate({
+      ...node._raw,
+      ServiceID: node.apiId,
+      IsActive: node.isActive ? 0 : 1,
+      UpdatedDate: new Date().toISOString(),
+    });
   };
 
   /* ── Modal submit ── */
   const handleModalSubmit = (formData) => {
     const { mode, targetNode } = modal;
-    if (mode === "addRoot")  saveServiceMutate({ ...formData, parentServiceID: 0, displayOrder: services.length + 1 });
+    if (mode === "addRoot") saveServiceMutate({ ...formData, parentServiceID: 0, displayOrder: services.length + 1 });
     if (mode === "addChild") {
       setPendingApiNodeId(targetNode.id);
       saveServiceMutate({ ...formData, parentServiceID: targetNode.apiId, displayOrder: (targetNode.children?.length ?? 0) + 1 });
@@ -509,7 +520,12 @@ const ServiceListing = ({
     }
     if (mode === "edit") {
       setPendingApiNodeId(targetNode.id);
-      updateServiceMutate({ ...targetNode._raw, ...formData, serviceID: targetNode.apiId, updatedDate: new Date().toISOString() });
+      updateServiceMutate({
+        ...targetNode._raw,
+        ...formData,           // formData is camelCase from your form state
+        ServiceID: targetNode.apiId,
+        UpdatedDate: new Date().toISOString(),
+      });
     }
   };
 
@@ -521,14 +537,14 @@ const ServiceListing = ({
 
   /* ── Derived ── */
   const totalAvailableMetrics = useMemo(() => countTotalNodes(services), [services]);
-  const processedDataTree     = useMemo(() =>
+  const processedDataTree = useMemo(() =>
     searchQuery.trim() ? filterTreeHierarchy(services, searchQuery) : services,
     [searchQuery, services]);
   const flattenServiceTree = (nodes, parentLabel = "") =>
     nodes.flatMap((node) => {
       const cat = parentLabel || node.name || "General";
       return [{ id: node.id, apiId: node.apiId, name: node.name, category: cat, status: node.isActive ? "Active" : "Draft" },
-              ...(node.children?.length ? flattenServiceTree(node.children, node.name) : [])];
+      ...(node.children?.length ? flattenServiceTree(node.children, node.name) : [])];
     });
   const handleSave = () => onSave?.(flattenServiceTree(services));
 
@@ -540,10 +556,10 @@ const ServiceListing = ({
      ========================================================================== */
   const TreeNode = ({ node, depth }) => {
     const [isHovered, setIsHovered] = useState(false);
-    const isExpanded    = expandedNodeIds.includes(node.id);
-    const hasChildren   = node.children?.length > 0;
+    const isExpanded = expandedNodeIds.includes(node.id);
+    const hasChildren = node.children?.length > 0;
     const isNodePending = pendingApiNodeId === node.id;
-    const color         = dc(depth);
+    const color = dc(depth);
 
     return (
       <motion.div

@@ -24,53 +24,53 @@ import {
    STATUS CONFIG
    ========================================================================== */
 const STATUS_STYLES = {
-  Success:  "bg-emerald-50 text-emerald-700 border-emerald-200",
-  Active:   "bg-emerald-50 text-emerald-700 border-emerald-200",
-  Failed:   "bg-red-50 text-red-600 border-red-200",
-  Expired:  "bg-slate-100 text-slate-500 border-slate-200",
+  Success: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  Active: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  Failed: "bg-red-50 text-red-600 border-red-200",
+  Expired: "bg-slate-100 text-slate-500 border-slate-200",
   Inactive: "bg-slate-100 text-slate-500 border-slate-200",
-  Pending:  "bg-amber-50 text-amber-700 border-amber-200",
-  Warning:  "bg-amber-50 text-amber-700 border-amber-200",
+  Pending: "bg-amber-50 text-amber-700 border-amber-200",
+  Warning: "bg-amber-50 text-amber-700 border-amber-200",
 };
 
 /* ==========================================================================
    DEMO DATA — used when no rows/cols prop is passed
    ========================================================================== */
 export const DEMO_COLS = [
-  { key: "name",       title: "Name",       dataIndex: "name" },
-  { key: "email",      title: "Email",      dataIndex: "email" },
-  { key: "role",       title: "Role",       dataIndex: "role" },
+  { key: "name", title: "Name", dataIndex: "name" },
+  { key: "email", title: "Email", dataIndex: "email" },
+  { key: "role", title: "Role", dataIndex: "role" },
   { key: "department", title: "Department", dataIndex: "department" },
-  { key: "status",     title: "Status",     dataIndex: "status" },
+  { key: "status", title: "Status", dataIndex: "status" },
   {
     key: "salary", title: "Salary", dataIndex: "salary",
     render: (v) => `$${Number(v).toLocaleString()}`,
   },
-  { key: "joined",   title: "Joined",   dataIndex: "joined" },
+  { key: "joined", title: "Joined", dataIndex: "joined" },
   { key: "projects", title: "Projects", dataIndex: "projects" },
 ];
 
 export const DEMO_ROWS = [
-  { id: 1,  name: "Ava Chen",       email: "ava.chen@synapse.io",       role: "Engineering Lead",   department: "Engineering",  status: "Active",   salary: 142000, joined: "2021-03-15", projects: 8  },
-  { id: 2,  name: "Marcus Webb",    email: "m.webb@synapse.io",         role: "Product Manager",    department: "Product",      status: "Active",   salary: 128000, joined: "2020-07-01", projects: 12 },
-  { id: 3,  name: "Priya Nair",     email: "p.nair@synapse.io",         role: "UX Designer",        department: "Design",       status: "Active",   salary: 115000, joined: "2022-01-10", projects: 6  },
-  { id: 4,  name: "James Okafor",   email: "j.okafor@synapse.io",       role: "Backend Engineer",   department: "Engineering",  status: "Pending",  salary: 132000, joined: "2023-06-20", projects: 3  },
-  { id: 5,  name: "Sofia Reyes",    email: "s.reyes@synapse.io",        role: "Data Scientist",     department: "Analytics",    status: "Active",   salary: 138000, joined: "2021-09-05", projects: 10 },
-  { id: 6,  name: "Tom Hargreaves", email: "t.hargreaves@synapse.io",   role: "DevOps Engineer",    department: "Engineering",  status: "Inactive", salary: 119000, joined: "2019-11-22", projects: 0  },
-  { id: 7,  name: "Leila Mansouri", email: "l.mansouri@synapse.io",     role: "Sales Director",     department: "Sales",        status: "Active",   salary: 155000, joined: "2020-02-14", projects: 15 },
-  { id: 8,  name: "Raj Patel",      email: "r.patel@synapse.io",        role: "Frontend Engineer",  department: "Engineering",  status: "Active",   salary: 126000, joined: "2022-08-30", projects: 7  },
-  { id: 9,  name: "Nina Petrov",    email: "n.petrov@synapse.io",       role: "Legal Counsel",      department: "Legal",        status: "Active",   salary: 162000, joined: "2018-04-11", projects: 4  },
-  { id: 10, name: "Carlos Vega",    email: "c.vega@synapse.io",         role: "ML Engineer",        department: "Analytics",    status: "Pending",  salary: 144000, joined: "2023-09-01", projects: 2  },
-  { id: 11, name: "Amy Laurent",    email: "a.laurent@synapse.io",      role: "HR Manager",         department: "HR",           status: "Active",   salary: 108000, joined: "2020-12-01", projects: 5  },
-  { id: 12, name: "Derek Stone",    email: "d.stone@synapse.io",        role: "Security Engineer",  department: "Engineering",  status: "Failed",   salary: 134000, joined: "2021-05-18", projects: 6  },
-  { id: 13, name: "Yuki Tanaka",    email: "y.tanaka@synapse.io",       role: "Cloud Architect",    department: "Engineering",  status: "Active",   salary: 158000, joined: "2019-08-27", projects: 11 },
-  { id: 14, name: "Hannah Brooks",  email: "h.brooks@synapse.io",       role: "Content Strategist", department: "Marketing",    status: "Active",   salary: 97000,  joined: "2022-03-07", projects: 9  },
-  { id: 15, name: "Ethan Cole",     email: "e.cole@synapse.io",         role: "Finance Analyst",    department: "Finance",      status: "Inactive", salary: 112000, joined: "2020-10-15", projects: 0  },
-  { id: 16, name: "Mei Lin",        email: "m.lin@synapse.io",          role: "QA Engineer",        department: "Engineering",  status: "Active",   salary: 118000, joined: "2023-02-14", projects: 4  },
-  { id: 17, name: "Oliver Grant",   email: "o.grant@synapse.io",        role: "Growth Manager",     department: "Marketing",    status: "Pending",  salary: 122000, joined: "2023-11-01", projects: 1  },
-  { id: 18, name: "Sara Kim",       email: "s.kim@synapse.io",          role: "iOS Engineer",       department: "Engineering",  status: "Active",   salary: 131000, joined: "2021-07-22", projects: 8  },
-  { id: 19, name: "Finn O'Brien",   email: "f.obrien@synapse.io",       role: "Platform Engineer",  department: "Engineering",  status: "Active",   salary: 140000, joined: "2020-05-30", projects: 9  },
-  { id: 20, name: "Zara Ahmed",     email: "z.ahmed@synapse.io",        role: "Chief of Staff",     department: "Operations",   status: "Active",   salary: 168000, joined: "2018-01-08", projects: 18 },
+  { id: 1, name: "Ava Chen", email: "ava.chen@synapse.io", role: "Engineering Lead", department: "Engineering", status: "Active", salary: 142000, joined: "2021-03-15", projects: 8 },
+  { id: 2, name: "Marcus Webb", email: "m.webb@synapse.io", role: "Product Manager", department: "Product", status: "Active", salary: 128000, joined: "2020-07-01", projects: 12 },
+  { id: 3, name: "Priya Nair", email: "p.nair@synapse.io", role: "UX Designer", department: "Design", status: "Active", salary: 115000, joined: "2022-01-10", projects: 6 },
+  { id: 4, name: "James Okafor", email: "j.okafor@synapse.io", role: "Backend Engineer", department: "Engineering", status: "Pending", salary: 132000, joined: "2023-06-20", projects: 3 },
+  { id: 5, name: "Sofia Reyes", email: "s.reyes@synapse.io", role: "Data Scientist", department: "Analytics", status: "Active", salary: 138000, joined: "2021-09-05", projects: 10 },
+  { id: 6, name: "Tom Hargreaves", email: "t.hargreaves@synapse.io", role: "DevOps Engineer", department: "Engineering", status: "Inactive", salary: 119000, joined: "2019-11-22", projects: 0 },
+  { id: 7, name: "Leila Mansouri", email: "l.mansouri@synapse.io", role: "Sales Director", department: "Sales", status: "Active", salary: 155000, joined: "2020-02-14", projects: 15 },
+  { id: 8, name: "Raj Patel", email: "r.patel@synapse.io", role: "Frontend Engineer", department: "Engineering", status: "Active", salary: 126000, joined: "2022-08-30", projects: 7 },
+  { id: 9, name: "Nina Petrov", email: "n.petrov@synapse.io", role: "Legal Counsel", department: "Legal", status: "Active", salary: 162000, joined: "2018-04-11", projects: 4 },
+  { id: 10, name: "Carlos Vega", email: "c.vega@synapse.io", role: "ML Engineer", department: "Analytics", status: "Pending", salary: 144000, joined: "2023-09-01", projects: 2 },
+  { id: 11, name: "Amy Laurent", email: "a.laurent@synapse.io", role: "HR Manager", department: "HR", status: "Active", salary: 108000, joined: "2020-12-01", projects: 5 },
+  { id: 12, name: "Derek Stone", email: "d.stone@synapse.io", role: "Security Engineer", department: "Engineering", status: "Failed", salary: 134000, joined: "2021-05-18", projects: 6 },
+  { id: 13, name: "Yuki Tanaka", email: "y.tanaka@synapse.io", role: "Cloud Architect", department: "Engineering", status: "Active", salary: 158000, joined: "2019-08-27", projects: 11 },
+  { id: 14, name: "Hannah Brooks", email: "h.brooks@synapse.io", role: "Content Strategist", department: "Marketing", status: "Active", salary: 97000, joined: "2022-03-07", projects: 9 },
+  { id: 15, name: "Ethan Cole", email: "e.cole@synapse.io", role: "Finance Analyst", department: "Finance", status: "Inactive", salary: 112000, joined: "2020-10-15", projects: 0 },
+  { id: 16, name: "Mei Lin", email: "m.lin@synapse.io", role: "QA Engineer", department: "Engineering", status: "Active", salary: 118000, joined: "2023-02-14", projects: 4 },
+  { id: 17, name: "Oliver Grant", email: "o.grant@synapse.io", role: "Growth Manager", department: "Marketing", status: "Pending", salary: 122000, joined: "2023-11-01", projects: 1 },
+  { id: 18, name: "Sara Kim", email: "s.kim@synapse.io", role: "iOS Engineer", department: "Engineering", status: "Active", salary: 131000, joined: "2021-07-22", projects: 8 },
+  { id: 19, name: "Finn O'Brien", email: "f.obrien@synapse.io", role: "Platform Engineer", department: "Engineering", status: "Active", salary: 140000, joined: "2020-05-30", projects: 9 },
+  { id: 20, name: "Zara Ahmed", email: "z.ahmed@synapse.io", role: "Chief of Staff", department: "Operations", status: "Active", salary: 168000, joined: "2018-01-08", projects: 18 },
 ];
 
 /* ==========================================================================
@@ -220,15 +220,13 @@ function ColumnVisibilityPanel({ cols, hidden, onToggle, onClose }) {
           return (
             <label
               key={colKey}
-              className={`flex cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold transition-all ${
-                isVisible ? "bg-indigo-50 text-indigo-700" : "bg-slate-50 text-slate-400"
-              }`}
+              className={`flex cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold transition-all ${isVisible ? "bg-indigo-50 text-indigo-700" : "bg-slate-50 text-slate-400"
+                }`}
             >
               <input type="checkbox" checked={isVisible} onChange={() => onToggle(colKey)} className="sr-only" />
               <div
-                className={`w-4 h-4 rounded-md border flex items-center justify-center transition-all ${
-                  isVisible ? "border-indigo-400 bg-indigo-400" : "border-slate-300 bg-white"
-                }`}
+                className={`w-4 h-4 rounded-md border flex items-center justify-center transition-all ${isVisible ? "border-indigo-400 bg-indigo-400" : "border-slate-300 bg-white"
+                  }`}
               >
                 {isVisible && (
                   <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 12 12">
@@ -265,11 +263,10 @@ function ExportDropdown({ onCSV, onExcel }) {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((p) => !p)}
-        className={`flex h-8 w-8 items-center justify-center rounded-xl border transition-all ${
-          open
+        className={`flex h-8 w-8 items-center justify-center rounded-xl border transition-all ${open
             ? "border-indigo-300 bg-indigo-50 text-indigo-600"
             : "border-slate-200 bg-white text-slate-500 hover:bg-slate-50"
-        }`}
+          }`}
         title="Export"
       >
         <Download className="w-3.5 h-3.5" />
@@ -373,11 +370,10 @@ function RowActionMenu({ row, onAction }) {
     <div ref={ref} className="relative" onClick={(e) => e.stopPropagation()}>
       <button
         onClick={handleTrigger}
-        className={`flex h-7 w-7 items-center justify-center rounded-lg border transition-all opacity-0 group-hover:opacity-100 ${
-          open
+        className={`flex h-7 w-7 items-center justify-center rounded-lg border transition-all opacity-0 group-hover:opacity-100 ${open
             ? "border-indigo-300 bg-indigo-50 text-indigo-600 opacity-100"
             : "border-slate-200 bg-white text-slate-400 hover:text-slate-700 hover:border-slate-300"
-        }`}
+          }`}
       >
         <MoreHorizontal className="w-4 h-4" />
       </button>
@@ -439,17 +435,17 @@ const DataTableComponent = ({
   }, [cols]);
 
   // ── State ────────────────────────────────────────────────────────────────
-  const [globalFilter, setGlobalFilter]       = useState("");
-  const [colFilters, setColFilters]           = useState({});
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [colFilters, setColFilters] = useState({});
   const [activeColFilter, setActiveColFilter] = useState(null);
-  const [sortColKey, setSortColKey]           = useState(null);
-  const [sortDir, setSortDir]                 = useState("asc");
-  const [page, setPage]                       = useState(1);
-  const [pageSize, setPageSize]               = useState(10);
-  const [selectedIds, setSelectedIds]         = useState(new Set()); // tracks by row.id
-  const [hiddenCols, setHiddenCols]           = useState([]);
-  const [showColPanel, setShowColPanel]       = useState(false);
-  const [densityMode]                         = useState("normal");
+  const [sortColKey, setSortColKey] = useState(null);
+  const [sortDir, setSortDir] = useState("asc");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [selectedIds, setSelectedIds] = useState(new Set()); // tracks by row.id
+  const [hiddenCols, setHiddenCols] = useState([]);
+  const [showColPanel, setShowColPanel] = useState(false);
+  const [densityMode] = useState("normal");
 
   const visibleCols = useMemo(
     () => normalizedCols.filter((c) => !hiddenCols.includes(c.key)),
@@ -595,14 +591,14 @@ const DataTableComponent = ({
 
   const densityPadding = {
     compact: "py-1.5 px-3",
-    normal:  "py-3 px-4",
+    normal: "py-3 px-4",
     relaxed: "py-4 px-4",
   }[densityMode];
 
   const accentMap = {
-    blue:    { ring: "focus:border-blue-400",    icon: "text-blue-500",    bg: "bg-blue-50",    check: "border-blue-400 bg-blue-400" },
-    indigo:  { ring: "focus:border-indigo-400",  icon: "text-indigo-500",  bg: "bg-indigo-50",  check: "border-indigo-400 bg-indigo-400" },
-    violet:  { ring: "focus:border-violet-400",  icon: "text-violet-500",  bg: "bg-violet-50",  check: "border-violet-400 bg-violet-400" },
+    blue: { ring: "focus:border-blue-400", icon: "text-blue-500", bg: "bg-blue-50", check: "border-blue-400 bg-blue-400" },
+    indigo: { ring: "focus:border-indigo-400", icon: "text-indigo-500", bg: "bg-indigo-50", check: "border-indigo-400 bg-indigo-400" },
+    violet: { ring: "focus:border-violet-400", icon: "text-violet-500", bg: "bg-violet-50", check: "border-violet-400 bg-violet-400" },
     emerald: { ring: "focus:border-emerald-400", icon: "text-emerald-500", bg: "bg-emerald-50", check: "border-emerald-400 bg-emerald-400" },
   };
   const ac = accentMap[accent] ?? accentMap.indigo;
@@ -725,11 +721,10 @@ const DataTableComponent = ({
           <div className="relative">
             <button
               onClick={() => setShowColPanel((p) => !p)}
-              className={`flex h-8 w-8 items-center justify-center rounded-xl border transition-all ${
-                showColPanel
+              className={`flex h-8 w-8 items-center justify-center rounded-xl border transition-all ${showColPanel
                   ? "border-indigo-300 bg-indigo-50 text-indigo-600"
                   : "border-slate-200 bg-white text-slate-500 hover:bg-slate-50"
-              }`}
+                }`}
               title="Column visibility"
             >
               <Settings2 className="w-3.5 h-3.5" />
@@ -747,7 +742,7 @@ const DataTableComponent = ({
       </div>
 
       {/* ── Bulk Action Toolbar — only shown when rows are selected ── */}
-      {selectedIds.size > 0 && (
+      {/* {selectedIds.size > 0 && (
         <div className="pt-3">
           <BulkActionToolbar
             count={selectedIds.size}
@@ -755,7 +750,7 @@ const DataTableComponent = ({
             onClear={() => setSelectedIds(new Set())}
           />
         </div>
-      )}
+      )} */}
 
       {/* ── Table ── */}
       <div className="overflow-x-auto">
@@ -793,8 +788,8 @@ const DataTableComponent = ({
                 <th className="py-2.5 px-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest w-10">S.NO</th>
 
                 {visibleCols.map((col) => {
-                  const isSorted   = sortColKey === col.key;
-                  const hasFilter  = !!(colFilters[col.key]?.trim());
+                  const isSorted = sortColKey === col.key;
+                  const hasFilter = !!(colFilters[col.key]?.trim());
                   const filterOpen = activeColFilter === col.key;
                   return (
                     <th key={col.key} className="py-2.5 px-4 text-left relative">
@@ -808,13 +803,12 @@ const DataTableComponent = ({
                         </button>
                         <button
                           onClick={() => toggleColFilter(col.key)}
-                          className={`flex h-5 w-5 items-center justify-center rounded-md transition-all ${
-                            hasFilter
+                          className={`flex h-5 w-5 items-center justify-center rounded-md transition-all ${hasFilter
                               ? "bg-indigo-100 text-indigo-600"
                               : filterOpen
-                              ? "bg-slate-200 text-slate-600"
-                              : "text-slate-300 hover:text-slate-500 hover:bg-slate-100"
-                          }`}
+                                ? "bg-slate-200 text-slate-600"
+                                : "text-slate-300 hover:text-slate-500 hover:bg-slate-100"
+                            }`}
                           title={`Filter by ${col.title}`}
                         >
                           <Filter className="w-2.5 h-2.5" />
@@ -859,10 +853,8 @@ const DataTableComponent = ({
                   return (
                     <tr
                       key={row?.id ?? rowIdx}
-                      onClick={() => toggleSelectRow(row)}
-                      className={`group border-b border-slate-50 cursor-pointer transition-colors ${
-                        isSelected ? "bg-indigo-50/60" : "hover:bg-slate-50/70"
-                      }`}
+                      className={`group border-b border-slate-50 transition-colors ${isSelected ? "bg-indigo-50/60" : "hover:bg-slate-50/70"
+                        }`}
                     >
                       {/* Checkbox — stopPropagation so it doesn't double-fire */}
                       {/* <td className="py-3 px-4 w-10" onClick={(e) => e.stopPropagation()}>
@@ -889,15 +881,15 @@ const DataTableComponent = ({
 
                       {/* Data cells */}
                       {visibleCols.map((col) => {
-                        const cellValue    = getCellValue(row, col);
+                        const cellValue = getCellValue(row, col);
                         const displayValue = col.render
                           ? col.render(cellValue, row, rowIdx)
                           : (cellValue ?? "—");
                         return (
                           <td key={col.key} className={`${densityPadding} text-slate-700`}>
                             {!col.render &&
-                            typeof displayValue === "string" &&
-                            STATUS_STYLES[displayValue] ? (
+                              typeof displayValue === "string" &&
+                              STATUS_STYLES[displayValue] ? (
                               <StatusBadge value={displayValue} />
                             ) : (
                               <span className="text-sm">{displayValue}</span>
@@ -941,9 +933,9 @@ const DataTableComponent = ({
               {pageSize === "all"
                 ? `${sortedRows.length} total`
                 : `${Math.min((page - 1) * pageSize + 1, sortedRows.length)}–${Math.min(
-                    page * pageSize,
-                    sortedRows.length
-                  )} of ${sortedRows.length}`}
+                  page * pageSize,
+                  sortedRows.length
+                )} of ${sortedRows.length}`}
             </span>
           </div>
 
@@ -971,11 +963,10 @@ const DataTableComponent = ({
                   <button
                     key={p}
                     onClick={() => setPage(p)}
-                    className={`flex h-7 w-7 items-center justify-center rounded-lg text-xs font-bold transition-all ${
-                      page === p
+                    className={`flex h-7 w-7 items-center justify-center rounded-lg text-xs font-bold transition-all ${page === p
                         ? "bg-indigo-500 text-white border border-indigo-500 shadow-sm shadow-indigo-200"
                         : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
-                    }`}
+                      }`}
                   >
                     {p}
                   </button>
