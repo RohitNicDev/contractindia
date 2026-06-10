@@ -52,8 +52,8 @@ import CommercialDashboard from "./Component/Dashboard/CommercialDashboard";
 // ── Admin ──────────────────────────────────────────────────────────────────
 import AdminLogin from "./Component/Admin/AdminLogin";
 import AdminDashboard from "./Component/Dashboard/AdminDashboard";
-import BuyingService from "./Component/Public/Services/Buyingservice";
-import BuyingService2 from "./Component/Public/Services/buyingservice2";
+import BuyingService from "./Component/Public/Services/Buyingservice"; 
+import BuyingService2 from "./Component/Public/Services/Buyingservice2";
 
 export const router = createBrowserRouter([
   // ── Public routes (Header + Footer via PublicLayout) ─────────────────────
