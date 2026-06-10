@@ -114,3 +114,6 @@ export const UserVerificationGet = async (type, usertype) => {
 
   return await api.get(url);
 };
+export const verifyUserRegistration = async (payload) => {
+  return await api.post(`/UserRegistration/verify/admin`, payload);
+};

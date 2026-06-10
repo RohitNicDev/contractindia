@@ -342,72 +342,72 @@ function BulkActionToolbar({ count, onAction, onClear }) {
 /* ==========================================================================
    ROW ACTION MENU — stopPropagation prevents row selection
    ========================================================================== */
-function RowActionMenu({ row, onAction }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
+// function RowActionMenu({ row, onAction }) {
+//   const [open, setOpen] = useState(false);
+//   const ref = useRef(null);
 
-  useEffect(() => {
-    if (!open) return;
-    const handler = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [open]);
+//   useEffect(() => {
+//     if (!open) return;
+//     const handler = (e) => {
+//       if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+//     };
+//     document.addEventListener("mousedown", handler);
+//     return () => document.removeEventListener("mousedown", handler);
+//   }, [open]);
 
-  const handleTrigger = (e) => {
-    e.stopPropagation(); // prevents row click / toggleSelectRow
-    setOpen((p) => !p);
-  };
+//   const handleTrigger = (e) => {
+//     e.stopPropagation(); // prevents row click / toggleSelectRow
+//     setOpen((p) => !p);
+//   };
 
-  const handleAction = (e, action) => {
-    e.stopPropagation();
-    onAction?.(action, row);
-    setOpen(false);
-  };
+//   const handleAction = (e, action) => {
+//     e.stopPropagation();
+//     onAction?.(action, row);
+//     setOpen(false);
+//   };
 
-  return (
-    <div ref={ref} className="relative" onClick={(e) => e.stopPropagation()}>
-      <button
-        onClick={handleTrigger}
-        className={`flex h-7 w-7 items-center justify-center rounded-lg border transition-all opacity-0 group-hover:opacity-100 ${open
-            ? "border-indigo-300 bg-indigo-50 text-indigo-600 opacity-100"
-            : "border-slate-200 bg-white text-slate-400 hover:text-slate-700 hover:border-slate-300"
-          }`}
-      >
-        <MoreHorizontal className="w-4 h-4" />
-      </button>
-      {open && (
-        <div className="absolute right-0 top-full mt-1 z-50 w-44 rounded-2xl bg-white border border-slate-200 shadow-xl shadow-slate-200/60 py-1.5 overflow-hidden">
-          <button
-            onClick={(e) => handleAction(e, "view")}
-            className="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors"
-          >
-            <Search className="w-3.5 h-3.5" /> View Details
-          </button>
-          <button
-            onClick={(e) => handleAction(e, "approve")}
-            className="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors"
-          >
-            <CheckCircle className="w-3.5 h-3.5 text-emerald-500" /> Approve
-          </button>
-          <button
-            onClick={(e) => handleAction(e, "reject")}
-            className="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors"
-          >
-            <XCircle className="w-3.5 h-3.5 text-amber-500" /> Reject
-          </button>
-          <button
-            onClick={(e) => handleAction(e, "delete")}
-            className="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors"
-          >
-            <Trash2 className="w-3.5 h-3.5" /> Delete
-          </button>
-        </div>
-      )}
-    </div>
-  );
-}
+//   return (
+//     <div ref={ref} className="relative" onClick={(e) => e.stopPropagation()}>
+//       <button
+//         onClick={handleTrigger}
+//         className={`flex h-7 w-7 items-center justify-center rounded-lg border transition-all opacity-0 group-hover:opacity-100 ${open
+//             ? "border-indigo-300 bg-indigo-50 text-indigo-600 opacity-100"
+//             : "border-slate-200 bg-white text-slate-400 hover:text-slate-700 hover:border-slate-300"
+//           }`}
+//       >
+//         <MoreHorizontal className="w-4 h-4" />
+//       </button>
+//       {open && (
+//         <div className="absolute right-0 top-full mt-1 z-50 w-44 rounded-2xl bg-white border border-slate-200 shadow-xl shadow-slate-200/60 py-1.5 overflow-hidden">
+//           <button
+//             onClick={(e) => handleAction(e, "view")}
+//             className="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors"
+//           >
+//             <Search className="w-3.5 h-3.5" /> View Details
+//           </button>
+//           <button
+//             onClick={(e) => handleAction(e, "approve")}
+//             className="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors"
+//           >
+//             <CheckCircle className="w-3.5 h-3.5 text-emerald-500" /> Approve
+//           </button>
+//           <button
+//             onClick={(e) => handleAction(e, "reject")}
+//             className="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors"
+//           >
+//             <XCircle className="w-3.5 h-3.5 text-amber-500" /> Reject
+//           </button>
+//           <button
+//             onClick={(e) => handleAction(e, "delete")}
+//             className="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors"
+//           >
+//             <Trash2 className="w-3.5 h-3.5" /> Delete
+//           </button>
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
 
 /* ==========================================================================
    MAIN DATA TABLE COMPONENT
@@ -899,12 +899,12 @@ const DataTableComponent = ({
                       })}
 
                       {/* Row action menu — clicking does NOT select the row */}
-                      <td
+                      {/* <td
                         className={`${densityPadding} text-right`}
                         onClick={(e) => e.stopPropagation()}
                       >
                         <RowActionMenu row={row} onAction={handleRowAction} />
-                      </td>
+                      </td> */}
                     </tr>
                   );
                 })

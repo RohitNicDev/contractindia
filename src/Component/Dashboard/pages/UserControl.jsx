@@ -1,115 +1,307 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { Users, Shield, RefreshCw, Download } from "lucide-react";
+import { Users, Shield, Eye, Ban, ShieldCheck } from "lucide-react";
 import CustomHeading from "../../../components/CustomHeading";
 import DataTableComponent from "../../dataTable";
-import { Badge, handleExport } from "../../uiUtiles";
+import { Badge } from "../../uiUtiles";
+import { ConfirmModal } from "../../../components/common/ConfirmModal";
+import { UserDetailDrawer } from "../../../components/common/UserDetailDrawer";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  UserVerificationGet,
+  userType,
+  verifyUserRegistration,
+} from "../../../services/api";
+import { useQuery } from "@tanstack/react-query";
 
-const initAllUsers = [
-    { id: 1, name: "Rahul Sharma", email: "rahul@gmail.com", type: "Individual", status: "Active" },
-    { id: 2, name: "Sharma Builders", email: "info@sharmabuilders.com", type: "Commercial", status: "Active" },
-    { id: 3, name: "Priya Mehta", email: "priya@gmail.com", type: "Individual", status: "Blocked" },
-    { id: 4, name: "Gupta Contractors", email: "contact@guptacontractors.com", type: "Commercial", status: "Active" },
-    { id: 5, name: "Amit Verma", email: "amit@gmail.com", type: "Individual", status: "Active" },
-];
+// ── API helpers ────────────────────────────────────────────────────────────
+const userVerificationGetApi = async (status, usertype) => {
+  const response = await UserVerificationGet(status, usertype);
+  return response?.data ?? [];
+};
 
+const verifyUserRegistrationApi = async (payload) => {
+  const response = await verifyUserRegistration({
+    userId: payload.userId,
+    approved: payload.approved,
+  });
+  return response ?? [];
+};
+
+const getuserTypeApi = async () => {
+  const response = await userType();
+  return response ?? [];
+};
+
+// ── Main component ─────────────────────────────────────────────────────────
 const UserControl = () => {
-    const [users, setUsers] = useState(initAllUsers);
-    const [isFetching, setIsFetching] = useState(false);
+  const [tab, setTab] = useState(1);
+  const [status, setStatus] = useState(1); // 1=Approved, 2=Rejected
+  const [selectedUser, setSelectedUser] = useState(null); // for detail drawer
+  const [confirmState, setConfirmState] = useState(null); // { action, row }
 
-    const toggleStatus = (id) => {
-        setUsers((prev) =>
-            prev.map((u) =>
-                u.id === id ? { ...u, status: u.status === "Active" ? "Blocked" : "Active" } : u
-            )
-        );
-        toast.success("User status updated");
-    };
+  // Fetch tab types
+  const { data: userTypeList = [], isLoading: userTypeLoading } = useQuery({
+    queryKey: ["userType"],
+    queryFn: getuserTypeApi,
+    staleTime: Infinity,
+  });
 
-    const refetch = () => {
-        setIsFetching(true);
-        setTimeout(() => {
-            setIsFetching(false);
-            toast.success("List refreshed");
-        }, 600);
-    };
+  // Sync active tab with first available tab from API
+  useEffect(() => {
+    if (userTypeList.length > 0 && !userTypeList.some((t) => t.value === tab)) {
+      setTab(userTypeList[0].value);
+    }
+  }, [userTypeList, tab]);
 
+  // Fetch users for active tab and status
+  const {
+    data: userData = [],
+    isLoading: userDataLoading,
+    refetch: userDataRefetch,
+    isFetching: userDataFetching,
+  } = useQuery({
+    queryKey: ["userControl", status, tab],
+    queryFn: () => userVerificationGetApi(status, tab),
+    enabled: true,
+    retry: 2,
+  });
 
-    const columns = [
-        { title: "Name", dataIndex: "name", key: "name", render: (val) => val ?? "—" },
-        { title: "Email", dataIndex: "email", key: "email", render: (val) => val ?? "—" },
-        {
-            title: "Type",
-            dataIndex: "type",
-            key: "type",
-            render: (val) => <Badge color={val === "Commercial" ? "indigo" : "slate"}>{val}</Badge>
-        },
-        {
-            title: "Status",
-            dataIndex: "status",
-            key: "status",
-            render: (val) => <Badge color={val === "Active" ? "green" : "red"}>{val}</Badge>
-        },
-        {
-            title: "Action",
-            key: "action",
-            render: (_, row) => (
-                <button
-                    onClick={() => toggleStatus(row.id)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold text-white shadow-sm transition-all hover:opacity-90 ${row.status === "Active"
-                        ? "bg-gradient-to-r from-red-500 to-red-600"
-                        : "bg-gradient-to-r from-emerald-500 to-emerald-600"
-                        }`}
-                >
-                    {row.status === "Active" ? "Block" : "Unblock"}
-                </button>
-            ),
-        },
-    ];
+  const handleRefetch = async () => {
+    await userDataRefetch();
+    toast.success("List refreshed");
+  };
 
-    return (
-        <div className="space-y-6">
-            <CustomHeading
-                title="User Control"
-                subtitle="Manage user access and account states."
-                icon={Users}
-                badge={`${users.length} users`}
-                badgeColor="indigo"
-                // actions={
-                //     <div className="flex items-center gap-2">
-                //         <button
-                //             type="button"
-                //             onClick={refetch}
-                //             disabled={isFetching}
-                //             title="Refresh"
-                //             className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-sm transition-all hover:bg-slate-50 disabled:opacity-40"
-                //         >
-                //             <RefreshCw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
-                //         </button>
-                //         <button
-                //             type="button"
-                //             onClick={() => handleExport(users)}
-                //             disabled={users.length === 0}
-                //             className="flex h-9 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 text-xs font-bold text-slate-600 shadow-sm transition-all hover:bg-slate-50 disabled:opacity-40"
-                //         >
-                //             <Download className="h-3.5 w-3.5" />
-                //             Export CSV
-                //         </button>
-                //     </div>
-                // }
-            />
+  // Column definitions
+  const columns = [
+    ...(tab === 2
+      ? [
+          {
+            title: "Company Name",
+            dataIndex: "CompanyName",
+            key: "CompanyName",
+            render: (val) => val ?? "—",
+          },
+        ]
+      : []),
+    {
+      title: "Name",
+      dataIndex: "Name",
+      key: "Name",
+      render: (val) => val ?? "—",
+    },
+    {
+      title: "Email",
+      dataIndex: "EmailId",
+      key: "EmailId",
+      render: (val) => val ?? "—",
+    },
+    {
+      title: "Mobile",
+      dataIndex: "MobileNo",
+      key: "MobileNo",
+      render: (val) => val ?? "—",
+    },
+    {
+      title: "State",
+      dataIndex: "StateName",
+      key: "StateName",
+      render: (val) => val ?? "—",
+    },
+    ...(tab === 2
+      ? [
+          {
+            title: "Service Name",
+            dataIndex: "ServiceName",
+            key: "ServiceName",
+            render: (val) => val ?? "—",
+          },
+        ]
+      : []),
+    {
+      title: "Status",
+      dataIndex: "Status",
+      key: "Status",
+      render: (val) => {
+        const statusMap = {
+          1: { color: "green", label: "Approved" },
+          2: { color: "red", label: "Rejected" },
+        };
+        const statusInfo = statusMap[status] || { color: "slate", label: "—" };
+        return <Badge color={statusInfo.color}>{statusInfo.label}</Badge>;
+      },
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (_, row) => (
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setSelectedUser(row)}
+            className="h-9 w-9 rounded-xl border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+          >
+            <Eye className="h-4 w-4" />
+          </button>
 
-            <DataTableComponent
-                title="All Users"
-                icon={Shield}
-                accent="indigo"
-                cols={columns}
-                rows={users}
-                onRefresh={refetch}
-                onExport={handleExport}
-                loading={isFetching}
-            />
+          {status === 1 && (
+            <button
+              onClick={() =>
+                setConfirmState({
+                  action: "Rejected",
+                  row,
+                })
+              }
+              className="h-9 w-9 rounded-xl bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-100"
+            >
+<Ban className="h-4 w-4 text-red-600" />
+            </button>
+          )}
+
+          {status === 2 && (
+            <button
+              onClick={() =>
+                setConfirmState({
+                  action: "Verified",
+                  row,
+                })
+              }
+              className="h-9 w-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-100"
+            >
+              <ShieldCheck className="h-4 w-4 text-emerald-600" />
+            </button>
+          )}
         </div>
-    );
-}
+      ),
+    },
+  ];
+
+  const currentTabLabel =
+    userTypeList.find((t) => t.value === tab)?.label ??
+    (tab === 1 ? "Individual" : "Commercial");
+
+  const isLoading =
+    userDataLoading || userDataFetching || userTypeLoading;
+
+
+  return (
+    <>
+      <div className="space-y-6">
+        {/* Page heading */}
+        <CustomHeading
+          title="User Control"
+          subtitle="Manage user access and account states."
+          icon={Users}
+          badge={`${userData.length} records`}
+          badgeColor="indigo"
+        />
+
+        {/* Tab switcher */}
+        <div className="rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            {/* User Type */}
+            <div className="flex rounded-xl bg-slate-100 p-1">
+              {userTypeList.map((item) => (
+                <button
+                  key={item.value}
+                  onClick={() => setTab(item.value)}
+                  className={`px-5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${
+                    tab === item.value
+                      ? "bg-white text-indigo-600 shadow-sm"
+                      : "text-slate-500 hover:text-slate-700"
+                  }`}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Status */}
+            <div className="flex rounded-xl bg-slate-100 p-1">
+              {[
+                {
+                  id: 1,
+                  label: "Approved",
+                  color: "bg-emerald-100 text-emerald-700",
+                },
+                {
+                  id: 2,
+                  label: "Rejected",
+                  color: "bg-red-100 text-red-700",
+                },
+              ].map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setStatus(item.id)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    status === item.id
+                      ? "bg-white shadow-sm text-slate-900"
+                      : "text-slate-500 hover:text-slate-700"
+                  }`}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Data table */}
+        <DataTableComponent
+          title={`${currentTabLabel} Users`}
+          icon={Shield}
+          accent="indigo"
+          cols={columns}
+          rows={userData}
+          onRefresh={handleRefetch}
+          loading={isLoading}
+        />
+      </div>
+
+      {/* Detail drawer overlay */}
+      <AnimatePresence>
+        {selectedUser && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              key="backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedUser(null)}
+              className="fixed inset-0 z-40 bg-slate-900/20 backdrop-blur-sm"
+            />
+            <UserDetailDrawer
+              user={selectedUser}
+              tab={tab}
+              onClose={() => setSelectedUser(null)}
+            />
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Confirm modal */}
+      <AnimatePresence>
+        {confirmState && (
+          <ConfirmModal
+            action={confirmState?.action}
+            user={confirmState?.row}
+            onConfirm={async ({ reason }) => {
+              const response = await verifyUserRegistrationApi({
+                userId: confirmState?.row?.userId,
+                approved: confirmState?.action === "Verified" ? 1 : 2,
+                reason,
+              });
+
+              userDataRefetch();
+              setConfirmState(null);
+
+              return response;
+            }}
+            onCancel={() => setConfirmState(null)}
+          />
+        )}
+      </AnimatePresence>
+    </>
+  );
+};
 export default UserControl;
