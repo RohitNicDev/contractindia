@@ -22,6 +22,9 @@ import ServiceListing from "./pages/ServiceListing";
 import SubscriptionHistory from "./pages/SubscriptionHistory";
 import ClientsHistory from "./pages/ClientsHistory";
 import LeadManagement from "./pages/LeadManagement";
+import MyCredits from "./pages/MyCredits";
+import PlansAndSubscriptions from "./pages/PlansAndSubscriptions";
+import { btnPrimary } from "../uiUtiles";
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
 export const glass = "rounded-2xl bg-white/80 backdrop-blur-xl border border-white/90 shadow-[0_2px_20px_rgba(99,102,241,0.07)]";
@@ -31,6 +34,8 @@ const NAV = [
   { id: "profile", label: "My Profile", icon: User },
   // { id: "payments", label: "Payment History", icon: History },
   { id: "subscription", label: "Subscription History", icon: Briefcase },
+  // { id: "plans", label: "Plans & Subscriptions", icon: Briefcase },
+  // { id: "credits", label: "My Credits", icon: CreditCard },
   { id: "clients", label: "Client History", icon: User },
   { id: "leads", label: "Lead Management", icon: List },
   { id: "services", label: "Service Listing", icon: Briefcase },
@@ -388,6 +393,8 @@ export default function CommercialDashboard() {
       case "credits": return <AddCredits />;
       // case "payments": return <DataTable title="Payment History" icon={History} accent="blue" cols={["Txn ID", "Amount", "Type", "Date", "Status"]} rows={payRows} />;
       case "subscription": return <SubscriptionHistory />;
+      case "PlansAndSubscriptions": return <PlansAndSubscriptions />;
+      case "MyCredits": return <MyCredits />;
       case "clients": return <ClientsHistory />;
       case "leads": return <LeadManagement />;
       case "services": return <ServiceListing dashboardMode={true} />;
