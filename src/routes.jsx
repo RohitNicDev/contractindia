@@ -1,43 +1,43 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
 // ── Layouts ────────────────────────────────────────────────────────────────
-import PublicLayout    from "./routes/_public";
-import AuthLayout      from "./routes/_auth";
+import PublicLayout from "./routes/_public";
+import AuthLayout from "./routes/_auth";
 import DashboardLayout from "./routes/_dashboard";
 
 // ── Public pages ───────────────────────────────────────────────────────────
-import HomePage    from "./Component/Public/HomePage";
-import AboutUs     from "./Component/Public/AboutUs";
+import HomePage from "./Component/Public/HomePage";
+import AboutUs from "./Component/Public/AboutUs";
 import { Companies } from "./Component/Public/Companies";
 import ContactPage from "./Component/Public/ContactPage";
-import Projects    from "./Component/Public/Projects";
+import Projects from "./Component/Public/Projects";
 import Marketplace from "./Component/Public/Marketplace";
 
 // ── Service pages ──────────────────────────────────────────────────────────
-import ConsultingService   from "./Component/Public/Services/ConsultingService";
-import ContractorService   from "./Component/Public/Services/ContractorService";
-import AssetsManagement    from "./Component/Public/Services/AssetsManagement";
-import BrandDevelopment    from "./Component/Public/Services/BrandDevelopment";
-import LegalContracts      from "./Component/Public/Services/LegalContracts";
+import ConsultingService from "./Component/Public/Services/ConsultingService";
+import ContractorService from "./Component/Public/Services/ContractorService";
+import AssetsManagement from "./Component/Public/Services/AssetsManagement";
+import BrandDevelopment from "./Component/Public/Services/BrandDevelopment";
+import LegalContracts from "./Component/Public/Services/LegalContracts";
 import MarketingManagement from "./Component/Public/Services/MarketingManagement";
 import MaterialManufacture from "./Component/Public/Services/MaterialManufacture";
-import MaterialSuppler     from "./Component/Public/Services/MaterialSuppler";
-import TenderServices      from "./Component/Public/Services/TenderServices";
-import ContractionAudit    from "./Component/Public/Services/ContractionAudit";
+import MaterialSuppler from "./Component/Public/Services/MaterialSuppler";
+import TenderServices from "./Component/Public/Services/TenderServices";
+import ContractionAudit from "./Component/Public/Services/ContractionAudit";
 
 // ── Auth pages (inside AuthLayout) ────────────────────────────────────────
-import LoginForm       from "./components/auth/LoginForm";
+import LoginForm from "./components/auth/LoginForm";
 import OtpVerification from "./components/auth/OtpVerification";
 import { RegisterForm } from "./components/auth/RegisterForm";
 
 // ── Dashboard child pages (inside DashboardLayout) ────────────────────────
-import DashboardIndex     from "./routes/_dashboard.index";
-import DashboardProfile   from "./routes/_dashboard.profile";
-import DashboardTenders   from "./routes/_dashboard.tenders";
-import DashboardProjects  from "./routes/_dashboard.projects";
+import DashboardIndex from "./routes/_dashboard.index";
+import DashboardProfile from "./routes/_dashboard.profile";
+import DashboardTenders from "./routes/_dashboard.tenders";
+import DashboardProjects from "./routes/_dashboard.projects";
 import DashboardCompanies from "./routes/_dashboard.companies";
-import DashboardMessages  from "./routes/_dashboard.messages";
-import DashboardSettings  from "./routes/_dashboard.settings";
+import DashboardMessages from "./routes/_dashboard.messages";
+import DashboardSettings from "./routes/_dashboard.settings";
 
 // ── Profile wizard (nested inside DashboardLayout) ────────────────────────
 import ProfileWizard from "./Component/Dashboard/pages/ProfileWizard";
@@ -50,31 +50,36 @@ import IndividualDashboard from "./Component/Dashboard/IndividualDashboard";
 import CommercialDashboard from "./Component/Dashboard/CommercialDashboard";
 
 // ── Admin ──────────────────────────────────────────────────────────────────
-import AdminLogin     from "./Component/Admin/AdminLogin";
+import AdminLogin from "./Component/Admin/AdminLogin";
 import AdminDashboard from "./Component/Dashboard/AdminDashboard";
+import BuyingService from "./Component/Public/Services/Buyingservice";
+import BuyingService2 from "./Component/Public/Services/buyingservice2";
 
 export const router = createBrowserRouter([
-
   // ── Public routes (Header + Footer via PublicLayout) ─────────────────────
   {
     element: <PublicLayout />,
     children: [
-      { path: "/",                                element: <HomePage /> },
-      { path: "/about",                           element: <AboutUs /> },
-      { path: "/company-list",                    element: <Companies /> },
-      { path: "/contact",                         element: <ContactPage /> },
-      { path: "/projects",                        element: <Projects /> },
-      { path: "/marketplace",                     element: <Marketplace /> },
-      { path: "/services/consulting",             element: <ConsultingService /> },
-      { path: "/services/contractor",             element: <ContractorService /> },
-      { path: "/services/assets-management",      element: <AssetsManagement /> },
-      { path: "/services/brand-development",      element: <BrandDevelopment /> },
-      { path: "/services/legal-contracts",        element: <LegalContracts /> },
-      { path: "/services/marketing",              element: <MarketingManagement /> },
-      { path: "/services/material-manufacturing", element: <MaterialManufacture /> },
-      { path: "/services/material-supply",        element: <MaterialSuppler /> },
-      { path: "/services/tender",                 element: <TenderServices /> },
-      { path: "/services/contraction-audit",      element: <ContractionAudit /> },
+      { path: "/", element: <HomePage /> },
+      { path: "/about", element: <AboutUs /> },
+      { path: "/company-list", element: <Companies /> },
+      { path: "/contact", element: <ContactPage /> },
+      { path: "/projects", element: <Projects /> },
+      { path: "/marketplace", element: <Marketplace /> },
+      { path: "/services/buy2", element: <BuyingService2 /> },
+      { path: "/services/buy", element: <BuyingService /> },
+      { path: "/services/contractor", element: <ContractorService /> },
+      { path: "/services/assets-management", element: <AssetsManagement /> },
+      { path: "/services/brand-development", element: <BrandDevelopment /> },
+      { path: "/services/legal-contracts", element: <LegalContracts /> },
+      { path: "/services/marketing", element: <MarketingManagement /> },
+      {
+        path: "/services/material-manufacturing",
+        element: <MaterialManufacture />,
+      },
+      { path: "/services/material-supply", element: <MaterialSuppler /> },
+      { path: "/services/tender", element: <TenderServices /> },
+      { path: "/services/contraction-audit", element: <ContractionAudit /> },
     ],
   },
 
@@ -82,8 +87,8 @@ export const router = createBrowserRouter([
   {
     element: <AuthLayout />,
     children: [
-      { path: "/login",    element: <LoginForm /> },
-      { path: "/otp",      element: <OtpVerification /> },
+      { path: "/login", element: <LoginForm /> },
+      { path: "/otp", element: <OtpVerification /> },
       { path: "/register", element: <RegisterForm /> },
     ],
   },
@@ -93,13 +98,13 @@ export const router = createBrowserRouter([
     path: "/dashboard",
     element: <DashboardLayout />,
     children: [
-      { index: true,            element: <DashboardIndex /> },
-      { path: "profile",        element: <DashboardProfile /> },
-      { path: "tenders",        element: <DashboardTenders /> },
-      { path: "projects",       element: <DashboardProjects /> },
-      { path: "companies",      element: <DashboardCompanies /> },
-      { path: "messages",       element: <DashboardMessages /> },
-      { path: "settings",       element: <DashboardSettings /> },
+      { index: true, element: <DashboardIndex /> },
+      { path: "profile", element: <DashboardProfile /> },
+      { path: "tenders", element: <DashboardTenders /> },
+      { path: "projects", element: <DashboardProjects /> },
+      { path: "companies", element: <DashboardCompanies /> },
+      { path: "messages", element: <DashboardMessages /> },
+      { path: "settings", element: <DashboardSettings /> },
       { path: "profile-wizard", element: <ProfileWizard /> },
     ],
   },
@@ -115,7 +120,7 @@ export const router = createBrowserRouter([
   { path: "/admin/user-action/:applicationId", element: <ActionWrapperMain /> },
 
   // ── Admin panel ───────────────────────────────────────────────────────────
-  { path: "/admin/login",     element: <AdminLogin /> },
+  { path: "/admin/login", element: <AdminLogin /> },
   { path: "/admin/dashboard", element: <AdminDashboard /> },
 
   // ── Fallback ──────────────────────────────────────────────────────────────

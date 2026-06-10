@@ -325,8 +325,8 @@ function BillingPage({ cart, onBack, onConfirm }) {
   };
 
   const handleSubmit = async () => {
-    const e = validate();
-    if (Object.keys(e).length > 0) { setErrors(e); return; }
+    // const e = validate();
+    // if (Object.keys(e).length > 0) { setErrors(e); return; }
     setSubmitting(true);
     await new Promise((r) => setTimeout(r, 1400)); // simulate API
     onConfirm({ form, orderId: generateOrderId(), total, tax, subtotal, cart, date: new Date() });
