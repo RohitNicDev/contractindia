@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Badge, gradBtn, glass } from "../../uiUtiles";
-import CustomHeading from "../../../components/CustomHeading";
+import { Badge, gradBtn, glass } from "../../common/uiUtiles";
+import CustomHeading from "../../common/CustomHeading";
 import { Form, Input, InputNumber, Select, Switch, Table, Button } from "antd";
 
 import {
@@ -16,7 +16,7 @@ import {
   Blocks,
 } from "lucide-react";
 
-import CommonModal from "../../../components/CommonModal";
+import CommonModal from "../../common/CommonModal";
 
 import {
   planMasterSave,

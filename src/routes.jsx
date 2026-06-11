@@ -3,7 +3,7 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 // ── Layouts ────────────────────────────────────────────────────────────────
 import PublicLayout from "./routes/_public";
 import AuthLayout from "./routes/_auth";
-import DashboardLayout from "./routes/_dashboard";
+// import DashboardLayout from "./routes/_dashboard";
 
 // ── Public pages ───────────────────────────────────────────────────────────
 import HomePage from "./Component/Public/HomePage";
@@ -26,21 +26,21 @@ import TenderServices from "./Component/Public/Services/TenderServices";
 import ContractionAudit from "./Component/Public/Services/ContractionAudit";
 
 // ── Auth pages (inside AuthLayout) ────────────────────────────────────────
-import LoginForm from "./components/auth/LoginForm";
-import OtpVerification from "./components/auth/OtpVerification";
-import { RegisterForm } from "./components/auth/RegisterForm";
+import LoginForm from "./Component/auth/LoginForm";
+import OtpVerification from "./Component/auth/OtpVerification";
+import { RegisterForm } from "./Component/auth/RegisterForm";
 
 // ── Dashboard child pages (inside DashboardLayout) ────────────────────────
-import DashboardIndex from "./routes/_dashboard.index";
-import DashboardProfile from "./routes/_dashboard.profile";
-import DashboardTenders from "./routes/_dashboard.tenders";
-import DashboardProjects from "./routes/_dashboard.projects";
-import DashboardCompanies from "./routes/_dashboard.companies";
-import DashboardMessages from "./routes/_dashboard.messages";
-import DashboardSettings from "./routes/_dashboard.settings";
+// import DashboardIndex from "./routes/_dashboard.index";
+// import DashboardProfile from "./routes/_dashboard.profile";
+// import DashboardTenders from "./routes/_dashboard.tenders";
+// import DashboardProjects from "./routes/_dashboard.projects";
+// import DashboardCompanies from "./routes/_dashboard.companies";
+// import DashboardMessages from "./routes/_dashboard.messages";
+// import DashboardSettings from "./routes/_dashboard.settings";
 
 // ── Profile wizard (nested inside DashboardLayout) ────────────────────────
-import ProfileWizard from "./Component/Dashboard/pages/ProfileWizard";
+// import ProfileWizard from "./Component/Dashboard/pages/ProfileWizard";
 
 // ── User action wrapper (standalone — opened from admin verification) ──────
 import ActionWrapperMain from "./Component/Dashboard/pages/ActionWrapperMain";
@@ -69,6 +69,7 @@ export const router = createBrowserRouter([
       { path: "/services/buy2", element: <BuyingService2 /> },
       { path: "/services/buy", element: <BuyingService /> },
       { path: "/services/contractor", element: <ContractorService /> },
+      { path: "/services/consulting", element: <ConsultingService /> },
       { path: "/services/assets-management", element: <AssetsManagement /> },
       { path: "/services/brand-development", element: <BrandDevelopment /> },
       { path: "/services/legal-contracts", element: <LegalContracts /> },
@@ -94,20 +95,20 @@ export const router = createBrowserRouter([
   },
 
   // ── Main dashboard (collapsible sidebar via DashboardLayout) ─────────────
-  {
-    path: "/dashboard",
-    element: <DashboardLayout />,
-    children: [
-      { index: true, element: <DashboardIndex /> },
-      { path: "profile", element: <DashboardProfile /> },
-      { path: "tenders", element: <DashboardTenders /> },
-      { path: "projects", element: <DashboardProjects /> },
-      { path: "companies", element: <DashboardCompanies /> },
-      { path: "messages", element: <DashboardMessages /> },
-      { path: "settings", element: <DashboardSettings /> },
-      { path: "profile-wizard", element: <ProfileWizard /> },
-    ],
-  },
+  // {
+  //   path: "/dashboard",
+  //   element: <DashboardLayout />,
+  //   children: [
+  //     { index: true, element: <DashboardIndex /> },
+  //     { path: "profile", element: <DashboardProfile /> },
+  //     { path: "tenders", element: <DashboardTenders /> },
+  //     { path: "projects", element: <DashboardProjects /> },
+  //     { path: "companies", element: <DashboardCompanies /> },
+  //     { path: "messages", element: <DashboardMessages /> },
+  //     { path: "settings", element: <DashboardSettings /> },
+  //     { path: "profile-wizard", element: <ProfileWizard /> },
+  //   ],
+  // },
 
   // ── Individual user dashboard (standalone — own sidebar) ─────────────────
   { path: "/individual/dashboard", element: <IndividualDashboard /> },

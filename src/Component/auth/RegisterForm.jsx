@@ -177,12 +177,14 @@ export function RegisterForm() {
         refreshCaptcha();
         return;
       }
-      toast.success(response?.remark || "Registration successful");
+      toast.success(response?.remark || "Registration successful", {
+        autoClose: 30000,
+      });
       navigate("/otp", {
         state: {
           singleVerification: false,
           email,
-          phone,  
+          phone,
           userType,
           guId: response?.value || null, // Pass the entire data object for OTP screen to use (if needed)
         },
@@ -227,11 +229,13 @@ export function RegisterForm() {
       stateName: stateObj?.label ?? values.state,
       cityName: values.cityName,
       pinCode: values.pinCode,
-       userType: Number(values.userType),
+      userType: Number(values.userType),
       companyName: isCommercial ? values.businessName || "" : "",
       serviceId: isCommercial ? values.serviceGroup || 0 : 0,
-      serviceName: isCommercial ? rootServiceList?.find((elm) => elm?.name == values?.serviceGroup)
-        ?.label || "" : "",
+      serviceName: isCommercial
+        ? rootServiceList?.find((elm) => elm?.name == values?.serviceGroup)
+            ?.label || ""
+        : "",
     });
   };
 

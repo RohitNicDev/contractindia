@@ -25,7 +25,7 @@ import {
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
-const RESEND_SEC = 60;
+const RESEND_SEC = 10;
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
@@ -76,6 +76,7 @@ const OtpVerification = () => {
   const state = location?.state || {};
   console.log(location, "location");
 
+  const [valueId, setvalueId] = useState(state?.guId || "");
   const [emailCode, setEmailCode] = useState("");
   const [mobileCode, setMobileCode] = useState("");
   const [password, setPassword] = useState("");
@@ -253,13 +254,13 @@ const OtpVerification = () => {
     if (!isComplete || isLoading) return;
 
     if (step === "email") {
-      doVerifyEmail({ otp: emailCode, id: state?.guId });
+      doVerifyEmail({ otp: emailCode, id: valueId });
       return;
     }
 
     if (step === "mobile") {
       doVerifyMobile({
-        id: state?.guId,
+        id: valueId,
         otp: mobileCode,
       });
       return;
@@ -275,7 +276,7 @@ const OtpVerification = () => {
         return;
       }
       doSetPassword({
-        id: state?.guId,
+        id: valueId,
         password,
       });
     }
@@ -286,14 +287,22 @@ const OtpVerification = () => {
     mutationFn: resendOtpApi,
     onSuccess: (res) => {
       const target = step === "email" ? "email" : "mobile";
+      console.log(res, "res");
+
       if (!res.status) {
-        toast.error(res.message || `Failed to resend OTP to ${target}`);
+        console.log(res, "res1");
+        toast.error(res?.message || `Failed to resend OTP to ${target}`);
         return;
       }
-      toast.info(res.message || `OTP resent to ${target}`);
+      toast.success(res?.remark || "`OTP resent ", {
+        autoClose: 30000,
+      });
+      setvalueId(res?.value || valueId);
     },
-    onError: () => {
-      toast.error("Failed to resend OTP");
+    onError: (e) => {
+      console.log(e, "Failed to resend OTP1");
+
+      toast.error("Failed to   OTP");
     },
   });
 
@@ -302,8 +311,9 @@ const OtpVerification = () => {
     setSeconds(RESEND_SEC);
     doResend({
       type: step,
-      emailId: state?.email,
-      mobileNo: state?.phone || state?.mobile,
+      id: valueId,
+      // emailId: state?.email,
+      // mobileNo: state?.phone || state?.mobile,
     });
   };
 

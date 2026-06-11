@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Users, Shield, Eye, Ban, ShieldCheck } from "lucide-react";
-import CustomHeading from "../../../components/CustomHeading";
-import DataTableComponent from "../../dataTable";
-import { Badge } from "../../uiUtiles";
-import { ConfirmModal } from "../../../components/common/ConfirmModal";
-import { UserDetailDrawer } from "../../../components/common/UserDetailDrawer";
+import CustomHeading from "../../common/CustomHeading";
+import DataTableComponent from "../../common/dataTable";
+import { Badge } from "../../common/uiUtiles";
+import { ConfirmModal } from "../../common/ConfirmModal";
+import { UserDetailDrawer } from "../../common/UserDetailDrawer";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   UserVerificationGet,

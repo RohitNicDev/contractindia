@@ -9,17 +9,17 @@ import {
   Users,
   Eye,
 } from "lucide-react";
-import CustomHeading from "../../../components/CustomHeading";
-import DataTableComponent, { StatusBadge } from "../../dataTable";
-import { Badge } from "../../uiUtiles";
+import CustomHeading from "../../common/CustomHeading";
+import DataTableComponent, { StatusBadge } from "../../common/dataTable";
+import { Badge } from "../../common/uiUtiles";
 import {
   userType,
   UserVerificationGet,
   verifyUserRegistration,
 } from "../../../services/api";
 import { useQuery } from "@tanstack/react-query";
-import { ConfirmModal } from "../../../components/common/ConfirmModal";
-import { UserDetailDrawer } from "../../../components/common/UserDetailDrawer";
+import { ConfirmModal } from "../../common/ConfirmModal";
+import { UserDetailDrawer } from "../../common/UserDetailDrawer";
 
 // ── API helpers ────────────────────────────────────────────────────────────
 const userVerificationGetApi = async (type, usertype) => {

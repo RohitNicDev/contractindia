@@ -64,7 +64,9 @@ const LoginForm = () => {
 
         // window.dispatchEvent(new Event("auth_changed"));
 
-        toast.success(response?.remark || "Login successful");
+        toast.success(response?.remark || "Login successful", {
+          autoClose: 30000,
+        });
         // response?.userType === 2
         // ? "/commercial/dashboard"
         // : response?.userType === 1

@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { StatusBadge } from "../../Component/dataTable";
+import { StatusBadge } from "./dataTable";
 import { XCircle } from "lucide-react";
 export const UserDetailDrawer = ({ user, tab, onClose }) => {
     if (!user) return null;

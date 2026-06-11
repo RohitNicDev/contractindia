@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { btnPrimary, Inputs, StatCard, Badge, handleExport } from '../../uiUtiles';
+import { btnPrimary, Inputs, StatCard, Badge, handleExport } from '../../common/uiUtiles';
 
 import { Plus, Loader2, RefreshCw, Download, List } from 'lucide-react';
 import { motion, } from "framer-motion";
@@ -7,8 +7,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { leadGet, leadSave, leadUpdate, leadDelete } from "../../../services/api";
 
-import CustomHeading from "../../../components/CustomHeading";
-import DataTableComponent from "../../dataTable";
+import CustomHeading from "../../common/CustomHeading";
+import DataTableComponent from "../../common/dataTable";
 
 const LeadManagement = () => {
     const queryClient = useQueryClient();

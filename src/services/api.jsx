@@ -24,15 +24,14 @@ export const setPassword = async (payload) => {
 };
 
 export const resendOtp = async (payload) => {
-  const { type, emailId, mobileNo } = payload;
+  const { type, id } = payload;
   const endpoint =
     type === "email"
-      ? "/UserRegistration/resend/email"
-      : "/UserRegistration/resend/mobile";
-  const body = type === "email" ? { emailId } : { mobileNo };
-  return await api.post(endpoint, body);
+      ? "/UserRegistration/otp/resend/email"
+      : "/UserRegistration/otp/resend/mobile";
+  return await api.post(endpoint, { id: id });
 };
- 
+
 export const getState = async (payload) => {
   return await api.get("/Common/getstate/2");
 };
@@ -106,10 +105,10 @@ export const UserVerificationGet = async (type, usertype) => {
 
   // Convert params to string (e.g., "isVerifiedByAdmin=true&userType=2")
   const queryString = params.toString();
-  
+
   // Append the query string to the base endpoint if any parameters exist
-  const url = queryString 
-    ? `/UserRegistration/get?${queryString}` 
+  const url = queryString
+    ? `/UserRegistration/get?${queryString}`
     : `/UserRegistration/get`;
 
   return await api.get(url);

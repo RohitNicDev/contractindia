@@ -3,8 +3,8 @@ import { toast } from "sonner";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, Briefcase, CreditCard, Eye, Plus, RefreshCw, Loader2, X, Lock, IndianRupee } from "lucide-react";
-import CustomHeading from "../../../components/CustomHeading";
-import DataTableComponent from "../../dataTable";
+import CustomHeading from "../../common/CustomHeading";
+import DataTableComponent from "../../common/dataTable";
 
 import { planMasterGet, subscriptionHistoryGet } from "../../../services/api";
 

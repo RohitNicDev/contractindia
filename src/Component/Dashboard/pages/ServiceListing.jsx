@@ -34,7 +34,7 @@ import {
   ServiceMasterSave,
   ServiceMasterUpdate,
 } from "../../../services/api";
-import CustomHeading from "../../../components/CustomHeading";
+import CustomHeading from "../../common/CustomHeading";
 import { SERVICES_HIERARCHY } from "../../../data/services_hierarchy";
 
 /* ==========================================================================
@@ -443,7 +443,7 @@ function ServiceFormModal({
                     />
                   </ModalField>
                 </ModalSection>
-                <ModalSection
+                {/* <ModalSection
                   label="Display Flags"
                   icon={<Eye className="h-3.5 w-3.5" />}
                 >
@@ -476,7 +476,7 @@ function ServiceFormModal({
                       </label>
                     ))}
                   </div>
-                </ModalSection>
+                </ModalSection> */}
                 <ModalSection
                   label="Links & URLs"
                   icon={<Link className="h-3.5 w-3.5" />}
@@ -1068,7 +1068,7 @@ ${isNodePending ? " pointer-events-none opacity-60" : ""}
               {node.isActive ? "Active" : "Inactive"}
             </button> */}
             {/* edit / add-child / delete — visible on hover */}
-            {!dashboardMode && !useLocalData && (
+            {!dashboardMode && !useLocalData ? (
               <div className="flex items-center gap-2 ml-auto">
                 <button
                   onClick={(e) => {
@@ -1099,21 +1099,21 @@ ${isNodePending ? " pointer-events-none opacity-60" : ""}
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
-
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleActivationState(node);
-                  }}
-                  className={`px-3 h-8 rounded-xl text-xs font-bold ${
-                    node.isActive
-                      ? "bg-emerald-100 text-emerald-700"
-                      : "bg-red-100 text-red-700"
-                  }`}
-                >
-                  {node.isActive ? "Active" : "Inactive"}
-                </button>
               </div>
+            ) : (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleActivationState(node);
+                }}
+                className={`px-3 h-8 rounded-xl text-xs font-bold ${
+                  node.isActive
+                    ? "bg-emerald-100 text-emerald-700"
+                    : "bg-red-100 text-red-700"
+                }`}
+              >
+                {node.isActive ? "Active" : "Inactive"}
+              </button>
             )}
           </div>
         </div>

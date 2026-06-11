@@ -2,8 +2,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, Plus, Eye, Download, RefreshCw, Loader2, CreditCard, TrendingUp, Wallet, X } from "lucide-react";
-import CustomHeading from "../../../components/CustomHeading";
-import DataTableComponent from "../../dataTable";
+import CustomHeading from "../../common/CustomHeading";
+import DataTableComponent from "../../common/dataTable";
 
 const glassCard = "rounded-2xl bg-white/80 backdrop-blur-xl border border-slate-200/70 shadow-[0_4px_24px_rgba(99,102,241,0.07)]";
 

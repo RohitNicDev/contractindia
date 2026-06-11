@@ -74,7 +74,7 @@ if (!Object.assign) {
 }
 
 import { router } from "./routes";
-import { AppToaster } from "./components/sonner";
+import { AppToaster } from "./Component/common/sonner";
 
 import "./index.css";
 import "./styles.css";

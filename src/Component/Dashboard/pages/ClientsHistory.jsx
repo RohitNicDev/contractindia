@@ -21,9 +21,9 @@ import {
 } from "lucide-react";
 
 import { clientHistoryGet } from "../../../services/api";
-import DataTableComponent from "../../dataTable";
-import CustomHeading from "../../../components/CustomHeading";
-import { handleExport } from "../../uiUtiles";
+import DataTableComponent from "../../common/dataTable";
+import CustomHeading from "../../common/CustomHeading";
+import { handleExport } from "../../common/uiUtiles";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    1. API ADAPTER
