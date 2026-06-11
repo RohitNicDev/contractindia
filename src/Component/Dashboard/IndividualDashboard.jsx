@@ -32,6 +32,7 @@ import DashboardLayout, {
 } from "../Dashboard/Layout/DashboardLayout";
 import PlansAndSubscriptions from "./pages/PlansAndSubscriptions";
 import MyCredits from "./pages/MyCredits";
+import SubscriptionPlansFlow from "./pages/SubscriptionPlansFlow";
 
 /* ── Nav definition ─────────────────────────────────────────────────────── */
 const NAV = [
@@ -439,6 +440,7 @@ const SUBSCRIPTIONS = [
 ];
 
 function SubscriptionPlan() {
+  const [showPlans, setShowPlans] = useState(false);
   return (
     <div className={`${glassCard} p-6`}>
       <SectionHeader
@@ -450,11 +452,10 @@ function SubscriptionPlan() {
         {SUBSCRIPTIONS.map((sub) => (
           <div
             key={sub.plan}
-            className={`rounded-2xl border p-5 transition-all ${
-              sub.status === "Active"
+            className={`rounded-2xl border p-5 transition-all ${sub.status === "Active"
                 ? "border-indigo-200 bg-indigo-50/40 shadow-sm"
                 : "border-slate-200 bg-slate-50/50"
-            }`}
+              }`}
           >
             <div className="flex items-center justify-between mb-3">
               <p className="font-black text-slate-900 text-sm">{sub.plan}</p>
@@ -482,7 +483,9 @@ function SubscriptionPlan() {
             </ul>
             {sub.status === "Expired" && (
               <button
-                onClick={() => toast.info("Redirecting to plans…")}
+
+                onClick={() => setShowPlans(true)}
+
                 className="w-full h-8 rounded-xl text-xs font-bold text-indigo-700 border border-indigo-200 bg-white hover:bg-indigo-50 transition-colors"
               >
                 Renew Plan
@@ -490,7 +493,13 @@ function SubscriptionPlan() {
             )}
           </div>
         ))}
+        {/* // 3. mount the flow */}
       </div>
+        <SubscriptionPlansFlow
+          open={showPlans}
+          onClose={() => { setShowPlans(false); refetchSubscription(); }}
+          currentPlanId={12213}
+        />
     </div>
   );
 }
