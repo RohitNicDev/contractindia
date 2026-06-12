@@ -602,9 +602,7 @@ export default function CommercialDashboard() {
   if (isLocked) {
     return <ProfileWizard />;
   }
-  useEffect(() => {
-    console.log(open);
-  }, [open]);
+ 
 
   const visibleNav = isLocked ? NAV.filter((n) => n.id === "profile") : NAV;
   return (

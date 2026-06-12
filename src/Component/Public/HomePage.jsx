@@ -1,12 +1,13 @@
 import ThemeProvider from "../../theme/ThemeProvider";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { Categories, ValueStrip } from "./category";
-import { Companies } from "./Companies";
+import { Link } from "react-router-dom"; 
+ 
 import HeroSection from "./HeroSection";
 import HomePageLogocarasole from "./HomePageLogocarasole";
 import { HowItWorks, Testimonials } from "./Section";
 import Test from "./Test";
+import Companies from "./Companies";
+import Categories, { ValueStrip } from "./category";
 
 // Staggered reveal — each section fades up as it enters the viewport
 const reveal = (delay = 0) => ({

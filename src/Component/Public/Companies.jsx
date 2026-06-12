@@ -1,6 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Star, MapPin, BadgeCheck, ArrowUpRight } from "lucide-react";
+import { UserVerificationGet } from "../../services/api";
+import { useQuery } from "@tanstack/react-query";
 
 const companies = [
   {
@@ -48,19 +50,69 @@ const companies = [
     grad: "from-amber-500 to-orange-600",
   },
 ];
+const userVerificationGetApi = async (type, usertype) => {
+  const response = await UserVerificationGet(type, usertype);
+  return response?.data ?? [];
+};
+const Companies = () => {
+  //1=approved, 0=pending, 2=rejected
+  //usertype: 1=individual, 2=Company
+  const params = {
+    isVerifiedByAdmin: 1,
+    userType: 2,
+  };
+  const {
+    data: userVerificationdata = [],
+    isLoading: userVerificationisLoading,
+    refetch: userVerificationrefetch,
+    isFetching: userVerificationisFetching,
+  } = useQuery({
+    queryKey: ["userVerificationGetApi", params],
+    queryFn: () =>
+      userVerificationGetApi(params?.isVerifiedByAdmin, params?.userType),
+    enabled: true,
+    retry: 2,
+  });
+  const companiesForDashboard = userVerificationdata?.map((item) => ({
+    userId: item.userId,
+    name: item.CompanyName || item.Name,
+    type: item.UserTypeName || "Business",
+    rating: 4.8,
+    reviews: 100,
+    tags: [item.ServiceName || "Business Service", item.Status],
+    loc: item.StateName,
+    verified: item.Status === "Approved",
 
-export function Companies() {
+    img: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80",
+
+    grad:
+      item.Status === "Approved"
+        ? "from-blue-500 to-indigo-600"
+        : "from-amber-500 to-orange-600",
+
+    email: item.EmailId,
+    mobile: item.MobileNo,
+    pincode: item.PinCode,
+  }));
   return (
     <section className="relative py-24 overflow-hidden bg-slate-100">
-
       {/* Background glow orbs */}
-      <div className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 65%)" }} />
-      <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(16,185,129,0.07) 0%, transparent 65%)" }} />
+      <div
+        className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 65%)",
+        }}
+      />
+      <div
+        className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(16,185,129,0.07) 0%, transparent 65%)",
+        }}
+      />
 
       <div className="container mx-auto px-6 relative z-10">
-
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -87,79 +139,168 @@ export function Companies() {
 
         {/* Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {companies.map((c, idx) => (
+          {companiesForDashboard?.map((elm, idx) => (
             <motion.div
-              key={c.name}
+              key={elm?.userId}
               initial={{ opacity: 0, y: 28 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.1, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+              transition={{
+                delay: idx * 0.1,
+                duration: 0.55,
+                ease: [0.22, 1, 0.36, 1],
+              }}
               viewport={{ once: true }}
-              whileHover={{ y: -8, transition: { duration: 0.25 } }}
-              className="group relative rounded-2xl overflow-hidden bg-white border border-slate-200/80 hover:border-indigo-200 shadow-sm hover:shadow-2xl transition-all duration-400"
+              whileHover={{
+                y: -8,
+                transition: { duration: 0.25 },
+              }}
+              className="
+                group
+                relative
+                rounded-2xl
+                overflow-hidden
+                bg-white
+                border
+                border-slate-200/80
+                hover:border-indigo-200
+                shadow-sm
+                hover:shadow-2xl
+                transition-all
+                duration-400
+              "
             >
-              {/* Gradient top accent */}
-              <div className={`absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r ${c.grad} z-10`} />
+              {/* Top Gradient */}
+              <div
+                className={`absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r ${elm?.grad} z-10`}
+              />
 
               {/* Cover Image */}
               <div className="relative h-40 overflow-hidden">
                 <img
-                  src={c.img}
-                  alt={c.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  src={elm?.img}
+                  alt={elm?.name}
+                  className="
+                    w-full
+                    h-full
+                    object-cover
+                    group-hover:scale-110
+                    transition-transform
+                    duration-700
+                  "
                 />
+
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
 
-                {/* Verified badge */}
-                {c.verified && (
+                {/* Verified Badge */}
+                {elm?.verified && (
                   <div className="absolute top-3 right-3 flex items-center gap-1 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full text-[10px] font-bold text-emerald-600 shadow-sm">
-                    <BadgeCheck className="w-3 h-3" /> Verified
+                    <BadgeCheck className="w-3 h-3" />
+                    Verified
                   </div>
                 )}
 
-                {/* View button on hover */}
+                {/* Hover Overlay */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <div className="flex items-center gap-1.5 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-xl text-xs font-bold text-slate-800 shadow-lg translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                    View Profile <ArrowUpRight className="w-3.5 h-3.5" />
+                    View Profile
+                    <ArrowUpRight className="w-3.5 h-3.5" />
                   </div>
                 </div>
               </div>
 
               {/* Content */}
               <div className="p-5">
+                {/* Company Name */}
                 <h3 className="font-bold text-slate-800 text-sm group-hover:text-indigo-600 transition-colors duration-300 leading-snug">
-                  {c.name}
+                  {elm?.name}
                 </h3>
-                <p className="text-xs text-slate-400 font-semibold mt-0.5">{c.type}</p>
+
+                <p className="text-xs text-slate-400 font-semibold mt-0.5">
+                  {elm?.type}
+                </p>
 
                 {/* Rating */}
                 <div className="flex items-center gap-1.5 mt-3">
                   <div className="flex gap-0.5">
                     {[1, 2, 3, 4, 5].map((s) => (
-                      <Star key={s} className={`w-3 h-3 ${s <= Math.floor(c.rating) ? "fill-amber-400 text-amber-400" : "text-slate-200"}`} />
+                      <Star
+                        key={s}
+                        className={`w-3 h-3 ${
+                          s <= Math.floor(elm?.rating)
+                            ? "fill-amber-400 text-amber-400"
+                            : "text-slate-200"
+                        }`}
+                      />
                     ))}
                   </div>
-                  <span className="text-xs font-bold text-slate-700">{c.rating}</span>
-                  <span className="text-[10px] text-slate-400">({c.reviews})</span>
+
+                  <span className="text-xs font-bold text-slate-700">
+                    {elm?.rating}
+                  </span>
+
+                  <span className="text-[10px] text-slate-400">
+                    ({elm?.reviews})
+                  </span>
                 </div>
 
                 {/* Tags */}
                 <div className="flex flex-wrap gap-1.5 mt-3">
-                  {c.tags.map((t) => (
-                    <span key={t} className="text-[10px] bg-slate-100 border border-slate-200/80 px-2 py-0.5 rounded-md font-semibold text-slate-500">
-                      {t}
+                  {elm?.tags.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="
+                        text-[10px]
+                        bg-slate-100
+                        border
+                        border-slate-200/80
+                        px-2
+                        py-0.5
+                        rounded-md
+                        font-semibold
+                        text-slate-500
+                      "
+                    >
+                      {tag}
                     </span>
                   ))}
+                </div>
+
+                {/* Contact Info */}
+                <div className="mt-3 space-y-1">
+                  {/* <p className="text-[11px] text-slate-500 truncate">
+                    📧 {elm?.email}
+                  </p>
+
+                  <p className="text-[11px] text-slate-500">
+                    📱 {elm?.address}
+                  </p> */}
+
+                  <p className="text-[11px] text-slate-500">📮 {elm?.pincode}</p>
                 </div>
 
                 {/* Footer */}
                 <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
                   <span className="flex items-center gap-1 text-xs text-slate-500">
-                    <MapPin className="w-3 h-3" /> {c.loc}
+                    <MapPin className="w-3 h-3" />
+                    {elm?.loc}
                   </span>
+
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className={`text-xs font-bold text-white px-3 py-1.5 rounded-lg bg-gradient-to-r ${c.grad} shadow-sm hover:shadow-md transition-shadow`}
+                    className={`
+                      text-xs
+                      font-bold
+                      text-white
+                      px-3
+                      py-1.5
+                      rounded-lg
+                      bg-gradient-to-r
+                      ${elm?.grad}
+                      shadow-sm
+                      hover:shadow-md
+                      transition-shadow
+                    `}
                   >
                     View
                   </motion.button>
@@ -168,7 +309,17 @@ export function Companies() {
             </motion.div>
           ))}
         </div>
+
+        {companies?.length === 0 && (
+          <div className="text-center py-16">
+            <p className="text-slate-500 font-medium">
+              No verified companies found.
+            </p>
+          </div>
+        )}
       </div>
     </section>
   );
-}
+};
+
+export default Companies;
