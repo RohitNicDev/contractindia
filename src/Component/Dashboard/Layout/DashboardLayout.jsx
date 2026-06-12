@@ -16,7 +16,6 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X, LogOut, Bell, Zap, ChevronDown } from "lucide-react";
 import LogoutPopup from "../../common/Logoutpopup";
- 
 
 /* ── Design tokens ─────────────────────────────────────────────────────────── */
 export const glass =
@@ -47,7 +46,13 @@ export function Avatar({ name = "U", size = 36, className = "" }) {
   return (
     <span
       className={`inline-flex items-center justify-center rounded-xl font-bold flex-shrink-0 ${className}`}
-      style={{ width: size, height: size, background: bg, color: fg, fontSize: size * 0.36 }}
+      style={{
+        width: size,
+        height: size,
+        background: bg,
+        color: fg,
+        fontSize: size * 0.36,
+      }}
     >
       {initials}
     </span>
@@ -58,14 +63,16 @@ export function Avatar({ name = "U", size = 36, className = "" }) {
 export function StatusBadge({ label, color = "indigo" }) {
   const map = {
     indigo: "bg-indigo-50 text-indigo-700 border-indigo-100",
-    blue:   "bg-blue-50   text-blue-700   border-blue-100",
-    emerald:"bg-emerald-50 text-emerald-700 border-emerald-100",
-    amber:  "bg-amber-50  text-amber-700  border-amber-100",
-    red:    "bg-red-50    text-red-600    border-red-200",
-    slate:  "bg-slate-100 text-slate-500  border-slate-200",
+    blue: "bg-blue-50   text-blue-700   border-blue-100",
+    emerald: "bg-emerald-50 text-emerald-700 border-emerald-100",
+    amber: "bg-amber-50  text-amber-700  border-amber-100",
+    red: "bg-red-50    text-red-600    border-red-200",
+    slate: "bg-slate-100 text-slate-500  border-slate-200",
   };
   return (
-    <span className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${map[color] ?? map.slate}`}>
+    <span
+      className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${map[color] ?? map.slate}`}
+    >
       <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
       {label}
     </span>
@@ -73,21 +80,32 @@ export function StatusBadge({ label, color = "indigo" }) {
 }
 
 /* ── Section header ───────────────────────────────────────────────────────── */
-export function SectionHeader({ icon: Icon, title, subtitle, accent = "indigo" }) {
+export function SectionHeader({
+  icon: Icon,
+  title,
+  subtitle,
+  accent = "indigo",
+}) {
   const accents = {
     indigo: "from-indigo-500 to-violet-500",
-    blue:   "from-blue-500   to-indigo-500",
-    emerald:"from-emerald-500 to-teal-500",
-    amber:  "from-amber-500  to-orange-400",
+    blue: "from-blue-500   to-indigo-500",
+    emerald: "from-emerald-500 to-teal-500",
+    amber: "from-amber-500  to-orange-400",
   };
   return (
     <div className="flex items-center gap-3 mb-5">
-      <span className={`flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br ${accents[accent] ?? accents.indigo} shadow-md flex-shrink-0`}>
+      <span
+        className={`flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br ${accents[accent] ?? accents.indigo} shadow-md flex-shrink-0`}
+      >
         <Icon className="h-4 w-4 text-white" />
       </span>
       <div>
-        <h2 className="text-base font-black text-slate-900 leading-tight">{title}</h2>
-        {subtitle && <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>}
+        <h2 className="text-base font-black text-slate-900 leading-tight">
+          {title}
+        </h2>
+        {subtitle && (
+          <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>
+        )}
       </div>
     </div>
   );
@@ -101,7 +119,9 @@ export function FormField({ label, error, children }) {
         {label}
       </label>
       {children}
-      {error && <p className="mt-1 text-[10px] text-red-500 font-medium">{error}</p>}
+      {error && (
+        <p className="mt-1 text-[10px] text-red-500 font-medium">{error}</p>
+      )}
     </div>
   );
 }
@@ -116,7 +136,11 @@ export function TextInput({ label, error, textarea, rows = 3, ...props }) {
   return (
     <FormField label={label} error={error}>
       {textarea ? (
-        <textarea rows={rows} className={`${base} py-2.5 resize-none`} {...props} />
+        <textarea
+          rows={rows}
+          className={`${base} py-2.5 resize-none`}
+          {...props}
+        />
       ) : (
         <input className={`${base} h-10`} {...props} />
       )}
@@ -136,32 +160,34 @@ export default function DashboardLayout({
   notifications = 0,
   children,
 }) {
-  const [mobileOpen, setMobileOpen]     = useState(false);
-  const [logoutOpen, setLogoutOpen]     = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [logoutOpen, setLogoutOpen] = useState(false);
 
   const badgeStyles = {
     indigo: "border-indigo-100 bg-indigo-50/60 text-indigo-700",
-    blue:   "border-blue-100   bg-blue-50/60   text-blue-700",
+    blue: "border-blue-100   bg-blue-50/60   text-blue-700",
   };
 
   const sidebarActiveStyle = {
-    indigo: "from-indigo-50 to-violet-50 text-indigo-700 border border-indigo-100",
-    blue:   "from-blue-50   to-indigo-50  text-blue-700   border border-blue-100/80",
+    indigo:
+      "from-indigo-50 to-violet-50 text-indigo-700 border border-indigo-100",
+    blue: "from-blue-50   to-indigo-50  text-blue-700   border border-blue-100/80",
   };
 
   const gradientBg = {
     indigo: "from-slate-50 via-indigo-50/30 to-violet-50/20",
-    blue:   "from-slate-50 via-blue-50/20   to-indigo-50/10",
+    blue: "from-slate-50 via-blue-50/20   to-indigo-50/10",
   };
 
   const activeDot = {
     indigo: "bg-indigo-500",
-    blue:   "bg-blue-500",
+    blue: "bg-blue-500",
   };
 
   return (
-    <div className={`flex h-screen overflow-hidden bg-gradient-to-br ${gradientBg[badgeColor] ?? gradientBg.indigo}`}>
-
+    <div
+      className={`flex h-screen overflow-hidden bg-gradient-to-br ${gradientBg[badgeColor] ?? gradientBg.indigo}`}
+    >
       {/* Ambient blobs */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
         <div className="absolute -left-40 -top-20 h-[500px] w-[500px] rounded-full bg-indigo-400/10 blur-[120px]" />
@@ -191,8 +217,12 @@ export default function DashboardLayout({
         <div className="flex h-16 items-center gap-3 border-b border-slate-100 px-4 flex-shrink-0">
           <Avatar name={user.name} size={36} className="shadow-sm" />
           <div className="min-w-0">
-            <p className="text-[13px] font-bold text-slate-900 truncate">{user.name}</p>
-            <p className={`text-[10px] font-semibold ${badgeColor === "blue" ? "text-blue-500" : "text-indigo-500"}`}>
+            <p className="text-[13px] font-bold text-slate-900 truncate">
+              {user.name}
+            </p>
+            <p
+              className={`text-[10px] font-semibold ${badgeColor === "blue" ? "text-blue-500" : "text-indigo-500"}`}
+            >
               {user.role}
             </p>
           </div>
@@ -201,8 +231,10 @@ export default function DashboardLayout({
         {/* Nav items */}
         <nav className="flex-1 overflow-y-auto py-4 px-2.5 space-y-0.5">
           {navItems.map(({ id, label, icon: Icon, subMenu }) => {
-            const isActive    = activeTab === id || (subMenu && subMenu.some(s => s.id === activeTab));
-            const hasSubMenu  = subMenu && subMenu.length > 0;
+            const isActive =
+              activeTab === id ||
+              (subMenu && subMenu.some((s) => s.id === activeTab));
+            const hasSubMenu = subMenu && subMenu.length > 0;
             const [subOpen, setSubOpen] = useState(isActive && hasSubMenu);
 
             return (
@@ -210,7 +242,7 @@ export default function DashboardLayout({
                 <button
                   onClick={() => {
                     if (hasSubMenu) {
-                      setSubOpen(o => !o);
+                      setSubOpen((o) => !o);
                     } else {
                       onTabChange(id);
                       setMobileOpen(false);
@@ -225,27 +257,36 @@ export default function DashboardLayout({
                   <Icon className="h-4 w-4 shrink-0" />
                   <span className="flex-1 text-left truncate">{label}</span>
                   {hasSubMenu && (
-                    <ChevronDown className={`w-3.5 h-3.5 shrink-0 transition-transform ${subOpen ? "rotate-180" : ""}`} />
+                    <ChevronDown
+                      className={`w-3.5 h-3.5 shrink-0 transition-transform ${subOpen ? "rotate-180" : ""}`}
+                    />
                   )}
                   {!hasSubMenu && isActive && (
-                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${activeDot[badgeColor]}`} />
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full shrink-0 ${activeDot[badgeColor]}`}
+                    />
                   )}
                 </button>
 
                 {/* Sub-menu */}
                 {hasSubMenu && subOpen && (
                   <div className="mt-0.5 ml-4 pl-2 border-l border-slate-100 space-y-0.5">
-                    {subMenu.map(sub => (
+                    {subMenu.map((sub) => (
                       <button
                         key={sub.id}
-                        onClick={() => { onTabChange(sub.id); setMobileOpen(false); }}
+                        onClick={() => {
+                          onTabChange(sub.id);
+                          setMobileOpen(false);
+                        }}
                         className={`w-full flex items-center gap-2 rounded-lg px-3 py-2 text-[12px] font-semibold transition-all ${
                           activeTab === sub.id
                             ? `${badgeColor === "blue" ? "bg-blue-50 text-blue-700" : "bg-indigo-50 text-indigo-700"}`
                             : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
                         }`}
                       >
-                        {sub.icon && <sub.icon className="h-3.5 w-3.5 shrink-0" />}
+                        {sub.icon && (
+                          <sub.icon className="h-3.5 w-3.5 shrink-0" />
+                        )}
                         <span className="w-1 h-1 rounded-full bg-current opacity-50 shrink-0" />
                         {sub.label}
                       </button>
@@ -271,22 +312,29 @@ export default function DashboardLayout({
 
       {/* ── Main area ── */}
       <div className="relative z-10 flex flex-1 flex-col overflow-hidden">
-
         {/* Top header */}
         <header className="flex h-16 items-center gap-4 bg-white/80 backdrop-blur-xl border-b border-slate-200/60 px-4 sm:px-6 flex-shrink-0">
           {/* Mobile toggle */}
           <button
             className="lg:hidden rounded-xl border border-slate-200 bg-white p-2 text-slate-500 hover:bg-slate-50"
-            onClick={() => setMobileOpen(o => !o)}
+            onClick={() => setMobileOpen((o) => !o)}
           >
-            {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            {mobileOpen ? (
+              <X className="h-4 w-4" />
+            ) : (
+              <Menu className="h-4 w-4" />
+            )}
           </button>
 
           {/* Page title */}
           <div className="flex items-center gap-2">
-            <span className={`w-1.5 h-1.5 rounded-full ${activeDot[badgeColor]}`} />
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${activeDot[badgeColor]}`}
+            />
             <h2 className="text-sm font-bold text-slate-700">
-              {navItems.flatMap(n => n.subMenu ? [n, ...n.subMenu] : [n]).find(n => n.id === activeTab)?.label ?? "Dashboard"}
+              {navItems
+                .flatMap((n) => (n.subMenu ? [n, ...n.subMenu] : [n]))
+                .find((n) => n.id === activeTab)?.label ?? "Dashboard"}
             </h2>
           </div>
 
@@ -299,9 +347,11 @@ export default function DashboardLayout({
                 <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-400" />
               )}
             </button>
-
+            {/* <NotificationBell /> */}
             {/* Account badge */}
-            <span className={`hidden sm:flex items-center gap-2 rounded-xl border px-3 py-1.5 text-xs font-bold ${badgeStyles[badgeColor] ?? badgeStyles.indigo}`}>
+            <span
+              className={`hidden sm:flex items-center gap-2 rounded-xl border px-3 py-1.5 text-xs font-bold ${badgeStyles[badgeColor] ?? badgeStyles.indigo}`}
+            >
               <Zap className="h-3.5 w-3.5" />
               {badge}
             </span>

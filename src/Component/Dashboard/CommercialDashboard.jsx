@@ -38,7 +38,7 @@ import {
   Check,
 } from "lucide-react";
 import SettingsPanel from "./SettingsPanel";
-import ProfileWizard from "./pages/ProfileWizard";
+import ProfileWizard from "./pages/ProfileSteper/ProfileWizard";
 import {
   useProfileWizardStore,
   calculateProgress,
@@ -63,8 +63,8 @@ const NAV = [
   { id: "profile", label: "My Profile", icon: User },
   // { id: "payments", label: "Payment History", icon: History },
   { id: "subscription", label: "Subscription History", icon: Briefcase },
-  // { id: "PlansAndSubscriptions", label: "Plans & Subscriptions", icon: Briefcase },
-  // { id: "credits", label: "My Credits", icon: CreditCard },
+  { id: "PlansAndSubscriptions", label: "Plans & Subscriptions", icon: Briefcase },
+  { id: "credits", label: "My Credits", icon: CreditCard },
   { id: "clients", label: "Client History", icon: User },
   { id: "leads", label: "Lead Management", icon: List },
   { id: "services", label: "Service Listing", icon: Briefcase },

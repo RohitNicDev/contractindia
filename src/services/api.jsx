@@ -116,3 +116,10 @@ export const UserVerificationGet = async (type, usertype) => {
 export const verifyUserRegistration = async (payload) => {
   return await api.post(`/UserRegistration/verify/admin`, payload);
 };
+export const userBasicInformationSave = async (payload) => {
+  return await api.post("/UserBasicInformation/save", payload);
+};
+
+export const userBankDetailSave = async (payload) => {
+  return await api.post("/UserBankDetail/save", payload);
+};

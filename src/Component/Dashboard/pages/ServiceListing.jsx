@@ -82,7 +82,26 @@ const serviceMasterUpdateApi = async (payload) =>
     ServiceName: payload?.ServiceName ?? payload?.serviceName ?? "",
     ServiceDescription:
       payload?.ServiceDescription ?? payload?.serviceDescription ?? "",
-    // ... rest of fields following the same pattern
+    ServiceIcon: payload?.ServiceIcon ?? payload?.serviceIcon ?? "",
+    ServiceImage: payload?.ServiceImage ?? payload?.serviceImage ?? "",
+    BannerImage: payload?.BannerImage ?? payload?.bannerImage ?? "",
+    ThumbnailImage:
+      payload?.ThumbnailImage ?? payload?.thumbnailImage ?? "",
+    ServiceURL: payload?.ServiceURL ?? payload?.serviceURL ?? "",
+    MetaTitle: payload?.MetaTitle ?? payload?.metaTitle ?? "",
+    MetaKeywords: payload?.MetaKeywords ?? payload?.metaKeywords ?? "",
+    MetaDescription:
+      payload?.MetaDescription ?? payload?.metaDescription ?? "",
+    SearchKeywords:
+      payload?.SearchKeywords ?? payload?.searchKeywords ?? "",
+    IsFeatured: payload?.IsFeatured ?? payload?.isFeatured ?? 0,
+    DisplayOnHomePage:
+      payload?.DisplayOnHomePage ?? payload?.displayOnHomePage ?? 0,
+    IsPopular: payload?.IsPopular ?? payload?.isPopular ?? 0,
+    IsVerifiedRequired:
+      payload?.IsVerifiedRequired ?? payload?.isVerifiedRequired ?? 0,
+    MinSubscriptionLevel:
+      payload?.MinSubscriptionLevel ?? payload?.minSubscriptionLevel ?? 0,
     IsActive: payload?.IsActive ?? payload?.isActive ?? 1,
     DisplayOrder: payload?.DisplayOrder ?? payload?.displayOrder ?? 0,
     UpdatedBy: 0,
@@ -443,17 +462,15 @@ function ServiceFormModal({
                     />
                   </ModalField>
                 </ModalSection>
-                {/* <ModalSection
-                  label="Display Flags"
+                <ModalSection
+                  label="Display Point"
                   icon={<Eye className="h-3.5 w-3.5" />}
+
                 >
                   <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                     {[
-                      { key: "isActive", label: "Active" },
-                      { key: "isFeatured", label: "Featured" },
-                      { key: "displayOnHomePage", label: "On Homepage" },
-                      { key: "isPopular", label: "Popular" },
-                      { key: "isVerifiedRequired", label: "Verified Required" },
+                      { key: "90", label: "Main Menu" },
+                      { key: "89", label: "Side Menu" },
                     ].map(({ key, label }) => (
                       <label
                         key={key}
@@ -462,7 +479,7 @@ function ServiceFormModal({
                         <input
                           type="checkbox"
                           checked={!!form[key]}
-                          onChange={(e) => set(key, e.target.checked ? 1 : 0)}
+                          onChange={(e) => set("displayOnHomePage", e.target.checked ? 1 : 0)}
                           className="sr-only"
                         />
                         <div
@@ -476,7 +493,7 @@ function ServiceFormModal({
                       </label>
                     ))}
                   </div>
-                </ModalSection> */}
+                </ModalSection>
                 <ModalSection
                   label="Links & URLs"
                   icon={<Link className="h-3.5 w-3.5" />}
