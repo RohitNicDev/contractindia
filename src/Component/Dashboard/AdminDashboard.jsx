@@ -31,6 +31,8 @@ import BusinessPlans from "./pages/BusinessPlans";
 import UserControl from "./pages/UserControl";
 import UserVerification from "./pages/UserVerification";
 import { Badge, gradBtn, glass } from "../common/uiUtiles";
+import CustomHeading from "../common/CustomHeading";
+import LogoutPopup from "../common/Logoutpopup";
 
 const stats = [
   {
@@ -476,9 +478,18 @@ function Security() {
   };
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto p-4">
+    <div className="space-y-8   mx-auto p-4">
+      <CustomHeading
+        title="Security Settings"
+        subtitle="Manage administrative credentials, monitor security logs, and audit active authorization roles."
+        icon={ShieldAlert}
+        // badge={isLoading ? undefined : `${totalPlans} record${totalPlans !== 1 ? "s" : ""}`}
+        badgeColor="violet"
+        variant="default"
+        size="md"
+      />
       {/* Header Description Section */}
-      <div className="flex items-start gap-4 pb-4 border-b border-slate-100">
+      {/* <div className="flex items-start gap-4 pb-4 border-b border-slate-100">
         <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl shadow-inner">
           <ShieldAlert className="w-6 h-6" />
         </div>
@@ -491,7 +502,7 @@ function Security() {
             active authorization roles.
           </p>
         </div>
-      </div>
+      </div> */}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Side: Password Modification Form */}
@@ -677,7 +688,16 @@ const pieData = [
 function Analytics() {
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-bold text-slate-800">Analytics</h2>
+      <CustomHeading
+        title="Analytics Dashboard"
+        subtitle="Visualize key performance indicators, track revenue trends, and analyze subscription breakdowns to drive informed business decisions."
+        icon={BarChart3}
+        // badge={isLoading ? undefined : `${totalPlans} record${totalPlans !== 1 ? "s" : ""}`}
+        badgeColor="violet"
+        variant="default"
+        size="md"
+      />
+
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {metricCards.map((m) => (
           <div key={m.label} style={{ ...glass, padding: "18px" }}>
@@ -795,10 +815,17 @@ const sectionMap = {
 };
 
 export default function AdminDashboard() {
+  const [logoutOpen, setLogoutOpen] = useState(false);
   const [active, setActive] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const navigate = useNavigate();
   const Section = sectionMap[active];
+  const [user, setUser] = useState({
+    companyName: "Contracts India Pvt Ltd",
+    contactPerson: "Admin User",
+    email: "Admin@gmail.com",
+    mobile: "9876543210",
+  });
   const signOut = () => {
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("admin_auth_v1");
@@ -872,7 +899,8 @@ export default function AdminDashboard() {
         </nav>
         <div className="p-3 border-t border-white/10">
           <button
-            onClick={signOut}
+            // onClick={signOut}
+            onClick={() => setLogoutOpen(true)}
             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all"
             style={{ color: "rgba(255,255,255,0.4)" }}
             onMouseEnter={(e) => (e.currentTarget.style.color = "#f87171")}
@@ -912,6 +940,19 @@ export default function AdminDashboard() {
             </span>
           </div>
         </header>
+        <LogoutPopup
+          open={logoutOpen}
+          user={{
+            name: user.companyName || user.contactPerson || "Company",
+            email: user.email || "",
+            role: "Commercial Account",
+          }}
+          onCancel={() => setLogoutOpen(false)}
+          onConfirm={async () => {
+            setLogoutOpen(false);
+            await signOut();
+          }}
+        />
         <main className="flex-1 overflow-y-auto p-6">
           <AnimatePresence mode="wait">
             <motion.div

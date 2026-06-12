@@ -654,30 +654,4 @@ export default function CommercialDashboard() {
        
   );
 }
-{
-  /* {showGstModal && (
-        <div className="fixed inset-0 z-[1000] bg-slate-950/85 flex items-center justify-center px-4 py-6">
-          <div className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl">
-          
-            <label className="block text-xs font-bold uppercase tracking-[0.24em] text-slate-400 mb-2">
-              GST Number
-            </label>
-            <input
-              value={gstNumber}
-              onChange={e => setGstNumber(e.target.value.toUpperCase())}
-              placeholder="Enter GST number"
-              className="w-full rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-sm text-white outline-none focus:border-blue-500"
-            />
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
-              <button
-                type="button"
-                onClick={saveGstNumber}
-                className="w-full sm:w-auto inline-flex items-center justify-center rounded-2xl bg-blue-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-blue-700"
-              >
-                Save GST Number
-              </button>
-            </div>
-          </div>
-        </div>
-      )} */
-}
+ 
