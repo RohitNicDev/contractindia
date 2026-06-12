@@ -12,7 +12,7 @@
  *  subtitle      string?                  — small muted line below title
  *  icon          ReactNode?               — icon shown in the header circle
  *  variant       "default"|"danger"|"success"|"warning"|"info"  — controls gradient + accent
- *  size          "sm"|"md"|"lg"|"xl"      — max-width of the panel
+ *  size          "sm"|"md"|"lg"|"xl"|"xxl" — max-width of the panel
  *  hideCloseBtn  boolean?                 — hide the X button
  *  children      ReactNode                — modal body
  *  footer        ReactNode?               — custom footer; if omitted the built-in
@@ -59,6 +59,7 @@ const SIZES = {
   md: "max-w-lg",
   lg: "max-w-2xl",
   xl: "max-w-4xl",
+  xxl: "max-w-6xl",
 };
 
 /* ========================================================================== */
@@ -122,7 +123,10 @@ export function CommonModal({
             onClick={(e) => e.stopPropagation()}
           >
             <div
-              className={`w-full ${sizeClass} max-h-[90vh] flex flex-col rounded-3xl bg-white shadow-2xl border border-slate-200/70 overflow-hidden`}
+              className={`  ${sizeClass}
+              
+              w-full max-w-6xl max-h-[80vh] flex flex-col rounded-3xl bg-white shadow-2xl border border-slate-200/70 
+              `}
             >
               {/* ── header ── */}
               <div className={`bg-gradient-to-r ${gradient} px-5 py-4 flex-shrink-0`}>
@@ -343,16 +347,5 @@ export function ModalInputStyles() {
 
 
    ── 4. Body-only (no footer) ─────────────────────────────────────────────────
-
-   <CommonModal
-     isOpen={open}
-     onClose={close}
-     title="Image preview"
-     variant="default"
-     size="xl"
-     hideFooter
-   >
-     <img src={previewUrl} className="w-full rounded-xl" />
-   </CommonModal>
-
+i
    ========================================================================== */
