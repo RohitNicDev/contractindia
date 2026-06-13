@@ -462,7 +462,7 @@ function ServiceFormModal({
                     />
                   </ModalField>
                 </ModalSection>
-                <ModalSection
+                {/* <ModalSection
                   label="Display Point"
                   icon={<Eye className="h-3.5 w-3.5" />}
 
@@ -493,7 +493,7 @@ function ServiceFormModal({
                       </label>
                     ))}
                   </div>
-                </ModalSection>
+                </ModalSection> */}
                 <ModalSection
                   label="Links & URLs"
                   icon={<Link className="h-3.5 w-3.5" />}

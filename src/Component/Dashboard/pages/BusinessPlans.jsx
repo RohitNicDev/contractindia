@@ -23,6 +23,7 @@ import {
   planMasterUpdate,
   planMasterDelete,
   planMasterGet,
+  userType,
 } from "../../../services/api";
 
 const planMasterGetApi = async () => {
@@ -44,7 +45,11 @@ const planMasterUpdateApi = async (payload) => {
   const response = await planMasterUpdate(payload);
   return response ?? [];
 };
-
+const getuserTypeApi = async () => {
+  const response = await userType();
+  console.log(response, "response");
+  return response ?? [];
+};
 const BusinessPlans = () => {
   const [form] = Form.useForm();
   const [planModal, setPlanModal] = useState(false);
@@ -72,7 +77,11 @@ const BusinessPlans = () => {
   });
 
   const plans = fetchedPlans && fetchedPlans.length > 0 ? fetchedPlans : [];
-
+  const { data: userTypeList = [], isLoading: userTypeLoading } = useQuery({
+    queryKey: ["userType"],
+    queryFn: getuserTypeApi,
+    staleTime: Infinity,
+  });
   const resetForm = () => {
     setSelectedPlanId(0);
     form.resetFields();
@@ -81,7 +90,7 @@ const BusinessPlans = () => {
       isActive: true,
     });
   };
- 
+
   const handleOpenCreateModal = () => {
     setSelectedPlanId(0);
 
@@ -100,6 +109,7 @@ const BusinessPlans = () => {
     const planId = plan?.PlanID ?? plan?.planID ?? plan?.id ?? 0;
 
     setSelectedPlanId(planId);
+console.log(plan,"planid");
 
     form.setFieldsValue({
       planName: plan?.PlanName ?? plan?.planName ?? "",
@@ -111,6 +121,9 @@ const BusinessPlans = () => {
       remark: plan?.Remark ?? plan?.remark ?? plan?.features ?? "",
       isActive:
         plan?.IsActive === 1 || plan?.isActive === 1 || plan?.isActive === true,
+      maxNoofServices: plan?.maxNoofServices ?? 0,
+      userType: plan?.UserType ?? undefined,
+      userTypeName: plan?.UserTypeName ?? "",
     });
 
     setPlanModal(true);
@@ -209,6 +222,11 @@ const BusinessPlans = () => {
       enterredBy: 0,
       enterDate: new Date().toISOString(),
       isActive: values.isActive ? 1 : 0,
+
+      maxNoofServices: Number(values.maxNoofServices || 0),
+      userType: Number(values.userType || 0),
+      userTypeName: userTypeList.find((item) => item.value === values.userType)?.label || "",
+
     };
     if (selectedPlanId) {
       planMasterupdateMutation(payload);
@@ -258,6 +276,21 @@ const BusinessPlans = () => {
           {Number(record.IsActive) === 1 ? "Active" : "Inactive"}
         </Badge>
       ),
+    },
+    {
+      title: "User Type",
+      dataIndex: "userType",
+      key: "userType",
+      
+      render: (_, record) => {
+        return userTypeList.find((item) => item.value === record.UserType)?.label || "-";
+      }
+    },
+
+    {
+      title: "Max Services",
+      dataIndex: "maxNoofServices",
+      key: "maxNoofServices",
     },
     {
       title: "Actions",
@@ -375,76 +408,108 @@ const BusinessPlans = () => {
               />
             </Form.Item>
 
-              <div className="grid grid-cols-2 gap-4">
-                <Form.Item
-                  name="price"
-                  label={
-                    <span className="font-medium text-slate-600">
-                      Price (₹)
-                    </span>
-                  }
-                  rules={[
-                    { required: true, message: "Please enter the price" },
-                  ]}
-                >
-                  <InputNumber
-                    className="w-full rounded-xl"
-                    placeholder="0"
-                    min={0}
-                  />
-                </Form.Item>
-
-                <Form.Item
-                  name="creditsIncluded"
-                  label={
-                    <span className="font-medium text-slate-600">
-                      Credits Included
-                    </span>
-                  }
-                  rules={[{ required: true, message: "Please enter credits" }]}
-                >
-                  <InputNumber
-                    className="w-full rounded-xl"
-                    placeholder="0"
-                    min={0}
-                  />
-                </Form.Item>
-              </div>
-
+            <div className="grid grid-cols-2 gap-4">
               <Form.Item
-                name="durationType"
+                name="price"
                 label={
                   <span className="font-medium text-slate-600">
-                    Duration Type
+                    Price (₹)
                   </span>
                 }
+                rules={[
+                  { required: true, message: "Please enter the price" },
+                ]}
               >
-                <Select className="rounded-xl">
-                  <Select.Option value="Monthly">Monthly</Select.Option>
-                  <Select.Option value="Yearly">Yearly</Select.Option>
-                </Select>
-              </Form.Item>
-
-              <Form.Item
-                name="remark"
-                label={
-                  <span className="font-medium text-slate-600">
-                    Remark / Features
-                  </span>
-                }
-              >
-                <Input.TextArea
-                  rows={3}
-                  placeholder="Add any details or features..."
-                  className="rounded-xl resize-none"
+                <InputNumber
+                  className="w-full rounded-xl"
+                  placeholder="0"
+                  min={0}
                 />
               </Form.Item>
 
-              <Form.Item name="isActive" valuePropName="checked">
-                <Switch checkedChildren="Active" unCheckedChildren="Inactive" />
+              <Form.Item
+                name="creditsIncluded"
+                label={
+                  <span className="font-medium text-slate-600">
+                    Credits Included
+                  </span>
+                }
+                rules={[{ required: true, message: "Please enter credits" }]}
+              >
+                <InputNumber
+                  className="w-full rounded-xl"
+                  placeholder="0"
+                  min={0}
+                />
               </Form.Item>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <Form.Item
+                name="maxNoofServices"
+                label="Max No Of Services"
+                rules={[
+                  { required: true, message: "Please enter no of services" },
+                ]}
+              >
+                <InputNumber
+                  min={1}
+                  max={1000}
+                  className="w-full"
+                  placeholder="Enter max services"
+                />
+              </Form.Item>
+              <Form.Item
+                name="userType"
+                label="User Type"
+                rules={[
+                  { required: true, message: "Select user type" },
+                ]}
+              >
+                <Select
+                  placeholder="Select User Type"
+                  options={userTypeList?.map((item) => ({
+                    value: item?.value,
+                    label: item?.label || item?.name,
+                  }))}
+                />
+              </Form.Item>
+            </div>
 
-              {/* <div className="flex justify-end gap-3 mt-6">
+            <Form.Item
+              name="durationType"
+              label={
+                <span className="font-medium text-slate-600">
+                  Duration Type
+                </span>
+              }
+            >
+              <Select className="rounded-xl">
+                <Select.Option value="Weekly">Weekly</Select.Option>
+                <Select.Option value="Monthly">Monthly</Select.Option>
+                <Select.Option value="Yearly">Yearly</Select.Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              name="remark"
+              label={
+                <span className="font-medium text-slate-600">
+                  Remark / Features
+                </span>
+              }
+            >
+              <Input.TextArea
+                rows={3}
+                placeholder="Add any details or features..."
+                className="rounded-xl resize-none"
+              />
+            </Form.Item>
+
+            <Form.Item name="isActive" valuePropName="checked">
+              <Switch checkedChildren="Active" unCheckedChildren="Inactive" />
+            </Form.Item>
+
+            {/* <div className="flex justify-end gap-3 mt-6">
               <Button
                 onClick={handleCancelModal}
                 className="rounded-xl font-semibold"
@@ -497,6 +562,27 @@ const BusinessPlans = () => {
             <div>
               <p className="text-xs text-slate-500">Duration</p>
               <p className="font-semibold">{viewModal.plan?.DurationType}</p>
+            </div>
+
+            <div>
+              <p className="text-xs text-slate-500">Status</p>
+              <p className="font-semibold">
+                <Badge color={Number(viewModal.plan?.IsActive) === 1 ? "green" : "yellow"}>
+                  {Number(viewModal.plan?.IsActive) === 1 ? "Active" : "Inactive"}
+                </Badge>
+              </p>
+            </div>
+
+            <div>
+              <p className="text-xs text-slate-500">User Type</p>
+              <p className="font-semibold">
+                {userTypeList.find((item) => item.value === viewModal.plan?.UserType)?.label || "-"}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-xs text-slate-500">Max No Of Services</p>
+              <p className="font-semibold">{viewModal.plan?.maxNoofServices ?? 0}</p>
             </div>
 
             <div>

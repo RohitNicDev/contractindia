@@ -53,6 +53,36 @@ export const planMasterGet = async () => {
 export const planMasterGetById = async (planId) => {
   return await api.get(`/PlanMaster/get/${planId}`);
 };
+export const DocumentCategorySave = async (payload) => {
+  return await api.post(`/DocumentCategory/save`, payload);
+};
+export const DocumentCategoryUpdate = async (payload) => {
+  return await api.put(`/DocumentCategory/update`, payload);
+};
+export const DocumentCategoryDelete = async (planId) => {
+  return await api.delete(`/DocumentCategory/delete/${planId}`);
+};
+export const DocumentCategoryGet = async () => {
+  return await api.get(`/DocumentCategory/get`);
+};
+export const DocumentCategoryGetById = async (planId) => {
+  return await api.get(`/DocumentCategory/get/${planId}`);
+};
+export const DocumentSubCategorySave = async (payload) => {
+  return await api.post(`/DocumentSubCategory/save`, payload);
+};
+export const DocumentSubCategoryUpdate = async (payload) => {
+  return await api.put(`/DocumentSubCategory/update`, payload);
+};
+export const DocumentSubCategoryDelete = async (planId) => {
+  return await api.delete(`/DocumentSubCategory/delete/${planId}`);
+};
+export const DocumentSubCategoryGet = async () => {
+  return await api.get(`/DocumentSubCategory/get`);
+};
+export const DocumentSubCategoryGetById = async (planId) => {
+  return await api.get(`/DocumentSubCategory/get/${planId}`);
+};
 export const ServiceMasterSave = async (payload) => {
   return await api.post(`/ServiceMaster/save`, payload);
 };
@@ -68,8 +98,8 @@ export const ServiceMasterGet = async () => {
 export const ServiceRootGet = async () => {
   return await api.get(`/ServiceMaster/rootservice`);
 };
-export const ServiceMasterGetById = async (planId) => {
-  return await api.get(`/ServiceMaster/get/${planId}`);
+export const ServiceMasterGetById = async (serviceId) => {
+  return await api.get(`/ServiceMaster/get?serviceId=${serviceId}`);
 };
 export const subscriptionHistoryGet = async () => {
   return await api.get(`/UserSubscriptionDetail/get`);
@@ -122,4 +152,15 @@ export const userBasicInformationSave = async (payload) => {
 
 export const userBankDetailSave = async (payload) => {
   return await api.post("/UserBankDetail/save", payload);
+};
+export const ContractorListGet = async (serviceId) => {
+  const response = await api.get(
+    `/UserRegistration/get?isVerifiedByAdmin=1&userType=2&serviceId=${serviceId}`
+  );
+
+  if (!response?.status) {
+    throw new Error(response?.message || "Contractors API error");
+  }
+
+  return response?.data || [];
 };

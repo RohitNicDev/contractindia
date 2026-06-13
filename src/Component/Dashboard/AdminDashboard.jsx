@@ -25,6 +25,7 @@ import {
   EyeOff,
   Eye,
   HistoryIcon,
+  FileText,
 } from "lucide-react";
 import ServiceListing from "./pages/ServiceListing";
 import BusinessPlans from "./pages/BusinessPlans";
@@ -33,6 +34,8 @@ import UserVerification from "./pages/UserVerification";
 import { Badge, gradBtn, glass } from "../common/uiUtiles";
 import CustomHeading from "../common/CustomHeading";
 import LogoutPopup from "../common/Logoutpopup";
+import DocumantationCategory from "./pages/DocumantationCategory";
+import DocumentSubCategory from "./pages/DocumentSubCategory";
 
 const stats = [
   {
@@ -801,6 +804,8 @@ const navItems = [
   { key: "services", label: "Service Management", icon: Briefcase },
   { key: "users", label: "User Control", icon: Users },
   { key: "plans", label: "Business Plans", icon: CreditCard },
+  { key: "documentation", label: "Documentation Category", icon: FileText },
+  { key: "documentsub", label: "Document Sub Category", icon: FileText },
   { key: "security", label: "Security", icon: Lock },
   { key: "analytics", label: "Analytics", icon: BarChart3 },
 ];
@@ -812,6 +817,8 @@ const sectionMap = {
   plans: BusinessPlans,
   security: Security,
   analytics: Analytics,
+  documentation: DocumantationCategory,
+  documentsub: DocumentSubCategory,
 };
 
 export default function AdminDashboard() {

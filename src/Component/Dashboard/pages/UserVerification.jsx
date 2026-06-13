@@ -258,45 +258,7 @@ export default function UserVerification() {
           badge={`${userVerificationdata.length} records`}
           badgeColor="indigo"
         />
-        {/* 
-<div className="flex flex-col gap-4 lg:flex-row lg:justify-between">
- 
-        <div className="flex gap-2">
-          {userTypeList.map((item) => (
-            <button
-              key={item.value}
-              onClick={() => setTab(item.value)}
-              className={`rounded-xl px-5 py-2 text-sm font-semibold
-        ${tab === item.value
-                  ? "bg-indigo-600 text-white"
-                  : "bg-white border"
-                }`}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-
-      
-        <div className="flex gap-2">
-          {[
-            { id: 0, label: "Pending" },
-            { id: 1, label: "Approved" },
-            { id: 2, label: "Rejected" },
-          ].map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setStatus(item.id)}
-              className={`rounded-xl px-4 py-2 text-sm font-medium
-        ${status === item.id
-                  ? "bg-slate-900 text-white"
-                  : "bg-white border"
-                }`}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div> this is looking ok ok but not amazing lokking  */}
+       
         {/* Tab switcher */}
         <div className="rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">
           <div className="flex items-center justify-between gap-4 flex-wrap">

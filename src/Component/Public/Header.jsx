@@ -25,94 +25,21 @@ import { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate, Link } from "react-router-dom";
 import { Button, Badge, Drawer, Collapse, Dropdown, Avatar } from "antd";
 import logo from "../../assets/IMG/logo_con1.png";
+import { ServiceRootGet } from "../../services/api";
+import { useQuery } from "@tanstack/react-query";
 const { Panel } = Collapse;
 
 // ─── Mega Menu Data ───────────────────────────────────────────────
-const NAV_ITEMS = [
-  { name: "Home", path: "/" },
-  { name: "About", path: "/about" },
-  {
-    name: " Our Services",
-    mega: true,
-    columns: [
-      {
-        title: "Consulting Services",
-        icon: <Brush size={15} className="text-blue-500" />,
-        color: "blue",
-        path: "/services/consulting",
-      },
-      {
-        title: "Contractor Services",
-        icon: <Users size={15} className="text-purple-500" />,
-        color: "purple",
-        path: "/services/contractor",
-      },
-      {
-        title: "Tender Services",
-        icon: <Building2 size={15} className="text-orange-500" />,
-        color: "orange",
-        path: "/services/tender",
-      },
-      {
-        title: "Assets Management",
-        icon: <Shield size={15} className="text-red-500" />,
-        color: "red",
-        path: "/services/assets-management",
-      },
-      {
-        title: "Legal Contracts Services",
-        icon: <Zap size={15} className="text-yellow-500" />,
-        color: "yellow",
-        path: "/services/legal-contracts",
-      },
-      {
-        title: "Procurement Services",
-        icon: <Wrench size={15} className="text-green-500" />,
-        color: "green",
-        items: [
-          {
-            name: "Material Manufacturing",
-            path: "/services/material-manufacturing",
-          },
-          {
-            name: "Material Supply & trades",
-            path: "/services/material-supply",
-          },
-        ],
-      },
-      {
-        title: "Brand Development Management",
-        icon: <Wrench size={15} className="text-green-500" />,
-        color: "green",
-        path: "/services/brand-development",
-      },
-      {
-        title: "Marketing Management",
-        icon: <Wrench size={15} className="text-green-500" />,
-        color: "green",
-        path: "/services/marketing",
-      },
-      {
-        title: "Contraction Audit ",
-        icon: <Wrench size={15} className="text-green-500" />,
-        color: "green",
-        path: "/services/contraction-audit",
-      },
-    ],
-  },
-  { name: "Projects", path: "/projects", isNew: true },
-  { name: "Contact Us", path: "/contact" },
-];
 
 
 // ─── Services Dropdown Menu ──────────────────────────────────────
+
 const DropdownMenu = ({ columns, visible }) => (
   <div
-    className={`absolute top-full left-0 bg-white shadow-xl border border-gray-100 rounded-md py-2 w-72 transition-all duration-200 origin-top z-50 ${
-      visible
-        ? "opacity-100 scale-y-100 pointer-events-auto"
-        : "opacity-0 scale-y-95 pointer-events-none"
-    }`}
+    className={`absolute top-full left-0 bg-white shadow-xl border border-gray-100 rounded-md py-2 w-72 transition-all duration-200 origin-top z-50 ${visible
+      ? "opacity-100 scale-y-100 pointer-events-auto"
+      : "opacity-0 scale-y-95 pointer-events-none"
+      }`}
   >
     {columns.map((col) => (
       <div key={col.title} className="relative group/item">
@@ -162,7 +89,40 @@ const Header = () => {
   const megaRef = useRef(null);
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("login_mock_v1") || "{}");
+  const getRootServiceApi = async () => {
+    const response = await ServiceRootGet();
+    console.log(response, "response");
+    return response ?? [];
+  };
 
+  const { data: rootServiceList = [], isLoading: rootServicesLoading } =
+    useQuery({
+      queryKey: ["RootServiceApi"],
+      queryFn: getRootServiceApi,
+      retry: false,
+      staleTime: Infinity, // states rarely change
+    });
+  const serviceColumns = rootServiceList?.map((service) => ({
+    title: service.name,
+    color: "blue",
+    path: `service/${service.value}`,
+  }));
+  const NAV_ITEMS = [
+    { name: "Home", path: "/" },
+    { name: "About", path: "/about" },
+    {
+      name: "Our Services",
+      mega: true,
+      columns: serviceColumns,
+    },
+    { name: "Projects", path: "/projects", isNew: true },
+    { name: "Contact Us", path: "/contact" },
+  ];
+  useEffect(() => {
+    console.log(serviceColumns,"serviceColumns");
+    
+  }, [serviceColumns]);
+  
   const goToDashboard = () => {
     const userType = user?.userType;
     if (userType === "commercial") {
@@ -179,8 +139,8 @@ const Header = () => {
     }
     // Fallback route
     navigate("/home");
-  }; 
-  
+  };
+
   const handleSignOut = () => {
     localStorage.removeItem("commercial_user_v1");
     localStorage.removeItem("login_mock_v1");
@@ -193,7 +153,6 @@ const Header = () => {
     window.dispatchEvent(new Event("auth_changed"));
     navigate("/login");
   };
-
 
 
 
@@ -228,29 +187,28 @@ const Header = () => {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
-const dashboarditems = [
-  {
-    key: "dashboard",
-    icon: <LayoutDashboard size={16} />,
-    label: "Dashboard",
-    onClick: goToDashboard,
-  },
-  {
-    key: "logout",
-    icon: <LogOut size={16} />,
-    label: "Logout",
-    danger: true,
-     onClick: handleSignOut,
-  },
-];
+  const dashboarditems = [
+    {
+      key: "dashboard",
+      icon: <LayoutDashboard size={16} />,
+      label: "Dashboard",
+      onClick: goToDashboard,
+    },
+    {
+      key: "logout",
+      icon: <LogOut size={16} />,
+      label: "Logout",
+      danger: true,
+      onClick: handleSignOut,
+    },
+  ];
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? "bg-white/70 backdrop-blur-md shadow-lg border-b border-white/30"
-          : "bg-white border-b border-gray-100"
-      }`}
+      className={`sticky top-0 z-50 transition-all duration-500 ${scrolled
+        ? "bg-white/70 backdrop-blur-md shadow-lg border-b border-white/30"
+        : "bg-white border-b border-gray-100"
+        }`}
     >
       {/* 🌐 TOP BAR */}
       <div className="bg-[#162646] text-white/90 py-2.5 px-4 sm:px-6 overflow-hidden">
@@ -297,8 +255,7 @@ const dashboarditems = [
             <MenuIcon size={24} />
           </button>
 
-          {/* Logo */}
-          {/* Logo */}
+           
           <div
             className="flex items-center gap-3 cursor-pointer shrink-0"
             onClick={() => navigate("/")}
@@ -377,27 +334,27 @@ const dashboarditems = [
                     </Button>
                   </>
                 ) : (
-                <>
-                
-             <div className="flex items-center gap-3">
-<Dropdown
-  menu={{ items: dashboarditems }}
-  trigger={["click"]}
-  placement="bottomRight"
->
-  <div className="flex items-center gap-1 cursor-pointer">
-    <Avatar
-      size={38}
-      icon={<User2 size={18} />}
-      className="!bg-[#162646]"
-    />
-    <ChevronDownCircle size={16} className="text-slate-500" />
-  </div>
-</Dropdown>
-</div>
-                
-                
-                </>
+                  <>
+
+                    <div className="flex items-center gap-3">
+                      <Dropdown
+                        menu={{ items: dashboarditems }}
+                        trigger={["click"]}
+                        placement="bottomRight"
+                      >
+                        <div className="flex items-center gap-1 cursor-pointer">
+                          <Avatar
+                            size={38}
+                            icon={<User2 size={18} />}
+                            className="!bg-[#162646]"
+                          />
+                          <ChevronDownCircle size={16} className="text-slate-500" />
+                        </div>
+                      </Dropdown>
+                    </div>
+
+
+                  </>
                 )}
               </div>
             </div>
@@ -433,11 +390,10 @@ const dashboarditems = [
                   onMouseLeave={() => setMegaOpen(false)}
                 >
                   <button
-                    className={`flex items-center gap-1 px-3 py-1.5 text-sm font-bold rounded-lg transition outline-none ${
-                      megaOpen
-                        ? "text-blue-600 bg-blue-50"
-                        : "text-gray-600 hover:text-blue-600 hover:bg-blue-50/50"
-                    }`}
+                    className={`flex items-center gap-1 px-3 py-1.5 text-sm font-bold rounded-lg transition outline-none ${megaOpen
+                      ? "text-blue-600 bg-blue-50"
+                      : "text-gray-600 hover:text-blue-600 hover:bg-blue-50/50"
+                      }`}
                   >
                     {item.name}
                     <ChevronDown
@@ -454,10 +410,9 @@ const dashboarditems = [
                 <NavLink
                   to={item.path}
                   className={({ isActive }) =>
-                    `relative px-3 py-1.5 text-sm font-bold no-underline rounded-lg transition ${
-                      isActive
-                        ? "text-blue-600 bg-blue-50"
-                        : "text-gray-600 hover:text-blue-600 hover:bg-blue-50/50"
+                    `relative px-3 py-1.5 text-sm font-bold no-underline rounded-lg transition ${isActive
+                      ? "text-blue-600 bg-blue-50"
+                      : "text-gray-600 hover:text-blue-600 hover:bg-blue-50/50"
                     }`
                   }
                 >

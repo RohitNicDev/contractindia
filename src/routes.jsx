@@ -7,7 +7,7 @@ import AuthLayout from "./routes/_auth";
 
 // ── Public pages ───────────────────────────────────────────────────────────
 import HomePage from "./Component/Public/HomePage";
-import AboutUs from "./Component/Public/AboutUs"; 
+import AboutUs from "./Component/Public/AboutUs";
 import ContactPage from "./Component/Public/ContactPage";
 import Projects from "./Component/Public/Projects";
 import Marketplace from "./Component/Public/Marketplace";
@@ -51,15 +51,17 @@ import CommercialDashboard from "./Component/Dashboard/CommercialDashboard";
 // ── Admin ──────────────────────────────────────────────────────────────────
 import AdminLogin from "./Component/Admin/AdminLogin";
 import AdminDashboard from "./Component/Dashboard/AdminDashboard";
-import BuyingService from "./Component/Public/Services/Buyingservice"; 
+import BuyingService from "./Component/Public/Services/Buyingservice";
 import BuyingService2 from "./Component/Public/Services/Buyingservice2";
 import Companies from "./Component/Public/Companies";
+import CompanySubServices from "./Component/Public/Services/CompanySubServices";
 
 export const router = createBrowserRouter([
   // ── Public routes (Header + Footer via PublicLayout) ─────────────────────
   {
     element: <PublicLayout />,
     children: [
+      { path: "/service/:serviceId", element: <CompanySubServices /> },
       { path: "/", element: <HomePage /> },
       { path: "/about", element: <AboutUs /> },
       { path: "/company-list", element: <Companies /> },
