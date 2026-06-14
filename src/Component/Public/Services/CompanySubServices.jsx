@@ -12,7 +12,7 @@
  *   defaultServiceId number  which service to show on first load (default: first root service)
  */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -38,7 +38,7 @@ import { useParams } from "react-router-dom";
 const getRootServiceApi = async (serviceId) => {
     const response = await ServiceMasterGetById(serviceId);
     console.log(response, "response1");
-    return response ?? [];
+    return response?.data ?? [];
 };
 const getContractorsApi = async (id) => {
     const response = await ContractorListGet(id);
@@ -384,7 +384,11 @@ const CompanySubServices = ({
             }
         },
     });
- 
+    useEffect(() => {
+        console.log(allServices, "12");
+
+    }, [allServices])
+
     const serviceTree = useMemo(() => buildServiceTree(allServices), [allServices]);
 
     // auto-select once tree is ready
