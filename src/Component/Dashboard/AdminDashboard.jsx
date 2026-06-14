@@ -36,6 +36,7 @@ import CustomHeading from "../common/CustomHeading";
 import LogoutPopup from "../common/Logoutpopup";
 import DocumantationCategory from "./pages/DocumantationCategory";
 import DocumentSubCategory from "./pages/DocumentSubCategory";
+import DocumentCategoryManager from "../Public/Services/DocumentCategoryManager";
 
 const stats = [
   {
@@ -804,8 +805,9 @@ const navItems = [
   { key: "services", label: "Service Management", icon: Briefcase },
   { key: "users", label: "User Control", icon: Users },
   { key: "plans", label: "Business Plans", icon: CreditCard },
-  { key: "documentation", label: "Documentation Category", icon: FileText },
-  { key: "documentsub", label: "Document Sub Category", icon: FileText },
+  // { key: "documentation", label: "Documentation Category", icon: FileText },
+  // { key: "documentsub", label: "Document Sub Category", icon: FileText },
+  { key: "documentcat", label: "Document Category", icon: FileText },
   { key: "security", label: "Security", icon: Lock },
   { key: "analytics", label: "Analytics", icon: BarChart3 },
 ];
@@ -819,6 +821,7 @@ const sectionMap = {
   analytics: Analytics,
   documentation: DocumantationCategory,
   documentsub: DocumentSubCategory,
+  documentcat: DocumentCategoryManager,
 };
 
 export default function AdminDashboard() {
