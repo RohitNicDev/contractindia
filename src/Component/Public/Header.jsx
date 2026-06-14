@@ -118,10 +118,10 @@ const Header = () => {
     { name: "Projects", path: "/projects", isNew: true },
     { name: "Contact Us", path: "/contact" },
   ];
-  useEffect(() => {
-    console.log(serviceColumns,"serviceColumns");
-    
-  }, [serviceColumns]);
+  // useEffect(() => {
+  //   console.log(serviceColumns,"serviceColumns");
+  //   setAllServices(rootServiceList);
+  // }, [serviceColumns]);
   
   const goToDashboard = () => {
     const userType = user?.userType;

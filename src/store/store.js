@@ -12,3 +12,12 @@ export const userStore = create((set) => ({
   loginResponse: null,
   setLoginResponse: (response) => set({ loginResponse: response }),
 }));
+
+export const serviceStore = create((set) => ({
+  allServices: [],
+  setAllServices: (services) => set({ allServices: services }),
+  selectedService: null,
+  setSelectedService: (service) => set({ selectedService: service }),
+  serviceTree: [],
+  setServiceTree: (tree) => set({ serviceTree: tree }),
+}));

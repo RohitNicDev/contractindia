@@ -419,9 +419,9 @@ const CompanySubServices = ({
 
     /* ── Active label ── */
     const activeLabel = useMemo(() => {
-        if (!activeServiceId) return "Contractor Services";
+        if (!activeServiceId) return "Services";
         const flat = flattenTree(serviceTree);
-        return flat.find((n) => n.id === activeServiceId)?.name || "Contractor Services";
+        return flat.find((n) => n.id === activeServiceId)?.name || "Services";
     }, [activeServiceId, serviceTree]);
 
     /* ── Handlers ── */
@@ -435,8 +435,9 @@ const CompanySubServices = ({
 
                     {/* ── SIDEBAR ── */}
                     <aside className="space-y-4 h-fit sticky top-6">
+                        {/* get services name from store */}
                         <p className="text-[14px] font-bold uppercase tracking-[0.2em] text-slate-500 px-3">
-                            Contractor Services
+                         Service
                         </p>
 
                         {servicesLoading ? (
