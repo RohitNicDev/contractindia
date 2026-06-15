@@ -14,6 +14,7 @@ import {
   Trash2,
   CheckCircle,
   Blocks,
+  Users,
 } from "lucide-react";
 
 import CommonModal from "../../common/CommonModal";
@@ -25,6 +26,7 @@ import {
   planMasterGet,
   userType,
 } from "../../../services/api";
+import DataTableComponent from "../../common/dataTable";
 
 const planMasterGetApi = async () => {
   const response = await planMasterGet();
@@ -109,7 +111,7 @@ const BusinessPlans = () => {
     const planId = plan?.PlanID ?? plan?.planID ?? plan?.id ?? 0;
 
     setSelectedPlanId(planId);
-console.log(plan,"planid");
+    console.log(plan, "planid");
 
     form.setFieldsValue({
       planName: plan?.PlanName ?? plan?.planName ?? "",
@@ -211,6 +213,8 @@ console.log(plan,"planid");
   };
 
   const onFinish = (values) => {
+    console.log(values, "values1");
+
     const payload = {
       planID: selectedPlanId || 0,
       planName: values.planName,
@@ -222,11 +226,11 @@ console.log(plan,"planid");
       enterredBy: 0,
       enterDate: new Date().toISOString(),
       isActive: values.isActive ? 1 : 0,
-
-      maxNoofServices: Number(values.maxNoofServices || 0),
+      maxNoofServices: values.maxNoofServices || 0,
       userType: Number(values.userType || 0),
-      userTypeName: userTypeList.find((item) => item.value === values.userType)?.label || "",
-
+      userTypeName:
+        userTypeList.find((item) => item.value === values.userType)?.label ||
+        "",
     };
     if (selectedPlanId) {
       planMasterupdateMutation(payload);
@@ -281,10 +285,13 @@ console.log(plan,"planid");
       title: "User Type",
       dataIndex: "userType",
       key: "userType",
-      
+
       render: (_, record) => {
-        return userTypeList.find((item) => item.value === record.UserType)?.label || "-";
-      }
+        return (
+          userTypeList.find((item) => item.value === record.UserType)?.label ||
+          "-"
+        );
+      },
     },
 
     {
@@ -361,17 +368,23 @@ console.log(plan,"planid");
           }
         />
 
-        <div style={{ ...glass, padding: "20px" }}>
-          <Table
-            columns={columns}
-            dataSource={plans}
-            rowKey={(record) => record.PlanID ?? record.planID ?? record.id ?? Math.random()}
-            loading={isLoading}
-            pagination={{ pageSize: 10 }}
-            scroll={{ x: 800 }}
-            className="modern-table"
-          />
-        </div>
+        {/* <div style={{ ...glass, padding: "20px" }}> */}
+        <DataTableComponent
+          title="Business Plans"
+          icon={Users}
+          accent="emerald"
+          cols={columns}
+          rows={plans}
+          onRefresh={refetch}
+          // onExport={handleExport}
+          loading={isFetching && !isLoading}
+        
+         
+          rowKey={(record) =>
+            record.PlanID ?? record.planID ?? record.id ?? Math.random()
+          }
+        />
+        {/* </div> */}
         <CommonModal
           isOpen={planModal}
           onClose={handleCancelModal}
@@ -412,13 +425,9 @@ console.log(plan,"planid");
               <Form.Item
                 name="price"
                 label={
-                  <span className="font-medium text-slate-600">
-                    Price (₹)
-                  </span>
+                  <span className="font-medium text-slate-600">Price (₹)</span>
                 }
-                rules={[
-                  { required: true, message: "Please enter the price" },
-                ]}
+                rules={[{ required: true, message: "Please enter the price" }]}
               >
                 <InputNumber
                   className="w-full rounded-xl"
@@ -461,9 +470,7 @@ console.log(plan,"planid");
               <Form.Item
                 name="userType"
                 label="User Type"
-                rules={[
-                  { required: true, message: "Select user type" },
-                ]}
+                rules={[{ required: true, message: "Select user type" }]}
               >
                 <Select
                   placeholder="Select User Type"
@@ -567,8 +574,14 @@ console.log(plan,"planid");
             <div>
               <p className="text-xs text-slate-500">Status</p>
               <p className="font-semibold">
-                <Badge color={Number(viewModal.plan?.IsActive) === 1 ? "green" : "yellow"}>
-                  {Number(viewModal.plan?.IsActive) === 1 ? "Active" : "Inactive"}
+                <Badge
+                  color={
+                    Number(viewModal.plan?.IsActive) === 1 ? "green" : "yellow"
+                  }
+                >
+                  {Number(viewModal.plan?.IsActive) === 1
+                    ? "Active"
+                    : "Inactive"}
                 </Badge>
               </p>
             </div>
@@ -576,13 +589,17 @@ console.log(plan,"planid");
             <div>
               <p className="text-xs text-slate-500">User Type</p>
               <p className="font-semibold">
-                {userTypeList.find((item) => item.value === viewModal.plan?.UserType)?.label || "-"}
+                {userTypeList.find(
+                  (item) => item.value === viewModal.plan?.UserType,
+                )?.label || "-"}
               </p>
             </div>
 
             <div>
               <p className="text-xs text-slate-500">Max No Of Services</p>
-              <p className="font-semibold">{viewModal.plan?.maxNoofServices ?? 0}</p>
+              <p className="font-semibold">
+                {viewModal.plan?.maxNoofServices ?? 0}
+              </p>
             </div>
 
             <div>

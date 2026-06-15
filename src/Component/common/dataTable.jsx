@@ -51,27 +51,7 @@ export const DEMO_COLS = [
 ];
 
 export const DEMO_ROWS = [
-  { id: 1, name: "Ava Chen", email: "ava.chen@synapse.io", role: "Engineering Lead", department: "Engineering", status: "Active", salary: 142000, joined: "2021-03-15", projects: 8 },
-  { id: 2, name: "Marcus Webb", email: "m.webb@synapse.io", role: "Product Manager", department: "Product", status: "Active", salary: 128000, joined: "2020-07-01", projects: 12 },
-  { id: 3, name: "Priya Nair", email: "p.nair@synapse.io", role: "UX Designer", department: "Design", status: "Active", salary: 115000, joined: "2022-01-10", projects: 6 },
-  { id: 4, name: "James Okafor", email: "j.okafor@synapse.io", role: "Backend Engineer", department: "Engineering", status: "Pending", salary: 132000, joined: "2023-06-20", projects: 3 },
-  { id: 5, name: "Sofia Reyes", email: "s.reyes@synapse.io", role: "Data Scientist", department: "Analytics", status: "Active", salary: 138000, joined: "2021-09-05", projects: 10 },
-  { id: 6, name: "Tom Hargreaves", email: "t.hargreaves@synapse.io", role: "DevOps Engineer", department: "Engineering", status: "Inactive", salary: 119000, joined: "2019-11-22", projects: 0 },
-  { id: 7, name: "Leila Mansouri", email: "l.mansouri@synapse.io", role: "Sales Director", department: "Sales", status: "Active", salary: 155000, joined: "2020-02-14", projects: 15 },
-  { id: 8, name: "Raj Patel", email: "r.patel@synapse.io", role: "Frontend Engineer", department: "Engineering", status: "Active", salary: 126000, joined: "2022-08-30", projects: 7 },
-  { id: 9, name: "Nina Petrov", email: "n.petrov@synapse.io", role: "Legal Counsel", department: "Legal", status: "Active", salary: 162000, joined: "2018-04-11", projects: 4 },
-  { id: 10, name: "Carlos Vega", email: "c.vega@synapse.io", role: "ML Engineer", department: "Analytics", status: "Pending", salary: 144000, joined: "2023-09-01", projects: 2 },
-  { id: 11, name: "Amy Laurent", email: "a.laurent@synapse.io", role: "HR Manager", department: "HR", status: "Active", salary: 108000, joined: "2020-12-01", projects: 5 },
-  { id: 12, name: "Derek Stone", email: "d.stone@synapse.io", role: "Security Engineer", department: "Engineering", status: "Failed", salary: 134000, joined: "2021-05-18", projects: 6 },
-  { id: 13, name: "Yuki Tanaka", email: "y.tanaka@synapse.io", role: "Cloud Architect", department: "Engineering", status: "Active", salary: 158000, joined: "2019-08-27", projects: 11 },
-  { id: 14, name: "Hannah Brooks", email: "h.brooks@synapse.io", role: "Content Strategist", department: "Marketing", status: "Active", salary: 97000, joined: "2022-03-07", projects: 9 },
-  { id: 15, name: "Ethan Cole", email: "e.cole@synapse.io", role: "Finance Analyst", department: "Finance", status: "Inactive", salary: 112000, joined: "2020-10-15", projects: 0 },
-  { id: 16, name: "Mei Lin", email: "m.lin@synapse.io", role: "QA Engineer", department: "Engineering", status: "Active", salary: 118000, joined: "2023-02-14", projects: 4 },
-  { id: 17, name: "Oliver Grant", email: "o.grant@synapse.io", role: "Growth Manager", department: "Marketing", status: "Pending", salary: 122000, joined: "2023-11-01", projects: 1 },
-  { id: 18, name: "Sara Kim", email: "s.kim@synapse.io", role: "iOS Engineer", department: "Engineering", status: "Active", salary: 131000, joined: "2021-07-22", projects: 8 },
-  { id: 19, name: "Finn O'Brien", email: "f.obrien@synapse.io", role: "Platform Engineer", department: "Engineering", status: "Active", salary: 140000, joined: "2020-05-30", projects: 9 },
-  { id: 20, name: "Zara Ahmed", email: "z.ahmed@synapse.io", role: "Chief of Staff", department: "Operations", status: "Active", salary: 168000, joined: "2018-01-08", projects: 18 },
-];
+ ];
 
 /* ==========================================================================
    HELPERS

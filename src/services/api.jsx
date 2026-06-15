@@ -68,6 +68,21 @@ export const DocumentCategoryGet = async () => {
 export const DocumentCategoryGetById = async (planId) => {
   return await api.get(`/DocumentCategory/get/${planId}`);
 };
+export const UserDocumentStoreSave = async (payload) => {
+  return await api.post(`/UserDocumentStore/save`, payload);
+};
+export const UserDocumentStoreUpdate = async (payload) => {
+  return await api.put(`/UserDocumentStore/update`, payload);
+};
+export const UserDocumentStoreDelete = async (planId) => {
+  return await api.delete(`/UserDocumentStore/delete/${planId}`);
+};
+export const UserDocumentStoreGet = async () => {
+  return await api.get(`/UserDocumentStore/get`);
+};
+export const UserDocumentStoreGetById = async (planId) => {
+  return await api.get(`/UserDocumentStore/get/${planId}`);
+};
 export const DocumentSubCategorySave = async (payload) => {
   return await api.post(`/DocumentSubCategory/save`, payload);
 };
@@ -164,3 +179,5 @@ export const ContractorListGet = async (serviceId) => {
 
   return response?.data || [];
 };
+
+

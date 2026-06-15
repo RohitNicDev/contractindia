@@ -21,12 +21,13 @@ import {
   User2,
   ChevronDownCircle,
 } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { NavLink, useNavigate, Link } from "react-router-dom";
 import { Button, Badge, Drawer, Collapse, Dropdown, Avatar } from "antd";
 import logo from "../../assets/IMG/logo_con1.png";
 import { ServiceRootGet } from "../../services/api";
 import { useQuery } from "@tanstack/react-query";
+import { useserviceStore, useUserStore } from "../../store/store";
 const { Panel } = Collapse;
 
 // ─── Mega Menu Data ───────────────────────────────────────────────
@@ -93,8 +94,8 @@ const Header = () => {
     const response = await ServiceRootGet();
     console.log(response, "response");
     return response ?? [];
-  };
-
+  }; 
+const { setAllServices } = useserviceStore();
   const { data: rootServiceList = [], isLoading: rootServicesLoading } =
     useQuery({
       queryKey: ["RootServiceApi"],
@@ -102,11 +103,25 @@ const Header = () => {
       retry: false,
       staleTime: Infinity, // states rarely change
     });
-  const serviceColumns = rootServiceList?.map((service) => ({
-    title: service.name,
-    color: "blue",
-    path: `service/${service.value}`,
-  }));
+// useEffect(() => {
+//   console.log(rootServiceList,"rootServiceList");
+  
+//   if (rootServiceList?.length > 0) {
+//     console.log("running","rootServiceList");
+    
+//     setAllServices(rootServiceList);
+//   }
+// }, [rootServiceList]);
+  const serviceColumns = useMemo(
+    () =>
+      rootServiceList?.map((service) => ({
+        title: service.name,
+        color: "blue",
+        path: `service/${service.value}`,
+      })) || [],
+    [rootServiceList],
+  );
+
   const NAV_ITEMS = [
     { name: "Home", path: "/" },
     { name: "About", path: "/about" },
@@ -118,10 +133,12 @@ const Header = () => {
     { name: "Projects", path: "/projects", isNew: true },
     { name: "Contact Us", path: "/contact" },
   ];
-  // useEffect(() => {
-  //   console.log(serviceColumns,"serviceColumns");
-  //   setAllServices(rootServiceList);
-  // }, [serviceColumns]);
+
+  useEffect(() => {
+    if (rootServiceList?.length) {
+      setAllServices(rootServiceList);
+    }
+  }, [rootServiceList, setAllServices]);
   
   const goToDashboard = () => {
     const userType = user?.userType;

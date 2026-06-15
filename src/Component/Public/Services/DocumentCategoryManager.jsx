@@ -204,7 +204,7 @@ const DocumentCategoryManager = () => {
   /* Category table columns */
   const catColumns = [
     {
-      title: "#", key: "idx", width: 52,
+      title: "S.No.", key: "idx", width: 65,
       render: (_, __, i) => <span className="text-xs text-slate-400 font-mono">{i + 1}</span>,
     },
     {
@@ -215,16 +215,16 @@ const DocumentCategoryManager = () => {
         </span>
       ),
     },
+    // {
+    //   title: "ID", key: "id", width: 80,
+    //   render: (_, r) => (
+    //     <span className="text-xs font-mono text-slate-400">
+    //       #{r?.DocumentCategoryID ?? r?.documentCategoryID ?? "—"}
+    //     </span>
+    //   ),
+    // },
     {
-      title: "ID", key: "id", width: 80,
-      render: (_, r) => (
-        <span className="text-xs font-mono text-slate-400">
-          #{r?.DocumentCategoryID ?? r?.documentCategoryID ?? "—"}
-        </span>
-      ),
-    },
-    {
-      title: "Status", key: "status", width: 110,
+      title: "Status", key: "status",  
       render: (_, r) => (
         <Badge color={resolveActive(r) ? "green" : "yellow"}>
           {resolveActive(r) ? "Active" : "Inactive"}
@@ -232,7 +232,7 @@ const DocumentCategoryManager = () => {
       ),
     },
     {
-      title: "Created", key: "created", width: 120,
+      title: "Created", key: "created",  
       render: (_, r) => (
         <span className="text-xs text-slate-500">
           {formatDate(r?.CreatedDate ?? r?.createdDate)}
@@ -240,7 +240,7 @@ const DocumentCategoryManager = () => {
       ),
     },
     {
-      title: "Actions", key: "actions", width: 120,
+      title: "Actions", key: "actions", width: 200,
       render: (_, r) => (
         <ActionButtons
           onView={() => setCatViewModal({ open: true, record: r })}
@@ -339,7 +339,7 @@ const DocumentCategoryManager = () => {
   /* SubCategory table columns */
   const subColumns = [
     {
-      title: "#", key: "idx", width: 52,
+      title: "S.No.", key: "idx", width: 65,
       render: (_, __, i) => <span className="text-xs text-slate-400 font-mono">{i + 1}</span>,
     },
     {
@@ -361,14 +361,14 @@ const DocumentCategoryManager = () => {
         );
       },
     },
-    {
-      title: "ID", key: "id", width: 80,
-      render: (_, r) => (
-        <span className="text-xs font-mono text-slate-400">
-          #{r?.DocumentSubCategoryID ?? r?.documentSubCategoryID ?? "—"}
-        </span>
-      ),
-    },
+    // {
+    //   title: "ID", key: "id", width: 80,
+    //   render: (_, r) => (
+    //     <span className="text-xs font-mono text-slate-400">
+    //       #{r?.DocumentSubCategoryID ?? r?.documentSubCategoryID ?? "—"}
+    //     </span>
+    //   ),
+    // },
     {
       title: "Status", key: "status", width: 110,
       render: (_, r) => (

@@ -19,10 +19,10 @@ import LogoutPopup from "../../common/Logoutpopup";
 
 /* ── Design tokens ─────────────────────────────────────────────────────────── */
 export const glass =
-  "rounded-2xl bg-white/80 backdrop-blur-xl border border-white/90 shadow-[0_2px_20px_rgba(99,102,241,0.07)]";
+  "rounded-2xl bg-white border border-white/90 shadow-[0_2px_20px_rgba(99,102,241,0.07)]";
 
 export const glassCard =
-  "rounded-2xl bg-white/70 backdrop-blur-xl border border-white/80 shadow-[0_4px_24px_rgba(99,102,241,0.08)]";
+  "rounded-2xl bg-white border border-slate-100 shadow-[0_4px_24px_rgba(99,102,241,0.08)]";
 
 /* ── Avatar with initials ─────────────────────────────────────────────────── */
 export function Avatar({ name = "U", size = 36, className = "" }) {
@@ -190,8 +190,8 @@ export default function DashboardLayout({
     >
       {/* Ambient blobs */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-        <div className="absolute -left-40 -top-20 h-[500px] w-[500px] rounded-full bg-indigo-400/10 blur-[120px]" />
-        <div className="absolute right-[-80px] top-[30%] h-[400px] w-[400px] rounded-full bg-violet-400/10 blur-[120px]" />
+        <div className="absolute -left-40 -top-20 h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle,rgba(129,140,248,0.15)_0%,transparent_70%)]" />
+        <div className="absolute right-[-80px] top-[30%] h-[400px] w-[400px] rounded-full bg-[radial-gradient(circle,rgba(167,139,250,0.15)_0%,transparent_70%)]" />
       </div>
 
       {/* Mobile backdrop */}
@@ -209,7 +209,7 @@ export default function DashboardLayout({
 
       {/* ── Sidebar ── */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-60 flex flex-col bg-white/90 backdrop-blur-2xl border-r border-slate-200/60 shadow-[4px_0_24px_rgba(99,102,241,0.06)] lg:relative transition-transform duration-300 ${
+        className={`fixed inset-y-0 left-0 z-50 w-60 flex flex-col bg-white border-r border-slate-200/60 shadow-[4px_0_24px_rgba(99,102,241,0.06)] lg:relative transition-transform duration-300 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }`}
       >
@@ -313,7 +313,7 @@ export default function DashboardLayout({
       {/* ── Main area ── */}
       <div className="relative z-10 flex flex-1 flex-col overflow-hidden">
         {/* Top header */}
-        <header className="flex h-16 items-center gap-4 bg-white/80 backdrop-blur-xl border-b border-slate-200/60 px-4 sm:px-6 flex-shrink-0">
+        <header className="flex h-16 items-center gap-4 bg-white border-b border-slate-200/60 px-4 sm:px-6 flex-shrink-0">
           {/* Mobile toggle */}
           <button
             className="lg:hidden rounded-xl border border-slate-200 bg-white p-2 text-slate-500 hover:bg-slate-50"
@@ -360,17 +360,13 @@ export default function DashboardLayout({
 
         {/* Page content */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.22 }}
-            >
-              {children}
-            </motion.div>
-          </AnimatePresence>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.22 }}
+          >
+            {children}
+          </motion.div>
         </main>
       </div>
 

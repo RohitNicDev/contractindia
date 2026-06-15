@@ -5,7 +5,7 @@
  */
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, Outlet, useOutletContext } from "react-router-dom";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import {
@@ -21,6 +21,7 @@ import {
   ShoppingBag,
   History,
   Plus,
+  BriefcaseBusiness,
 } from "lucide-react";
 import DashboardLayout, {
   glassCard,
@@ -30,19 +31,47 @@ import DashboardLayout, {
   StatusBadge,
   Avatar,
 } from "../Dashboard/Layout/DashboardLayout";
-import PlansAndSubscriptions from "./pages/PlansAndSubscriptions";
-import MyCredits from "./pages/MyCredits";
 import SubscriptionPlansFlow from "./pages/SubscriptionPlansFlow";
 
 /* ── Nav definition ─────────────────────────────────────────────────────── */
 const NAV = [
-  { id: "overview", label: "Dashboard", icon: LayoutDashboard },
-  { id: "profile", label: "My Profile", icon: User },
-  { id: "password", label: "Change Password", icon: Key },
-  { id: "subscription", label: "Subscription Plan", icon: CreditCard },
-  // { id: "PlansAndSubscriptions", label: "Plans & Subscriptions", icon: BookOpen },
-  // { id: "MyCredits", label: "My Credits", icon: Edit3 },
+  { id: "overview", label: "Dashboard", icon: LayoutDashboard, route: "" },
+  { id: "MyServices", label: "My Services", icon: BriefcaseBusiness, route: "MyServices" },
+  { id: "subscription", label: "Subscription Plan", icon: CreditCard, route: "subscription" },
+  { id: "plans-and-subscriptions", label: "Plans & Subscriptions", icon: BookOpen, route: "plans-and-subscriptions" },
+  { id: "mycredits", label: "My Credits", icon: Edit3, route: "mycredits" },
+  { id: "profile", label: "My Profile", icon: User, route: "profile" },
+  { id: "password", label: "Change Password", icon: Key, route: "password" },
 ];
+
+function getNavItem(value) {
+  if (!value) return undefined;
+  const normalized = String(value).trim().toLowerCase();
+  return NAV.find(
+    (item) =>
+      item.id.toLowerCase() === normalized ||
+      item.route.toLowerCase() === normalized ||
+      normalized === `individual/dashboard/${item.route.toLowerCase()}` ||
+      normalized === `/individual/dashboard/${item.route.toLowerCase()}` ||
+      normalized === `/${item.route.toLowerCase()}`,
+  );
+}
+
+function getPathForNav(value) {
+  const item = getNavItem(value);
+  if (!item) return null;
+  return item.route === ""
+    ? "/individual/dashboard"
+    : `/individual/dashboard/${item.route}`;
+}
+
+function resolveTabByRoute(pathname) {
+  const relativePath = pathname
+    .replace(/^\/individual\/dashboard\/?/, "")
+    .replace(/\/$/, "");
+  const item = NAV.find((nav) => nav.route === relativePath);
+  return item ? item.id : "overview";
+}
 
 /* ── Helpers ─────────────────────────────────────────────────────────────── */
 function loadUser() {
@@ -69,7 +98,9 @@ function saveUser(u) {
    ══════════════════════════════════════════════════════════════════════════ */
 
 /* ── Overview ──────────────────────────────────────────────────────────── */
-function Overview({ user }) {
+export function Overview(props) {
+  const context = useOutletContext();
+  const user = props.user || context?.user || {};
   const firstName = user.name?.split(" ")[0] || "there";
 
   const stats = [
@@ -78,24 +109,28 @@ function Overview({ user }) {
       value: "250",
       icon: CreditCard,
       grad: "from-indigo-500 to-violet-500",
+      tab: "mycredits",
     },
     {
       label: "Active Plans",
       value: "2",
       icon: CheckCircle2,
       grad: "from-emerald-500 to-teal-500",
+      tab: "plans-and-subscriptions",
     },
-    {
-      label: "Bookings",
-      value: "7",
-      icon: History,
-      grad: "from-amber-500 to-orange-400",
-    },
+    // {
+    //   label: "Bookings",
+    //   value: "7",
+    //   icon: History,
+    //   grad: "from-amber-500 to-orange-400",
+    //   tab: "clients",
+    // },
     {
       label: "Services",
       value: "3",
       icon: ShoppingBag,
       grad: "from-pink-500 to-rose-500",
+      tab: "MyServices",
     },
   ];
 
@@ -131,7 +166,7 @@ function Overview({ user }) {
         className={`relative overflow-hidden ${glassCard} p-6`}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-violet-500/8 to-cyan-400/6 rounded-2xl" />
-        <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-indigo-400/15 blur-3xl" />
+        <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-[radial-gradient(circle,rgba(129,140,248,0.2)_0%,transparent_70%)]" />
         <div className="relative flex items-start justify-between">
           <div>
             <h1 className="text-2xl font-black bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-800 bg-clip-text text-transparent">
@@ -150,7 +185,7 @@ function Overview({ user }) {
       </motion.div>
 
       {/* Stats grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
         {stats.map((s, i) => (
           <motion.div
             key={s.label}
@@ -158,7 +193,8 @@ function Overview({ user }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.07 }}
             whileHover={{ y: -2 }}
-            className={`${glassCard} p-5`}
+            onClick={() => s.tab && context.handleTabChange?.(s.tab)}
+            className={`${glassCard} p-5 cursor-pointer hover:shadow-lg transition-all`}
           >
             <div className="flex items-start justify-between mb-3">
               <span
@@ -199,7 +235,7 @@ function Overview({ user }) {
       </div>
 
       {/* Newsletter teaser */}
-      <div className={`${glassCard} p-5`}>
+      {/* <div className={`${glassCard} p-5`}>
         <div className="flex items-center gap-2 mb-2">
           <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
           <span className="text-xs font-black text-amber-600 uppercase tracking-wide">
@@ -220,13 +256,17 @@ function Overview({ user }) {
         >
           Read Now <ArrowRight className="w-3.5 h-3.5" />
         </button>
-      </div>
+      </div> */}
     </div>
   );
 }
 
 /* ── My Profile ──────────────────────────────────────────────────────────── */
-function MyProfile({ user, onUpdate }) {
+export function MyProfile(props) {
+  const context = useOutletContext();
+  const user = props.user || context?.user || {};
+  const onUpdate = props.onUpdate || context?.setUser || (() => { });
+
   const [form, setForm] = useState({
     name: user.name || "",
     email: user.email || "",
@@ -328,7 +368,7 @@ function MyProfile({ user, onUpdate }) {
 }
 
 /* ── Change Password ─────────────────────────────────────────────────────── */
-function ChangePassword() {
+export function ChangePassword() {
   const [form, setForm] = useState({ old: "", next: "", confirm: "" });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -439,7 +479,7 @@ const SUBSCRIPTIONS = [
   },
 ];
 
-function SubscriptionPlan() {
+export function SubscriptionPlan() {
   const [showPlans, setShowPlans] = useState(false);
   return (
     <div className={`${glassCard} p-6`}>
@@ -453,8 +493,8 @@ function SubscriptionPlan() {
           <div
             key={sub.plan}
             className={`rounded-2xl border p-5 transition-all ${sub.status === "Active"
-                ? "border-indigo-200 bg-indigo-50/40 shadow-sm"
-                : "border-slate-200 bg-slate-50/50"
+              ? "border-indigo-200 bg-indigo-50/40 shadow-sm"
+              : "border-slate-200 bg-slate-50/50"
               }`}
           >
             <div className="flex items-center justify-between mb-3">
@@ -495,11 +535,11 @@ function SubscriptionPlan() {
         ))}
         {/* // 3. mount the flow */}
       </div>
-        <SubscriptionPlansFlow
-          open={showPlans}
-          onClose={() => { setShowPlans(false); refetchSubscription(); }}
-          currentPlanId={12213}
-        />
+      <SubscriptionPlansFlow
+        open={showPlans}
+        onClose={() => { setShowPlans(false); refetchSubscription(); }}
+        currentPlanId={12213}
+      />
     </div>
   );
 }
@@ -509,8 +549,16 @@ function SubscriptionPlan() {
    ══════════════════════════════════════════════════════════════════════════ */
 export default function IndividualDashboard() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState(loadUser);
-  const [activeTab, setActiveTab] = useState("overview");
+
+  const activeTab = resolveTabByRoute(location.pathname);
+
+  const handleTabChange = (tab) => {
+    const path = getPathForNav(tab) || (typeof tab === "string" ? tab : null);
+    if (!path) return;
+    navigate(path);
+  };
 
   const handleSignOut = () => {
     [
@@ -526,37 +574,20 @@ export default function IndividualDashboard() {
     navigate("/login");
   };
 
-  const renderPage = () => {
-    switch (activeTab) {
-      case "overview":
-        return <Overview user={user} />;
-      case "profile":
-        return <MyProfile user={user} onUpdate={setUser} />;
-      case "password":
-        return <ChangePassword />;
-      case "subscription":
-        return <SubscriptionPlan />;
-      case "PlansAndSubscriptions":
-        return <PlansAndSubscriptions />;
-      case "MyCredits":
-        return <MyCredits />;
-      default:
-        return <Overview user={user} />;
-    }
-  };
+
 
   return (
     <DashboardLayout
       navItems={NAV}
       activeTab={activeTab}
-      onTabChange={setActiveTab}
+      onTabChange={handleTabChange}
       user={{ name: user.name, email: user.email, role: "Individual Account" }}
       onSignOut={handleSignOut}
       badge="Individual Account"
       badgeColor="indigo"
       notifications={2}
     >
-      {renderPage()}
+      <Outlet context={{ user, setUser, handleTabChange }} />
     </DashboardLayout>
   );
 }

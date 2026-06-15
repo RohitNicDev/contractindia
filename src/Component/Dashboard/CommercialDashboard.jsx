@@ -1,75 +1,123 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, Routes, Route, Outlet, useOutletContext } from "react-router-dom";
 import { toast } from "sonner";
 import {
   LayoutDashboard,
   User,
   CreditCard,
-  History,
   Briefcase,
-  Eye,
   List,
-  FileText,
   Settings,
-  LogOut,
-  Menu,
-  X,
   Plus,
-  CheckCircle2,
-  Upload,
   ChevronDown,
-  Zap,
-  ToggleLeft,
-  ToggleRight,
-  Key,
   TrendingUp,
   ArrowUpRight,
-  Shield,
-  FolderOpen,
-  Building2,
-  Trash2,
-  Bell,
-  Search,
-  CircleDot,
-  Layers3,
-  ChevronRight,
-  Check,
+  User2Icon,
+  PlaneIcon,
+  ClipboardList,
+  Users,
+  UserRound,
+  PackageCheck,
+  Receipt,
 } from "lucide-react";
-import SettingsPanel from "./SettingsPanel";
 import ProfileWizard from "./pages/ProfileSteper/ProfileWizard";
 import {
   useProfileWizardStore,
   calculateProgress,
 } from "../../store/profileWizardStore";
-import { SERVICES_HIERARCHY } from "../../data/services_hierarchy";
-import { Input } from "antd";
-import ServiceListing from "./pages/ServiceListing";
-import SubscriptionHistory from "./pages/SubscriptionHistory";
-import ClientsHistory from "./pages/ClientsHistory";
-import LeadManagement from "./pages/LeadManagement";
-import MyCredits from "./pages/MyCredits";
-import PlansAndSubscriptions from "./pages/PlansAndSubscriptions";
-import { btnPrimary } from "../common/uiUtiles";
-import LogoutPopup from "../common/Logoutpopup";
 import DashboardLayout from "../Dashboard/Layout/DashboardLayout";
 // ─── Design tokens ────────────────────────────────────────────────────────────
 export const glass =
-  "rounded-2xl bg-white/80 backdrop-blur-xl border border-white/90 shadow-[0_2px_20px_rgba(99,102,241,0.07)]";
+  "rounded-2xl bg-white border border-slate-100 shadow-[0_2px_20px_rgba(99,102,241,0.07)]";
 
 const NAV = [
-  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "profile", label: "My Profile", icon: User },
-  // { id: "payments", label: "Payment History", icon: History },
-  { id: "subscription", label: "Subscription History", icon: Briefcase },
-  { id: "PlansAndSubscriptions", label: "Plans & Subscriptions", icon: Briefcase },
-  { id: "credits", label: "My Credits", icon: CreditCard },
-  { id: "clients", label: "Client History", icon: User },
-  { id: "leads", label: "Lead Management", icon: List },
-  { id: "services", label: "Service Listing", icon: Briefcase },
-  { id: "settings", label: "Settings", icon: Settings },
+  {
+    id: "dashboard",
+    label: "Dashboard",
+    icon: LayoutDashboard,
+    route: "",
+  },
+  {
+    id: "profile",
+    label: "My Profile",
+    icon: UserRound,
+    route: "profile",
+  },
+  {
+    id: "clients",
+    label: "Client History",
+    icon: Users,
+    route: "clients",
+  },
+  {
+    id: "leads",
+    label: "Lead Management",
+    icon: ClipboardList,
+    route: "leads",
+  },
+  {
+    id: "services",
+    label: "Service Listing",
+    icon: Briefcase,
+    route: "services",
+  },
+  {
+    id: "subscription",
+    label: "Subscription History",
+    icon: Receipt,
+    route: "subscription",
+  },
+  {
+    id: "PlansAndSubscriptions",
+    label: "Plans & Subscriptions",
+    icon: PackageCheck,
+    route: "plans-and-subscriptions",
+  },
+  {
+    id: "credits",
+    label: "My Credits",
+    icon: CreditCard,
+    route: "credits",
+  },
+  {
+    id: "settings",
+    label: "Settings",
+    icon: Settings,
+    route: "settings",
+  },
 ];
+function getNavItem(value) {
+  if (!value) return undefined;
+  const normalized = String(value).trim().toLowerCase();
+  return NAV.find(
+    (item) =>
+      item.id.toLowerCase() === normalized ||
+      item.label.toLowerCase() === normalized ||
+      item.route.toLowerCase() === normalized ||
+      item.route.toLowerCase() === normalized.replace(/^\//, "") ||
+      normalized === `commercial/dashboard/${item.route.toLowerCase()}` ||
+      normalized === `/commercial/dashboard/${item.route.toLowerCase()}` ||
+      normalized === `/${item.route.toLowerCase()}`,
+  );
+}
+
+function getPathForNav(value) {
+  const item = getNavItem(value);
+  if (!item) return null;
+  return item.route === ""
+    ? "/commercial/dashboard"
+    : `/commercial/dashboard/${item.route}`;
+}
+
+function resolveTabByRoute(pathname) {
+  const relativePath = pathname
+    .replace(/^\/commercial\/dashboard\/?/, "")
+    .replace(/\/$/, "");
+  const item = NAV.find((nav) => nav.route === relativePath);
+  return item ? item.id : "dashboard";
+}
 
 // ─── Portal Multi-Select Dropdown (escapes overflow:hidden) ───────────────────
 function PortalDropdown({ options, selected, onToggle, color, bg, border }) {
@@ -236,41 +284,49 @@ function PortalDropdown({ options, selected, onToggle, color, bg, border }) {
 }
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
-function Dashboard({ user }) {
+export const Dashboard = (props) => {
+  const context = useOutletContext();
+  const user = props.user || context?.user || {};
+  const onTabChange = props.onTabChange || context?.handleTabChange || (() => { });
+
   const name = user.companyName || user.contactPerson || "there";
 
   const stats = [
     {
       label: "Credits",
-      value: "₹500",
+      value: user.credits ? `₹${user.credits.toLocaleString()}` : "₹0",
       sub: "+₹200 this month",
       grad: "from-blue-500 to-indigo-500",
       icon: CreditCard,
       up: true,
+      tab: "credits",
     },
     {
       label: "Active Leads",
-      value: "12",
+      value: user.activeLeads ? String(user.activeLeads) : "0",
       sub: "3 new this week",
       grad: "from-emerald-500 to-teal-500",
       icon: List,
       up: true,
+      tab: "leads",
     },
     {
       label: "Clients",
-      value: "8",
+      value: user.clients ? String(user.clients) : "0",
       sub: "2 inactive",
       grad: "from-amber-500 to-orange-400",
       icon: User,
       up: false,
+      tab: "clients",
     },
     {
       label: "Services",
-      value: "5",
+      value: user.services ? String(user.services.length || 0) : "0",
       sub: "All active",
       grad: "from-violet-500 to-purple-500",
       icon: Briefcase,
       up: true,
+      tab: "services",
     },
   ];
 
@@ -283,8 +339,8 @@ function Dashboard({ user }) {
         className={`relative overflow-hidden ${glass} p-6`}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/8 via-indigo-500/6 to-violet-400/4 rounded-2xl" />
-        <div className="absolute -right-16 -top-12 h-48 w-48 rounded-full bg-indigo-400/10 blur-3xl" />
-        <div className="absolute -left-8 -bottom-8 h-32 w-32 rounded-full bg-blue-300/10 blur-2xl" />
+        <div className="absolute -right-16 -top-12 h-48 w-48 rounded-full bg-[radial-gradient(circle,rgba(129,140,248,0.2)_0%,transparent_70%)]" />
+        <div className="absolute -left-8 -bottom-8 h-32 w-32 rounded-full bg-[radial-gradient(circle,rgba(147,197,253,0.2)_0%,transparent_70%)]" />
         <div className="relative flex items-start justify-between">
           <div>
             <p className="text-[10.5px] font-bold uppercase tracking-[0.22em] text-blue-500">
@@ -332,7 +388,8 @@ function Dashboard({ user }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.07 }}
             whileHover={{ y: -2, transition: { duration: 0.15 } }}
-            className={`${glass} p-5 group cursor-pointer`}
+            onClick={() => s.tab && onTabChange(s.tab)}
+            className={`${glass} p-5 group cursor-pointer transition-all hover:shadow-lg`}
           >
             <div className="flex items-start justify-between mb-3">
               <span
@@ -409,94 +466,6 @@ function Dashboard({ user }) {
 }
 
 // ─── Add Credits ──────────────────────────────────────────────────────────────
-function AddCredits() {
-  const [credits, setCredits] = useState(500);
-  const [amt, setAmt] = useState("");
-
-  const add = () => {
-    const n = parseInt(amt);
-    if (!n || n <= 0) {
-      toast.error("Enter a valid amount");
-      return;
-    }
-    setCredits((c) => c + n);
-    setAmt("");
-    toast.success(`₹${n} credits added!`);
-  };
-
-  return (
-    <div className={`${glass} p-6 space-y-6`}>
-      <div className="flex items-center gap-3">
-        <span className="w-9 h-9 rounded-xl flex items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-500 shadow-md">
-          <CreditCard className="w-4 h-4 text-white" />
-        </span>
-        <div>
-          <h3 className="font-black text-slate-800">Add Credits</h3>
-          <p className="text-xs text-slate-400">Top up your account balance</p>
-        </div>
-      </div>
-
-      {/* Balance display */}
-      <div
-        className="relative overflow-hidden rounded-2xl p-5"
-        style={{ background: "linear-gradient(135deg,#3b82f6,#6366f1)" }}
-      >
-        <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-white/10 blur-2xl" />
-        <p className="text-xs font-semibold text-blue-100 uppercase tracking-widest">
-          Current Balance
-        </p>
-        <p className="text-4xl font-black text-white mt-1">
-          ₹{credits.toLocaleString()}
-        </p>
-        <p className="text-blue-200 text-xs mt-1">Available to spend</p>
-      </div>
-
-      {/* Quick amounts */}
-      <div>
-        <p className="text-[10.5px] font-bold text-slate-400 uppercase tracking-widest mb-2">
-          Quick add
-        </p>
-        <div className="grid grid-cols-4 gap-2">
-          {[500, 1000, 2000, 5000].map((v) => (
-            <button
-              key={v}
-              onClick={() => setAmt(String(v))}
-              className={`py-2.5 rounded-xl border text-sm font-bold transition-all ${
-                amt === String(v)
-                  ? "border-blue-400 bg-blue-50 text-blue-700"
-                  : "border-slate-200 bg-white text-slate-700 hover:border-blue-200"
-              }`}
-            >
-              ₹{v.toLocaleString()}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="flex gap-3">
-        <input
-          type="number"
-          value={amt}
-          onChange={(e) => setAmt(e.target.value)}
-          placeholder="Custom amount (₹)"
-          className="flex-1 px-3 py-2.5 rounded-xl border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100/50 outline-none text-sm bg-white"
-        />
-        <motion.button
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={add}
-          className="px-5 py-2.5 rounded-xl font-bold text-sm text-white shadow-md flex items-center gap-2"
-          style={btnPrimary}
-        >
-          <Plus className="w-4 h-4" /> Pay
-        </motion.button>
-      </div>
-      <p className="text-[10.5px] text-slate-400">
-        Demo integration — no real payment processed.
-      </p>
-    </div>
-  );
-}
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
@@ -513,13 +482,12 @@ export default function CommercialDashboard() {
     raw
       ? JSON.parse(raw)
       : {
-          companyName: "Demo Company",
-          contactPerson: "Demo User",
-          email: "demo@company.com",
-          mobile: "9876543210",
-        },
+        companyName: "Demo Company",
+        contactPerson: "Demo User",
+        email: "demo@company.com",
+        mobile: "9876543210",
+      },
   );
-  const [activeTab, setActiveTab] = useState("dashboard");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [gstNumber, setGstNumber] = useState(
     () => localStorage.getItem("commercial_gst_v1") || "",
@@ -567,63 +535,40 @@ export default function CommercialDashboard() {
     toast.success("GST number saved.");
   };
 
-  const renderPage = () => {
-    if (isLocked) {
-      return <ProfileWizard />;
-    }
-    switch (activeTab) {
-      case "dashboard":
-        return <Dashboard user={user} />;
-      case "profile":
-        return <ProfileWizard />;
-      case "credits":
-        return <AddCredits />;
-      // case "payments": return <DataTable title="Payment History" icon={History} accent="blue" cols={["Txn ID", "Amount", "Type", "Date", "Status"]} rows={payRows} />;
-      case "subscription":
-        return <SubscriptionHistory />;
-      case "PlansAndSubscriptions":
-        return <PlansAndSubscriptions />;
-      case "MyCredits":
-        return <MyCredits />;
-      case "clients":
-        return <ClientsHistory />;
-      case "leads":
-        return <LeadManagement />;
-      case "services":
-        return <ServiceListing dashboardMode={true} />;
-      case "settings":
-        return <SettingsPanel />;
-      default:
-        return <Dashboard user={user} />;
-    }
+  const location = useLocation();
+  const activeTab = resolveTabByRoute(location.pathname);
+
+  const handleTabChange = (tab) => {
+    const path = getPathForNav(tab) || (typeof tab === "string" ? tab : null);
+    if (!path) return;
+    navigate(path);
   };
 
   // If locked, render fullscreen ProfileWizard onboarding layout directly
   if (isLocked) {
     return <ProfileWizard />;
   }
- 
 
   const visibleNav = isLocked ? NAV.filter((n) => n.id === "profile") : NAV;
   return (
     <>
-    <DashboardLayout
-      navItems={NAV}
-      activeTab={activeTab}
-      onTabChange={setActiveTab}
-      user={{
-        name:  user.companyName || user.contactPerson || "Company",
-        email: user.email || "",
-        role:  "Commercial Account",
-      }}
-      onSignOut={handleSignOut}
-      badge="Commercial"
-      badgeColor="blue"
-      notifications={1}
-    >
-      {renderPage()}
-    </DashboardLayout>
-    {/* {showGstModal && (
+      <DashboardLayout
+        navItems={NAV}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        user={{
+          name: user.companyName || user.contactPerson || "Company",
+          email: user.email || "",
+          role: "Commercial Account",
+        }}
+        onSignOut={handleSignOut}
+        badge="Commercial"
+        badgeColor="blue"
+        notifications={1}
+      >
+        <Outlet context={{ user, handleTabChange }} />
+      </DashboardLayout>
+      {/* {showGstModal && (
         <div className="fixed inset-0 z-[1000] bg-slate-950/85 flex items-center justify-center px-4 py-6">
           <div className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl">
           
@@ -648,8 +593,6 @@ export default function CommercialDashboard() {
           </div>
         </div>
       )}  */}
-      </>
-       
+    </>
   );
 }
- 

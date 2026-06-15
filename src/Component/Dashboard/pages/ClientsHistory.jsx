@@ -111,9 +111,8 @@ export default function ClientsHistory() {
   } = useQuery({
     queryKey: ["clientsHistory"],
     queryFn: fetchClientHistory,
-
-    retry: 2,
-    onError: () => toast.error("Failed to load client history."),
+    // retry: 2,
+    // onError: () => toast.error("Failed to load client history."),
   });
 
   /* ── Derived table rows ── */

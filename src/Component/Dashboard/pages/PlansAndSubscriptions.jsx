@@ -153,11 +153,10 @@ function PaymentModal({ plan, onClose, onSuccess }) {
 
             <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
               onClick={handleSubmit} disabled={!isValid}
-              className={`w-full py-3.5 rounded-2xl font-bold text-sm text-white shadow-lg ${
-                isValid
-                  ? "bg-gradient-to-r from-indigo-600 to-violet-600 hover:opacity-90"
-                  : "bg-slate-300 cursor-not-allowed"
-              }`}>
+              className={`w-full py-3.5 rounded-2xl font-bold text-sm text-white shadow-lg ${isValid
+                ? "bg-gradient-to-r from-indigo-600 to-violet-600 hover:opacity-90"
+                : "bg-slate-300 cursor-not-allowed"
+                }`}>
               Pay {formatPrice(form.amount)}
             </motion.button>
             <p className="text-center text-[10px] text-slate-400">Secure demo payment — no real transaction processed</p>
@@ -252,11 +251,10 @@ export default function PlansAndSubscriptions() {
       dataIndex: "IsActive",
       key: "IsActive",
       render: (_, record) => (
-        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold border ${
-          resolvePlanStatus(record) === "Active"
-            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-            : "bg-slate-100 text-slate-500 border-slate-200"
-        }`}>
+        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold border ${resolvePlanStatus(record) === "Active"
+          ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+          : "bg-slate-100 text-slate-500 border-slate-200"
+          }`}>
           {resolvePlanStatus(record)}
         </span>
       ),
@@ -361,72 +359,71 @@ export default function PlansAndSubscriptions() {
       <div className="flex rounded-xl bg-slate-100 p-1 w-fit">
         <button
           onClick={() => setTab("plans")}
-          className={`px-5 py-2 text-sm font-bold rounded-lg transition-all duration-200 ${
-            tab === "plans"
-              ? "bg-white text-indigo-600 shadow-sm"
-              : "text-slate-500 hover:text-slate-700"
-          }`}
+          className={`px-5 py-2 text-sm font-bold rounded-lg transition-all duration-200 ${tab === "plans"
+            ? "bg-white text-indigo-600 shadow-sm"
+            : "text-slate-500 hover:text-slate-700"
+            }`}
         >
           Available Plans
         </button>
         <button
           onClick={() => setTab("subscriptions")}
-          className={`px-5 py-2 text-sm font-bold rounded-lg transition-all duration-200 ${
-            tab === "subscriptions"
-              ? "bg-white text-indigo-600 shadow-sm"
-              : "text-slate-500 hover:text-slate-700"
-          }`}
+          className={`px-5 py-2 text-sm font-bold rounded-lg transition-all duration-200 ${tab === "subscriptions"
+            ? "bg-white text-indigo-600 shadow-sm"
+            : "text-slate-500 hover:text-slate-700"
+            }`}
         >
           My Subscriptions
         </button>
       </div>
-
-      {tab === "plans" ? (
-        plansLoading ? (
-          <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-slate-200/70 bg-white py-20">
-            <Loader2 className="h-8 w-8 animate-spin text-violet-400" />
-            <p className="text-xs font-medium text-slate-400">Loading available plans…</p>
-          </div>
+      <div className="mx-auto space-y-6">
+        {tab === "plans" ? (
+          plansLoading ? (
+            <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-slate-200/70 bg-white py-20">
+              <Loader2 className="h-8 w-8 animate-spin text-violet-400" />
+              <p className="text-xs font-medium text-slate-400">Loading available plans…</p>
+            </div>
+          ) : (
+            <DataTableComponent
+              title="Available Plans"
+              icon={Briefcase}
+              accent="indigo"
+              cols={planColumns}
+              rows={plans}
+              onRefresh={refetchPlans}
+              loading={plansFetching && !plansLoading}
+            />
+          )
         ) : (
-          <DataTableComponent
-            title="Available Plans"
-            icon={Briefcase}
-            accent="indigo"
-            cols={planColumns}
-            rows={plans}
-            onRefresh={refetchPlans}
-            loading={plansFetching && !plansLoading}
-          />
-        )
-      ) : (
-        subsLoading ? (
-          <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-slate-200/70 bg-white py-20">
-            <Loader2 className="h-8 w-8 animate-spin text-violet-400" />
-            <p className="text-xs font-medium text-slate-400">Loading subscription records…</p>
-          </div>
-        ) : (
-          <DataTableComponent
-            title="My Subscriptions"
-            icon={CreditCard}
-            accent="violet"
-            cols={subscriptionColumns}
-            rows={subscriptions}
-            onRefresh={refetchSubs}
-            loading={subsFetching && !subsLoading}
-          />
-        )
-      )}
-
-      <AnimatePresence>
-        {paymentPlan && (
-          <PaymentModal
-            key="payment-modal"
-            plan={paymentPlan}
-            onClose={() => setPaymentPlan(null)}
-            onSuccess={handlePaymentSuccess}
-          />
+          subsLoading ? (
+            <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-slate-200/70 bg-white py-20">
+              <Loader2 className="h-8 w-8 animate-spin text-violet-400" />
+              <p className="text-xs font-medium text-slate-400">Loading subscription records…</p>
+            </div>
+          ) : (
+            <DataTableComponent
+              title="My Subscriptions"
+              icon={CreditCard}
+              accent="violet"
+              cols={subscriptionColumns}
+              rows={subscriptions}
+              onRefresh={refetchSubs}
+              loading={subsFetching && !subsLoading}
+            />
+          )
         )}
-      </AnimatePresence>
+
+        <AnimatePresence>
+          {paymentPlan && (
+            <PaymentModal
+              key="payment-modal"
+              plan={paymentPlan}
+              onClose={() => setPaymentPlan(null)}
+              onSuccess={handlePaymentSuccess}
+            />
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }

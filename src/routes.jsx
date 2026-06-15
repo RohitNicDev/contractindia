@@ -45,8 +45,8 @@ import { RegisterForm } from "./Component/auth/RegisterForm";
 import ActionWrapperMain from "./Component/Dashboard/pages/ActionWrapperMain";
 
 // ── Standalone dashboards ──────────────────────────────────────────────────
-import IndividualDashboard from "./Component/Dashboard/IndividualDashboard";
-import CommercialDashboard from "./Component/Dashboard/CommercialDashboard";
+import IndividualDashboard, { Overview, MyProfile, ChangePassword, SubscriptionPlan } from "./Component/Dashboard/IndividualDashboard";
+import CommercialDashboard, { Dashboard } from "./Component/Dashboard/CommercialDashboard";
 
 // ── Admin ──────────────────────────────────────────────────────────────────
 import AdminLogin from "./Component/Admin/AdminLogin";
@@ -55,6 +55,17 @@ import BuyingService from "./Component/Public/Services/Buyingservice";
 import BuyingService2 from "./Component/Public/Services/Buyingservice2";
 import Companies from "./Component/Public/Companies";
 import CompanySubServices from "./Component/Public/Services/CompanySubServices";
+import DashboardLayout from "./Component/Dashboard/Layout/DashboardLayout";
+import ProfileWizard from "./Component/Dashboard/pages/ProfileSteper/ProfileWizard";
+import AddCredits from "./Component/Dashboard/pages/AddCredits";
+import SubscriptionHistory from "./Component/Dashboard/pages/SubscriptionHistory";
+import PlansAndSubscriptions from "./Component/Dashboard/pages/PlansAndSubscriptions";
+import MyCredits from "./Component/Dashboard/pages/MyCredits";
+import ClientsHistory from "./Component/Dashboard/pages/ClientsHistory";
+import ServiceListing from "./Component/Dashboard/pages/ServiceListing";
+import SettingsPanel from "./Component/Dashboard/SettingsPanel";
+import LeadManagement from "./Component/Dashboard/pages/LeadManagement";
+import IndividualMyServices from "./Component/Dashboard/pages/IndividualMyServices";
 
 export const router = createBrowserRouter([
   // ── Public routes (Header + Footer via PublicLayout) ─────────────────────
@@ -93,30 +104,48 @@ export const router = createBrowserRouter([
       { path: "/login", element: <LoginForm /> },
       { path: "/otp", element: <OtpVerification /> },
       { path: "/register", element: <RegisterForm /> },
+
     ],
   },
 
   // ── Main dashboard (collapsible sidebar via DashboardLayout) ─────────────
   // {
   //   path: "/dashboard",
-  //   element: <DashboardLayout />,
-  //   children: [
-  //     { index: true, element: <DashboardIndex /> },
-  //     { path: "profile", element: <DashboardProfile /> },
-  //     { path: "tenders", element: <DashboardTenders /> },
-  //     { path: "projects", element: <DashboardProjects /> },
-  //     { path: "companies", element: <DashboardCompanies /> },
-  //     { path: "messages", element: <DashboardMessages /> },
-  //     { path: "settings", element: <DashboardSettings /> },
-  //     { path: "profile-wizard", element: <ProfileWizard /> },
   //   ],
   // },
 
-  // ── Individual user dashboard (standalone — own sidebar) ─────────────────
-  { path: "/individual/dashboard", element: <IndividualDashboard /> },
+  // ── Commercial Dashboard ──────────────────────────────────────────────────
+  {
+    path: "/commercial/dashboard",
+    element: <CommercialDashboard />,
+    children: [
+      { index: true, element: <Dashboard /> },
+      { path: "profile", element: <ProfileWizard /> },
+      { path: "credits", element: <AddCredits /> },
+      { path: "subscription", element: <SubscriptionHistory /> },
+      { path: "plans-and-subscriptions", element: <PlansAndSubscriptions /> },
+      { path: "mycredits", element: <MyCredits /> },
+      { path: "clients", element: <ClientsHistory /> },
+      { path: "services", element: <ServiceListing dashboardMode={true} /> },
+      { path: "leads", element: <LeadManagement /> },
+      { path: "settings", element: <SettingsPanel /> },
+    ],
+  },
 
-  // ── Commercial user dashboard (standalone — own sidebar) ─────────────────
-  { path: "/commercial/dashboard", element: <CommercialDashboard /> },
+  // ── Individual user dashboard (standalone — own sidebar) ─────────────────
+  {
+    path: "/individual/dashboard",
+    element: <IndividualDashboard />,
+    children: [
+      { index: true, element: <Overview /> },
+      { path: "MyServices", element: <IndividualMyServices /> },
+      { path: "subscription", element: <SubscriptionPlan /> },
+      { path: "plans-and-subscriptions", element: <PlansAndSubscriptions /> },
+      { path: "mycredits", element: <MyCredits /> },
+      { path: "profile", element: <MyProfile /> },
+      { path: "password", element: <ChangePassword /> },
+    ],
+  },
 
   // ── User action review panel (opened from admin verification table) ───────
   // Receives: location.state = { actionType, userRow, userTab }

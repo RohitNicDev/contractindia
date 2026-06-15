@@ -1,23 +1,20 @@
 import { create } from "zustand";
 
-export const userStore = create((set) => ({
+export const useUserStore = create((set) => ({
   userProfile: null,
-  setUserProfile: (profile) => set({ userProfile: profile }),
+  setUserProfile: (profile) => set({ profile }),
   token: null,
   setToken: (token) => set({ token }),
-  refreshToken: null,
-  setRefreshToken: (refreshToken) => set({ refreshToken }),
-  accessToken: null,
-  setAccessToken: (accessToken) => set({ accessToken }),
-  loginResponse: null,
-  setLoginResponse: (response) => set({ loginResponse: response }),
+  setUser: (user) => set({ user }),
+  User: null,
 }));
-
-export const serviceStore = create((set) => ({
-  allServices: [],
+export const useserviceStore = create((set) => ({
+  allServices: null,
   setAllServices: (services) => set({ allServices: services }),
+
   selectedService: null,
   setSelectedService: (service) => set({ selectedService: service }),
+
   serviceTree: [],
   setServiceTree: (tree) => set({ serviceTree: tree }),
 }));
