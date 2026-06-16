@@ -78,7 +78,10 @@ const LoginForm = () => {
             userType: response.userType,
             singleVerification: true,
             mobile: response.mobileNo || null,
-            guId: response?.value || null, // Pass the entire data object for OTP screen to use (if needed)
+            guId: response?.value || null,
+            response: response,
+            
+            // Pass the entire data object for OTP screen to use (if needed)
           },
         });
       }

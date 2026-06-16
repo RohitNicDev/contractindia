@@ -1,4 +1,4 @@
-﻿import { message, Switch } from "antd";
+import { message, Switch } from "antd";
 import {
   Building2,
   ChevronRight,
@@ -15,7 +15,7 @@ import {
   Zap,
   ChevronDown,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { AnimatePresence, motion } from "framer-motion";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -30,6 +30,7 @@ import {
 } from "../../../../services/api";
 import { formatDocumentPayload, validateDocumentFile } from "../../../../utils/Format";
 import { SERVICES_HIERARCHY } from "../../../../data/services_hierarchy";
+import { useUserStore } from "../../../../store/store";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // STEP 1: COMPANY TYPE
@@ -117,8 +118,14 @@ export function Step2BasicInfo({ store, nextStep, prevStep, triggerOtpSend }) {
     handleSubmit,
     formState: { errors },
     watch,
+    reset,
   } = useForm({ defaultValues: store.basicInfo });
 
+  useEffect(() => {
+    reset(store.basicInfo);
+  }, [store.basicInfo, reset]);
+
+  const { loginResponce } = useUserStore();
   // Mutation for saving basic info
   const { mutate: saveBasicInfo, isPending: isSaving } = useMutation({
     mutationFn: userBasicInformationSave,
@@ -138,7 +145,9 @@ export function Step2BasicInfo({ store, nextStep, prevStep, triggerOtpSend }) {
 
   const onSaveStep2 = async (data) => {
     const payload = {
-      userID: 0,
+
+      userID: loginResponce?.userId || 0,
+
       companyTypeId: 0,
       companyTypeName: store.companyType || "",
       companyName: data.companyName || "",
@@ -189,6 +198,7 @@ export function Step2BasicInfo({ store, nextStep, prevStep, triggerOtpSend }) {
             className="bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100/50 text-slate-800 shadow-sm"
             value={store.companyType}
             onChange={(e) => store.setCompanyType(e.target.value)}
+            disabled
           >
             <option value="">-- Choose Type --</option>
             <option value="proprietor">Proprietor</option>
@@ -233,7 +243,7 @@ export function Step2BasicInfo({ store, nextStep, prevStep, triggerOtpSend }) {
                 pattern: { value: /^\S+@\S+$/i, message: "Invalid email" },
               })}
             />
-            <button
+            {/* <button
               type="button"
               onClick={() => triggerOtpSend("email", watch("email"))}
               className={`px-4 rounded-xl font-bold text-xs border flex items-center justify-center shrink-0 shadow-sm transition-colors ${store.basicInfo.emailVerified
@@ -242,13 +252,13 @@ export function Step2BasicInfo({ store, nextStep, prevStep, triggerOtpSend }) {
                 }`}
             >
               {store.basicInfo.emailVerified ? "Verified ✓" : "Verify OTP"}
-            </button>
+            </button>*/}
           </div>
-          {errors.email && (
+          {/* {errors.email && (
             <span className="text-red-500 text-[10px] flex items-center gap-1">
               <AlertCircle className="w-3 h-3" /> {errors.email.message}
             </span>
-          )}
+          )} */}
         </div>
 
         <div className="flex flex-col gap-1.5">
@@ -268,7 +278,7 @@ export function Step2BasicInfo({ store, nextStep, prevStep, triggerOtpSend }) {
                 },
               })}
             />
-            <button
+            {/* <button
               type="button"
               onClick={() => triggerOtpSend("mobile", watch("mobile"))}
               className={`px-4 rounded-xl font-bold text-xs border flex items-center justify-center shrink-0 shadow-sm transition-colors ${store.basicInfo.mobileVerified
@@ -277,13 +287,13 @@ export function Step2BasicInfo({ store, nextStep, prevStep, triggerOtpSend }) {
                 }`}
             >
               {store.basicInfo.mobileVerified ? "Verified ✓" : "Verify OTP"}
-            </button>
+            </button> */}
           </div>
-          {errors.mobile && (
+          {/* {errors.mobile && (
             <span className="text-red-500 text-[10px] flex items-center gap-1">
               <AlertCircle className="w-3 h-3" /> {errors.mobile.message}
             </span>
-          )}
+          )} */}
         </div>
 
         <div className="flex flex-col gap-1.5">
@@ -366,7 +376,7 @@ export function Step2BasicInfo({ store, nextStep, prevStep, triggerOtpSend }) {
 export function Step4Documents({ store, nextStep, prevStep }) {
   const [dragActive, setDragActive] = useState(false);
   const [uploadingFiles, setUploadingFiles] = useState({});
-
+  const { loginResponce } = useUserStore();
   // Fetch document categories
   const {
     data: categoriesData = { data: [] },
@@ -446,10 +456,11 @@ export function Step4Documents({ store, nextStep, prevStep }) {
 
       // Format payload
       const payload = formatDocumentPayload(
-        file,
+        file, 
         file.name,
         categoryId,
-        0
+        0,
+        loginResponce?.userID || 0
       );
 
       // Save document
@@ -1010,6 +1021,7 @@ export function Step6Banking({
       text: "BANK",
     };
   };
+  const { loginResponce } = useUserStore();
 
   const {
     register,
@@ -1041,7 +1053,7 @@ export function Step6Banking({
   const onSaveStep6 = async (data) => {
     const payload = {
       bankDetailID: 0,
-      userID: 0,
+      userID: loginResponce?.userId || 0,
       bankName: data.bankName || "",
       accountNo: data.accountNumber || "",
       ifsc: data.ifscCode || "",

@@ -34,6 +34,9 @@ import {
   Step5ServiceListing,
   Step6Banking,
 } from "./stepComponents";
+import { UserRegistrationUserIdGet } from "../../../../services/api";
+import { useUserStore } from "../../../../store/store";
+import { useQuery } from "@tanstack/react-query";
 
 // Steps definition
 const STEPS = [
@@ -59,7 +62,11 @@ const STEPS = [
     desc: "Fintech Settlement",
   },
 ];
-
+const UserRegistrationUserIdGetApi = async (userId) => {
+  const response = await UserRegistrationUserIdGet(userId);
+  console.log(response, "response");
+  return response?.data ?? [];
+};
 export default function ProfileWizard() {
   const store = useProfileWizardStore();
   const progress = calculateProgress(store);
@@ -99,7 +106,30 @@ export default function ProfileWizard() {
       message.error("Please complete at least 80% of your profile before skipping.");
     }
   };
+  const getloginResponce = useUserStore((state) => state?.loginResponce);
 
+  const { data: UserData = [], isLoading: UserDataLoading } = useQuery({
+    queryKey: ["UserData", getloginResponce?.userId],
+    queryFn: () => UserRegistrationUserIdGetApi(getloginResponce?.userId),
+    enabled: !!getloginResponce?.userId,
+    retry: false,
+  });
+
+  React.useEffect(() => {
+    if (!UserData || (Array.isArray(UserData) && UserData.length === 0)) return;
+    const userObj = Array.isArray(UserData) ? UserData[0] : UserData;
+    if (userObj) {
+      if (!store.basicInfo.companyName && !store.basicInfo.contactPerson) {
+        store.setBasicInfo({
+          companyName: userObj.CompanyName || "",
+          contactPerson: userObj.Name || "",
+          email: userObj.EmailId || "",
+          mobile: userObj.MobileNo || "",
+          address: userObj.Address || "",
+        });
+      }
+    }
+  }, [UserData, store]);
   const triggerOtpSend = (type, val) => {
     if (!val) {
       message.error(`Please enter a valid ${type} before sending OTP.`);
@@ -109,22 +139,22 @@ export default function ProfileWizard() {
     message.info(`6-digit OTP code sent to ${val}`);
   };
 
-  const verifyOtp = () => {
-    if (otpVal === "123456" || otpVal.length === 6) {
-      if (otpModal.type === "email") {
-        store.setBasicInfo({ emailVerified: true });
-      } else {
-        store.setBasicInfo({ mobileVerified: true });
-      }
-      setOtpModal({ isOpen: false, type: "email", val: "" });
-      setOtpVal("");
-      message.success(
-        `${otpModal.type === "email" ? "Email" : "Mobile"} verified successfully!`,
-      );
-    } else {
-      message.error("Invalid OTP code. Please enter 123456 for testing.");
-    }
-  };
+  // const verifyOtp = () => {
+  //   if (otpVal === "123456" || otpVal.length === 6) {
+  //     if (otpModal.type === "email") {
+  //       store.setBasicInfo({ emailVerified: true });
+  //     } else {
+  //       store.setBasicInfo({ mobileVerified: true });
+  //     }
+  //     setOtpModal({ isOpen: false, type: "email", val: "" });
+  //     setOtpVal("");
+  //     message.success(
+  //       `${otpModal.type === "email" ? "Email" : "Mobile"} verified successfully!`,
+  //     );
+  //   } else {
+  //     message.error("Invalid OTP code. Please enter 123456 for testing.");
+  //   }
+  // };
 
   return (
     <div className="min-h-screen text-slate-800 flex flex-col font-sans select-none relative overflow-hidden">
@@ -452,7 +482,7 @@ export default function ProfileWizard() {
       </div>
 
       {/* OTP verification Modal Overlay */}
-      {otpModal.isOpen && (
+      {/* {otpModal.isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md px-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -499,7 +529,7 @@ export default function ProfileWizard() {
             </button>
           </motion.div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

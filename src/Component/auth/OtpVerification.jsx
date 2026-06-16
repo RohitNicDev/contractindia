@@ -22,6 +22,7 @@ import {
   setPassword,
   resendOtp,
 } from "../../services/api";
+import { useUserStore } from "../../store/store";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -75,6 +76,7 @@ const OtpVerification = () => {
   const location = useLocation();
   const state = location?.state || {};
   console.log(location, "location");
+  const { setloginResponce } = useUserStore();
 
   const [valueId, setvalueId] = useState(state?.guId || "");
   const [emailCode, setEmailCode] = useState("");
@@ -181,6 +183,9 @@ const OtpVerification = () => {
         toast.success(res.message || "Mobile verified!");
         setSuccessPulse(true);
         setStep("complete");
+        console.log(state?.response,"ok");
+        
+        setloginResponce(state?.response || null);
         setTimeout(redirectUser, 600);
         return;
       } else {
@@ -362,13 +367,12 @@ const OtpVerification = () => {
             return (
               <div key={s} className="flex flex-1 items-center gap-1.5">
                 <div
-                  className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${
-                    done
+                  className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${done
                       ? "bg-[var(--auth-accent-strong)]"
                       : active
                         ? "bg-[var(--auth-accent-strong)] opacity-60"
                         : "bg-[var(--auth-step-inactive)]"
-                  }`}
+                    }`}
                 />
               </div>
             );

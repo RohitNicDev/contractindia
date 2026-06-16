@@ -1,7 +1,7 @@
-export const formatDocumentPayload = (file, documentName, categoryId, subCategoryId) => {
+export const formatDocumentPayload = (file, documentName, categoryId, subCategoryId,userID) => {
     return {
         userDocumentID: 0,
-        userID: 0,
+        userID:userID || 0,
         documentName: documentName || file.name,
         documentCategoryID: categoryId,
         documentCategoryName: '',

@@ -1,10 +1,15 @@
 import { create } from "zustand";
 
 export const useUserStore = create((set) => ({
+  loginResponce: {},
+  setloginResponce: (responce) => set({ loginResponce: responce }),
+  userDetails: null,
+  setUserDetails: (data) => set({ userDetails: data }),
   userProfile: null,
-  setUserProfile: (profile) => set({ profile }),
+  setUserProfile: (userProfile) => set({ userProfile }),
   token: null,
   setToken: (token) => set({ token }),
+  User: null,
   setUser: (user) => set({ user }),
   User: null,
 }));

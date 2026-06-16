@@ -179,5 +179,9 @@ export const ContractorListGet = async (serviceId) => {
 
   return response?.data || [];
 };
+export const UserRegistrationUserIdGet = async (userId) => {
+  return await api.get(`/UserRegistration/get?userId=${userId}`);
+};
+
 
 

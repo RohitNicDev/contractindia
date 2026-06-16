@@ -28,6 +28,9 @@ import {
   calculateProgress,
 } from "../../store/profileWizardStore";
 import DashboardLayout from "../Dashboard/Layout/DashboardLayout";
+import { useUserStore } from "../../store/store";
+import { useQuery } from "@tanstack/react-query";
+import { UserRegistrationUserIdGet } from "../../services/api";
 // ─── Design tokens ────────────────────────────────────────────────────────────
 export const glass =
   "rounded-2xl bg-white border border-slate-100 shadow-[0_2px_20px_rgba(99,102,241,0.07)]";
@@ -470,13 +473,18 @@ export const Dashboard = (props) => {
 // ═══════════════════════════════════════════════════════════════════════════════
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════════════
-
+const UserRegistrationUserIdGetApi = async (userId) => {
+  const response = await UserRegistrationUserIdGet(userId);
+  console.log(response, "response");
+  return response?.data ?? [];
+};
 export default function CommercialDashboard() {
   const navigate = useNavigate();
   const store = useProfileWizardStore();
   const progress = calculateProgress(store);
   const isLocked = progress < 80 && !store.isSkipped;
   const [open, setOpen] = useState(false);
+  const { setUserDetails } = useUserStore();
   const raw = localStorage.getItem("commercial_user_v1");
   const [user, setUser] = useState(
     raw
@@ -488,13 +496,38 @@ export default function CommercialDashboard() {
         mobile: "9876543210",
       },
   );
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [gstNumber, setGstNumber] = useState(
-    () => localStorage.getItem("commercial_gst_v1") || "",
-  );
-  const [showGstModal, setShowGstModal] = useState(
-    () => !localStorage.getItem("commercial_gst_v1") && !isLocked,
-  );
+  // const [mobileOpen, setMobileOpen] = useState(false);
+  // const [gstNumber, setGstNumber] = useState(
+  //   () => localStorage.getItem("commercial_gst_v1") || "",
+  // );
+  // const [showGstModal, setShowGstModal] = useState(
+  //   () => !localStorage.getItem("commercial_gst_v1") && !isLocked,
+  // );
+  const getloginResponce = useUserStore((state) => state?.loginResponce);
+  const { data: UserData = [], isLoading: UserDataLoading } = useQuery({
+    queryKey: ["UserData", getloginResponce?.userId],
+    queryFn: () => UserRegistrationUserIdGetApi(getloginResponce?.userId),
+    enabled: !!getloginResponce?.userId,
+    retry: false,
+  });
+
+
+  useEffect(() => {
+    if (!UserData || (Array.isArray(UserData) && UserData.length === 0) || Object.keys(UserData).length === 0) return;
+    const userObj = Array.isArray(UserData) ? UserData[0] : UserData;
+    setUser(
+      {
+        companyName: userObj?.CompanyName || "Demo Company",
+        contactPerson: userObj?.Name || "Demo User",
+        email: userObj?.EmailId || "demo@company.com",
+        mobile: userObj?.MobileNo || "9876543210",
+        services: userObj?.ServiceName || [],
+        serviceIds: userObj?.ServiceId || [],
+        pinCode: userObj?.PinCode || "",
+      }
+    );
+  }, [UserData]);
+
 
   const handleSignOut = useCallback(() => {
     [
