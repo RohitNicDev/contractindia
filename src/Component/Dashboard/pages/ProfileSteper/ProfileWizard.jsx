@@ -26,17 +26,15 @@ import ServiceListing from "../ServiceListing";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import React from "react";
-import {
-  Step1CompanyType,
-  Step2BasicInfo,
-  Step3Registration,
-  Step4Documents,
-  Step5ServiceListing,
-  Step6Banking,
-} from "./stepComponents";
+ 
 import { UserRegistrationUserIdGet } from "../../../../services/api";
 import { useUserStore } from "../../../../store/store";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query"; 
+import Step2BasicInfo from "./Step2BasicInfo";
+import Step1CompanyType from "./Step1CompanyType";
+import Step3Registration from "./Step3Registration";
+import  Step6Banking  from "./Step6Banking";
+import { Step4Documents } from "./Step4Documents";
 
 // Steps definition
 const STEPS = [
