@@ -27,11 +27,9 @@ const cats = [
     count: "4,200 Designers",
     link: "/services/tender",
   },
-   
 ];
 
-const serviceCardMeta = {
-};
+const serviceCardMeta = {};
 
 const normalizeServiceCard = (service) => {
   const name = service.name || service.label || "Service";
@@ -47,7 +45,7 @@ const normalizeServiceCard = (service) => {
       meta?.image ||
       "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=900&q=80",
     count: meta?.count || "Verified professionals",
-    link: meta?.link || `/services/${slug}`,
+    link: meta?.link || `service/${service?.value}`,
     id: service.value ?? name,
   };
 };
@@ -80,7 +78,7 @@ const getRootServiceApi = async () => {
   console.log(response, "response");
   return response ?? [];
 };
-  export function ValueStrip  ()  {
+export function ValueStrip() {
   return (
     <div className="bg-slate-100 mt-20">
       <section className="container mx-auto px-4 -mt-14 relative z-30">
@@ -152,7 +150,7 @@ const getRootServiceApi = async () => {
       </section>
     </div>
   );
-};
+}
 
 const Categories = () => {
   const { data: rootServiceList = [], isLoading: rootServicesLoading } =
@@ -217,6 +215,10 @@ const Categories = () => {
             <Link
               key={elm?.id ?? index}
               to={elm?.link}
+                            onClick={() => {
+              console.log(elm?.link, "elm?.link");
+
+                            }}
               className="group relative flex flex-col bg-white rounded-2xl overflow-hidden border border-slate-200/80 hover:border-indigo-300 shadow-sm hover:shadow-2xl transition-all duration-400"
             >
               <motion.div
@@ -270,5 +272,5 @@ const Categories = () => {
       </div>
     </div>
   );
-}
+};
 export default Categories;

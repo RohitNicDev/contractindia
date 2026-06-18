@@ -4,8 +4,13 @@
  * Pages: Overview · My Profile · Change Password · Subscription Plan
  */
 
-import { useState } from "react";
-import { useNavigate, useLocation, Outlet, useOutletContext } from "react-router-dom";
+import { useEffect, useState } from "react";
+import {
+  useNavigate,
+  useLocation,
+  Outlet,
+  useOutletContext,
+} from "react-router-dom";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import {
@@ -32,18 +37,40 @@ import DashboardLayout, {
   Avatar,
 } from "../Dashboard/Layout/DashboardLayout";
 import SubscriptionPlansFlow from "./pages/SubscriptionPlansFlow";
+import { UserRegistrationUserIdGet } from "../../services/api";
+import { useUserStore } from "../../store/store";
+import { useQuery } from "@tanstack/react-query";
 
 /* ── Nav definition ─────────────────────────────────────────────────────── */
 const NAV = [
   { id: "overview", label: "Dashboard", icon: LayoutDashboard, route: "" },
-  { id: "MyServices", label: "My Services", icon: BriefcaseBusiness, route: "MyServices" },
-  { id: "subscription", label: "Subscription Plan", icon: CreditCard, route: "subscription" },
-  { id: "plans-and-subscriptions", label: "Plans & Subscriptions", icon: BookOpen, route: "plans-and-subscriptions" },
+  {
+    id: "MyServices",
+    label: "My Services",
+    icon: BriefcaseBusiness,
+    route: "MyServices",
+  },
+  {
+    id: "subscription",
+    label: "Subscription Plan",
+    icon: CreditCard,
+    route: "subscription",
+  },
+  {
+    id: "plans-and-subscriptions",
+    label: "Plans & Subscriptions",
+    icon: BookOpen,
+    route: "plans-and-subscriptions",
+  },
   { id: "mycredits", label: "My Credits", icon: Edit3, route: "mycredits" },
   { id: "profile", label: "My Profile", icon: User, route: "profile" },
   { id: "password", label: "Change Password", icon: Key, route: "password" },
 ];
-
+const UserRegistrationUserIdGetApi = async (userId) => {
+  const response = await UserRegistrationUserIdGet(userId);
+  console.log(response, "response");
+  return response?.data ?? [];
+};
 function getNavItem(value) {
   if (!value) return undefined;
   const normalized = String(value).trim().toLowerCase();
@@ -265,7 +292,7 @@ export function Overview(props) {
 export function MyProfile(props) {
   const context = useOutletContext();
   const user = props.user || context?.user || {};
-  const onUpdate = props.onUpdate || context?.setUser || (() => { });
+  const onUpdate = props.onUpdate || context?.setUser || (() => {});
 
   const [form, setForm] = useState({
     name: user.name || "",
@@ -457,8 +484,8 @@ export function ChangePassword() {
 /* ── Subscription Plan ───────────────────────────────────────────────────── */
 const SUBSCRIPTIONS = [
   {
-    plan: "Free Plan",
-    price: "₹0/mo",
+    plan: "Pro Plan",
+    price: "₹100/mo",
     status: "Active",
     expires: "Unlimited",
     features: ["5 enquiries/mo", "Basic listings", "Email support"],
@@ -492,10 +519,11 @@ export function SubscriptionPlan() {
         {SUBSCRIPTIONS.map((sub) => (
           <div
             key={sub.plan}
-            className={`rounded-2xl border p-5 transition-all ${sub.status === "Active"
-              ? "border-indigo-200 bg-indigo-50/40 shadow-sm"
-              : "border-slate-200 bg-slate-50/50"
-              }`}
+            className={`rounded-2xl border p-5 transition-all ${
+              sub.status === "Active"
+                ? "border-indigo-200 bg-indigo-50/40 shadow-sm"
+                : "border-slate-200 bg-slate-50/50"
+            }`}
           >
             <div className="flex items-center justify-between mb-3">
               <p className="font-black text-slate-900 text-sm">{sub.plan}</p>
@@ -523,9 +551,7 @@ export function SubscriptionPlan() {
             </ul>
             {sub.status === "Expired" && (
               <button
-
                 onClick={() => setShowPlans(true)}
-
                 className="w-full h-8 rounded-xl text-xs font-bold text-indigo-700 border border-indigo-200 bg-white hover:bg-indigo-50 transition-colors"
               >
                 Renew Plan
@@ -537,7 +563,10 @@ export function SubscriptionPlan() {
       </div>
       <SubscriptionPlansFlow
         open={showPlans}
-        onClose={() => { setShowPlans(false); refetchSubscription(); }}
+        onClose={() => {
+          setShowPlans(false);
+          refetchSubscription();
+        }}
         currentPlanId={12213}
       />
     </div>
@@ -551,7 +580,7 @@ export default function IndividualDashboard() {
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState(loadUser);
-
+  const { loginResponce } = useUserStore();
   const activeTab = resolveTabByRoute(location.pathname);
 
   const handleTabChange = (tab) => {
@@ -559,7 +588,36 @@ export default function IndividualDashboard() {
     if (!path) return;
     navigate(path);
   };
+  const { data: UserData = [], isLoading: UserDataLoading } = useQuery({
+    queryKey: ["UserData", loginResponce?.userId],
+    queryFn: () => UserRegistrationUserIdGetApi(loginResponce?.userId),
+    enabled: !!loginResponce?.userId,
+    retry: false,
+  });
+  useEffect(() => {
+    console.log(UserData,"UserData");
+  }, [UserData]);
+    
+  useEffect(() => {
+    if (
+      !UserData ||
+      (Array.isArray(UserData) && UserData.length === 0) ||
+      Object.keys(UserData).length === 0
+    )
+      return;
+    console.log(UserData, "looo");
 
+    const userObj = Array.isArray(UserData) ? UserData[0] : UserData;
+    setUser({
+      companyName: userObj?.CompanyName || "Demo Company",
+      name: userObj?.Name || "Demo User",
+      email: userObj?.EmailId || "demo@company.com",
+      mobile: userObj?.MobileNo || "9876543210",
+      services: userObj?.ServiceName || [],
+      serviceIds: userObj?.ServiceId || [],
+      pinCode: userObj?.PinCode || "",
+    });
+  }, [UserData]);
   const handleSignOut = () => {
     [
       "individual_user_v1",
@@ -573,8 +631,6 @@ export default function IndividualDashboard() {
     window.dispatchEvent(new Event("auth_changed"));
     navigate("/login");
   };
-
-
 
   return (
     <DashboardLayout

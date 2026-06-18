@@ -24,11 +24,11 @@ import { LogOut, X, ShieldCheck, Loader2, CheckCircle2 } from "lucide-react";
 /* ── Tiny avatar with initials ── */
 function Avatar({ name }) {
   const initials = name
-    .split(" ")
-    .map((w) => w[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
+    ?.split(" ")
+    ?.map((w) => w[0])
+    ?.join("")
+    ?.slice(0, 2)
+    ?.toUpperCase();
   const colors = [
     ["#eef2ff", "#4338ca"],
     ["#f0fdf4", "#15803d"],
@@ -36,7 +36,11 @@ function Avatar({ name }) {
     ["#fff7ed", "#c2410c"],
     ["#eff6ff", "#1d4ed8"],
   ];
-  const [bg, fg] = colors[name.charCodeAt(0) % colors.length];
+ const index = name
+  ? name.charCodeAt(0) % colors.length
+  : 0;
+
+const [bg, fg] = colors[index];
   return (
     <span
       style={{
@@ -87,7 +91,7 @@ export default function LogoutPopup({
   /* ── Backdrop ── */
   return (
     <div
-      onClick={(e) => { if (e.target === e.currentTarget) handleCancel(); }}
+      onClick={(e) => { if (e?.target === e?.currentTarget) handleCancel(); }}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4"
     >
       <div className="relative w-full max-w-sm bg-white rounded-3xl border border-slate-200 shadow-2xl shadow-slate-300/30 overflow-hidden">
@@ -130,10 +134,10 @@ export default function LogoutPopup({
 
             {/* ── User card ── */}
             <div className="mx-5 mb-5 flex items-center gap-3 bg-slate-50 rounded-2xl px-3.5 py-3 border border-slate-100">
-              <Avatar name={user.name} />
+              <Avatar name={user?.name} />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-slate-800 truncate">{user.name}</p>
-                <p className="text-[11px] text-slate-500 truncate">{user.email}</p>
+                <p className="text-sm font-bold text-slate-800 truncate">{user?.name}</p>
+                <p className="text-[11px] text-slate-500 truncate">{user?.email}</p>
               </div>
               <span className="flex-shrink-0 text-[10px] font-bold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-200">
                 Active

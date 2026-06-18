@@ -156,5 +156,5 @@ export const router = createBrowserRouter([
   { path: "/admin/dashboard", element: <AdminDashboard /> },
 
   // ── Fallback ──────────────────────────────────────────────────────────────
-  { path: "*", element: <Navigate to="/" replace /> },
+  // { path: "*", element: <Navigate to="/" replace /> },
 ]);

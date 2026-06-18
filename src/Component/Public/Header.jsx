@@ -25,22 +25,23 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { NavLink, useNavigate, Link } from "react-router-dom";
 import { Button, Badge, Drawer, Collapse, Dropdown, Avatar } from "antd";
 import logo from "../../assets/IMG/logo_con1.png";
-import { ServiceRootGet } from "../../services/api";
+import { ServiceRootGet, UserRegistrationUserIdGet } from "../../services/api";
 import { useQuery } from "@tanstack/react-query";
 import { useserviceStore, useUserStore } from "../../store/store";
+import LogoutPopup from "../common/Logoutpopup";
 const { Panel } = Collapse;
 
 // ─── Mega Menu Data ───────────────────────────────────────────────
-
 
 // ─── Services Dropdown Menu ──────────────────────────────────────
 
 const DropdownMenu = ({ columns, visible }) => (
   <div
-    className={`absolute top-full left-0 bg-white shadow-xl border border-gray-100 rounded-md py-2 w-72 transition-all duration-200 origin-top z-50 ${visible
-      ? "opacity-100 scale-y-100 pointer-events-auto"
-      : "opacity-0 scale-y-95 pointer-events-none"
-      }`}
+    className={`absolute top-full left-0 bg-white shadow-xl border border-gray-100 rounded-md py-2 w-72 transition-all duration-200 origin-top z-50 ${
+      visible
+        ? "opacity-100 scale-y-100 pointer-events-auto"
+        : "opacity-0 scale-y-95 pointer-events-none"
+    }`}
   >
     {columns.map((col) => (
       <div key={col.title} className="relative group/item">
@@ -79,7 +80,16 @@ const DropdownMenu = ({ columns, visible }) => (
     ))}
   </div>
 );
-
+const UserRegistrationUserIdGetApi = async (userId) => {
+  const response = await UserRegistrationUserIdGet(userId);
+  console.log(response, "response");
+  return response?.data ?? [];
+};
+const getRootServiceApi = async () => {
+  const response = await ServiceRootGet();
+  console.log(response, "response");
+  return response ?? [];
+};
 // ─── Main Header ──────────────────────────────────────────────────
 const Header = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -87,15 +97,16 @@ const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [logoutOpen, setLogoutOpen] = useState(false);
   const megaRef = useRef(null);
+
+  const { loginResponce, resetUserStore } = useUserStore();
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("login_mock_v1") || "{}");
-  const getRootServiceApi = async () => {
-    const response = await ServiceRootGet();
-    console.log(response, "response");
-    return response ?? [];
-  }; 
-const { setAllServices } = useserviceStore();
+  const user = loginResponce;
+  const userType = loginResponce?.userType;
+
+  const auth = loginResponce?.isLoginSuccessful;
+  const { setAllServices } = useserviceStore();
   const { data: rootServiceList = [], isLoading: rootServicesLoading } =
     useQuery({
       queryKey: ["RootServiceApi"],
@@ -103,15 +114,109 @@ const { setAllServices } = useserviceStore();
       retry: false,
       staleTime: Infinity, // states rarely change
     });
-// useEffect(() => {
-//   console.log(rootServiceList,"rootServiceList");
-  
-//   if (rootServiceList?.length > 0) {
-//     console.log("running","rootServiceList");
-    
-//     setAllServices(rootServiceList);
-//   }
-// }, [rootServiceList]);
+
+  const { data: UserData = [], isLoading: UserDataLoading } = useQuery({
+    queryKey: ["UserData", loginResponce?.userId],
+    queryFn: () => UserRegistrationUserIdGetApi(loginResponce?.userId),
+    enabled: !!loginResponce?.userId,
+    retry: false,
+  });
+  useEffect(() => {
+    console.log(UserData[0]?.Name, "UserData");
+  }, [UserData]);
+  useEffect(() => {
+    const handler = (e) => {
+      if (megaRef.current && !megaRef.current.contains(e.target)) {
+        setMegaOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+  useEffect(() => {
+    if (rootServiceList?.length) {
+      setAllServices(rootServiceList);
+    }
+  }, [rootServiceList, setAllServices]);
+
+  const goToDashboard = () => {
+    const userType = user?.userType;
+    console.log(user, "522139");
+    if (userType == 2) {
+      navigate("/commercial/dashboard");
+      return;
+    }
+    if (userType == 1) {
+      navigate("/individual/dashboard");
+      return;
+    }
+    if (userType == 0) {
+      navigate("/admin/dashboard");
+      return;
+    }
+    // Fallback route
+    navigate("/home");
+  };
+
+  const handleSignOut = () => {
+    localStorage.removeItem("commercial_user_v1");
+    localStorage.removeItem("login_mock_v1");
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("otp_verified_v1");
+    localStorage.removeItem("registration_form_v1");
+    localStorage.removeItem("individual_user_v1");
+    localStorage.removeItem("admin_auth_v1");
+    localStorage.removeItem("commercial_gst_v1");
+    window.dispatchEvent(new Event("auth_changed"));
+    resetUserStore();
+    navigate("/login");
+  };
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+
+    const checkAuthStatus = () => {
+      setIsLoggedIn(auth == true);
+    };
+    checkAuthStatus();
+
+    // Listen to storage events for cross-tab updates or custom dispatched events
+    window.addEventListener("storage", checkAuthStatus);
+    window.addEventListener("auth_changed", checkAuthStatus);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("storage", checkAuthStatus);
+      window.removeEventListener("auth_changed", checkAuthStatus);
+    };
+  }, []);
+
+  // Close mega menu on outside click
+
+  const onSignOut = async () => {
+    setLogoutOpen(true);
+  };
+  useEffect(() => {
+    console.log(logoutOpen);
+  }, [logoutOpen]);
+
+  const dashboarditems = [
+    {
+      key: "dashboard",
+      icon: <LayoutDashboard size={16} />,
+      label: "Dashboard",
+      onClick: goToDashboard,
+    },
+    {
+      key: "logout",
+      icon: <LogOut size={16} />,
+      label: "Logout",
+      danger: true,
+
+      onClick: onSignOut,
+    },
+  ];
   const serviceColumns = useMemo(
     () =>
       rootServiceList?.map((service) => ({
@@ -133,99 +238,13 @@ const { setAllServices } = useserviceStore();
     { name: "Projects", path: "/projects", isNew: true },
     { name: "Contact Us", path: "/contact" },
   ];
-
-  useEffect(() => {
-    if (rootServiceList?.length) {
-      setAllServices(rootServiceList);
-    }
-  }, [rootServiceList, setAllServices]);
-  
-  const goToDashboard = () => {
-    const userType = user?.userType;
-    if (userType === "commercial") {
-      navigate("/commercial/dashboard");
-      return;
-    }
-    if (userType === "individual") {
-      navigate("/individual/dashboard");
-      return;
-    }
-    if (user.email === "admin@gmail.com" || userType === "admin") {
-      navigate("/admin/dashboard");
-      return;
-    }
-    // Fallback route
-    navigate("/home");
-  };
-
-  const handleSignOut = () => {
-    localStorage.removeItem("commercial_user_v1");
-    localStorage.removeItem("login_mock_v1");
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("otp_verified_v1");
-    localStorage.removeItem("registration_form_v1");
-    localStorage.removeItem("individual_user_v1");
-    localStorage.removeItem("admin_auth_v1");
-    localStorage.removeItem("commercial_gst_v1");
-    window.dispatchEvent(new Event("auth_changed"));
-    navigate("/login");
-  };
-
-
-
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
-
-    const checkAuthStatus = () => {
-      const auth = localStorage.getItem("isLoggedIn");
-      setIsLoggedIn(auth === "true");
-    };
-    checkAuthStatus();
-
-    // Listen to storage events for cross-tab updates or custom dispatched events
-    window.addEventListener("storage", checkAuthStatus);
-    window.addEventListener("auth_changed", checkAuthStatus);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("storage", checkAuthStatus);
-      window.removeEventListener("auth_changed", checkAuthStatus);
-    };
-  }, []);
-
-  // Close mega menu on outside click
-  useEffect(() => {
-    const handler = (e) => {
-      if (megaRef.current && !megaRef.current.contains(e.target)) {
-        setMegaOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
-  const dashboarditems = [
-    {
-      key: "dashboard",
-      icon: <LayoutDashboard size={16} />,
-      label: "Dashboard",
-      onClick: goToDashboard,
-    },
-    {
-      key: "logout",
-      icon: <LogOut size={16} />,
-      label: "Logout",
-      danger: true,
-      onClick: handleSignOut,
-    },
-  ];
-
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-500 ${scrolled
-        ? "bg-white/70 backdrop-blur-md shadow-lg border-b border-white/30"
-        : "bg-white border-b border-gray-100"
-        }`}
+      className={`sticky top-0 z-50 transition-all duration-500 ${
+        scrolled
+          ? "bg-white/70 backdrop-blur-md shadow-lg border-b border-white/30"
+          : "bg-white border-b border-gray-100"
+      }`}
     >
       {/* 🌐 TOP BAR */}
       <div className="bg-[#162646] text-white/90 py-2.5 px-4 sm:px-6 overflow-hidden">
@@ -248,17 +267,20 @@ const { setAllServices } = useserviceStore();
           </div>
 
           {/* RIGHT */}
-          <div className="flex items-center gap-4 text-[11px] sm:text-[12px] font-semibold border-t border-white/10 md:border-none pt-2 md:pt-0 w-full md:w-auto justify-center">
-            {/* <span className="cursor-pointer hover:text-blue-300 transition uppercase tracking-wide">
+          {isLoggedIn && (
+            <div className="flex items-center gap-4 text-[11px] sm:text-[12px] font-semibold border-t border-white/10 md:border-none pt-2 md:pt-0 w-full md:w-auto justify-center">
+              {/* <span className="cursor-pointer hover:text-blue-300 transition uppercase tracking-wide">
               Advertise
             </span> */}
 
-            <span className="opacity-30">|</span>
+              <span className="opacity-30">|</span>
 
-            <span className="cursor-pointer hover:text-blue-300 transition  tracking-wide">
-              Welcome Demo User
-            </span>
-          </div>
+              <span className="cursor-pointer hover:text-blue-300 transition  tracking-wide">
+                Welcome
+                {UserData?.length > 0 ? `: ${UserData[0]?.Name}` : ""}
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -272,7 +294,6 @@ const { setAllServices } = useserviceStore();
             <MenuIcon size={24} />
           </button>
 
-           
           <div
             className="flex items-center gap-3 cursor-pointer shrink-0"
             onClick={() => navigate("/")}
@@ -352,7 +373,6 @@ const { setAllServices } = useserviceStore();
                   </>
                 ) : (
                   <>
-
                     <div className="flex items-center gap-3">
                       <Dropdown
                         menu={{ items: dashboarditems }}
@@ -365,12 +385,13 @@ const { setAllServices } = useserviceStore();
                             icon={<User2 size={18} />}
                             className="!bg-[#162646]"
                           />
-                          <ChevronDownCircle size={16} className="text-slate-500" />
+                          {/* <ChevronDownCircle
+                              size={16}
+                              className="text-slate-500"
+                            /> */}
                         </div>
                       </Dropdown>
                     </div>
-
-
                   </>
                 )}
               </div>
@@ -407,10 +428,11 @@ const { setAllServices } = useserviceStore();
                   onMouseLeave={() => setMegaOpen(false)}
                 >
                   <button
-                    className={`flex items-center gap-1 px-3 py-1.5 text-sm font-bold rounded-lg transition outline-none ${megaOpen
-                      ? "text-blue-600 bg-blue-50"
-                      : "text-gray-600 hover:text-blue-600 hover:bg-blue-50/50"
-                      }`}
+                    className={`flex items-center gap-1 px-3 py-1.5 text-sm font-bold rounded-lg transition outline-none ${
+                      megaOpen
+                        ? "text-blue-600 bg-blue-50"
+                        : "text-gray-600 hover:text-blue-600 hover:bg-blue-50/50"
+                    }`}
                   >
                     {item.name}
                     <ChevronDown
@@ -427,9 +449,10 @@ const { setAllServices } = useserviceStore();
                 <NavLink
                   to={item.path}
                   className={({ isActive }) =>
-                    `relative px-3 py-1.5 text-sm font-bold no-underline rounded-lg transition ${isActive
-                      ? "text-blue-600 bg-blue-50"
-                      : "text-gray-600 hover:text-blue-600 hover:bg-blue-50/50"
+                    `relative px-3 py-1.5 text-sm font-bold no-underline rounded-lg transition ${
+                      isActive
+                        ? "text-blue-600 bg-blue-50"
+                        : "text-gray-600 hover:text-blue-600 hover:bg-blue-50/50"
                     }`
                   }
                 >
@@ -611,6 +634,15 @@ const { setAllServices } = useserviceStore();
           </div>
         </div>
       </Drawer>
+      <LogoutPopup
+        open={logoutOpen}
+        user={{ name: UserData?.[0]?.Name ?? "User", email: UserData?.[0]?.EmailId ?? "" }}
+        onCancel={() => setLogoutOpen(false)}
+        onConfirm={async () => {
+          setLogoutOpen(false);
+          handleSignOut();
+        }}
+      />
     </header>
   );
 };

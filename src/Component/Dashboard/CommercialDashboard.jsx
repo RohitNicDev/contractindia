@@ -1,7 +1,14 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate, useLocation, Routes, Route, Outlet, useOutletContext } from "react-router-dom";
+import {
+  useNavigate,
+  useLocation,
+  Routes,
+  Route,
+  Outlet,
+  useOutletContext,
+} from "react-router-dom";
 import { toast } from "sonner";
 import {
   LayoutDashboard,
@@ -290,8 +297,9 @@ function PortalDropdown({ options, selected, onToggle, color, bg, border }) {
 export const Dashboard = (props) => {
   const context = useOutletContext();
   const user = props.user || context?.user || {};
-  const onTabChange = props.onTabChange || context?.handleTabChange || (() => { });
-
+  const onTabChange =
+    props.onTabChange || context?.handleTabChange || (() => {});
+  const resetUserStore = useUserStore((state) => state?.resetUserStore);
   const name = user.companyName || user.contactPerson || "there";
 
   const stats = [
@@ -466,7 +474,7 @@ export const Dashboard = (props) => {
       </div>
     </div>
   );
-}
+};
 
 // ─── Add Credits ──────────────────────────────────────────────────────────────
 
@@ -481,20 +489,23 @@ const UserRegistrationUserIdGetApi = async (userId) => {
 export default function CommercialDashboard() {
   const navigate = useNavigate();
   const store = useProfileWizardStore();
+  // const useuserStore = useUserStore();
   const progress = calculateProgress(store);
   const isLocked = progress < 80 && !store.isSkipped;
   const [open, setOpen] = useState(false);
-  const { setUserDetails } = useUserStore();
+  // const { setUserDetails } = useUserStore();
+  const { resetUserStore } = useUserStore();
+
   const raw = localStorage.getItem("commercial_user_v1");
   const [user, setUser] = useState(
     raw
       ? JSON.parse(raw)
       : {
-        companyName: "Demo Company",
-        contactPerson: "Demo User",
-        email: "demo@company.com",
-        mobile: "9876543210",
-      },
+          companyName: "Demo Company",
+          contactPerson: "Demo User",
+          email: "demo@company.com",
+          mobile: "9876543210",
+        },
   );
   // const [mobileOpen, setMobileOpen] = useState(false);
   // const [gstNumber, setGstNumber] = useState(
@@ -511,23 +522,24 @@ export default function CommercialDashboard() {
     retry: false,
   });
 
-
   useEffect(() => {
-    if (!UserData || (Array.isArray(UserData) && UserData.length === 0) || Object.keys(UserData).length === 0) return;
+    if (
+      !UserData ||
+      (Array.isArray(UserData) && UserData.length === 0) ||
+      Object.keys(UserData).length === 0
+    )
+      return;
     const userObj = Array.isArray(UserData) ? UserData[0] : UserData;
-    setUser(
-      {
-        companyName: userObj?.CompanyName || "Demo Company",
-        contactPerson: userObj?.Name || "Demo User",
-        email: userObj?.EmailId || "demo@company.com",
-        mobile: userObj?.MobileNo || "9876543210",
-        services: userObj?.ServiceName || [],
-        serviceIds: userObj?.ServiceId || [],
-        pinCode: userObj?.PinCode || "",
-      }
-    );
+    setUser({
+      companyName: userObj?.CompanyName || "Demo Company",
+      contactPerson: userObj?.Name || "Demo User",
+      email: userObj?.EmailId || "demo@company.com",
+      mobile: userObj?.MobileNo || "9876543210",
+      services: userObj?.ServiceName || [],
+      serviceIds: userObj?.ServiceId || [],
+      pinCode: userObj?.PinCode || "",
+    });
   }, [UserData]);
-
 
   const handleSignOut = useCallback(() => {
     [
@@ -540,6 +552,8 @@ export default function CommercialDashboard() {
       "admin_auth_v1",
       "commercial_gst_v1",
     ].forEach((k) => localStorage.removeItem(k));
+    resetUserStore();
+
     window.dispatchEvent(new Event("auth_changed"));
     navigate("/login");
   }, [navigate]);

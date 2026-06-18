@@ -1,18 +1,44 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
-export const useUserStore = create((set) => ({
-  loginResponce: {},
-  setloginResponce: (responce) => set({ loginResponce: responce }),
-  userDetails: null,
-  setUserDetails: (data) => set({ userDetails: data }),
-  userProfile: null,
-  setUserProfile: (userProfile) => set({ userProfile }),
-  token: null,
-  setToken: (token) => set({ token }),
-  User: null,
-  setUser: (user) => set({ user }),
-  User: null,
-}));
+export const useUserStore = create(
+  persist(
+    (set) => ({
+      loginResponce: {},
+      userDetails: null,
+      userProfile: null,
+      token: null,
+      user: null,
+
+      setloginResponce: (responce) =>
+        set({ loginResponce: responce }),
+
+      setUserDetails: (data) =>
+        set({ userDetails: data }),
+
+      setUserProfile: (userProfile) =>
+        set({ userProfile }),
+
+      setToken: (token) =>
+        set({ token }),
+
+      setUser: (user) =>
+        set({ user }),
+
+      resetUserStore: () =>
+        set({
+          loginResponce: {},
+          userDetails: null,
+          userProfile: null,
+          token: null,
+          user: null,
+        }),
+    }),
+    {
+      name: "user-storage", // localStorage key
+    }
+  )
+);
 export const useserviceStore = create((set) => ({
   allServices: null,
   setAllServices: (services) => set({ allServices: services }),

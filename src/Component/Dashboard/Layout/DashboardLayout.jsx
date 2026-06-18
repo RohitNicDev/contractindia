@@ -14,8 +14,19 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X, LogOut, Bell, Zap, ChevronDown } from "lucide-react";
+import {
+  Menu,
+  X,
+  LogOut,
+  Bell,
+  Zap,
+  ChevronDown,
+  Home,
+  HomeIcon,
+} from "lucide-react";
 import LogoutPopup from "../../common/Logoutpopup";
+import { useUserStore } from "../../../store/store";
+import { useNavigate } from "react-router-dom";
 
 /* ── Design tokens ─────────────────────────────────────────────────────────── */
 export const glass =
@@ -153,7 +164,7 @@ export default function DashboardLayout({
   navItems = [],
   activeTab,
   onTabChange,
-  user = { name: "User", email: "", role: "Account" },
+  user = { name: loginResponce?.name??"User", email: loginResponce?.email?? "", role: "Account" },
   onSignOut,
   badge = "Account",
   badgeColor = "indigo",
@@ -162,7 +173,9 @@ export default function DashboardLayout({
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
-
+  const navigate = useNavigate();
+  const { loginResponce } = useUserStore();
+  const userType = loginResponce?.userType;
   const badgeStyles = {
     indigo: "border-indigo-100 bg-indigo-50/60 text-indigo-700",
     blue: "border-blue-100   bg-blue-50/60   text-blue-700",
@@ -349,12 +362,23 @@ export default function DashboardLayout({
             </button>
             {/* <NotificationBell /> */}
             {/* Account badge */}
-            <span
+            {userType == 1 && (
+              <span
+                onClick={() => {
+                  navigate("/");
+                }}
+                className={`hidden sm:flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-1.5 text-xs font-bold ${badgeStyles[badgeColor] ?? badgeStyles.indigo}`}
+              >
+                <HomeIcon className="h-3.5 w-3.5" />
+                HOME
+              </span>
+            )}
+            {/* <span
               className={`hidden sm:flex items-center gap-2 rounded-xl border px-3 py-1.5 text-xs font-bold ${badgeStyles[badgeColor] ?? badgeStyles.indigo}`}
             >
               <Zap className="h-3.5 w-3.5" />
               {badge}
-            </span>
+            </span> */}
           </div>
         </header>
 

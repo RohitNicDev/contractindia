@@ -200,12 +200,12 @@ const Companies = () => {
                 )}
 
                 {/* Hover Overlay */}
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                {/* <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <div className="flex items-center gap-1.5 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-xl text-xs font-bold text-slate-800 shadow-lg translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
                     View Profile
                     <ArrowUpRight className="w-3.5 h-3.5" />
                   </div>
-                </div>
+                </div> */}
               </div>
 
               {/* Content */}
@@ -285,7 +285,7 @@ const Companies = () => {
                     {elm?.loc}
                   </span>
 
-                  <motion.button
+                  {/* <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className={`
@@ -303,7 +303,7 @@ const Companies = () => {
                     `}
                   >
                     View
-                  </motion.button>
+                  </motion.button> */}
                 </div>
               </div>
             </motion.div>
