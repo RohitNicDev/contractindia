@@ -4,8 +4,23 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import Switch from "antd/lib/switch";
+import { userBasicInformationSave } from "../../../../services/api";
+import { useMutation } from "@tanstack/react-query";
+import { useUserStore } from "../../../../store/store";
+import { toast } from "sonner";
 
 const Step3Registration = ({ store, nextStep, prevStep }) => {
+  const { loginResponce } = useUserStore();
+
+  const [validationStatus, setValidationStatus] = useState({});
+
+  // Validation patterns
+  const patterns = {
+    gstin: /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[0-9A-Z]{1}$/,
+    pan: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
+    aadhaar: /^\d{12}$/,
+    cin: /^[A-Z]{1}[0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/,
+  };
   const {
     register: registerStep3,
     control: controlStep3,
@@ -23,38 +38,61 @@ const Step3Registration = ({ store, nextStep, prevStep }) => {
       pfNo: store.registrationDetails?.pfNo || "",
       esiNo: store.registrationDetails?.esiNo || "",
       msmeNo: store.registrationDetails?.msmeNo || "",
-      udyogAadhaarToggle: store.registrationDetails?.udyogAadhaarToggle || false,
+
+      udyogAadhaarToggle:
+        store.registrationDetails?.udyogAadhaarToggle || false,
       licenseNo: store.registrationDetails?.licenseNo || "",
       licenseExpiryDate: store.registrationDetails?.licenseExpiryDate || "",
     },
   });
+  const { mutate: saveBasicInfo, isPending: isSaving } = useMutation({
+    mutationFn: userBasicInformationSave,
+    onSuccess: (response) => {
+      console.log(response, "response");
 
-  const [validationStatus, setValidationStatus] = useState({});
-
-  // Validation patterns
-  const patterns = {
-    gstin: /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[0-9A-Z]{1}$/,
-    pan: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
-    aadhaar: /^\d{12}$/,
-    cin: /^[A-Z]{1}[0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/,
-  };
-
-  const onSaveStep3 = async (data) => {
-    try {
-      // Validate at least one identifier is provided
-      const hasIdentifier = data.gstNo || data.panNo || data.cinNo || data.aadharNo;
-      if (!hasIdentifier) {
-        alert("Please provide at least one identifier (GST/PAN/CIN/Aadhaar)");
-        return;
+      if (response?.status) {
+        toast.success(
+          response?.message || "Basic Information saved successfully!",
+        );
+        store.setRegistrationDetails(watchStep3());
+        nextStep();
+      } else {
+        toast.error(response?.message || "Failed to save basic information");
       }
+    },
+    onError: (error) => {
+      toast.error(
+        error?.message || "Failed to save basic information. Please try again.",
+      );
+    },
+  });
+  const onSaveStep3 = async (data) => {
+    console.log(store, "store");
 
-      // Save to store
-      store.setRegistrationDetails(data);
-      alert("✓ Registration & Compliance details saved successfully!");
-      nextStep();
-    } catch (error) {
-      alert("Failed to save registration details");
-    }
+    const payload = {
+      userId: loginResponce?.userId || 0,
+
+      companyTypeId: 0,
+      companyTypeName: store?.basicInfo?.companyType || "",
+      companyName: store?.basicInfo?.companyName || "",
+      email: store?.basicInfo?.email || "",
+      contactNo: store?.basicInfo?.mobile || "",
+      address: store?.basicInfo?.address || "",
+      aadharNo: data?.aadharNo || "",
+      gstNo: data?.gstNo || "",
+      panNo: data?.panNo || "",
+      esiNo: data?.esiNo || "",
+      cinNo: data?.cinNo || "",
+      isMSME: data?.udyogAadhaarToggle ? 1 : 0,
+      udyogRegistrationNo: data?.msmeNo || "",
+      pfNo: data?.pfNo || "",
+      aadharNo: data?.aadharNo || "",
+      licenseNo: data?.licenseNo,
+      licenseExpiryDate: data?.licenseExpiryDate,
+    };
+console.log(payload,"payload");
+
+    saveBasicInfo(payload);
   };
 
   const validateField = (fieldName, value) => {
@@ -214,7 +252,8 @@ const Step3Registration = ({ store, nextStep, prevStep }) => {
 
         {/* Info Box */}
         <div className="mt-4 p-3 bg-blue-100/50 border border-blue-200 rounded-lg text-[10px] text-blue-800">
-          ℹ️ At least one identification number (GST/PAN/CIN/Aadhaar) is required
+          ℹ️ At least one identification number (GST/PAN/CIN/Aadhaar) is
+          required
         </div>
       </motion.div>
 
@@ -349,6 +388,7 @@ const Step3Registration = ({ store, nextStep, prevStep }) => {
         </button>
         <button
           type="submit"
+          disabled={isSaving}
           className="px-6 py-2.5 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg text-white font-extrabold text-xs disabled:opacity-40 disabled:cursor-not-allowed hover:from-blue-500 hover:to-purple-500 transition-all flex items-center gap-1"
         >
           Save & Continue <ChevronRight className="w-4 h-4" />
@@ -356,5 +396,5 @@ const Step3Registration = ({ store, nextStep, prevStep }) => {
       </div>
     </form>
   );
-}
+};
 export default Step3Registration;
