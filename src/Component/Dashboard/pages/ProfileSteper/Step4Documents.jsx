@@ -15,10 +15,15 @@ import { useUserStore } from "../../../../store/store";
 import {
   DocumentCategoryGet,
   DocumentSubCategoryGet,
+  UserDocumentStoreGetById,
   UserDocumentStoreSave,
 } from "../../../../services/api";
 import { createDocumentPayload } from "../../../../utils/Format";
 
+const UserDocumentStoreGetByIdApi = async (userid) => {
+  const response = await UserDocumentStoreGetById(`userId=${userid}`);
+  return response?.data ?? [];
+};
 export function Step4Documents({ store, nextStep, prevStep }) {
   const [dragActive, setDragActive] = useState(false);
   const [uploadingFiles, setUploadingFiles] = useState({});
@@ -45,6 +50,15 @@ export function Step4Documents({ store, nextStep, prevStep }) {
     queryKey: ["documentSubCategories"],
     queryFn: DocumentSubCategoryGet,
     enabled: categories.length > 0,
+    staleTime: Infinity,
+  });
+  const {
+    data: UserDocumentStoreGetByIddata = { data: [] },
+    isLoading: UserDocumentStoreGetByIddataLoading,
+  } = useQuery({
+    queryKey: ["UserDocumentStoreGetByIdApi", loginResponce?.userId],
+    queryFn: () => UserDocumentStoreGetByIdApi,
+    enabled: !!loginResponce?.userId,
     staleTime: Infinity,
   });
 
@@ -228,7 +242,6 @@ export function Step4Documents({ store, nextStep, prevStep }) {
                     <h3 className="text-sm font-bold text-slate-800">
                       {category?.DocumentCategoryName || "Unknown Category"}
                     </h3>
-                   
                   </div>
                 </div>
 

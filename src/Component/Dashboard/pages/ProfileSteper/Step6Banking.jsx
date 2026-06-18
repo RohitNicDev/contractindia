@@ -3,6 +3,7 @@ import { useUserStore } from "../../../../store/store";
 import { userBankDetailSave } from "../../../../services/api";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 const Step6Banking = ({
   store,

@@ -345,7 +345,7 @@ export default function ProfileWizard() {
                   <Step2BasicInfo
                     store={store}
                     nextStep={nextStep}
-                    prevStep={prevStep}
+                    prevStep={prevStep}UserBasicInformation
                     triggerOtpSend={triggerOtpSend}
                   />
                 )}

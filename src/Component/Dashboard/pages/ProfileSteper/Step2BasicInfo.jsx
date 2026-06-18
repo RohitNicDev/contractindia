@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useUserStore } from "../../../../store/store";
 import { userBasicInformationSave } from "../../../../services/api";
+import { toast } from "sonner";
 
 const Step2BasicInfo = ({ store, nextStep, prevStep, triggerOtpSend }) => {
   const {
@@ -23,6 +24,8 @@ const Step2BasicInfo = ({ store, nextStep, prevStep, triggerOtpSend }) => {
   const { mutate: saveBasicInfo, isPending: isSaving } = useMutation({
     mutationFn: userBasicInformationSave,
     onSuccess: (response) => {
+      console.log(response,"response");
+      
       if (response?.status) {
         toast.success(response?.message || "Basic Information saved successfully!");
         store.setBasicInfo(watch());

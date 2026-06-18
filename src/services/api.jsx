@@ -81,7 +81,7 @@ export const UserDocumentStoreGet = async () => {
   return await api.get(`/UserDocumentStore/get`);
 };
 export const UserDocumentStoreGetById = async (planId) => {
-  return await api.get(`/UserDocumentStore/get/${planId}`);
+  return await api.get(`/UserDocumentStore/get?${planId}`);
 };
 export const DocumentSubCategorySave = async (payload) => {
   return await api.post(`/DocumentSubCategory/save`, payload);
@@ -114,7 +114,7 @@ export const ServiceRootGet = async () => {
   return await api.get(`/ServiceMaster/rootservice`);
 };
 export const ServiceMasterGetById = async (serviceId) => {
-  return await api.get(`/ServiceMaster/get?serviceId=${serviceId}`);
+  return await api.get(`/ServiceMaster/get?ParentServiceID=${serviceId}`);
 };
 export const subscriptionHistoryGet = async () => {
   return await api.get(`/UserSubscriptionDetail/get`);
@@ -182,6 +182,7 @@ export const ContractorListGet = async (serviceId) => {
 export const UserRegistrationUserIdGet = async (userId) => {
   return await api.get(`/UserRegistration/get?userId=${userId}`);
 };
+
 
 
 
