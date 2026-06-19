@@ -72,8 +72,8 @@ const Step3Registration = ({ store, nextStep, prevStep }) => {
     const payload = {
       userId: loginResponce?.userId || 0,
 
-      companyTypeId: 0,
-      companyTypeName: store?.basicInfo?.companyType || "",
+      companyTypeId: store?.companyType || "",
+      companyTypeName: store?.companyTypeName || "",
       companyName: store?.basicInfo?.companyName || "",
       email: store?.basicInfo?.email || "",
       contactNo: store?.basicInfo?.mobile || "",

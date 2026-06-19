@@ -195,8 +195,7 @@ const DocumentCategoryManager = () => {
       documentCategoryID: catSelectedId || 0,
       documentCategoryName: values.documentCategoryName?.trim(),
       isActive: values.isActive ? 1 : 0,
-      createdBy: 0, createdDate: new Date().toISOString(),
-      updatedBy: 0, updatedDate: new Date().toISOString(),
+ 
     };
     catSelectedId ? catUpdate(payload) : catSave(payload);
   };
@@ -330,8 +329,7 @@ const DocumentCategoryManager = () => {
       documentSubCategoryName: values.documentSubCategoryName?.trim(),
       documentCategoryID: values.documentCategoryID,
       isActive: values.isActive ? 1 : 0,
-      createdBy: 0, createdDate: new Date().toISOString(),
-      updatedBy: 0, updatedDate: new Date().toISOString(),
+     
     };
     subSelectedId ? subUpdate(payload) : subSave(payload);
   };

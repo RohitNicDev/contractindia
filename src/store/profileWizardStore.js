@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
 
 const initialStoreState = {
   companyType: "",
+  companyTypeName: "",
   basicInfo: {
     companyName: "",
     contactPerson: "",
@@ -47,7 +48,11 @@ export const useProfileWizardStore = create()(
     (set) => ({
       ...initialStoreState,
 
-      setCompanyType: (type) => set({ companyType: type }),
+      setCompanyType: (payload) =>
+        set((state) => ({
+          companyType: payload?.companyType ?? payload,
+          companyTypeName: payload?.companyTypeName ?? state.companyTypeName,
+        })),
 
       setBasicInfo: (info) =>
         set((state) => ({
@@ -96,8 +101,8 @@ export const useProfileWizardStore = create()(
     {
       name: "contracts_india_profile_wizard_draft_v1",
       storage: createJSONStorage(() => localStorage),
-    }
-  )
+    },
+  ),
 );
 
 // Helper function to calculate completion percentage dynamically
@@ -163,7 +168,13 @@ export const getProfileSuggestions = (state) => {
     suggestions.push("Select your Organisation Structure");
   }
   const bi = state.basicInfo;
-  if (!bi.companyName || !bi.contactPerson || !bi.email || !bi.mobile || !bi.address) {
+  if (
+    !bi.companyName ||
+    !bi.contactPerson ||
+    !bi.email ||
+    !bi.mobile ||
+    !bi.address
+  ) {
     suggestions.push("Complete all fields in Basic Company Information");
   }
   const rd = state.registrationDetails;
@@ -184,7 +195,9 @@ export const getProfileSuggestions = (state) => {
     suggestions.push("Upload business registration or identity documents");
   }
   if (state.services.length === 0) {
-    suggestions.push("List at least one service to start receiving tender recommendations");
+    suggestions.push(
+      "List at least one service to start receiving tender recommendations",
+    );
   }
 
   return suggestions;

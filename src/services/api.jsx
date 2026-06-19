@@ -170,7 +170,7 @@ export const userBankDetailSave = async (payload) => {
 };
 export const ContractorListGet = async (serviceId) => {
   const response = await api.get(
-    `/UserRegistration/get?isVerifiedByAdmin=1&userType=2&serviceId=${serviceId}`
+    `/UserRegistration/get?isVerifiedByAdmin=1&userType=2&serviceId=${serviceId}`,
   );
 
   if (!response?.status) {
@@ -183,6 +183,6 @@ export const UserRegistrationUserIdGet = async (userId) => {
   return await api.get(`/UserRegistration/get?userId=${userId}`);
 };
 
-
-
-
+export const userCommonlistType = async (commenlist) => {
+  return await api.get(`/Common/commonlist/${commenlist}`);
+};

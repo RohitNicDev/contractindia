@@ -148,10 +148,7 @@ const DocumentationCategory = () => {
       documentCategoryID: selectedId || 0,
       documentCategoryName: values.documentCategoryName?.trim(),
       isActive: values.isActive ? 1 : 0,
-      createdBy: 0,
-      createdDate: new Date().toISOString(),
-      updatedBy: 0,
-      updatedDate: new Date().toISOString(),
+     
     };
 
     if (selectedId) {

@@ -62,9 +62,7 @@ const serviceMasterSaveApi = async (payload) =>
     displayOrder: payload?.displayOrder ?? 0,
     isActive: payload?.isActive ?? 1,
     createdBy: 0,
-    createdDate: new Date().toISOString(),
-    updatedBy: 0,
-    updatedDate: new Date().toISOString(),
+   
     bannerImage: payload?.bannerImage ?? "",
     thumbnailImage: payload?.thumbnailImage ?? "",
     serviceURL: payload?.serviceURL ?? "",

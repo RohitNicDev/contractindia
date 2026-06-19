@@ -1,26 +1,53 @@
 import { Building2, Check, ChevronRight } from "lucide-react";
-import {  motion } from "framer-motion";
+import { motion } from "framer-motion";
+import { userCommonlistType } from "../../../../services/api";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+const userCommonlistTypeApi = async () => {
+  const response = await userCommonlistType("Organisation_type");
+  console.log(response, "response");
+  return response ?? [];
+};
 const Step1CompanyType = ({ store, nextStep }) => {
-  const companyTypes = [
-    { id: "proprietor", label: "Proprietor", desc: "Single owner business" },
-    {
-      id: "partnership",
-      label: "Partnership",
-      desc: "Joint commercial venture",
-    },
-    {
-      id: "private_limited",
-      label: "Private Limited",
-      desc: "PvT Ltd corporate structure",
-    },
-    {
-      id: "public_limited",
-      label: "Public Limited",
-      desc: "Publicly listed enterprise",
-    },
-    { id: "opc", label: "OPC", desc: "One Person Company" },
-    { id: "llp", label: "LLP", desc: "Limited Liability Partnership" },
-  ];
+  const [companyTypes, setcompanyTypes] = useState([]);
+  const { data: companyTypesData = [], isLoading: companyTypesDataLoading } =
+    useQuery({
+      queryKey: ["userCommonlistTypeApi"],
+      queryFn: () => userCommonlistTypeApi(),
+    });
+  // const companyTypes = [
+  //   { id: "proprietor", label: "Proprietor", desc: "Single owner business" },
+  //   {
+  //     id: "partnership",
+  //     label: "Partnership",
+  //     desc: "Joint commercial venture",
+  //   },
+  //   {
+  //     id: "private_limited",
+  //     label: "Private Limited",
+  //     desc: "PvT Ltd corporate structure",
+  //   },
+  //   {
+  //     id: "public_limited",
+  //     label: "Public Limited",
+  //     desc: "Publicly listed enterprise",
+  //   },
+  //   { id: "opc", label: "OPC", desc: "One Person Company" },
+  //   { id: "llp", label: "LLP", desc: "Limited Liability Partnership" },
+  // ];
+  useEffect(() => {
+    if (companyTypesData?.length > 0) {
+      const data = companyTypesData.map((item) => ({
+        id: item.value,
+        label: item.label,
+        desc: item.name,
+      }));
+
+      setcompanyTypes(data || []);
+    } else {
+      setcompanyTypes([]);
+    }
+  }, [companyTypesData]);
 
   return (
     <div className="space-y-4">
@@ -29,14 +56,19 @@ const Step1CompanyType = ({ store, nextStep }) => {
         details and tax requirements.
       </p>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        {companyTypes.map((type) => {
-          const isSelected = store.companyType === type.id;
+        {companyTypes?.map((type) => {
+          const isSelected = store.companyType == type?.id;
           return (
             <motion.button
-              key={type.id}
+              key={type?.id}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => store.setCompanyType(type.id)}
+              onClick={() =>
+                store.setCompanyType({
+                  companyType: type?.id,
+                  companyTypeName: type?.label,
+                })
+              }
               className={`p-4 rounded-2xl border text-left flex flex-col justify-between h-28 transition-all relative overflow-hidden group ${
                 isSelected
                   ? "bg-gradient-to-br from-blue-50/50 to-indigo-50/30 border-blue-200 shadow-md"
@@ -65,9 +97,11 @@ const Step1CompanyType = ({ store, nextStep }) => {
               </div>
               <div>
                 <h4 className="font-extrabold text-sm text-slate-800">
-                  {type.label}
+                  {type?.label}
                 </h4>
-                <p className="text-[10px] text-slate-500 mt-0.5">{type.desc}</p>
+                <p className="text-[10px] text-slate-500 mt-0.5">
+                  {type?.desc}
+                </p>
               </div>
             </motion.button>
           );

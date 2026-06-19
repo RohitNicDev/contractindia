@@ -98,13 +98,10 @@ const DocumentSubCategory = () => {
   /* ── Category lookup helper ── */
   const getCategoryName = (id) => {
     const found = categoryList.find(
-      (c) =>
-        (c?.documentCategoryID ?? c?.DocumentCategoryID) === id
+      (c) => (c?.documentCategoryID ?? c?.DocumentCategoryID) === id,
     );
     return (
-      found?.documentCategoryName ??
-      found?.DocumentCategoryName ??
-      `ID: ${id}`
+      found?.documentCategoryName ?? found?.DocumentCategoryName ?? `ID: ${id}`
     );
   };
 
@@ -135,9 +132,7 @@ const DocumentSubCategory = () => {
         record?.documentSubCategoryName ??
         "",
       documentCategoryID:
-        record?.DocumentCategoryID ??
-        record?.documentCategoryID ??
-        undefined,
+        record?.DocumentCategoryID ?? record?.documentCategoryID ?? undefined,
       isActive: resolveActive(record),
     });
     setFormModal(true);
@@ -204,10 +199,6 @@ const DocumentSubCategory = () => {
       documentSubCategoryName: values.documentSubCategoryName?.trim(),
       documentCategoryID: values.documentCategoryID,
       isActive: values.isActive ? 1 : 0,
-      createdBy: 0,
-      createdDate: new Date().toISOString(),
-      updatedBy: 0,
-      updatedDate: new Date().toISOString(),
     };
 
     if (selectedId) {
@@ -219,7 +210,6 @@ const DocumentSubCategory = () => {
 
   /* ── Table columns ── */
   const columns = [
-    
     {
       title: "Sub-Category Name",
       key: "documentSubCategoryName",
@@ -235,8 +225,7 @@ const DocumentSubCategory = () => {
       title: "Parent Category",
       key: "documentCategoryID",
       render: (_, record) => {
-        const catId =
-          record?.DocumentCategoryID ?? record?.documentCategoryID;
+        const catId = record?.DocumentCategoryID ?? record?.documentCategoryID;
         return (
           <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-full">
             {getCategoryName(catId)}
@@ -304,7 +293,6 @@ const DocumentSubCategory = () => {
   return (
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_rgba(139,92,246,0.07),_transparent_55%),#f8fafc] p-4 sm:p-6">
       <div className="mx-auto  space-y-5">
-
         {/* ── Heading ── */}
         <CustomHeading
           title="Document Sub-Categories"
@@ -342,16 +330,15 @@ const DocumentSubCategory = () => {
 
         {/* ── Table ── */}
         <div className="rounded-2xl border border-slate-200/70 bg-white shadow-sm overflow-hidden">
-      
           <DataTableComponent
-          title={"Document Sub-Categories"}
-          icon={FolderOpen}
-          accent="indigo"
-          cols={columns}
-          rows={list}
-          onRefresh={refetch}
-          loading={isLoading}
-        />
+            title={"Document Sub-Categories"}
+            icon={FolderOpen}
+            accent="indigo"
+            cols={columns}
+            rows={list}
+            onRefresh={refetch}
+            loading={isLoading}
+          />
         </div>
 
         {/* ══════════════════════════════════════════════════════════════
@@ -435,11 +422,7 @@ const DocumentSubCategory = () => {
             </Form.Item>
 
             {/* Active toggle */}
-            <Form.Item
-              name="isActive"
-              valuePropName="checked"
-              className="mb-0"
-            >
+            <Form.Item name="isActive" valuePropName="checked" className="mb-0">
               <div className="flex items-center gap-3">
                 <Switch checkedChildren="Active" unCheckedChildren="Inactive" />
                 <span className="text-xs text-slate-500">
@@ -481,14 +464,16 @@ const DocumentSubCategory = () => {
                   label: "Parent Category",
                   value: getCategoryName(
                     viewModal.record?.DocumentCategoryID ??
-                    viewModal.record?.documentCategoryID
+                      viewModal.record?.documentCategoryID,
                   ),
                 },
                 {
                   label: "Status",
                   custom: (
                     <Badge
-                      color={resolveActive(viewModal.record) ? "green" : "yellow"}
+                      color={
+                        resolveActive(viewModal.record) ? "green" : "yellow"
+                      }
                     >
                       {resolveActive(viewModal.record) ? "Active" : "Inactive"}
                     </Badge>
@@ -498,14 +483,14 @@ const DocumentSubCategory = () => {
                   label: "Created Date",
                   value: formatDate(
                     viewModal.record?.CreatedDate ??
-                    viewModal.record?.createdDate
+                      viewModal.record?.createdDate,
                   ),
                 },
                 {
                   label: "Last Updated",
                   value: formatDate(
                     viewModal.record?.UpdatedDate ??
-                    viewModal.record?.updatedDate
+                      viewModal.record?.updatedDate,
                   ),
                 },
               ].map(({ label, value, mono, custom }) => (
@@ -518,8 +503,9 @@ const DocumentSubCategory = () => {
                   </span>
                   {custom ?? (
                     <span
-                      className={`text-sm font-semibold text-slate-800 ${mono ? "font-mono text-xs text-slate-500" : ""
-                        }`}
+                      className={`text-sm font-semibold text-slate-800 ${
+                        mono ? "font-mono text-xs text-slate-500" : ""
+                      }`}
                     >
                       {value ?? "—"}
                     </span>
@@ -566,7 +552,6 @@ const DocumentSubCategory = () => {
             ?
           </p>
         </CommonModal>
-
       </div>
     </div>
   );

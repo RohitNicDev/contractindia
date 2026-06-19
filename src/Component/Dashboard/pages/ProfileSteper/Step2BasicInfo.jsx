@@ -13,7 +13,7 @@ const Step2BasicInfo = ({ store, nextStep, prevStep, triggerOtpSend }) => {
     formState: { errors },
     watch,
     reset,
-  } = useForm({ defaultValues: store.basicInfo });
+  } = useForm({ defaultValues: store.basicInfo, });
 
   useEffect(() => {
     reset(store.basicInfo);
@@ -24,10 +24,12 @@ const Step2BasicInfo = ({ store, nextStep, prevStep, triggerOtpSend }) => {
   const { mutate: saveBasicInfo, isPending: isSaving } = useMutation({
     mutationFn: userBasicInformationSave,
     onSuccess: (response) => {
-      console.log(response,"response");
-      
+      console.log(response, "response");
+
       if (response?.status) {
-        toast.success(response?.message || "Basic Information saved successfully!");
+        toast.success(
+          response?.message || "Basic Information saved successfully!",
+        );
         store.setBasicInfo(watch());
         nextStep();
       } else {
@@ -35,32 +37,28 @@ const Step2BasicInfo = ({ store, nextStep, prevStep, triggerOtpSend }) => {
       }
     },
     onError: (error) => {
-      toast.error(error?.message || "Failed to save basic information. Please try again.");
+      toast.error(
+        error?.message || "Failed to save basic information. Please try again.",
+      );
     },
   });
 
   const onSaveStep2 = async (data) => {
     const payload = {
-
       userId: loginResponce?.userId || 0,
-
-      companyTypeId: 0,
-      companyTypeName: store.companyType || "",
-      companyName: data.companyName || "",
-      email: data.email || "",
-      contactNo: data.mobile || "",
-      address: data.address || "",
-      gstNo: data.gstNo || "",
-      panNo: data.panNo || "",
-      esiNo: data.esiNo || "",
-      cinNo: data.cinNo || "",
-      isMSME: data.udyogAadhaarToggle ? 1 : 0,
-      udyogRegistrationNo: data.msmeNo || "",
-      isActive: 1,
-      createdBy: 0,
-      createdDate: new Date().toISOString(),
+      companyTypeId: store?.companyType || "",
+      companyTypeName: store?.companyTypeName || "",
+      companyName: data?.companyName || "",
+      email: data?.email || "",
+      contactNo: data?.mobile || "",
+      address: data?.address || "",
+      gstNo: data?.gstNo || "",
+      panNo: data?.panNo || "",
+      esiNo: data?.esiNo || "",
+      cinNo: data?.cinNo || "",
+      isMSME: data?.udyogAadhaarToggle ? 1 : 0,
+      udyogRegistrationNo: data?.msmeNo || "",
     };
-
     saveBasicInfo(payload);
   };
 
@@ -85,7 +83,19 @@ const Step2BasicInfo = ({ store, nextStep, prevStep, triggerOtpSend }) => {
             </span>
           )}
         </div>
-
+        <div className="flex flex-col gap-1.5">
+          <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+            Company Type *
+          </label>
+          <input
+            type="text"
+            placeholder="e.g. Private Limited"
+            className="bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100/50 text-slate-800 placeholder-slate-400 shadow-sm"
+            value={store.companyTypeName || ""}
+            disabled
+          />
+        </div>
+{/* 
         <div className="flex flex-col gap-1.5">
           <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
             Company Type *
@@ -104,7 +114,7 @@ const Step2BasicInfo = ({ store, nextStep, prevStep, triggerOtpSend }) => {
             <option value="opc">OPC</option>
             <option value="llp">LLP</option>
           </select>
-        </div>
+        </div> */}
 
         <div className="flex flex-col gap-1.5">
           <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
@@ -263,5 +273,5 @@ const Step2BasicInfo = ({ store, nextStep, prevStep, triggerOtpSend }) => {
       </div>
     </form>
   );
-}
+};
 export default Step2BasicInfo;
