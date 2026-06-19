@@ -246,14 +246,14 @@ export function Step4Documents({ store, nextStep, prevStep }) {
                 </div>
 
                 {/* Subcategories Grid */}
-                {subcats.length === 0 ? (
+                {subcats?.length === 0 ? (
                   <div className="text-center py-6 text-slate-500 text-xs">
                     No subcategories available for this category
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* ✅ Iterate through filtered subcategories */}
-                    {subcats.map((subcat) => {
+                    {subcats?.map((subcat) => {
                       const subcategoryId = subcat?.DocumentSubCategoryID;
                       const fileKey = `${categoryId}-${subcategoryId}`;
                       const uploadProgress = uploadingFiles[fileKey];

@@ -139,9 +139,9 @@ export const calculateProgress = (state) => {
   // Step 4: Banking Details (15% total, 3% per field)
   const bd = state.bankingDetails;
   if (bd.bankName?.trim()) score += 3;
-  if (bd.accountType?.trim()) score += 3;
+  // if (bd.accountType?.trim()) score += 3;
   if (bd.accountNumber?.trim()) score += 3;
-  if (bd.ifscCode?.trim()) score += 3;
+  if (bd.ifscCode?.trim()) score += 6;
   if (bd.micrCode?.trim()) score += 3;
 
   // Step 5: Document Upload Center (20% total, 5% per section containing files)

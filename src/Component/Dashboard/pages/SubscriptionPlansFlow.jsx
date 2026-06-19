@@ -652,7 +652,7 @@ export default function SubscriptionPlansFlow({
 
           <CommonModal
             isOpen={open}
-            onClose={close}
+            onClose={handleClose}
             title="Subscription Plans"
             variant="info"
             size="xxl"

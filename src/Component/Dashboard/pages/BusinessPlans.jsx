@@ -89,7 +89,7 @@ const BusinessPlans = () => {
     form.resetFields();
     form.setFieldsValue({
       durationType: "Monthly",
-      isActive: true,
+      // isActive: true,
     });
   };
 
@@ -100,7 +100,7 @@ const BusinessPlans = () => {
 
     form.setFieldsValue({
       durationType: "Monthly",
-      isActive: true,
+      // isActive: true,
     });
 
     setPlanModal(true);
@@ -121,8 +121,8 @@ const BusinessPlans = () => {
       durationType:
         plan?.DurationType ?? plan?.durationType ?? plan?.duration ?? "Monthly",
       remark: plan?.Remark ?? plan?.remark ?? plan?.features ?? "",
-      isActive:
-        plan?.IsActive === 1 || plan?.isActive === 1 || plan?.isActive === true,
+      // isActive:
+      //   plan?.IsActive === 1 || plan?.isActive === 1 || plan?.isActive === true,
       maxNoofServices: plan?.maxNoofServices ?? 0,
       userType: plan?.UserType ?? undefined,
       userTypeName: plan?.UserTypeName ?? "",
@@ -225,7 +225,7 @@ const BusinessPlans = () => {
       enterredIP: window.location.hostname,
       enterredBy: 0,
       enterDate: new Date().toISOString(),
-      isActive: values.isActive ? 1 : 0,
+      // isActive: values.isActive ? 1 : 0,
       maxNoofServices: values.maxNoofServices || 0,
       userType: Number(values.userType || 0),
       userTypeName:
@@ -271,16 +271,16 @@ const BusinessPlans = () => {
     //     dataIndex: "remark",
     //     key: "remark",
     // },
-    {
-      title: "Status",
-      dataIndex: "isActive",
-      key: "isActive",
-      render: (_, record) => (
-        <Badge color={Number(record.IsActive) === 1 ? "green" : "yellow"}>
-          {Number(record.IsActive) === 1 ? "Active" : "Inactive"}
-        </Badge>
-      ),
-    },
+    // {
+    //   title: "Status",
+    //   dataIndex: "isActive",
+    //   key: "isActive",
+    //   render: (_, record) => (
+    //     <Badge color={Number(record.IsActive) === 1 ? "green" : "yellow"}>
+    //       {Number(record.IsActive) === 1 ? "Active" : "Inactive"}
+    //     </Badge>
+    //   ),
+    // },
     {
       title: "User Type",
       dataIndex: "userType",
@@ -404,7 +404,7 @@ const BusinessPlans = () => {
             layout="vertical"
             onFinish={onFinish}
             className="mt-4"
-            initialValues={{ durationType: "Monthly", isActive: true }}
+            initialValues={{ durationType: "Monthly",   }}
           >
             <Form.Item
               name="planName"
@@ -512,9 +512,9 @@ const BusinessPlans = () => {
               />
             </Form.Item>
 
-            <Form.Item name="isActive" valuePropName="checked">
+            {/* <Form.Item name="isActive" valuePropName="checked">
               <Switch checkedChildren="Active" unCheckedChildren="Inactive" />
-            </Form.Item>
+            </Form.Item> */}
 
             {/* <div className="flex justify-end gap-3 mt-6">
               <Button
@@ -571,7 +571,7 @@ const BusinessPlans = () => {
               <p className="font-semibold">{viewModal.plan?.DurationType}</p>
             </div>
 
-            <div>
+            {/* <div>
               <p className="text-xs text-slate-500">Status</p>
               <p className="font-semibold">
                 <Badge
@@ -584,7 +584,7 @@ const BusinessPlans = () => {
                     : "Inactive"}
                 </Badge>
               </p>
-            </div>
+            </div> */}
 
             <div>
               <p className="text-xs text-slate-500">User Type</p>

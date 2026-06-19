@@ -113,6 +113,7 @@ const Step6Banking = ({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
         <div className="space-y-4">
           <div className="flex flex-col gap-1.5">
+            
             <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
               Bank Name
             </label>
@@ -201,9 +202,9 @@ const Step6Banking = ({
 
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-[9px] uppercase font-bold tracking-widest text-white/70">
+                {/* <p className="text-[9px] uppercase font-bold tracking-widest text-white/70">
                   ContractsIndia Premium settlement
-                </p>
+                </p> */}
                 <h4 className="text-sm font-black mt-0.5">
                   {detectedBank.name}
                 </h4>
