@@ -3,7 +3,10 @@ import { AlertCircle, ChevronLeft, ChevronRight, Loader } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useUserStore } from "../../../../store/store";
-import { userBasicInformationSave } from "../../../../services/api";
+import {
+  userBasicInformationSave,
+  userBasicInformationUpdate,
+} from "../../../../services/api";
 import { toast } from "sonner";
 
 const Step2BasicInfo = ({ store, nextStep, prevStep, triggerOtpSend }) => {
@@ -13,7 +16,7 @@ const Step2BasicInfo = ({ store, nextStep, prevStep, triggerOtpSend }) => {
     formState: { errors },
     watch,
     reset,
-  } = useForm({ defaultValues: store.basicInfo, });
+  } = useForm({ defaultValues: store.basicInfo });
 
   useEffect(() => {
     reset(store.basicInfo);
@@ -22,7 +25,12 @@ const Step2BasicInfo = ({ store, nextStep, prevStep, triggerOtpSend }) => {
   const { loginResponce } = useUserStore();
   // Mutation for saving basic info
   const { mutate: saveBasicInfo, isPending: isSaving } = useMutation({
-    mutationFn: userBasicInformationSave,
+    mutationFn:
+      store.basicInfo?.address !== "" ||
+      store.basicInfo?.address !== null ||
+      store.basicInfo?.address !== undefined
+        ? userBasicInformationUpdate
+        : userBasicInformationSave,
     onSuccess: (response) => {
       console.log(response, "response");
 
@@ -95,7 +103,7 @@ const Step2BasicInfo = ({ store, nextStep, prevStep, triggerOtpSend }) => {
             disabled
           />
         </div>
-{/* 
+        {/* 
         <div className="flex flex-col gap-1.5">
           <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
             Company Type *

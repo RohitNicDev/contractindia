@@ -4,10 +4,10 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import Switch from "antd/lib/switch";
-import { userBasicInformationSave } from "../../../../services/api";
 import { useMutation } from "@tanstack/react-query";
 import { useUserStore } from "../../../../store/store";
 import { toast } from "sonner";
+import { userBasicInformationUpdate } from "../../../../services/api";
 
 const Step3Registration = ({ store, nextStep, prevStep }) => {
   const { loginResponce } = useUserStore();
@@ -45,28 +45,29 @@ const Step3Registration = ({ store, nextStep, prevStep }) => {
       licenseExpiryDate: store.registrationDetails?.licenseExpiryDate || "",
     },
   });
-  const { mutate: saveBasicInfo, isPending: isSaving } = useMutation({
-    mutationFn: userBasicInformationSave,
+  const { mutate: UpdateBasicInfo, isPending: isSaving } = useMutation({
+    mutationFn: userBasicInformationUpdate,
     onSuccess: (response) => {
       console.log(response, "response");
 
       if (response?.status) {
         toast.success(
-          response?.message || "Basic Information saved successfully!",
+          response?.message || "Basic Information Updated successfully!",
         );
         store.setRegistrationDetails(watchStep3());
         nextStep();
       } else {
-        toast.error(response?.message || "Failed to save basic information");
+        toast.error(response?.message || "Failed to Update basic information");
       }
     },
     onError: (error) => {
       toast.error(
-        error?.message || "Failed to save basic information. Please try again.",
+        error?.message ||
+          "Failed to Update basic information. Please try again.",
       );
     },
   });
-  const onSaveStep3 = async (data) => {
+  const onUpdateStep3 = async (data) => {
     console.log(store, "store");
 
     const payload = {
@@ -90,9 +91,9 @@ const Step3Registration = ({ store, nextStep, prevStep }) => {
       licenseNo: data?.licenseNo,
       licenseExpiryDate: data?.licenseExpiryDate,
     };
-console.log(payload,"payload");
+    console.log(payload, "payload");
 
-    saveBasicInfo(payload);
+    UpdateBasicInfo(payload);
   };
 
   const validateField = (fieldName, value) => {
@@ -114,7 +115,7 @@ console.log(payload,"payload");
   };
 
   return (
-    <form onSubmit={handleSubmitStep3(onSaveStep3)} className="space-y-6">
+    <form onSubmit={handleSubmitStep3(onUpdateStep3)} className="space-y-6">
       {/* ✅ Section A - Registration Details */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
@@ -391,7 +392,7 @@ console.log(payload,"payload");
           disabled={isSaving}
           className="px-6 py-2.5 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg text-white font-extrabold text-xs disabled:opacity-40 disabled:cursor-not-allowed hover:from-blue-500 hover:to-purple-500 transition-all flex items-center gap-1"
         >
-          Save & Continue <ChevronRight className="w-4 h-4" />
+          Update & Continue <ChevronRight className="w-4 h-4" />
         </button>
       </div>
     </form>

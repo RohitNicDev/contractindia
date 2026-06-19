@@ -23,17 +23,21 @@ import {
 } from "../../../../store/profileWizardStore";
 import { useNavigate } from "react-router-dom";
 import ServiceListing from "../ServiceListing";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import React from "react";
- 
-import { UserRegistrationUserIdGet } from "../../../../services/api";
+
+import {
+  userBankDetailbyParams,
+  userBasicInformationbyParam,
+  UserRegistrationUserIdGet,
+} from "../../../../services/api";
 import { useUserStore } from "../../../../store/store";
-import { useQuery } from "@tanstack/react-query"; 
+import { useQuery } from "@tanstack/react-query";
 import Step2BasicInfo from "./Step2BasicInfo";
 import Step1CompanyType from "./Step1CompanyType";
 import Step3Registration from "./Step3Registration";
-import  Step6Banking  from "./Step6Banking";
+import Step6Banking from "./Step6Banking";
 import { Step4Documents } from "./Step4Documents";
 
 // Steps definition
@@ -62,6 +66,16 @@ const STEPS = [
 ];
 const UserRegistrationUserIdGetApi = async (userId) => {
   const response = await UserRegistrationUserIdGet(userId);
+  console.log(response, "response");
+  return response?.data ?? [];
+};
+const userBankDetailbyParamsApi = async (userId) => {
+  const response = await userBankDetailbyParams(`userId=${userId}`);
+  console.log(response, "response");
+  return response?.data ?? [];
+};
+const userBankInformationbyParamsApi = async (userId) => {
+  const response = await userBasicInformationbyParam(`userId=${userId}`);
   console.log(response, "response");
   return response?.data ?? [];
 };
@@ -99,9 +113,13 @@ export default function ProfileWizard() {
     navigation("/commercial/dashboard");
     if (progress >= 45) {
       store.setIsSkipped(true);
-      message.success("You have skipped the profile wizard. Navigations unlocked!");
+      message.success(
+        "You have skipped the profile wizard. Navigations unlocked!",
+      );
     } else {
-      message.error("Please complete at least 80% of your profile before skipping.");
+      message.error(
+        "Please complete at least 80% of your profile before skipping.",
+      );
     }
   };
   const getloginResponce = useUserStore((state) => state?.loginResponce);
@@ -112,8 +130,24 @@ export default function ProfileWizard() {
     enabled: !!getloginResponce?.userId,
     retry: false,
   });
+  const { data: bankDetailData = [], isLoading: bankDetailDataLoading } =
+    useQuery({
+      queryKey: ["bankDetailData", getloginResponce?.userId],
+      queryFn: () => userBankDetailbyParamsApi(getloginResponce?.userId),
+      enabled: !!getloginResponce?.userId,
+      retry: false,
+    });
+  const {
+    data: bankInformationData = [],
+    isLoading: bankInformationDataLoading,
+  } = useQuery({
+    queryKey: ["bankInformationData", getloginResponce?.userId],
+    queryFn: () => userBankInformationbyParamsApi(getloginResponce?.userId),
+    enabled: !!getloginResponce?.userId,
+    retry: false,
+  });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!UserData || (Array.isArray(UserData) && UserData.length === 0)) return;
     const userObj = Array.isArray(UserData) ? UserData[0] : UserData;
     if (userObj) {
@@ -127,7 +161,56 @@ export default function ProfileWizard() {
         });
       }
     }
-  }, [UserData, store]);
+  }, [UserData]);
+  //bank details
+  useEffect(() => {
+    if (bankDetailData.length > 0) {
+      console.log(bankDetailData[0], "bankDetailData");
+      store.setBankingDetails({
+        bankName: bankDetailData[0]?.BankName,
+        accountNumber: bankDetailData[0]?.AccountNo,
+        ifscCode: bankDetailData[0]?.IFSC,
+        micrCode: bankDetailData[0]?.MICR,
+      });
+    }
+  }, [bankDetailData]);
+  //bankInformationData
+  useEffect(() => {
+    if (bankInformationData.length > 0) {
+      const info = bankInformationData[0];
+      console.log(info, "bankInformationData");
+
+      // set company type if not already chosen
+      if (!store.companyType) {
+        store.setCompanyType({
+          companyType: info.CompanyTypeId ?? info.CompanyTypeName ?? "",
+          companyTypeName: info.CompanyTypeName ?? "",
+        });
+      }
+
+      // populate basic info without overwriting existing user edits
+      store.setBasicInfo({
+        companyName: store.basicInfo.companyName || info.CompanyName || "",
+        contactPerson: store.basicInfo.contactPerson || info.ContactNo || "",
+        email: store.basicInfo.email || info.Email || "",
+        mobile: store.basicInfo.mobile || info.ContactNo || "",
+        address: store.basicInfo.address || info.Address || "",
+      });
+
+      // populate registration details if available
+      store.setRegistrationDetails({
+        gstNo: store.registrationDetails.gstNo || info.GSTNo || "",
+        panNo: store.registrationDetails.panNo || info.PANNo || "",
+        cinNo: store.registrationDetails.cinNo || info.CINNo || "",
+        udyogAadhaarToggle:
+          typeof info.IsMSME === "boolean"
+            ? info.IsMSME
+            : store.registrationDetails.udyogAadhaarToggle,
+        msmeNo: store.registrationDetails.msmeNo || info.UdyogRegistrationNo || "",
+      });
+    }
+  }, [bankInformationData]);
+
   const triggerOtpSend = (type, val) => {
     if (!val) {
       message.error(`Please enter a valid ${type} before sending OTP.`);
@@ -180,7 +263,14 @@ export default function ProfileWizard() {
           <div className="flex flex-col md:flex-row items-center gap-4 bg-white/80 backdrop-blur-xl border border-white/90 shadow-[0_2px_20px_rgba(99,102,241,0.07)] p-2 rounded-2xl">
             <div className="relative shrink-0 flex items-center justify-center">
               <svg className="w-16 h-16 -rotate-90">
-                <circle cx="32" cy="32" r="26" className="stroke-slate-100" strokeWidth="5" fill="transparent" />
+                <circle
+                  cx="32"
+                  cy="32"
+                  r="26"
+                  className="stroke-slate-100"
+                  strokeWidth="5"
+                  fill="transparent"
+                />
                 <motion.circle
                   cx="32"
                   cy="32"
@@ -214,12 +304,13 @@ export default function ProfileWizard() {
                   {store.basicInfo.contactPerson || "Commercial Partner"}
                 </h2>
                 <span
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${progress < 40
+                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                    progress < 40
                       ? "text-red-600 bg-red-50 border-red-200"
                       : progress < 80
                         ? "text-orange-600 bg-orange-50 border-orange-200"
                         : "text-cyan-700 bg-cyan-50 border-cyan-200"
-                    }`}
+                  }`}
                 >
                   {progress < 40
                     ? "Weak"
@@ -266,16 +357,18 @@ export default function ProfileWizard() {
                   <React.Fragment key={step.id}>
                     <button
                       onClick={() => store.setCurrentStep(step.id)}
-                      className={`flex flex-col items-center gap-2 group focus:outline-none transition-all relative ${isActive ? "scale-105" : ""
-                        }`}
+                      className={`flex flex-col items-center gap-2 group focus:outline-none transition-all relative ${
+                        isActive ? "scale-105" : ""
+                      }`}
                     >
                       <div
-                        className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all ${isActive
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all ${
+                          isActive
                             ? "bg-linear-to-br from-blue-500 to-purple-500 border-blue-400 shadow-[0_0_12px_rgba(59,130,246,0.4)]"
                             : isCompleted
                               ? "bg-blue-50 border-blue-200 text-blue-600"
                               : "bg-slate-50 border-slate-200 text-slate-400 group-hover:border-slate-300"
-                          }`}
+                        }`}
                       >
                         {isCompleted ? (
                           <Check className="w-4 h-4" />
@@ -284,10 +377,11 @@ export default function ProfileWizard() {
                         )}
                       </div>
                       <span
-                        className={`text-[11px] font-bold tracking-tight transition-all ${isActive
+                        className={`text-[11px] font-bold tracking-tight transition-all ${
+                          isActive
                             ? "text-blue-600"
                             : "text-slate-500 group-hover:text-slate-700"
-                          }`}
+                        }`}
                       >
                         {step.label}
                       </span>
@@ -331,7 +425,9 @@ export default function ProfileWizard() {
                   </div>
                   <div className="bg-slate-50 border border-slate-200/60 rounded-xl px-3 py-1 flex items-center gap-1.5 shadow-inner">
                     <Sparkles className="w-3.5 h-3.5 text-yellow-500 animate-pulse" />
-                    <span className="text-[10px] font-bold text-slate-600">Verified Step</span>
+                    <span className="text-[10px] font-bold text-slate-600">
+                      Verified Step
+                    </span>
                   </div>
                 </div>
 
@@ -345,32 +441,51 @@ export default function ProfileWizard() {
                   <Step2BasicInfo
                     store={store}
                     nextStep={nextStep}
-                    prevStep={prevStep}UserBasicInformation
+                    prevStep={prevStep}
+                    UserBasicInformation
                     triggerOtpSend={triggerOtpSend}
                   />
                 )}
 
                 {/* Step 3 */}
                 {store.currentStep === 3 && (
-                  <Step3Registration store={store} nextStep={nextStep} prevStep={prevStep} />
+                  <Step3Registration
+                    store={store}
+                    nextStep={nextStep}
+                    prevStep={prevStep}
+                  />
                 )}
 
                 {/* Step 4 */}
                 {store.currentStep === 4 && (
-                  <Step4Documents store={store} nextStep={nextStep} prevStep={prevStep} />
+                  <Step4Documents
+                    store={store}
+                    nextStep={nextStep}
+                    prevStep={prevStep}
+                  />
                 )}
 
                 {/* Step 5 */}
                 {store.currentStep === 5 && (
                   <div className="space-y-6">
-                    <ServiceListing onSave={handleSaveServiceStep} onBack={prevStep} dashboardMode={true} />
+                    <ServiceListing
+                      onSave={handleSaveServiceStep}
+                      onBack={prevStep}
+                      dashboardMode={true}
+                    />
                     {/* <Step5ServiceListing/> */}
                   </div>
                 )}
 
                 {/* Step 6 */}
                 {store.currentStep === 6 && (
-                  <Step6Banking store={store} nextStep={nextStep} prevStep={prevStep} navigation={navigation} progress={progress} />
+                  <Step6Banking
+                    store={store}
+                    nextStep={nextStep}
+                    prevStep={prevStep}
+                    navigation={navigation}
+                    progress={progress}
+                  />
                 )}
               </motion.div>
             </AnimatePresence>
@@ -380,8 +495,12 @@ export default function ProfileWizard() {
         {/* Right Side Summary Panel */}
         <aside className="w-full lg:w-[25%] border-t lg:border-t-0 lg:border-l border-slate-200 bg-white/70 backdrop-blur-xl p-6 flex flex-col gap-6 overflow-y-auto">
           <div>
-            <h3 className="text-xs uppercase font-extrabold tracking-widest text-slate-400">Onboarding Health</h3>
-            <h2 className="text-lg font-black text-slate-800 mt-1">Profile Summary</h2>
+            <h3 className="text-xs uppercase font-extrabold tracking-widest text-slate-400">
+              Onboarding Health
+            </h3>
+            <h2 className="text-lg font-black text-slate-800 mt-1">
+              Profile Summary
+            </h2>
           </div>
 
           {/* Strength progress indicator */}
@@ -398,16 +517,22 @@ export default function ProfileWizard() {
             </div>
             <div className="text-[10px] text-slate-500 font-semibold mt-1">
               {progress >= 45 ? (
-                <span className="text-emerald-600 font-bold">✓ Profile qualified for dashboard release.</span>
+                <span className="text-emerald-600 font-bold">
+                  ✓ Profile qualified for dashboard release.
+                </span>
               ) : (
-                <span>Needs {45 - progress}% more progress to unlock sidebar.</span>
+                <span>
+                  Needs {45 - progress}% more progress to unlock sidebar.
+                </span>
               )}
             </div>
           </div>
 
           {/* Completed steps checklist */}
           <div className="space-y-3">
-            <h4 className="text-[10px] uppercase font-extrabold tracking-widest text-slate-400">Verification Steps Checklist</h4>
+            <h4 className="text-[10px] uppercase font-extrabold tracking-widest text-slate-400">
+              Verification Steps Checklist
+            </h4>
             <div className="space-y-2">
               {STEPS.map((step, idx) => {
                 const stepProg =
@@ -427,20 +552,24 @@ export default function ProfileWizard() {
                 return (
                   <div
                     key={step.id}
-                    className={`flex items-center gap-3 p-2.5 rounded-xl border transition-all ${isCompleted
+                    className={`flex items-center gap-3 p-2.5 rounded-xl border transition-all ${
+                      isCompleted
                         ? "bg-blue-50 border-blue-100 text-slate-700"
                         : "bg-slate-50/40 border-slate-100 text-slate-400"
-                      }`}
+                    }`}
                   >
                     <div
-                      className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 border ${isCompleted
+                      className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 border ${
+                        isCompleted
                           ? "bg-blue-100 border-blue-300 text-blue-600"
                           : "border-slate-200 bg-white"
-                        }`}
+                      }`}
                     >
                       {isCompleted && <Check className="w-3 h-3" />}
                     </div>
-                    <span className="text-xs font-bold truncate">{step.label}</span>
+                    <span className="text-xs font-bold truncate">
+                      {step.label}
+                    </span>
                   </div>
                 );
               })}
@@ -451,18 +580,24 @@ export default function ProfileWizard() {
           <div className="bg-slate-50 border border-slate-150 rounded-2xl p-4 space-y-2 text-xs">
             <div className="flex justify-between border-b border-slate-100 pb-2">
               <span className="text-slate-500">Selected Entity:</span>
-              <span className="font-bold text-slate-800 capitalize">{store.companyType || "—"}</span>
+              <span className="font-bold text-slate-800 capitalize">
+                {store.companyType || "—"}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-slate-500">Marketplace Services:</span>
-              <span className="font-bold text-cyan-600">{store.services.length} Active</span>
+              <span className="font-bold text-cyan-600">
+                {store.services.length} Active
+              </span>
             </div>
           </div>
 
           {/* Suggested improvements */}
           {suggestions.length > 0 && (
             <div className="space-y-2">
-              <h4 className="text-[10px] uppercase font-extrabold tracking-widest text-slate-400">Suggested Improvements</h4>
+              <h4 className="text-[10px] uppercase font-extrabold tracking-widest text-slate-400">
+                Suggested Improvements
+              </h4>
               <ul className="space-y-2">
                 {suggestions.map((s, idx) => (
                   <li

@@ -81,16 +81,14 @@ const Step6Banking = ({
 
   const onSaveStep6 = async (data) => {
     const payload = {
-      bankDetailID: 0,
+      // bankDetailID: 0,
       userId: loginResponce?.userId || 0,
       bankName: data.bankName || "",
       accountNo: data.accountNumber || "",
       ifsc: data.ifscCode || "",
       micr: data.micrCode || "",
       isPrimaryAccount: 1,
-      isActive: 1,
-      createdBy: 0,
-      createdDate: new Date().toISOString(),
+     
     };
 
     saveBankDetails(payload);

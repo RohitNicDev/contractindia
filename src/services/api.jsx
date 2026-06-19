@@ -164,9 +164,18 @@ export const verifyUserRegistration = async (payload) => {
 export const userBasicInformationSave = async (payload) => {
   return await api.post("/UserBasicInformation/save", payload);
 };
+export const userBasicInformationUpdate = async (payload) => {
+  return await api.put("/UserBasicInformation/Update", payload);
+};
+export const userBasicInformationbyParam = async (params) => {
+  return await api.get(`/UserBasicInformation/get?${params}` );
+};
 
 export const userBankDetailSave = async (payload) => {
   return await api.post("/UserBankDetail/save", payload);
+};
+export const userBankDetailbyParams = async (Params) => {
+  return await api.get(`/UserBankDetail/get?${Params}`);
 };
 export const ContractorListGet = async (serviceId) => {
   const response = await api.get(
