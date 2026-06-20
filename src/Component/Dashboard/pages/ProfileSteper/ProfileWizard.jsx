@@ -39,7 +39,7 @@ import Step1CompanyType from "./Step1CompanyType";
 import Step3Registration from "./Step3Registration";
 import Step6Banking from "./Step6Banking";
 import { Step4Documents } from "./Step4Documents";
-import { Step5ServiceListing } from "./Step5ServiceListing";
+import Step5ServiceListing from "./Step5ServiceListing";
 
 // Steps definition
 const STEPS = [
@@ -138,6 +138,7 @@ export default function ProfileWizard() {
       enabled: !!getloginResponce?.userId,
       retry: false,
     });
+    
   const {
     data: bankInformationData = [],
     isLoading: bankInformationDataLoading,
@@ -470,7 +471,7 @@ export default function ProfileWizard() {
                       onBack={prevStep}
                       dashboardMode={true}
                     /> */}
-                    <Step5ServiceListing />
+                    <Step5ServiceListing store={store} nextStep={nextStep} prevStep={prevStep} />
                   </div>
                 )}
 

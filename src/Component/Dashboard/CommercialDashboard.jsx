@@ -73,24 +73,24 @@ const NAV = [
     icon: Briefcase,
     route: "services",
   },
-  {
-    id: "subscription",
-    label: "Subscription History",
-    icon: Receipt,
-    route: "subscription",
-  },
+  // {
+  //   id: "subscription",
+  //   label: "Subscription History",
+  //   icon: Receipt,
+  //   route: "subscription",
+  // },
   {
     id: "PlansAndSubscriptions",
     label: "Plans & Subscriptions",
     icon: PackageCheck,
     route: "plans-and-subscriptions",
   },
-  {
-    id: "credits",
-    label: "My Credits",
-    icon: CreditCard,
-    route: "credits",
-  },
+  // {
+  //   id: "credits",
+  //   label: "My Credits",
+  //   icon: CreditCard,
+  //   route: "credits",
+  // },
   {
     id: "settings",
     label: "Settings",

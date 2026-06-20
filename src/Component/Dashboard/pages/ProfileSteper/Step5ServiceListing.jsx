@@ -2,7 +2,6 @@
 import {
     ChevronRight,
     ChevronLeft,
-
     GripVertical,
     Layers3,
     EyeOff,
@@ -13,9 +12,27 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { SERVICES_HIERARCHY } from "../../../../data/services_hierarchy";
+import { useUserStore } from "../../../../store/store";
+import { useQuery } from "@tanstack/react-query";
+import { UserRegistrationUserIdGet } from "../../../../services/api";
+import SubscriptionPlansFlow from "../SubscriptionPlansFlow";
 
 
 const Step5ServiceListing = ({ store, nextStep, prevStep }) => {
+    const loginResponce = useUserStore((state) => state?.loginResponce);
+    const userId = loginResponce?.userId;
+
+    const { data: UserData = [], refetch: refetchUserData } = useQuery({
+        queryKey: ["UserData", userId],
+        queryFn: async () => {
+            const response = await UserRegistrationUserIdGet(userId);
+            return response?.data ?? [];
+        },
+        enabled: !!userId,
+        retry: false,
+    });
+
+    const [showPlans, setShowPlans] = useState(false);
     const [services, setServices] = useState(SERVICES_HIERARCHY);
 
     const colorMap = {
@@ -27,6 +44,16 @@ const Step5ServiceListing = ({ store, nextStep, prevStep }) => {
     };
     const [activeIds, setActiveIds] = useState(store?.activeServices || []);
     const [expandedIds, setExpandedIds] = useState(store?.expandedServices || []);
+
+    // Sync with store when it is loaded
+    useEffect(() => {
+        if (store?.activeServices) {
+            setActiveIds(store.activeServices);
+        }
+        if (store?.expandedServices) {
+            setExpandedIds(store.expandedServices);
+        }
+    }, [store]);
     const [draggedItem, setDraggedItem] = useState(null);
     const [dragOverId, setDragOverId] = useState(null);
 
@@ -37,9 +64,18 @@ const Step5ServiceListing = ({ store, nextStep, prevStep }) => {
     };
 
     const toggleActive = (id) => {
+        const userObj = Array.isArray(UserData) ? UserData[0] : UserData;
+        const hasPlan = userObj?.PlanID || userObj?.planID || userObj?.planId || userObj?.PlanId;
+        const isCurrentlyActive = activeIds.includes(id);
+
+        if (!isCurrentlyActive && !hasPlan) {
+            toast.error("An active subscription plan is required to activate services.");
+            setShowPlans(true);
+            return;
+        }
+
         setActiveIds((prev) => {
-            const isActive = prev.includes(id);
-            if (isActive) {
+            if (isCurrentlyActive) {
                 toast.success("Service deactivated");
                 return prev.filter((x) => x !== id);
             }
@@ -307,6 +343,13 @@ const Step5ServiceListing = ({ store, nextStep, prevStep }) => {
                     Save & Continue <ChevronRight className="w-4 h-4" />
                 </button>
             </div>
+            <SubscriptionPlansFlow
+                open={showPlans}
+                onClose={() => {
+                    setShowPlans(false);
+                    refetchUserData();
+                }}
+            />
         </div>
     );
 }

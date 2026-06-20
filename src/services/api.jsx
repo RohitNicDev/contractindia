@@ -119,6 +119,9 @@ export const ServiceMasterGetById = async (serviceId) => {
 export const subscriptionHistoryGet = async () => {
   return await api.get(`/UserSubscriptionDetail/get`);
 };
+export const userSubscriptionDetailSave = async (payload) => {
+  return await api.post(`/UserSubscriptionDetail/save`, payload);
+};
 export const clientHistoryGet = async () => {
   return await api.get(`/ClientMaster/get`);
 };
