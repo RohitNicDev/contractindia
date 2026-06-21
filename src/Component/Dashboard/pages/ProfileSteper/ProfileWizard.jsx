@@ -249,18 +249,18 @@ export default function ProfileWizard() {
       </div>
 
       {/* Progress bar at the very top */}
-      <div className="h-1.5 w-full bg-slate-50/40 shrink-0 relative z-20">
+      {/* <div className="h-1.5 w-full bg-slate-50/40 shrink-0 relative z-20">
         <motion.div
           className="h-full bg-linear-to-r from-blue-500 via-purple-500 to-cyan-400 shadow-[0_0_12px_rgba(56,189,248,0.5)]"
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         />
-      </div>
+      </div> */}
 
       {/* Grid Layout Container */}
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative z-10">
-        <main className="flex-1 overflow-y-auto px-4 py-4 [scrollbar-width:none] flex flex-col gap-2 lg:max-w-[75%]">
+        <main className="flex-1 overflow-y-auto px-4 py-1 [scrollbar-width:none] flex flex-col gap-2 lg:max-w-[75%]">
           {/* Circular progress & Stepper Header Row */}
           <div className="flex flex-col md:flex-row items-center gap-4 bg-white/80 backdrop-blur-xl border border-white/90 shadow-[0_2px_20px_rgba(99,102,241,0.07)] p-2 rounded-2xl">
             <div className="relative shrink-0 flex items-center justify-center">

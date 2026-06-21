@@ -35,10 +35,10 @@ const fetchUserSubscriptions = async (userId) => {
 
 // ─── Color palette ─────────────────────────────────────────────────────────────
 const colorMap = {
-    violet:  { border: "#c4b5fd", bg: "#f5f3ff", text: "#7c3aed", glow: "rgba(124,58,237,0.4)" },
-    cyan:    { border: "#a5f3fc", bg: "#ecfeff", text: "#0891b2", glow: "rgba(8,145,178,0.4)" },
-    amber:   { border: "#fde68a", bg: "#fffbeb", text: "#d97706", glow: "rgba(217,119,6,0.4)" },
-    rose:    { border: "#fecdd3", bg: "#fff1f2", text: "#e11d48", glow: "rgba(225,29,72,0.4)" },
+    violet: { border: "#c4b5fd", bg: "#f5f3ff", text: "#7c3aed", glow: "rgba(124,58,237,0.4)" },
+    cyan: { border: "#a5f3fc", bg: "#ecfeff", text: "#0891b2", glow: "rgba(8,145,178,0.4)" },
+    amber: { border: "#fde68a", bg: "#fffbeb", text: "#d97706", glow: "rgba(217,119,6,0.4)" },
+    rose: { border: "#fecdd3", bg: "#fff1f2", text: "#e11d48", glow: "rgba(225,29,72,0.4)" },
     emerald: { border: "#a7f3d0", bg: "#ecfdf5", text: "#059669", glow: "rgba(5,150,105,0.4)" },
 };
 const COLOR_KEYS = Object.keys(colorMap);
@@ -50,19 +50,19 @@ const mapFlatToTree = (flat = []) => {
         const id = String(it.ServiceID);
         nodes[id] = {
             id,
-            serviceId:   it.ServiceID,
-            parentId:    it.ParentServiceID,
-            code:        it.ServiceCode,
-            name:        it.ServiceName || it.ServiceCode || `Service ${it.ServiceID}`,
+            serviceId: it.ServiceID,
+            parentId: it.ParentServiceID,
+            code: it.ServiceCode,
+            name: it.ServiceName || it.ServiceCode || `Service ${it.ServiceID}`,
             description: it.ServiceDescription,
-            icon:        it.ServiceIcon || null,
-            planId:      it.PlanID,
-            planName:    it.PlanName,
-            amount:      it.Amount,
-            isActive:    !!Number(it.IsActive),
+            icon: it.ServiceIcon || null,
+            planId: it.PlanID,
+            planName: it.PlanName,
+            amount: it.Amount,
+            isActive: !!Number(it.IsActive),
             userServiceId: it.UserServiceID ?? 0,
-            color:       COLOR_KEYS[idx % COLOR_KEYS.length],
-            children:    [],
+            color: COLOR_KEYS[idx % COLOR_KEYS.length],
+            children: [],
         };
     });
     const roots = [];
@@ -92,7 +92,7 @@ const flattenTree = (nodes) => {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
-const Step5ServiceListing = ({ store, nextStep, prevStep }) => {
+const Step5ServiceListing = ({ store, nextStep, prevStep, navbar = false }) => {
     const { loginResponce } = useUserStore();
     const userId = loginResponce?.userId;
 
@@ -102,8 +102,8 @@ const Step5ServiceListing = ({ store, nextStep, prevStep }) => {
         isLoading: servicesLoading,
     } = useQuery({
         queryKey: ["userServices", userId],
-        queryFn:  () => fetchUserServices(userId),
-        enabled:  !!userId,
+        queryFn: () => fetchUserServices(userId),
+        enabled: !!userId,
         retry: false,
     });
 
@@ -114,28 +114,23 @@ const Step5ServiceListing = ({ store, nextStep, prevStep }) => {
         refetch: refetchSubscriptions,
     } = useQuery({
         queryKey: ["userSubscriptions", userId],
-        queryFn:  () => fetchUserSubscriptions(userId),
-        enabled:  !!userId,
+        queryFn: () => fetchUserSubscriptions(userId),
+        enabled: !!userId,
         retry: false,
     });
-    useEffect(() => {
-      console.log(subscriptions,"subscriptions");
-      
-    }, [subscriptions])
-    
 
     // ── Derive active plan: index [0] = most recent, must be IsActive === 1 ───
     const activePlan = subscriptions.find((s) => s.IsActive === 1) ?? null;
     // Use index 0 if it's active, else no plan
-    const latestSub  = subscriptions[0] ?? null;
+    const latestSub = subscriptions[0] ?? null;
     const hasActivePlan = latestSub?.IsActive === 1;
 
     // ── Build tree & initial active ids from API ────────────────────────────────
-    const [services,    setServices]    = useState([]);
-    const [activeIds,   setActiveIds]   = useState([]);
+    const [services, setServices] = useState([]);
+    const [activeIds, setActiveIds] = useState([]);
     const [expandedIds, setExpandedIds] = useState([]);
-    const [showPlans,   setShowPlans]   = useState(false);
-    const [saving,      setSaving]      = useState(false);
+    const [showPlans, setShowPlans] = useState(false);
+    const [saving, setSaving] = useState(false);
     const profileStore = store ?? useProfileWizardStore();
 
     useEffect(() => {
@@ -172,17 +167,17 @@ const Step5ServiceListing = ({ store, nextStep, prevStep }) => {
         try {
             await saveService({
                 userServiceID: item.userServiceId ?? 0,
-                userID:        userId,
-                serviceID:     item.serviceId,
-                serviceName:   item.name,
-                planID:        latestSub?.PlanID   ?? item.planId   ?? 0,
-                planName:      latestSub?.PlanName ?? item.planName ?? "",
-                amount:        item.amount ?? 0,
-                remark:        "",
-                enterredIP:    "",
-                enterredBy:    userId,
-                enterDate:     new Date().toISOString(),
-                isActive:      isCurrentlyActive ? 0 : 1,
+                userID: userId,
+                serviceID: item.serviceId,
+                serviceName: item.name,
+                planID: latestSub?.PlanID ?? item.planId ?? 0,
+                planName: latestSub?.PlanName ?? item.planName ?? "",
+                amount: item.amount ?? 0,
+                remark: "",
+                enterredIP: "",
+                enterredBy: userId,
+                enterDate: new Date().toISOString(),
+                isActive: isCurrentlyActive ? 0 : 1,
             });
 
             toast.success(isCurrentlyActive ? "Service deactivated" : "Service activated");
@@ -222,13 +217,13 @@ const Step5ServiceListing = ({ store, nextStep, prevStep }) => {
 
     // ── Render one service card ─────────────────────────────────────────────────
     const renderServiceItem = (item, level = 0, parentColor = "violet") => {
-        const isExpanded   = expandedIds.includes(item?.id);
-        const isActive     = activeIds.includes(item?.id);
-        const hasChildren  = (item?.children)?.length > 0;
-        const children     = item?.children || [];
-        const color        = item?.color || parentColor;
-        const colors       = colorMap[color];
-        const indent       = level * 40;
+        const isExpanded = expandedIds.includes(item?.id);
+        const isActive = activeIds.includes(item?.id);
+        const hasChildren = (item?.children)?.length > 0;
+        const children = item?.children || [];
+        const color = item?.color || parentColor;
+        const colors = colorMap[color];
+        const indent = level * 40;
 
         return (
             <div key={item?.id} className="relative">
@@ -241,13 +236,12 @@ const Step5ServiceListing = ({ store, nextStep, prevStep }) => {
 
                 <motion.div
                     whileHover={{ scale: 1.005 }}
-                    className={`group relative mb-3 overflow-hidden rounded-2xl border-2 transition-all duration-300 ${
-                        isActive ? "bg-white" : "bg-slate-50/50"
-                    }`}
+                    className={`group relative mb-3 overflow-hidden rounded-2xl border-2 transition-all duration-300 ${isActive ? "bg-white" : "bg-slate-50/50"
+                        }`}
                     style={{
                         borderColor: isActive ? colors.border : "#e5e7eb",
-                        marginLeft:  `${indent}px`,
-                        boxShadow:   isActive
+                        marginLeft: `${indent}px`,
+                        boxShadow: isActive
                             ? `0 0 30px ${colors.glow}, 0 10px 40px -12px rgba(0,0,0,0.15)`
                             : "0 4px 12px rgba(0,0,0,0.05)",
                     }}
@@ -263,7 +257,7 @@ const Step5ServiceListing = ({ store, nextStep, prevStep }) => {
                                     style={{ borderColor: colors.border, backgroundColor: isExpanded ? "#f1f5fa" : "white" }}
                                 >
                                     {isExpanded
-                                        ? <ChevronDown  className="h-3.5 w-3.5" style={{ color: colors.text }} />
+                                        ? <ChevronDown className="h-3.5 w-3.5" style={{ color: colors.text }} />
                                         : <ChevronRight className="h-3.5 w-3.5" style={{ color: colors.text }} />
                                     }
                                 </button>
@@ -313,14 +307,14 @@ const Step5ServiceListing = ({ store, nextStep, prevStep }) => {
                                         onClick={() => toggleActive(item)}
                                         className="flex items-center gap-1.5 rounded-full border-2 px-3 py-1.5 shrink-0 text-xs font-bold transition-all hover:scale-105"
                                         style={{
-                                            borderColor:     isActive ? colors.border : "#e5e7eb",
+                                            borderColor: isActive ? colors.border : "#e5e7eb",
                                             backgroundColor: isActive ? colors.bg : "white",
-                                            color:           isActive ? colors.text : "#64748b",
-                                            boxShadow:       isActive ? `0 0 20px ${colors.glow}` : undefined,
+                                            color: isActive ? colors.text : "#64748b",
+                                            boxShadow: isActive ? `0 0 20px ${colors.glow}` : undefined,
                                         }}
                                     >
                                         {isActive
-                                            ? <><Zap   className="h-3 w-3" /> Active</>
+                                            ? <><Zap className="h-3 w-3" /> Active</>
                                             : <><EyeOff className="h-3 w-3 opacity-50" /> Inactive</>
                                         }
                                     </button>
@@ -334,7 +328,7 @@ const Step5ServiceListing = ({ store, nextStep, prevStep }) => {
                             className="absolute bottom-0 left-0 right-0 h-[3px]"
                             style={{
                                 background: `linear-gradient(to right, ${colors.glow}, ${colors.text}, ${colors.glow})`,
-                                boxShadow:  `0 0 10px ${colors.glow}`,
+                                boxShadow: `0 0 10px ${colors.glow}`,
                             }}
                         />
                     )}
@@ -350,7 +344,7 @@ const Step5ServiceListing = ({ store, nextStep, prevStep }) => {
     };
 
     const totalServices = services.reduce((acc, s) => acc + 1 + countTotalChildren(s), 0);
-    const isLoading     = servicesLoading || subscriptionsLoading;
+    const isLoading = servicesLoading || subscriptionsLoading;
 
     return (
         <div className="space-y-6">
@@ -431,7 +425,7 @@ const Step5ServiceListing = ({ store, nextStep, prevStep }) => {
             )}
 
             {/* Navigation */}
-            <div className="flex justify-between gap-3 pt-6 border-t border-slate-100">
+            {!navbar && <div className="flex justify-between gap-3 pt-6 border-t border-slate-100">
                 <button
                     type="button"
                     onClick={prevStep}
@@ -449,7 +443,7 @@ const Step5ServiceListing = ({ store, nextStep, prevStep }) => {
                         : <>Save & Continue <ChevronRight className="w-4 h-4" /></>
                     }
                 </button>
-            </div>
+            </div>}
 
             {/* Plans modal */}
             <SubscriptionPlansFlow

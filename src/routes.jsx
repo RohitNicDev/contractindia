@@ -66,6 +66,7 @@ import ServiceListing from "./Component/Dashboard/pages/ServiceListing";
 import SettingsPanel from "./Component/Dashboard/SettingsPanel";
 import LeadManagement from "./Component/Dashboard/pages/LeadManagement";
 import IndividualMyServices from "./Component/Dashboard/pages/IndividualMyServices";
+import Step5ServiceListing from "./Component/Dashboard/pages/ProfileSteper/Step5ServiceListing";
 
 export const router = createBrowserRouter([
   // ── Public routes (Header + Footer via PublicLayout) ─────────────────────
@@ -126,7 +127,8 @@ export const router = createBrowserRouter([
       { path: "plans-and-subscriptions", element: <PlansAndSubscriptions /> },
       { path: "mycredits", element: <MyCredits /> },
       { path: "clients", element: <ClientsHistory /> },
-      { path: "services", element: <ServiceListing dashboardMode={true} /> },
+      // { path: "services", element: <ServiceListing dashboardMode={true} /> },
+      { path: "servicesListing", element: <Step5ServiceListing navbar={true} /> },
       { path: "leads", element: <LeadManagement /> },
       { path: "settings", element: <SettingsPanel /> },
     ],

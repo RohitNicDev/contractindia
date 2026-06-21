@@ -71,7 +71,7 @@ const NAV = [
     id: "services",
     label: "Service Listing",
     icon: Briefcase,
-    route: "services",
+    route: "servicesListing",
   },
   // {
   //   id: "subscription",
