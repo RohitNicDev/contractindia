@@ -87,7 +87,6 @@ const Step3Registration = ({ store, nextStep, prevStep }) => {
       isMSME: data?.udyogAadhaarToggle ? 1 : 0,
       udyogRegistrationNo: data?.msmeNo || "",
       pfNo: data?.pfNo || "",
-      aadharNo: data?.aadharNo || "",
       licenseNo: data?.licenseNo,
       licenseExpiryDate: data?.licenseExpiryDate,
     };
