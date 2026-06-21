@@ -25,7 +25,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { NavLink, useNavigate, Link } from "react-router-dom";
 import { Button, Badge, Drawer, Collapse, Dropdown, Avatar } from "antd";
 import logo from "../../assets/IMG/logo_con1.png";
-import { ServiceRootGet, UserRegistrationUserIdGet } from "../../services/api";
+import { ServiceMenuGet, ServiceRootGet, UserRegistrationUserIdGet } from "../../services/api";
 import { useQuery } from "@tanstack/react-query";
 import { useserviceStore, useUserStore } from "../../store/store";
 import LogoutPopup from "../common/Logoutpopup";
@@ -90,6 +90,11 @@ const getRootServiceApi = async () => {
   console.log(response, "response");
   return response ?? [];
 };
+const ServiceMenuGetApi = async () => {
+  const response = await ServiceMenuGet();
+  console.log(response, "response");
+  return response?.data ?? [];
+};
 // ─── Main Header ──────────────────────────────────────────────────
 const Header = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -114,6 +119,18 @@ const Header = () => {
       retry: false,
       staleTime: Infinity, // states rarely change
     });
+  const { data: ServiceMenuGetList = [], isLoading: ServiceMenuGetsLoading } =
+    useQuery({
+      queryKey: ["ServiceMenuGetApi"],
+      queryFn: ServiceMenuGetApi,
+      retry: false,
+      staleTime: Infinity, // states rarely change
+    });
+    useEffect(() => {
+      console.log(ServiceMenuGetList,"ServiceMenuGetList");
+      
+    }, [ServiceMenuGetList])
+    
 
   const { data: UserData = [], isLoading: UserDataLoading } = useQuery({
     queryKey: ["UserData", loginResponce?.userId],

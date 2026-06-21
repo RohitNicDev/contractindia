@@ -50,19 +50,19 @@ const NAV = [
     icon: BriefcaseBusiness,
     route: "MyServices",
   },
-  {
-    id: "subscription",
-    label: "Subscription Plan",
-    icon: CreditCard,
-    route: "subscription",
-  },
+  // {
+  //   id: "subscription",
+  //   label: "Subscription Plan",
+  //   icon: CreditCard,
+  //   route: "subscription",
+  // },
   {
     id: "plans-and-subscriptions",
     label: "Plans & Subscriptions",
     icon: BookOpen,
     route: "plans-and-subscriptions",
   },
-  { id: "mycredits", label: "My Credits", icon: Edit3, route: "mycredits" },
+  // { id: "mycredits", label: "My Credits", icon: Edit3, route: "mycredits" },
   { id: "profile", label: "My Profile", icon: User, route: "profile" },
   { id: "password", label: "Change Password", icon: Key, route: "password" },
 ];

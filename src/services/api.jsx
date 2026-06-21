@@ -126,6 +126,9 @@ export const ServiceMasterDelete = async (planId) => {
 export const ServiceMasterGet = async () => {
   return await api.get(`/ServiceMaster/get`);
 };
+export const ServiceMenuGet = async () => {
+  return await api.get(`/ServiceMaster/getmenu`);
+};
 export const ServiceRootGet = async () => {
   return await api.get(`/ServiceMaster/rootservice`);
 };

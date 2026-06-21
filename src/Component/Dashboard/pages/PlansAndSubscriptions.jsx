@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { toast } from "sonner";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
@@ -10,7 +10,7 @@ import {
 import CustomHeading from "../../common/CustomHeading";
 import DataTableComponent from "../../common/dataTable";
 import { useUserStore } from "../../../store/store";
-import { planMasterGet, UserSubscriptionDetailGet, userSubscriptionDetailSave, } from "../../../services/api";
+import { planMasterGet, userBankDetailbyParams, UserSubscriptionDetailGet, userSubscriptionDetailSave, } from "../../../services/api";
 
 // ─── API helpers ───────────────────────────────────────────────────────────────
 const fetchPlans = async () => {
@@ -22,13 +22,17 @@ const fetchSubscriptions = async (userId) => {
   const res = await UserSubscriptionDetailGet(`userId=${userId}`);
   return res?.data ?? [];
 };
+const userBankDetailbyParamsApi = async (userId) => {
+  const res = await userBankDetailbyParams(`userId=${userId}`);
+  return res?.data ?? [];
+};
 
 // ─── Formatters ────────────────────────────────────────────────────────────────
 const formatPrice = (price) => {
   if (price == null || price === "") return "—";
   const num = Number(price);
   if (isNaN(num)) return price;
-  return num === 0 ? "Free" : `₹${num.toLocaleString("en-IN")}`;
+  return num === 0 ? "Free" : `₹${num?.toLocaleString("en-IN")}`;
 };
 
 const formatDate = (iso) => {
@@ -81,7 +85,7 @@ function PlanDetailModal({ plan, onClose, onSubscribe }) {
             </div>
             <div className="mt-4 flex items-end gap-1">
               <IndianRupee className="h-6 w-6 mb-0.5 text-white/80" />
-              <span className="text-4xl font-black">{price === 0 ? "Free" : price.toLocaleString("en-IN")}</span>
+              <span className="text-4xl font-black">{price === 0 ? "Free" : price?.toLocaleString("en-IN")}</span>
               {price > 0 && (
                 <span className="text-indigo-200 text-sm mb-1">
                   / {plan?.DurationType?.toLowerCase() ?? "period"}
@@ -95,10 +99,10 @@ function PlanDetailModal({ plan, onClose, onSubscribe }) {
             <div className="grid grid-cols-2 gap-3">
               {[
                 // { icon: Tag,    label: "Plan ID",      value: `#${plan?.PlanID}` },
-                { icon: Clock,  label: "Duration",     value: plan?.DurationType ?? "—" },
-                { icon: Star,   label: "Credits",      value: plan?.CreditsIncluded ?? 0 },
+                { icon: Clock, label: "Duration", value: plan?.DurationType ?? "—" },
+                { icon: Star, label: "Credits", value: plan?.CreditsIncluded ?? 0 },
                 { icon: Layers, label: "Max Services", value: plan?.maxNoofServices ?? "—" },
-                { icon: Users,  label: "User Type",    value: plan?.UserTypeName || "All" },
+                { icon: Users, label: "User Type", value: plan?.UserTypeName || "All" },
                 {
                   icon: CheckCircle2,
                   label: "Status",
@@ -163,7 +167,7 @@ function SubscriptionDetailModal({ sub, planMap, onClose }) {
           <div className={`p-6 text-white ${isActive
             ? "bg-gradient-to-br from-emerald-500 to-teal-600"
             : "bg-gradient-to-br from-slate-500 to-slate-700"
-          }`}>
+            }`}>
             <div className="flex items-start justify-between">
               <div>
                 <div className="flex items-center gap-2 mb-1">
@@ -182,11 +186,10 @@ function SubscriptionDetailModal({ sub, planMap, onClose }) {
               </button>
             </div>
             <div className="mt-3 flex items-center gap-2">
-              <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${
-                isActive
-                  ? "bg-white/20 border-white/30 text-white"
-                  : "bg-white/10 border-white/20 text-white/70"
-              }`}>
+              <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${isActive
+                ? "bg-white/20 border-white/30 text-white"
+                : "bg-white/10 border-white/20 text-white/70"
+                }`}>
                 {isActive ? "● Active" : "○ Inactive"}
               </span>
               <span className="text-white/70 text-xs">{formatDate(sub?.EnterDate)}</span>
@@ -197,11 +200,11 @@ function SubscriptionDetailModal({ sub, planMap, onClose }) {
             <div className="grid grid-cols-2 gap-3">
               {[
                 // { icon: Tag,     label: "Plan ID",      value: `#${sub?.PlanID}` },
-                { icon: Clock,   label: "Duration",     value: plan?.DurationType ?? "—" },
-                { icon: IndianRupee, label: "Price",    value: formatPrice(plan?.Price) },
-                { icon: Star,    label: "Credits",      value: plan?.CreditsIncluded ?? "—" },
-                { icon: Layers,  label: "Max Services", value: plan?.maxNoofServices ?? "—" },
-                { icon: Calendar,label: "Subscribed On",value: formatDate(sub?.EnterDate) },
+                { icon: Clock, label: "Duration", value: plan?.DurationType ?? "—" },
+                { icon: IndianRupee, label: "Price", value: formatPrice(plan?.Price) },
+                { icon: Star, label: "Credits", value: plan?.CreditsIncluded ?? "—" },
+                { icon: Layers, label: "Max Services", value: plan?.maxNoofServices ?? "—" },
+                { icon: Calendar, label: "Subscribed On", value: formatDate(sub?.EnterDate) },
               ].map(({ icon: Icon, label, value }) => (
                 <div key={label} className="flex items-center gap-2.5 p-3 bg-slate-50 rounded-xl border border-slate-100">
                   <div className="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0">
@@ -238,6 +241,7 @@ function SubscriptionDetailModal({ sub, planMap, onClose }) {
 // ─── Payment Modal ─────────────────────────────────────────────────────────────
 function PaymentModal({ plan, userId, onClose, onSuccess }) {
   const [step, setStep] = useState("form");
+
   const [form, setForm] = useState({
     cardNumber: "", cardHolder: "", expiry: "", cvv: "",
     amount: plan?.Price ?? 0,
@@ -259,24 +263,41 @@ function PaymentModal({ plan, userId, onClose, onSuccess }) {
       setStep("form");
     },
   });
+  const { data: bankDetailData = [], isLoading: bankDetailDataLoading } =
+    useQuery({
+      queryKey: ["bankDetailData", userId],
+      queryFn: () => userBankDetailbyParamsApi(userId),
+      enabled: !!userId,
+      retry: false,
+    });
+ useEffect(() => {
+  if (bankDetailData?.length > 0) {
+    setForm((prev) => ({
+      ...prev,
+      cardNumber: bankDetailData[0]?.AccountNo,
+    }));
+  }
+
+  console.log(bankDetailData, "bankDetailData");
+}, [bankDetailData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     let v = value;
-    if (name === "cardNumber") v = value.replace(/\D/g, "").slice(0, 16).replace(/(\d{4})(?=\d)/g, "$1 ");
+    if (name === "cardNumber") v = value?.replace(/\D/g, "")?.slice(0, 16)?.replace(/(\d{4})(?=\d)/g, "$1 ");
     if (name === "expiry") {
-      v = value.replace(/\D/g, "").slice(0, 4);
-      if (v.length >= 3) v = v.slice(0, 2) + "/" + v.slice(2);
+      v = value?.replace(/\D/g, "")?.slice(0, 4);
+      if (v.length >= 3) v = v?.slice(0, 2) + "/" + v?.slice(2);
     }
-    if (name === "cvv") v = value.replace(/\D/g, "").slice(0, 4);
+    if (name === "cvv") v = value?.replace(/\D/g, "")?.slice(0, 4);
     setForm((p) => ({ ...p, [name]: v }));
   };
 
   const isValid =
-    form.cardNumber.replace(/\s/g, "").length === 16 &&
-    form.cardHolder.trim().length > 0 &&
-    form.expiry.length === 5 &&
-    form.cvv.length >= 3;
+    form.cardNumber?.replace(/\s/g, "").length === 16 &&
+    form.cardHolder?.trim().length > 0 &&
+    form.expiry?.length === 5 &&
+    form.cvv?.length >= 3;
 
   const handleSubmit = () => {
     if (!isValid) { toast.error("Please fill in valid card details."); return; }
@@ -285,16 +306,21 @@ function PaymentModal({ plan, userId, onClose, onSuccess }) {
     // Save subscription to API
     saveSubscription({
       userSubscriptionID: 0,
-      userID:      userId,
-      planID:      plan?.PlanID,
-      planName:    plan?.PlanName ?? "",
-      remark:      plan?.Remark ?? "",
-      enterredIP:  "",
-      enterredBy:  userId,
-      enterDate:   new Date().toISOString(),
-      isActive:    1,
+      userID: userId,
+      planID: plan?.PlanID,
+      planName: plan?.PlanName ?? "",
+      remark: plan?.Remark ?? "",
+      enterredIP: "",
+      enterredBy: userId,
+      enterDate: new Date().toISOString(),
+      isActive: 1,
     });
   };
+  useEffect(() => {
+    console.log(form, "form");
+
+  }, [form])
+
 
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center px-4 py-6">
@@ -332,9 +358,9 @@ function PaymentModal({ plan, userId, onClose, onSuccess }) {
                 <div>
                   <p className="text-xs text-indigo-200 font-semibold uppercase tracking-widest">Total Amount</p>
                   <p className="text-3xl font-black mt-1 flex items-center gap-1">
-                    {form.amount === 0
+                    {form.amount == 0
                       ? "Free"
-                      : <><IndianRupee className="h-6 w-6" />{form.amount.toLocaleString("en-IN")}</>
+                      : <><IndianRupee className="h-6 w-6" />{form.amount?.toLocaleString("en-IN")}</>
                     }
                   </p>
                 </div>
@@ -386,11 +412,10 @@ function PaymentModal({ plan, userId, onClose, onSuccess }) {
               whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
               onClick={handleSubmit}
               disabled={form.amount > 0 && !isValid}
-              className={`w-full py-3.5 rounded-2xl font-bold text-sm text-white shadow-lg transition-opacity ${
-                form.amount > 0 && !isValid
-                  ? "bg-slate-300 cursor-not-allowed"
-                  : "bg-gradient-to-r from-indigo-600 to-violet-600 hover:opacity-90"
-              }`}
+              className={`w-full py-3.5 rounded-2xl font-bold text-sm text-white shadow-lg transition-opacity ${form.amount > 0 && !isValid
+                ? "bg-slate-300 cursor-not-allowed"
+                : "bg-gradient-to-r from-indigo-600 to-violet-600 hover:opacity-90"
+                }`}
             >
               {form.amount === 0 ? "Activate Free Plan" : `Pay ${formatPrice(form.amount)}`}
             </motion.button>
@@ -437,10 +462,10 @@ export default function PlansAndSubscriptions() {
   const userId = loginResponce?.userId;
   const queryClient = useQueryClient();
 
-  const [tab,         setTab]         = useState("plans");
-  const [detailPlan,  setDetailPlan]  = useState(null); // plan detail modal
+  const [tab, setTab] = useState("plans");
+  const [detailPlan, setDetailPlan] = useState(null); // plan detail modal
   const [paymentPlan, setPaymentPlan] = useState(null); // payment modal
-  const [detailSub,   setDetailSub]   = useState(null); // subscription detail modal
+  const [detailSub, setDetailSub] = useState(null); // subscription detail modal
 
   // ── Fetch plans ─────────────────────────────────────────────────────────────
   const {
@@ -574,11 +599,10 @@ export default function PlansAndSubscriptions() {
       render: (_, r) => {
         const active = Number(r.IsActive) === 1;
         return (
-          <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold border ${
-            active
-              ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-              : "bg-slate-100 text-slate-500 border-slate-200"
-          }`}>
+          <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold border ${active
+            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+            : "bg-slate-100 text-slate-500 border-slate-200"
+            }`}>
             <span className={`w-1.5 h-1.5 rounded-full ${active ? "bg-emerald-500" : "bg-slate-400"}`} />
             {active ? "Active" : "Inactive"}
           </span>
@@ -616,7 +640,7 @@ export default function PlansAndSubscriptions() {
           <Crown className="w-4 h-4 text-emerald-600 shrink-0" />
           <div className="flex-1 min-w-0">
             <p className="text-xs font-bold text-emerald-700">
-              Active: {activeSub.PlanName} 
+              Active: {activeSub.PlanName}
             </p>
             <p className="text-[10px] text-emerald-600">
               Subscription #{activeSub.SubscriptionID} · since {formatDate(activeSub.EnterDate)}
@@ -634,17 +658,16 @@ export default function PlansAndSubscriptions() {
       {/* Tabs */}
       <div className="flex rounded-xl bg-slate-100 p-1 w-fit">
         {[
-          { key: "plans",         label: "Available Plans" },
+          { key: "plans", label: "Available Plans" },
           { key: "subscriptions", label: "My Subscriptions" },
         ].map((t) => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`px-5 py-2 text-sm font-bold rounded-lg transition-all duration-200 ${
-              tab === t.key
-                ? "bg-white text-indigo-600 shadow-sm"
-                : "text-slate-500 hover:text-slate-700"
-            }`}
+            className={`px-5 py-2 text-sm font-bold rounded-lg transition-all duration-200 ${tab === t.key
+              ? "bg-white text-indigo-600 shadow-sm"
+              : "text-slate-500 hover:text-slate-700"
+              }`}
           >
             {t.label}
           </button>
