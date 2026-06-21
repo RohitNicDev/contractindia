@@ -13,6 +13,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { useUserStore } from "../../../../store/store";
+import { useProfileWizardStore } from "../../../../store/profileWizardStore";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
     getUserServicesByParam,
@@ -135,6 +136,7 @@ const Step5ServiceListing = ({ store, nextStep, prevStep }) => {
     const [expandedIds, setExpandedIds] = useState([]);
     const [showPlans,   setShowPlans]   = useState(false);
     const [saving,      setSaving]      = useState(false);
+    const profileStore = store ?? useProfileWizardStore();
 
     useEffect(() => {
         if (!rawServices.length) return;
@@ -153,10 +155,8 @@ const Step5ServiceListing = ({ store, nextStep, prevStep }) => {
         mutationFn: UserServiceDetailsSave,
     });
 
-    // ── Toggle active ───────────────────────────────────────────────────────────
-    const toggleActive = (item) => {
-        console.log(activePlan,"item");
-        
+    // ── Toggle active (optimistic + API save) ─────────────────────────────────
+    const toggleActive = async (item) => {
         const id = item.id;
         const isCurrentlyActive = activeIds.includes(id);
 
@@ -166,11 +166,31 @@ const Step5ServiceListing = ({ store, nextStep, prevStep }) => {
             return;
         }
 
-        setActiveIds((prev) =>
-            isCurrentlyActive
-                ? (toast.success("Service deactivated"), prev.filter((x) => x !== id))
-                : (toast.success("Service activated"),  [...prev, id])
-        );
+        // optimistic UI update
+        setActiveIds((prev) => (isCurrentlyActive ? prev.filter((x) => x !== id) : [...prev, id]));
+
+        try {
+            await saveService({
+                userServiceID: item.userServiceId ?? 0,
+                userID:        userId,
+                serviceID:     item.serviceId,
+                serviceName:   item.name,
+                planID:        latestSub?.PlanID   ?? item.planId   ?? 0,
+                planName:      latestSub?.PlanName ?? item.planName ?? "",
+                amount:        item.amount ?? 0,
+                remark:        "",
+                enterredIP:    "",
+                enterredBy:    userId,
+                enterDate:     new Date().toISOString(),
+                isActive:      isCurrentlyActive ? 0 : 1,
+            });
+
+            toast.success(isCurrentlyActive ? "Service deactivated" : "Service activated");
+        } catch (err) {
+            // rollback optimistic change
+            setActiveIds((prev) => (isCurrentlyActive ? [...prev, id] : prev.filter((x) => x !== id)));
+            toast.error(err?.message || "Failed to update service status. Please try again.");
+        }
     };
 
     const toggleExpanded = (id) =>
@@ -178,7 +198,7 @@ const Step5ServiceListing = ({ store, nextStep, prevStep }) => {
             prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
         );
 
-    // ── Save all toggled services to API ────────────────────────────────────────
+    // ── Save local service selections only (no API call) ───────────────────────
     const handleSave = async () => {
         if (!hasActivePlan) {
             toast.error("You need an active subscription plan before saving services.");
@@ -187,38 +207,14 @@ const Step5ServiceListing = ({ store, nextStep, prevStep }) => {
         }
 
         setSaving(true);
-        const allNodes   = flattenTree(services);
-        const now        = new Date().toISOString();
 
         try {
-            // Save each service that is currently active
-            const promises = allNodes
-                .filter((n) => activeIds.includes(n.id))
-                .map((n) =>
-                    saveService({
-                        userServiceID: n.userServiceId ?? 0,
-                        userID:        userId,
-                        serviceID:     n.serviceId,
-                        serviceName:   n.name,
-                        planID:        latestSub?.PlanID   ?? n.planId   ?? 0,
-                        planName:      latestSub?.PlanName ?? n.planName ?? "",
-                        amount:        n.amount ?? 0,
-                        remark:        "",
-                        enterredIP:    "",
-                        enterredBy:    userId,
-                        enterDate:     now,
-                        isActive:      1,
-                    })
-                );
-
-            await Promise.all(promises);
-
-            store.setActiveServices?.(activeIds);
-            store.setExpandedServices?.(expandedIds);
+            profileStore.setActiveServices?.(activeIds);
+            profileStore.setExpandedServices?.(expandedIds);
             toast.success(`✓ ${activeIds.length} service${activeIds.length !== 1 ? "s" : ""} saved!`);
-            nextStep();
+            nextStep?.();
         } catch (err) {
-            toast.error("Failed to save services. Please try again.");
+            toast.error("Failed to save service selection. Please try again.");
         } finally {
             setSaving(false);
         }
