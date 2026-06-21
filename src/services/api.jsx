@@ -80,6 +80,7 @@ export const UserDocumentStoreDelete = async (planId) => {
 export const UserDocumentStoreGet = async () => {
   return await api.get(`/UserDocumentStore/get`);
 };
+// /api/UserSubscriptionDetail/get
 export const UserDocumentStoreGetById = async (planId) => {
   return await api.get(`/UserDocumentStore/get?${planId}`);
 };
@@ -98,6 +99,21 @@ export const DocumentSubCategoryGet = async () => {
 export const DocumentSubCategoryGetById = async (planId) => {
   return await api.get(`/DocumentSubCategory/get/${planId}`);
 };
+export const UserServiceDetailsSave = async (payload) => {
+  return await api.post(`/UserServiceDetails/save`, payload);
+};
+export const UserServiceDetailsUpdate = async (payload) => {
+  return await api.put(`/UserServiceDetails/update`, payload);
+};
+export const UserServiceDetailsDelete = async (planId) => {
+  return await api.delete(`/UserServiceDetails/delete/${planId}`);
+};
+export const UserServiceDetailsGet = async () => {
+  return await api.get(`/UserServiceDetails/get`);
+};
+export const UserServiceDetailsGetbyParam = async (param) => {
+  return await api.get(`/UserServiceDetails/get?${param}`);
+};
 export const ServiceMasterSave = async (payload) => {
   return await api.post(`/ServiceMaster/save`, payload);
 };
@@ -115,6 +131,9 @@ export const ServiceRootGet = async () => {
 };
 export const ServiceMasterGetById = async (serviceId) => {
   return await api.get(`/ServiceMaster/get?ParentServiceID=${serviceId}`);
+};
+export const getUserServicesByParam = async (Params) => {
+  return await api.get(`/ServiceMaster/getuserservices?${Params}`);
 };
 export const subscriptionHistoryGet = async () => {
   return await api.get(`/UserSubscriptionDetail/get`);
@@ -198,3 +217,12 @@ export const UserRegistrationUserIdGet = async (userId) => {
 export const userCommonlistType = async (commenlist) => {
   return await api.get(`/Common/commonlist/${commenlist}`);
 };
+// ─── Add these to services/api.js ─────────────────────────────────────────────
+
+// GET /api/UserSubscriptionDetail/get?userId=xxx
+export const UserSubscriptionDetailGet = async (params) => {
+  return await api.get(`/UserSubscriptionDetail/get?${params}`);
+
+};
+
+ 
