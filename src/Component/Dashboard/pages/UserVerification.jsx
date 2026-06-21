@@ -110,13 +110,13 @@ export default function UserVerification() {
   const columns = [
     ...(tab === 2
       ? [
-          {
-            title: "Company Name",
-            dataIndex: "CompanyName",
-            key: "CompanyName",
-            render: (val) => val ?? "—",
-          },
-        ]
+        {
+          title: "Company Name",
+          dataIndex: "CompanyName",
+          key: "CompanyName",
+          render: (val) => val ?? "—",
+        },
+      ]
       : []),
     {
       title: "Name",
@@ -156,13 +156,13 @@ export default function UserVerification() {
     // },
     ...(tab === 2
       ? [
-          {
-            title: "Service Name",
-            dataIndex: "ServiceName",
-            key: "ServiceName",
-            render: (val) => val ?? "—",
-          },
-        ]
+        {
+          title: "Service Name",
+          dataIndex: "ServiceName",
+          key: "ServiceName",
+          render: (val) => val ?? "—",
+        },
+      ]
       : []),
     {
       title: "Actions",
@@ -176,6 +176,8 @@ export default function UserVerification() {
           >
             <Eye className="h-4 w-4" />
           </button>
+
+          
 
           {/* Pending List */}
           {status === 0 && (
@@ -235,6 +237,16 @@ export default function UserVerification() {
               <CheckCircle className="h-4 w-4" />
             </button>
           )} */}
+          {
+            tab == 2 && <button
+              // onClick={openAddRoot}
+              disabled={true}
+              className="flex h-9 items-center gap-2 rounded-lg bg-blue-600 px-4 text-sm font-medium text-white shadow-sm transition-all hover:bg-blue-700 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+
+              View
+            </button>
+          }
         </div>
       ),
     },
@@ -258,7 +270,7 @@ export default function UserVerification() {
           badge={`${userVerificationdata.length} records`}
           badgeColor="indigo"
         />
-       
+
         {/* Tab switcher */}
         <div className="rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">
           <div className="flex items-center justify-between gap-4 flex-wrap">
@@ -268,11 +280,10 @@ export default function UserVerification() {
                 <button
                   key={item.value}
                   onClick={() => setTab(item.value)}
-                  className={`px-5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${
-                    tab === item.value
-                      ? "bg-white text-indigo-600 shadow-sm"
-                      : "text-slate-500 hover:text-slate-700"
-                  }`}
+                  className={`px-5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${tab === item.value
+                    ? "bg-white text-indigo-600 shadow-sm"
+                    : "text-slate-500 hover:text-slate-700"
+                    }`}
                 >
                   {item.label}
                 </button>
@@ -304,11 +315,10 @@ export default function UserVerification() {
                 <button
                   key={item.id}
                   onClick={() => setStatus(item.id)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    status === item.id
-                      ? "bg-white shadow-sm text-slate-900"
-                      : "text-slate-500 hover:text-slate-700"
-                  }`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${status === item.id
+                    ? "bg-white shadow-sm text-slate-900"
+                    : "text-slate-500 hover:text-slate-700"
+                    }`}
                 >
                   {item.label}
 
