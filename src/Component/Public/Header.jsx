@@ -27,7 +27,7 @@ import { Button, Badge, Drawer, Collapse, Dropdown, Avatar } from "antd";
 import logo from "../../assets/IMG/logo_con1.png";
 import { ServiceMenuGet, ServiceRootGet, UserRegistrationUserIdGet } from "../../services/api";
 import { useQuery } from "@tanstack/react-query";
-import { useserviceStore, useUserStore } from "../../store/store";
+import { useServiceStore, useUserStore } from "../../store/store";
 import LogoutPopup from "../common/Logoutpopup";
 const { Panel } = Collapse;
 
@@ -37,11 +37,10 @@ const { Panel } = Collapse;
 
 const DropdownMenu = ({ columns, visible }) => (
   <div
-    className={`absolute top-full left-0 bg-white shadow-xl border border-gray-100 rounded-md py-2 w-72 transition-all duration-200 origin-top z-50 ${
-      visible
-        ? "opacity-100 scale-y-100 pointer-events-auto"
-        : "opacity-0 scale-y-95 pointer-events-none"
-    }`}
+    className={`absolute top-full left-0 bg-white shadow-xl border border-gray-100 rounded-md py-2 w-72 transition-all duration-200 origin-top z-50 ${visible
+      ? "opacity-100 scale-y-100 pointer-events-auto"
+      : "opacity-0 scale-y-95 pointer-events-none"
+      }`}
   >
     {columns.map((col) => (
       <div key={col.title} className="relative group/item">
@@ -109,9 +108,12 @@ const Header = () => {
   const navigate = useNavigate();
   const user = loginResponce;
   const userType = loginResponce?.userType;
+  const setMenuServices = useServiceStore((state) => state.setMenuServices);
+  const setAllServices = useServiceStore((state) => state.setAllServices);
+  const allMenuServices = useServiceStore((state) => state.allMenuServices);
+  const allServices = useServiceStore((state) => state.allServices);
 
   const auth = loginResponce?.isLoginSuccessful;
-  const { setAllServices } = useserviceStore();
   const { data: rootServiceList = [], isLoading: rootServicesLoading } =
     useQuery({
       queryKey: ["RootServiceApi"],
@@ -126,11 +128,25 @@ const Header = () => {
       retry: false,
       staleTime: Infinity, // states rarely change
     });
-    useEffect(() => {
-      console.log(ServiceMenuGetList,"ServiceMenuGetList");
-      
-    }, [ServiceMenuGetList])
-    
+
+  const areServiceListsEqual = (a, b) => {
+    if (!Array.isArray(a) || !Array.isArray(b)) return false;
+    if (a.length !== b.length) return false;
+    return a.every((item, index) => item?.ServiceID === b[index]?.ServiceID);
+  };
+
+  useEffect(() => {
+    if (ServiceMenuGetList?.length > 0) {
+      if (!areServiceListsEqual(allMenuServices, ServiceMenuGetList)) {
+        setMenuServices(ServiceMenuGetList);
+      }
+      if (!areServiceListsEqual(allServices, ServiceMenuGetList)) {
+        setAllServices(ServiceMenuGetList);
+      }
+    } else if (rootServiceList?.length > 0 && !areServiceListsEqual(allServices, rootServiceList)) {
+      setAllServices(rootServiceList);
+    }
+  }, [ServiceMenuGetList, rootServiceList, setMenuServices, setAllServices, allMenuServices, allServices]);
 
   const { data: UserData = [], isLoading: UserDataLoading } = useQuery({
     queryKey: ["UserData", loginResponce?.userId],
@@ -150,12 +166,6 @@ const Header = () => {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
-  useEffect(() => {
-    if (rootServiceList?.length) {
-      setAllServices(rootServiceList);
-    }
-  }, [rootServiceList, setAllServices]);
-
   const goToDashboard = () => {
     const userType = user?.userType;
     console.log(user, "522139");
@@ -236,12 +246,15 @@ const Header = () => {
   ];
   const serviceColumns = useMemo(
     () =>
-      rootServiceList?.map((service) => ({
-        title: service.name,
-        color: "blue",
-        path: `service/${service.value}`,
-      })) || [],
-    [rootServiceList],
+      ServiceMenuGetList?.filter(
+        (service) => Number(service.ParentServiceID ?? service.level ?? 0) === 0,
+      )
+        .map((service) => ({
+          title: service.ServiceName || service.name || "Service",
+          color: "blue",
+          path: `service/${service.ServiceID}`,
+        })) || [],
+    [ServiceMenuGetList],
   );
 
   const NAV_ITEMS = [
@@ -257,11 +270,10 @@ const Header = () => {
   ];
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? "bg-white/70 backdrop-blur-md shadow-lg border-b border-white/30"
-          : "bg-white border-b border-gray-100"
-      }`}
+      className={`sticky top-0 z-50 transition-all duration-500 ${scrolled
+        ? "bg-white/70 backdrop-blur-md shadow-lg border-b border-white/30"
+        : "bg-white border-b border-gray-100"
+        }`}
     >
       {/* 🌐 TOP BAR */}
       <div className="bg-[#162646] text-white/90 py-2.5 px-4 sm:px-6 overflow-hidden">
@@ -445,11 +457,10 @@ const Header = () => {
                   onMouseLeave={() => setMegaOpen(false)}
                 >
                   <button
-                    className={`flex items-center gap-1 px-3 py-1.5 text-sm font-bold rounded-lg transition outline-none ${
-                      megaOpen
-                        ? "text-blue-600 bg-blue-50"
-                        : "text-gray-600 hover:text-blue-600 hover:bg-blue-50/50"
-                    }`}
+                    className={`flex items-center gap-1 px-3 py-1.5 text-sm font-bold rounded-lg transition outline-none ${megaOpen
+                      ? "text-blue-600 bg-blue-50"
+                      : "text-gray-600 hover:text-blue-600 hover:bg-blue-50/50"
+                      }`}
                   >
                     {item.name}
                     <ChevronDown
@@ -466,10 +477,9 @@ const Header = () => {
                 <NavLink
                   to={item.path}
                   className={({ isActive }) =>
-                    `relative px-3 py-1.5 text-sm font-bold no-underline rounded-lg transition ${
-                      isActive
-                        ? "text-blue-600 bg-blue-50"
-                        : "text-gray-600 hover:text-blue-600 hover:bg-blue-50/50"
+                    `relative px-3 py-1.5 text-sm font-bold no-underline rounded-lg transition ${isActive
+                      ? "text-blue-600 bg-blue-50"
+                      : "text-gray-600 hover:text-blue-600 hover:bg-blue-50/50"
                     }`
                   }
                 >

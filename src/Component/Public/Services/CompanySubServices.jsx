@@ -1,101 +1,97 @@
 /**
- * ContractorService — fully dynamic version
- *
- * What changed vs the static version:
- *  1. Sidebar nav built from /api/ServiceMaster/get (parent → children tree)
- *  2. Contractor cards fetched from /api/UserRegistration/get?isVerifiedByAdmin=1&userType=2&serviceId=X
- *  3. Both use useQuery — no local dummy data
- *  4. UI is identical to the original; zero visual changes
- *
- * Props accepted (all optional):
- *   baseUrl       string   API base URL  (default: window.location.origin)
- *   defaultServiceId number  which service to show on first load (default: first root service)
+ * CompanySubServices
+ * - Left sidebar only
+ * - Infinite dynamic levels (L0, L1, L2, L3 ... Ln)
+ * - Every node clickable → loads contractors
+ * - Children expand/collapse with animation
+ * - Color & indent auto-derive from depth (no hardcoded level limit)
  */
 
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
-import { Building2, ChevronDown, MapPin, PhoneCall, Star } from "lucide-react";
-import { ContractorListGet, ServiceMasterGetById } from "../../../services/api";
+import { Building2, ChevronRight, MapPin, PhoneCall, Star } from "lucide-react";
+import { ContractorListGet, ServiceMenuGet } from "../../../services/api";
 import { useParams } from "react-router-dom";
-import { useserviceStore } from "../../../store/store";
+import { useServiceStore } from "../../../store/store";
 
-/* ============================================================
-   API LAYER
-   ============================================================ */
-
-/**
- * Fetch all services (flat list). Returns data[] array.
- * Endpoint: GET /api/ServiceMaster/get
- * Optional ?serviceId=X to filter; omit for all services.
- */
-
-const getRootServiceApi = async (serviceId) => {
-  const response = await ServiceMasterGetById(serviceId);
-  console.log(response, "response1");
-  return response?.data ?? [];
-};
-const getContractorsApi = async (id) => {
-  const response = await ContractorListGet(id);
-  console.log(response, "response2");
-  return response ?? [];
+/* ─── API ─────────────────────────────────────────────────────────────── */
+const fetchContractors = async (serviceId) => {
+  if (!serviceId) return [];
+  const res = await ContractorListGet(serviceId);
+  return res ?? [];
 };
 
-/**
- * Fetch contractors for a given serviceId.
- * Endpoint: GET /api/UserRegistration/get?isVerifiedByAdmin=1&userType=2&serviceId=X
- */
-
-/* ============================================================
-   TREE BUILDER — same pattern as ServiceListing
-   ============================================================ */
-const buildServiceTree = (flatList) => {
-  if (!Array.isArray(flatList) || !flatList.length) return [];
+/* ─── Build tree from flat API data ───────────────────────────────────── */
+const buildTree = (flat) => {
+  if (!Array.isArray(flat) || !flat.length) return [];
   const map = {};
+  flat.forEach((item) => { map[item.ServiceID] = { ...item, children: [] }; });
   const roots = [];
-
-  flatList.forEach((item) => {
-    const id = item.ServiceID ?? item.serviceID;
-    const pid = item.ParentServiceID ?? item.parentServiceID ?? 0;
-    const name = item.ServiceName ?? item.serviceName ?? "";
-    const order = item.DisplayOrder ?? item.displayOrder ?? 0;
-    const active = item.IsActive ?? item.isActive;
-
-    map[id] = {
-      id,
-      parentId: pid,
-      name,
-      order,
-      isActive: active === 1 || active === true,
-      children: [],
-      _raw: item,
-    };
+  flat.forEach((item) => {
+    const pid = item.ParentServiceID ?? 0;
+    if (!pid || !map[pid]) roots.push(map[item.ServiceID]);
+    else map[pid].children.push(map[item.ServiceID]);
   });
-
-  flatList.forEach((item) => {
-    const id = item.ServiceID ?? item.serviceID;
-    const pid = item.ParentServiceID ?? item.parentServiceID ?? 0;
-    const node = map[id];
-    if (!node) return;
-    !pid || pid === 0 || !map[pid]
-      ? roots.push(node)
-      : map[pid].children.push(node);
-  });
-
-  const sort = (nodes) => {
-    nodes.sort((a, b) => a.order - b.order || a.name.localeCompare(b.name));
-    nodes.forEach((n) => sort(n.children));
-    return nodes;
-  };
-  return sort(roots);
+  return roots;
 };
 
-/* ============================================================
-   CONTRACTOR CARD — maps API fields to card UI
-   ============================================================ */
+/* ─── Tree utilities ───────────────────────────────────────────────────── */
+const flattenTree = (nodes, out = []) => {
+  nodes.forEach((n) => { out.push(n); if (n.children?.length) flattenTree(n.children, out); });
+  return out;
+};
 
-// Fallback images per category index so cards always look good
-const FALLBACK_IMAGES = [
+const findNode = (nodes, id) => {
+  for (const n of nodes) {
+    if (n.ServiceID === id) return n;
+    const f = findNode(n.children ?? [], id);
+    if (f) return f;
+  }
+  return null;
+};
+
+// Does this subtree contain the active id?
+const subtreeHasActive = (node, activeId) => {
+  if (node.ServiceID === activeId) return true;
+  return (node.children ?? []).some((c) => subtreeHasActive(c, activeId));
+};
+
+// Get all ancestor ids for a target node
+const getAncestorIds = (tree, targetId) => {
+  const ancestors = new Set();
+  const walk = (nodes) => {
+    for (const n of nodes) {
+      ancestors.add(n.ServiceID);
+      if (n.ServiceID === targetId) return true;
+      if (walk(n.children ?? [])) return true;
+      ancestors.delete(n.ServiceID);
+    }
+    return false;
+  };
+  walk(tree);
+  ancestors.delete(targetId);
+  return ancestors;
+};
+
+const findFirstLeaf = (node) => {
+  if (!node?.children?.length) return node;
+  return findFirstLeaf(node.children[0]);
+};
+
+/* ─── Dynamic color from depth (cycles every 6 levels) ────────────────── */
+const PALETTE = [
+  { line: "#6366f1", dot: "#6366f1", activeBg: "#4f46e5", softBg: "#eef2ff", softText: "#4338ca" },
+  { line: "#0891b2", dot: "#0891b2", activeBg: "#0e7490", softBg: "#ecfeff", softText: "#0e7490" },
+  { line: "#059669", dot: "#059669", activeBg: "#047857", softBg: "#ecfdf5", softText: "#047857" },
+  { line: "#d97706", dot: "#d97706", activeBg: "#b45309", softBg: "#fffbeb", softText: "#b45309" },
+  { line: "#e11d48", dot: "#e11d48", activeBg: "#be123c", softBg: "#fff1f2", softText: "#be123c" },
+  { line: "#7c3aed", dot: "#7c3aed", activeBg: "#6d28d9", softBg: "#f5f3ff", softText: "#6d28d9" },
+];
+const p = (depth) => PALETTE[depth % PALETTE.length];
+
+/* ─── Fallback images ──────────────────────────────────────────────────── */
+const IMGS = [
   "https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=800&auto=format&fit=crop",
   "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800&auto=format&fit=crop",
   "https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=800&auto=format&fit=crop",
@@ -103,118 +99,233 @@ const FALLBACK_IMAGES = [
   "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?q=80&w=800&auto=format&fit=crop",
 ];
 
-function ContractorCard({ item, idx }) {
-  const image =
-    item.ProfileImage ||
-    item.CompanyImage ||
-    FALLBACK_IMAGES[idx % FALLBACK_IMAGES.length];
+/* ════════════════════════════════════════════════════════════════════════
+   RECURSIVE NODE — works for ANY depth dynamically
+   ════════════════════════════════════════════════════════════════════════ */
+function Node({ node, depth, activeId, onSelect, expandedIds, toggleExpand }) {
+  const hasKids   = node.children?.length > 0;
+  const isActive  = node.ServiceID === activeId;
+  const isOpen    = expandedIds.has(node.ServiceID);
+  const isAncestor = !isActive && subtreeHasActive(node, activeId);
+  const pal       = p(depth);
 
-  // API gives StateName instead of a city; use it as location
+  // indent per level: 16px per level, starting from 0
+  const indentPx  = depth * 16;
+
+  // font shrinks with depth, min 11px
+  const fs        = Math.max(11, 13 - depth * 0.5);
+
+  // dot shrinks with depth
+  const dotSize   = Math.max(6, 10 - depth * 1.5);
+
+  return (
+    <div>
+      <button
+        onClick={() => {
+          onSelect(node.ServiceID);
+          if (hasKids) toggleExpand(node.ServiceID);
+        }}
+        style={{
+          paddingLeft: 12 + indentPx,
+          fontSize: fs,
+          background: isActive
+            ? pal.activeBg
+            : isAncestor
+              ? pal.softBg
+              : "transparent",
+          color: isActive
+            ? "#ffffff"
+            : isAncestor
+              ? pal.softText
+              : "#475569",
+        }}
+        className="w-full text-left flex items-center gap-2 rounded-xl pr-3 py-2 mb-0.5 font-semibold transition-all duration-150 hover:opacity-90 group"
+      >
+        {/* Depth line — visual connector */}
+        {depth > 0 && (
+          <span
+            className="absolute left-0 top-0 bottom-0 w-0.5 rounded-full opacity-20 pointer-events-none"
+            style={{ background: p(depth - 1).line, marginLeft: 12 + (depth - 1) * 16 + 4 }}
+          />
+        )}
+
+        {/* Dot */}
+        <span
+          className="shrink-0 rounded-full"
+          style={{
+            width: dotSize,
+            height: dotSize,
+            background: isActive ? "#ffffff" : pal.dot,
+            opacity: isActive ? 1 : 0.85,
+            minWidth: dotSize,
+          }}
+        />
+
+        {/* Name */}
+        <span className="flex-1 line-clamp-2 leading-snug">{node.ServiceName}</span>
+
+        {/* Right: child count + chevron */}
+        {hasKids && (
+          <span className="flex items-center gap-1 shrink-0 ml-1">
+            <span
+              className="text-[9px] font-black px-1.5 py-0.5 rounded-md leading-none"
+              style={{
+                background: isActive ? "rgba(255,255,255,0.2)" : "#f1f5f9",
+                color: isActive ? "#fff" : "#64748b",
+              }}
+            >
+              {node.children.length}
+            </span>
+            <ChevronRight
+              size={11}
+              style={{
+                transform: isOpen ? "rotate(90deg)" : "rotate(0deg)",
+                transition: "transform 0.2s",
+                color: isActive ? "rgba(255,255,255,0.8)" : "#94a3b8",
+              }}
+            />
+          </span>
+        )}
+      </button>
+
+      {/* Children — animated */}
+      <AnimatePresence initial={false}>
+        {hasKids && isOpen && (
+          <motion.div
+            key="kids"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.18, ease: "easeInOut" }}
+            className="overflow-hidden"
+          >
+            {/* Left border line — color matches parent depth */}
+            <div
+              className="ml-0 pl-0"
+              // style={{ borderLeft: `2px solid ${pal.line}22`, marginLeft: 12 + indentPx + dotSize / 2 }}
+            >
+              {node.children.map((child) => (
+                <Node
+                  key={child.ServiceID}
+                  node={child}
+                  depth={depth + 1}
+                  activeId={activeId}
+                  onSelect={onSelect}
+                  expandedIds={expandedIds}
+                  toggleExpand={toggleExpand}
+                />
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   BREADCRUMB
+   ════════════════════════════════════════════════════════════════════════ */
+function Breadcrumb({ tree, activeId, onSelect }) {
+  const path = useMemo(() => {
+    const trail = [];
+    const walk = (nodes) => {
+      for (const n of nodes) {
+        trail.push(n);
+        if (n.ServiceID === activeId) return true;
+        if (walk(n.children ?? [])) return true;
+        trail.pop();
+      }
+      return false;
+    };
+    walk(tree);
+    return trail;
+  }, [tree, activeId]);
+
+  if (path.length <= 1) return null;
+
+  return (
+    <nav className="flex items-center gap-1 flex-wrap mb-4">
+      {path.map((node, i) => {
+        const isLast = i === path.length - 1;
+        const pal    = p(i);
+        return (
+          <span key={node.ServiceID} className="flex items-center gap-1">
+            {i > 0 && <ChevronRight size={11} className="text-slate-300 shrink-0" />}
+            <button
+              onClick={() => !isLast && onSelect(node.ServiceID)}
+              className="text-[11px] font-bold px-2 py-0.5 rounded-lg transition-all"
+              style={isLast
+                ? { background: pal.softBg, color: pal.softText, cursor: "default" }
+                : { color: "#94a3b8" }
+              }
+            >
+              {node.ServiceName}
+            </button>
+          </span>
+        );
+      })}
+    </nav>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   CONTRACTOR CARD
+   ════════════════════════════════════════════════════════════════════════ */
+function ContractorCard({ item, idx }) {
+  const img      = item.ProfileImage || item.CompanyImage || IMGS[idx % IMGS.length];
   const location = item.CityName || item.StateName || "India";
-  const company = item.CompanyName || item.Name || "Contractor";
-  const phone = item.MobileNo || item.PhoneNo || "";
-  const status = item.Status || "";
-  const rating = item.Rating ?? (4.5 + Math.random() * 0.4).toFixed(1); // placeholder if API doesn't provide
-  const experience = item.Experience || item.YearsOfExperience || "—";
-  const projects = item.ProjectsCompleted || item.TotalProjects || "—";
+  const company  = item.CompanyName || item.Name || "Contractor";
+  const phone    = item.MobileNo || item.PhoneNo || "";
+  const status   = item.Status || "";
+  const rating   = typeof item.Rating === "number" ? item.Rating : 4.5 + (idx % 5) * 0.1;
 
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      transition={{ duration: 0.3, delay: idx * 0.02 }}
+      exit={{ opacity: 0, scale: 0.94 }}
+      transition={{ duration: 0.22, delay: Math.min(idx * 0.03, 0.24) }}
       className="group bg-white rounded-3xl border border-slate-200/60 hover:border-blue-300 shadow-sm hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 overflow-hidden"
     >
-      {/* image */}
       <div className="relative h-36 m-2 rounded-2xl overflow-hidden">
-        <img
-          src={image}
-          alt={company}
+        <img src={img} alt={company}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          onError={(e) => {
-            e.currentTarget.src = FALLBACK_IMAGES[idx % FALLBACK_IMAGES.length];
-          }}
+          onError={(e) => { e.currentTarget.src = IMGS[idx % IMGS.length]; }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-
-        {/* rating badge */}
-        <div className="absolute top-2 left-2 flex gap-1">
-          <div className="bg-white/90 backdrop-blur px-2 py-0.5 rounded-lg flex items-center gap-1 shadow-sm">
-            <Star size={10} className="fill-yellow-400 text-yellow-400" />
-            <span className="text-[10px] font-black text-slate-800">
-              {Number(rating).toFixed(1)}
-            </span>
-          </div>
+        <div className="absolute top-2 left-2 bg-white/90 backdrop-blur px-2 py-0.5 rounded-lg flex items-center gap-1">
+          <Star size={10} className="fill-yellow-400 text-yellow-400" />
+          <span className="text-[10px] font-black text-slate-800">{rating.toFixed(1)}</span>
         </div>
-
-        {/* status badge */}
         {status && (
-          <div className="absolute top-2 right-2">
-            <span
-              className={`text-[9px] font-black px-2 py-0.5 rounded-lg backdrop-blur ${
-                status === "Approved"
-                  ? "bg-emerald-500/90 text-white"
-                  : "bg-amber-400/90 text-white"
-              }`}
-            >
-              {status}
-            </span>
-          </div>
+          <span className={`absolute top-2 right-2 text-[9px] font-black px-2 py-0.5 rounded-lg ${
+            status === "Approved" ? "bg-emerald-500/90 text-white" : "bg-amber-400/90 text-white"
+          }`}>{status}</span>
         )}
       </div>
-
-      {/* body */}
       <div className="px-4 pb-4">
-        <div className="mb-2">
-          <h3 className="text-sm font-black text-slate-800 leading-tight group-hover:text-blue-600 transition-colors line-clamp-1">
-            {company}
-          </h3>
-          <div className="flex items-center gap-1 text-slate-400 mt-0.5">
-            <MapPin size={10} />
-            <span className="text-[10px] font-medium truncate">{location}</span>
-          </div>
+        <h3 className="text-sm font-black text-slate-800 group-hover:text-blue-600 transition-colors line-clamp-1 mb-0.5">{company}</h3>
+        <div className="flex items-center gap-1 text-slate-400 mb-3">
+          <MapPin size={10} /><span className="text-[10px] truncate">{location}</span>
         </div>
-
-        {/* stats */}
-        <div className="grid grid-cols-2 gap-2 py-3 border-y border-slate-50 mb-1">
+        <div className="grid grid-cols-2 gap-2 py-3 border-y border-slate-50 mb-3">
           <div>
-            <p className="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">
-              Experience
-            </p>
-            <p className="text-[11px] font-bold text-slate-700">
-              {experience === "—" ? "—" : `${experience} Yrs`}
-            </p>
+            <p className="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Experience</p>
+            <p className="text-[11px] font-bold text-slate-700">{item.Experience ? `${item.Experience} Yrs` : "—"}</p>
           </div>
           <div className="border-l border-slate-100 pl-2">
-            <p className="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">
-              Projects
-            </p>
-            <p className="text-[11px] font-bold text-slate-700">
-              {projects === "—" ? "—" : `${projects}+`}
-            </p>
+            <p className="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Projects</p>
+            <p className="text-[11px] font-bold text-slate-700">{item.ProjectsCompleted ? `${item.ProjectsCompleted}+` : "—"}</p>
           </div>
         </div>
-
-        {/* description / email as subtle info */}
-        <div className="mb-4">
-          <p className="text-[11px] leading-[1.5] text-slate-400 line-clamp-1 font-medium">
-            {item.EmailId || "Verified contractor on Contracts India"}
-          </p>
-        </div>
-
-        {/* actions */}
+        <p className="text-[11px] text-slate-400 line-clamp-1 mb-4">{item.EmailId || "Verified on Contracts India"}</p>
         <div className="flex gap-2">
-          <button className="flex-1 bg-slate-900 hover:bg-blue-600 text-white py-2 rounded-xl text-[11px] font-bold transition-all transform active:scale-95 shadow-sm">
-            View Details
-          </button>
+          <button className="flex-1 bg-slate-900 hover:bg-blue-600 text-white py-2 rounded-xl text-[11px] font-bold transition-all active:scale-95">View Details</button>
           {phone && (
-            <a
-              href={`tel:${phone}`}
-              className="flex-1 inline-flex items-center justify-center gap-1.5 border border-emerald-200 text-emerald-700 py-2 rounded-xl text-[11px] font-bold bg-white hover:bg-emerald-50 transition-all"
-            >
-              <PhoneCall className="w-3.5 h-3.5" /> Call Now
+            <a href={`tel:${phone}`} className="flex-1 inline-flex items-center justify-center gap-1.5 border border-emerald-200 text-emerald-700 py-2 rounded-xl text-[11px] font-bold hover:bg-emerald-50 transition-all">
+              <PhoneCall className="w-3.5 h-3.5" /> Call
             </a>
           )}
         </div>
@@ -223,354 +334,198 @@ function ContractorCard({ item, idx }) {
   );
 }
 
-/* ============================================================
-   SIDEBAR NAV — built from service tree
-   ============================================================ */
-function SidebarNav({ tree, activeId, onSelect, openKey, setOpenKey }) {
-  return (
-    <nav className="bg-white/70 backdrop-blur-xl rounded-[24px] p-2 border border-white shadow-sm">
-      {tree.map((node) => {
-        const hasChildren = node.children?.length > 0;
-        const isChildActive =
-          hasChildren &&
-          node.children.some(
-            (c) =>
-              c.id === activeId || c.children?.some((gc) => gc.id === activeId),
-          );
-        const isSelfActive = node.id === activeId;
-        const isOpen = openKey === node.id;
-
-        return (
-          <div key={node.id} className="mb-1">
-            {/* parent row */}
-            <div
-              onClick={() => {
-                if (hasChildren) {
-                  setOpenKey(isOpen ? null : node.id);
-                } else {
-                  onSelect(node.id);
-                  setOpenKey(null);
-                }
-              }}
-              className={`flex items-center justify-between px-4 py-2.5 rounded-xl cursor-pointer transition-all duration-200
-                ${
-                  isSelfActive || (isChildActive && !isOpen)
-                    ? "bg-slate-900 text-white shadow-lg shadow-slate-200"
-                    : "text-slate-600 hover:bg-slate-100"
-                }`}
-            >
-              <span className="font-semibold text-[13px] line-clamp-1">
-                {node.name}
-              </span>
-              {hasChildren && (
-                <ChevronDown
-                  size={14}
-                  className={`flex-shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
-                />
-              )}
-            </div>
-
-            {/* children */}
-            <AnimatePresence>
-              {hasChildren && isOpen && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  className="overflow-hidden"
-                >
-                  <div className="py-1 px-2 mt-1 space-y-0.5">
-                    {node.children.map((child) => {
-                      const hasGrandChildren = child.children?.length > 0;
-                      const isGrandChildActive =
-                        hasGrandChildren &&
-                        child.children.some((gc) => gc.id === activeId);
-                      const isChildSelfActive = child.id === activeId;
-                      const childOpen = openKey === `${node.id}-${child.id}`;
-
-                      return (
-                        <div key={child.id}>
-                          <button
-                            onClick={() => {
-                              if (hasGrandChildren) {
-                                setOpenKey(
-                                  childOpen ? null : `${node.id}-${child.id}`,
-                                );
-                              } else {
-                                onSelect(child.id);
-                              }
-                            }}
-                            className={`w-full text-left px-4 py-2 rounded-lg text-[12px] font-bold transition-all flex items-center justify-between
-                              ${
-                                isChildSelfActive ||
-                                (isGrandChildActive && !childOpen)
-                                  ? "text-blue-600 bg-blue-50/80 shadow-[inset_0_0_0_1px_rgba(37,99,235,0.1)]"
-                                  : "text-slate-500 hover:bg-white hover:text-slate-900"
-                              }`}
-                          >
-                            <span>• {child.name}</span>
-                            {hasGrandChildren && (
-                              <ChevronDown
-                                size={11}
-                                className={`flex-shrink-0 transition-transform duration-300 ${childOpen ? "rotate-180" : ""}`}
-                              />
-                            )}
-                          </button>
-
-                          {/* grandchildren */}
-                          <AnimatePresence>
-                            {hasGrandChildren && childOpen && (
-                              <motion.div
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: "auto", opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                className="overflow-hidden"
-                              >
-                                <div className="pl-4 py-1 space-y-0.5">
-                                  {child.children.map((gc) => (
-                                    <button
-                                      key={gc.id}
-                                      onClick={() => onSelect(gc.id)}
-                                      className={`w-full text-left px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-all
-                                        ${
-                                          gc.id === activeId
-                                            ? "text-blue-600 bg-blue-50/80"
-                                            : "text-slate-400 hover:bg-white hover:text-slate-700"
-                                        }`}
-                                    >
-                                      ‣ {gc.name}
-                                    </button>
-                                  ))}
-                                </div>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        );
-      })}
-    </nav>
-  );
-}
-
-/* ============================================================
-   SKELETON LOADER
-   ============================================================ */
 function CardSkeleton() {
   return (
-    <div className="bg-white rounded-3xl border border-slate-200/60 overflow-hidden animate-pulse">
+    <div className="bg-white rounded-3xl border border-slate-100 overflow-hidden animate-pulse">
       <div className="h-36 m-2 rounded-2xl bg-slate-100" />
-      <div className="px-4 pb-4 space-y-3">
+      <div className="px-4 pb-4 space-y-3 mt-2">
         <div className="h-3 bg-slate-100 rounded w-3/4" />
         <div className="h-2 bg-slate-100 rounded w-1/2" />
         <div className="grid grid-cols-2 gap-2 py-3 border-y border-slate-50">
-          <div className="h-4 bg-slate-100 rounded" />
-          <div className="h-4 bg-slate-100 rounded" />
+          <div className="h-4 bg-slate-100 rounded" /><div className="h-4 bg-slate-100 rounded" />
         </div>
-        <div className="h-2 bg-slate-100 rounded w-full" />
+        <div className="h-2 bg-slate-100 rounded" />
         <div className="flex gap-2">
-          <div className="flex-1 h-8 bg-slate-100 rounded-xl" />
-          <div className="flex-1 h-8 bg-slate-100 rounded-xl" />
+          <div className="flex-1 h-8 bg-slate-100 rounded-xl" /><div className="flex-1 h-8 bg-slate-100 rounded-xl" />
         </div>
       </div>
     </div>
   );
 }
 
-/* ============================================================
-   MAIN COMPONENT
-   ============================================================ */
-const CompanySubServices = ({}) => {
-  const [activeServiceId, setActiveServiceId] = useState(null);
-  const [openKey, setOpenKey] = useState(null);
-  const { serviceId } = useParams();
-  const getAllServices = useserviceStore((state) => state?.allServices);
+/* ════════════════════════════════════════════════════════════════════════
+   MAIN
+   ════════════════════════════════════════════════════════════════════════ */
+const CompanySubServices = () => {
+  const { serviceId }  = useParams();
+  console.log(serviceId,"serviceId");
+  
+  const menuServicesInStore = useServiceStore((state) => state?.allMenuServices ?? state?.allServices ?? []);
 
-  /* ── 1. Fetch ALL services → build sidebar tree ── */
-  const {
-    data: allServices = [],
-    isLoading: servicesLoading,
-    error: servicesError,
-  } = useQuery({
-    queryKey: ["allServices", serviceId],
-    queryFn: () => getRootServiceApi(serviceId),
+  const [activeId,    setActiveId]    = useState(null);
+  const [expandedIds, setExpandedIds] = useState(new Set());
 
-    onSuccess: (data) => {
-      // auto-select first leaf service on load
-      if (activeServiceId === null && data.length) {
-        const tree = buildServiceTree(data);
-        const firstLeaf = findFirstLeaf(tree);
-        if (firstLeaf) {
-          setActiveServiceId(firstLeaf.id);
-          // auto-open its parent
-          const parent = tree.find((n) =>
-            n.children?.some(
-              (c) =>
-                c.id === firstLeaf.id ||
-                c.children?.some((gc) => gc.id === firstLeaf.id),
-            ),
-          );
-          if (parent) setOpenKey(parent.id);
-        }
-      }
-    },
+  const { data: menuServicesApi = [], isLoading: menuServicesLoading } = useQuery({
+    queryKey: ["ServiceMenuGetList"],
+    queryFn: ServiceMenuGet,
+    enabled: !menuServicesInStore?.length,
+    staleTime: 5 * 60 * 1000,
   });
+
+  const allMenuServices = menuServicesInStore?.length ? menuServicesInStore : menuServicesApi;
+  const tree = useMemo(() => {
+    if (!allMenuServices?.length) return [];
+    const fullTree = buildTree(allMenuServices);
+    if (!serviceId) return fullTree;
+    const target = findNode(fullTree, Number(serviceId));
+    return target ? [target] : [];
+  }, [allMenuServices, serviceId]);
+
+  const treeLoading = menuServicesLoading && !menuServicesInStore?.length;
+  const totalNodes = useMemo(() => flattenTree(tree)?.length, [tree]);
+
+  /* Auto-select first leaf on load or when the route subtree changes */
   useEffect(() => {
-    console.log(allServices, "12");
-  }, [allServices]);
-
-  const serviceTree = useMemo(
-    () => buildServiceTree(allServices),
-    [allServices],
-  );
-
-  // auto-select once tree is ready
-  useMemo(() => {
-    if (activeServiceId === null && serviceTree.length) {
-      const firstLeaf = findFirstLeaf(serviceTree);
-      if (firstLeaf) {
-        setActiveServiceId(firstLeaf.id);
-        const parent = serviceTree.find((n) =>
-          n.children?.some(
-            (c) =>
-              c.id === firstLeaf.id ||
-              c.children?.some((gc) => gc.id === firstLeaf.id),
-          ),
-        );
-        if (parent) setOpenKey(parent.id);
-      }
+    if (!tree.length) {
+      setActiveId(null);
+      setExpandedIds(new Set());
+      return;
     }
-  }, [serviceTree]);
 
-  /* ── 2. Fetch contractors for the active service ── */
-  const {
-    data: contractors = [],
-    isLoading: contractorsLoading,
-    error: contractorsError,
-  } = useQuery({
-    queryKey: ["contractors", activeServiceId],
-    queryFn: () => getContractorsApi(activeServiceId),
-    enabled: activeServiceId !== null,
+    const isActiveInTree = activeId !== null && !!findNode(tree, activeId);
+    if (isActiveInTree) return;
+
+    const leaf = findFirstLeaf(tree[0]) ?? tree[0];
+    setActiveId(leaf.ServiceID);
+    setExpandedIds(getAncestorIds(tree, leaf.ServiceID));
+  }, [tree, activeId]);
+
+  /* Select node + auto-expand its ancestors */
+  const handleSelect = (id) => {
+    setActiveId(id);
+    const ancestors = getAncestorIds(tree, id);
+    setExpandedIds((prev) => new Set([...prev, ...ancestors]));
+  };
+
+  const toggleExpand = (id) =>
+    setExpandedIds((prev) => {
+      const s = new Set(prev);
+      s.has(id) ? s.delete(id) : s.add(id);
+      return s;
+    });
+
+  const activeNode = useMemo(() => (activeId ? findNode(tree, activeId) : null), [tree, activeId]);
+
+  /* Parent service name from store */
+  const parentName = useMemo(() => {
+    const s = allMenuServices?.find((el) => Number(el.ServiceID ?? el.value) === Number(serviceId));
+    return s?.ServiceName || s?.name || "Services";
+  }, [allMenuServices, serviceId]);
+
+  /* Contractors for selected node */
+  const { data: contractors = [], isLoading: contractorsLoading } = useQuery({
+    queryKey: ["contractors", activeId],
+    queryFn:  () => fetchContractors(activeId),
+    enabled:  !!activeId,
     staleTime: 2 * 60 * 1000,
   });
 
-  /* ── Active label ── */
-  const activeLabel = useMemo(() => {
-    if (!activeServiceId) return "Services";
-    const flat = flattenTree(serviceTree);
-    return flat.find((n) => n.id === activeServiceId)?.name || "Services";
-  }, [activeServiceId, serviceTree]);
-
-  /* ── Handlers ── */
-  const handleSelect = (id) => setActiveServiceId(id);
-  useEffect(() => {
-    console.log(getAllServices, "getAllServices");
-  }, [getAllServices]);
-
-  /* ── Render ── */
   return (
-    <div className="min-h-screen bg-[#F1F5F9] py-8 px-4 md:px-6 font-sans selection:bg-blue-100">
-      <div className="max-w-[1600px] mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-8">
-          {/* ── SIDEBAR ── */}
-          <aside className="space-y-4 h-fit sticky top-6">
-            {/* get services name from store */}
-            <p className="px-3 text-2xl font-bold text-slate-900 tracking-tight">
-              {
-                getAllServices?.find(
-                  (elm) => Number(elm.value) === Number(serviceId),
-                )?.name||''
-              }
-            </p>
+    <div className="min-h-screen bg-[#F1F5F9] font-sans">
+      <div className="max-w-[1600px] mx-auto px-4 md:px-6 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 items-start">
 
-            {servicesLoading ? (
-              <div className="bg-white/70 rounded-[24px] p-4 border border-white space-y-2 animate-pulse">
-                {[...Array(7)].map((_, i) => (
-                  <div key={i} className="h-9 rounded-xl bg-slate-100" />
-                ))}
+          {/* ── SIDEBAR ── */}
+          <aside className="sticky top-6">
+            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+              {/* Header */}
+              <div className="px-4 py-3 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
+                <p className="text-sm font-black text-slate-800 truncate">{parentName}</p>
+                <p className="text-[10px] text-slate-400 mt-0.5 font-medium">{totalNodes} categories</p>
               </div>
-            ) : servicesError ? (
-              <div className="bg-white/70 rounded-[24px] p-4 border border-red-200 text-xs text-red-500">
-                Failed to load services. {servicesError.message}
+
+              {/* Tree scroll area */}
+              <div
+                className="py-2 px-2 overflow-y-auto relative"
+                style={{ maxHeight: "calc(100vh - 160px)", scrollbarWidth: "thin", scrollbarColor: "#e2e8f0 transparent" }}
+              >
+                {treeLoading ? (
+                  <div className="space-y-2 p-2 animate-pulse">
+                    {/* {[...Array(8)].map((_, i) => (
+                      <div key={i} className="h-8 rounded-xl bg-slate-100" style={{ width: `${90 - i * 5}%`, marginLeft: (i % 3) * 12 }} />
+                    ))} */}
+                  </div>
+                ) : tree.length === 0 ? (
+                  <p className="text-center text-xs text-slate-400 py-8">No categories found</p>
+                ) : (
+                  tree.map((node) => (
+                    <Node
+                      key={node.ServiceID}
+                      node={node}
+                      depth={0}
+                      activeId={activeId}
+                      onSelect={handleSelect}
+                      expandedIds={expandedIds}
+                      toggleExpand={toggleExpand}
+                    />
+                  ))
+                )}
               </div>
-            ) : (
-              <SidebarNav
-                tree={serviceTree}
-                activeId={activeServiceId}
-                onSelect={handleSelect}
-                openKey={openKey}
-                setOpenKey={setOpenKey}
-              />
-            )}
+            </div>
           </aside>
 
-          {/* ── MAIN CONTENT ── */}
-          <section>
-            {/* heading */}
-            <div className="flex items-center justify-between mb-6 px-1">
+          {/* ── CONTENT ── */}
+          <section className="min-w-0">
+            {/* Breadcrumb */}
+            <Breadcrumb tree={tree} activeId={activeId} onSelect={handleSelect} />
+
+            {/* Heading */}
+            <div className="flex items-start justify-between gap-4 mb-5">
               <div>
-                <h2 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                  {activeLabel}
-                  {!contractorsLoading && (
-                    <span className="text-sm font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded-md">
+                <h2 className="text-xl font-black text-slate-900 flex items-center gap-2 flex-wrap">
+                  {activeNode?.ServiceName ?? "Select a category"}
+                  {!contractorsLoading && activeId && (
+                    <span className="text-sm font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded-lg">
                       {contractors.length}
                     </span>
                   )}
                 </h2>
+                {activeNode && (
+                  <p className="text-[10px] text-slate-400 mt-0.5 font-medium">
+                    L{activeNode.level ?? "?"} · ID #{activeNode.ServiceID}
+                    {activeNode.children?.length > 0
+                      ? ` · ${activeNode.children.length} sub-categories`
+                      : " · leaf"
+                    }
+                  </p>
+                )}
               </div>
             </div>
 
-            {/* error */}
-            {contractorsError && (
-              <div className="bg-red-50 border border-red-200 rounded-2xl px-4 py-3 text-sm text-red-600 mb-4">
-                Failed to load contractors: {contractorsError.message}
-              </div>
-            )}
-
-            {/* grid */}
-            <motion.div
-              layout
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4"
-            >
-              {contractorsLoading ? (
-                [...Array(6)].map((_, i) => <CardSkeleton key={i} />)
-              ) : (
-                <AnimatePresence mode="popLayout">
-                  {contractors.map((item, idx) => (
-                    <ContractorCard
-                      key={item.userId ?? idx}
-                      item={item}
-                      idx={idx}
-                    />
-                  ))}
-                </AnimatePresence>
-              )}
+            {/* Cards grid */}
+            <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+              {contractorsLoading
+                ? [...Array(6)].map((_, i) => <CardSkeleton key={i} />)
+                : (
+                  <AnimatePresence mode="popLayout">
+                    {contractors.map((item, idx) => (
+                      <ContractorCard key={item.userId ?? idx} item={item} idx={idx} />
+                    ))}
+                  </AnimatePresence>
+                )
+              }
             </motion.div>
 
-            {/* empty state */}
-            {!contractorsLoading &&
-              !contractorsError &&
-              contractors.length === 0 &&
-              activeServiceId && (
-                <motion.div className="bg-white rounded-[40px] border border-dashed border-slate-300 py-20 text-center">
-                  <Building2
-                    size={40}
-                    className="text-slate-200 mx-auto mb-4"
-                  />
-                  <h3 className="text-xl font-bold text-slate-800">
-                    No Specialists Found
-                  </h3>
-                  <p className="text-slate-400 text-sm mt-2">
-                    Try switching categories or check back later.
-                  </p>
-                </motion.div>
-              )}
+            {/* Empty */}
+            {!contractorsLoading && contractors.length === 0 && activeId && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                className="bg-white rounded-[40px] border border-dashed border-slate-200 py-20 text-center mt-4"
+              >
+                <Building2 size={40} className="text-slate-200 mx-auto mb-4" />
+                <h3 className="text-lg font-bold text-slate-700">No Specialists Found</h3>
+                <p className="text-slate-400 text-sm mt-1">Try a sub-category or check back later.</p>
+              </motion.div>
+            )}
           </section>
         </div>
       </div>
@@ -579,72 +534,3 @@ const CompanySubServices = ({}) => {
 };
 
 export default CompanySubServices;
-
-/* ============================================================
-   TREE UTILITIES
-   ============================================================ */
-function flattenTree(nodes, out = []) {
-  nodes.forEach((n) => {
-    out.push(n);
-    if (n.children?.length) flattenTree(n.children, out);
-  });
-  return out;
-}
-
-function findFirstLeaf(nodes) {
-  for (const n of nodes) {
-    if (!n.children?.length) return n;
-    const leaf = findFirstLeaf(n.children);
-    if (leaf) return leaf;
-  }
-  return null;
-}
-
-/* ============================================================
-   HEADER INTEGRATION (NAV_ITEMS with dynamic subchildren)
-   ============================================================
-
-   In your Header.jsx, replace the static serviceColumns with:
-
-   const { data: allServices = [] } = useQuery({
-     queryKey: ["allServices"],
-     queryFn: () => fetchAllServices(BASE_URL),
-     staleTime: 5 * 60 * 1000,
-   });
-
-   const serviceTree = useMemo(() => buildServiceTree(allServices), [allServices]);
-
-   // Build mega-menu columns from root services, with subchildren
-   const serviceColumns = serviceTree.map((root) => ({
-     title: root.name,
-     color: "blue",
-     path: `/services/${root.id}`,
-     // If you want sub-items in the mega menu:
-     children: root.children?.map((child) => ({
-       title: child.name,
-       path: `/services/${child.id}`,
-       children: child.children?.map((gc) => ({
-         title: gc.name,
-         path: `/services/${gc.id}`,
-       })),
-     })),
-   }));
-
-   const NAV_ITEMS = [
-     { name: "Home", path: "/" },
-     { name: "About", path: "/about" },
-     {
-       name: "Our Services",
-       mega: true,
-       columns: serviceColumns,   // ← live from API
-     },
-     { name: "Projects", path: "/projects", isNew: true },
-     { name: "Contact Us", path: "/contact" },
-   ];
-
-   Pass `baseUrl` as a prop to ContractorService:
-   <ContractorService baseUrl="http://97.74.91.115/contractsindiamainapi" />
-
-   Or set it via env:
-   const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
-   ============================================================ */

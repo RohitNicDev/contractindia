@@ -39,13 +39,24 @@ export const useUserStore = create(
     }
   )
 );
-export const useserviceStore = create((set) => ({
-  allServices: null,
-  setAllServices: (services) => set({ allServices: services }),
 
-  selectedService: null,
-  setSelectedService: (service) => set({ selectedService: service }),
+export const useServiceStore = create(
+  persist(
+    (set) => ({
+      allServices: null,
+      setAllServices: (services) => set({ allServices: services }),
 
-  serviceTree: [],
-  setServiceTree: (tree) => set({ serviceTree: tree }),
-}));
+      allMenuServices: null,
+      setMenuServices: (services) => set({ allMenuServices: services }),
+
+      selectedService: null,
+      setSelectedService: (service) => set({ selectedService: service }),
+
+      serviceTree: [],
+      setServiceTree: (tree) => set({ serviceTree: tree }),
+    }),
+    {
+      name: "service-store", // localStorage key
+    }
+  )
+);
