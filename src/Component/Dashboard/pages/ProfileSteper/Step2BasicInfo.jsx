@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { AlertCircle, ChevronLeft, ChevronRight, Loader } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useUserStore } from "../../../../store/store";
 import {
@@ -20,7 +20,12 @@ const Step2BasicInfo = ({ store, nextStep, prevStep, triggerOtpSend }) => {
 
   useEffect(() => {
     reset(store.basicInfo);
+    setCompanyPhotos(store.basicInfo.companyPhotos || []);
   }, [store.basicInfo, reset]);
+
+  const [companyPhotos, setCompanyPhotos] = useState(
+    store.basicInfo.companyPhotos || [],
+  );
 
   const { loginResponce } = useUserStore();
   // Mutation for saving basic info
@@ -52,6 +57,8 @@ const Step2BasicInfo = ({ store, nextStep, prevStep, triggerOtpSend }) => {
   });
 
   const onSaveStep2 = async (data) => {
+    store.setBasicInfo({ companyPhotos });
+
     const payload = {
       userId: loginResponce?.userId || 0,
       companyTypeId: store?.companyType || "",
@@ -68,6 +75,38 @@ const Step2BasicInfo = ({ store, nextStep, prevStep, triggerOtpSend }) => {
       udyogRegistrationNo: data?.msmeNo || "",
     };
     saveBasicInfo(payload);
+  };
+
+  const handlePhotoFiles = async (files) => {
+    const readers = Array.from(files).map(
+      (file) =>
+        new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () =>
+            resolve({
+              name: file.name,
+              size: file.size,
+              type: file.type,
+              src: reader.result,
+            });
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        }),
+    );
+
+    const previews = await Promise.all(readers);
+    setCompanyPhotos((current) => [...current, ...previews]);
+  };
+
+  const handlePhotoInput = async (event) => {
+    const files = event.target.files;
+    if (!files?.length) return;
+    await handlePhotoFiles(files);
+    event.target.value = "";
+  };
+
+  const removePhoto = (index) => {
+    setCompanyPhotos((current) => current.filter((_, idx) => idx !== index));
   };
 
   return (
@@ -102,6 +141,41 @@ const Step2BasicInfo = ({ store, nextStep, prevStep, triggerOtpSend }) => {
             value={store.companyTypeName || ""}
             disabled
           />
+        </div>
+
+        <div className="flex flex-col gap-1.5 md:col-span-2">
+          <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+            Company Photos
+          </label>
+          <label className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 text-sm cursor-pointer hover:border-blue-300 hover:bg-slate-100 transition-all">
+            <span>{companyPhotos.length > 0 ? `${companyPhotos.length} photo${companyPhotos.length > 1 ? "s" : ""} selected` : "Select company photos"}</span>
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={handlePhotoInput}
+            />
+          </label>
+          {companyPhotos.length > 0 && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-3">
+              {companyPhotos.map((photo, idx) => (
+                <div key={`${photo.name}-${idx}`} className="relative rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-sm">
+                  <img src={photo.src} alt={photo.name} className="h-24 w-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => removePhoto(idx)}
+                    className="absolute top-2 right-2 h-7 w-7 rounded-full bg-slate-900/80 text-white flex items-center justify-center text-xs"
+                  >
+                    ×
+                  </button>
+                  <div className="p-2 text-[10px] text-slate-500 truncate">
+                    {photo.name}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
         {/* 
         <div className="flex flex-col gap-1.5">

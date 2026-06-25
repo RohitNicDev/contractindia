@@ -228,4 +228,19 @@ export const UserSubscriptionDetailGet = async (params) => {
 
 };
 
- 
+ export const UserPaymentHistorySave = async (payload) => {
+  return await api.post(`/UserPaymentHistory/save`, payload);
+};
+export const UserPaymentHistoryUpdate = async (payload) => {
+  return await api.put(`/UserPaymentHistory/update`, payload);
+};
+export const UserPaymentHistoryDelete = async (planId) => {
+  return await api.delete(`/UserPaymentHistory/delete/${planId}`);
+};
+export const UserPaymentHistoryGet = async () => {
+  return await api.get(`/UserPaymentHistory/get`);
+};
+// http://97.74.91.115/contractsindiamainapi/api/UserPaymentHistory/get?paymentId=4243242&userId=30098855
+export const UserPaymentHistoryGetById = async (params) => {
+  return await api.get(`/UserPaymentHistory/get?${params}`);
+};

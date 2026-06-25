@@ -185,8 +185,8 @@ export default function ProfileWizard() {
       // set company type if not already chosen
       if (!store.companyType) {
         store.setCompanyType({
-          companyType: info.CompanyTypeId ?? info.CompanyTypeName ?? "",
-          companyTypeName: info.CompanyTypeName ?? "",
+          companyType: store.companyType || info?.CompanyTypeId ||"",
+          companyTypeName: store.companyTypeName || info?.CompanyTypeName || "",
         });
       }
 
@@ -208,7 +208,8 @@ export default function ProfileWizard() {
           typeof info.IsMSME === "boolean"
             ? info.IsMSME
             : store.registrationDetails.udyogAadhaarToggle,
-        msmeNo: store.registrationDetails.msmeNo || info.UdyogRegistrationNo || "",
+        msmeNo:
+          store.registrationDetails.msmeNo || info.UdyogRegistrationNo || "",
       });
     }
   }, [bankInformationData]);
@@ -306,12 +307,13 @@ export default function ProfileWizard() {
                   {store.basicInfo.contactPerson || "Commercial Partner"}
                 </h2>
                 <span
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${progress < 40
+                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                    progress < 40
                       ? "text-red-600 bg-red-50 border-red-200"
                       : progress < 80
                         ? "text-orange-600 bg-orange-50 border-orange-200"
                         : "text-cyan-700 bg-cyan-50 border-cyan-200"
-                    }`}
+                  }`}
                 >
                   {progress < 40
                     ? "Weak"
@@ -358,16 +360,18 @@ export default function ProfileWizard() {
                   <React.Fragment key={step.id}>
                     <button
                       onClick={() => store.setCurrentStep(step.id)}
-                      className={`flex flex-col items-center gap-2 group focus:outline-none transition-all relative ${isActive ? "scale-105" : ""
-                        }`}
+                      className={`flex flex-col items-center gap-2 group focus:outline-none transition-all relative ${
+                        isActive ? "scale-105" : ""
+                      }`}
                     >
                       <div
-                        className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all ${isActive
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all ${
+                          isActive
                             ? "bg-linear-to-br from-blue-500 to-purple-500 border-blue-400 shadow-[0_0_12px_rgba(59,130,246,0.4)]"
                             : isCompleted
                               ? "bg-blue-50 border-blue-200 text-blue-600"
                               : "bg-slate-50 border-slate-200 text-slate-400 group-hover:border-slate-300"
-                          }`}
+                        }`}
                       >
                         {isCompleted ? (
                           <Check className="w-4 h-4" />
@@ -376,10 +380,11 @@ export default function ProfileWizard() {
                         )}
                       </div>
                       <span
-                        className={`text-[11px] font-bold tracking-tight transition-all ${isActive
+                        className={`text-[11px] font-bold tracking-tight transition-all ${
+                          isActive
                             ? "text-blue-600"
                             : "text-slate-500 group-hover:text-slate-700"
-                          }`}
+                        }`}
                       >
                         {step.label}
                       </span>
@@ -471,7 +476,11 @@ export default function ProfileWizard() {
                       onBack={prevStep}
                       dashboardMode={true}
                     /> */}
-                    <Step5ServiceListing store={store} nextStep={nextStep} prevStep={prevStep} />
+                    <Step5ServiceListing
+                      store={store}
+                      nextStep={nextStep}
+                      prevStep={prevStep}
+                    />
                   </div>
                 )}
 
@@ -550,16 +559,18 @@ export default function ProfileWizard() {
                 return (
                   <div
                     key={step.id}
-                    className={`flex items-center gap-3 p-2.5 rounded-xl border transition-all ${isCompleted
+                    className={`flex items-center gap-3 p-2.5 rounded-xl border transition-all ${
+                      isCompleted
                         ? "bg-blue-50 border-blue-100 text-slate-700"
                         : "bg-slate-50/40 border-slate-100 text-slate-400"
-                      }`}
+                    }`}
                   >
                     <div
-                      className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 border ${isCompleted
+                      className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 border ${
+                        isCompleted
                           ? "bg-blue-100 border-blue-300 text-blue-600"
                           : "border-slate-200 bg-white"
-                        }`}
+                      }`}
                     >
                       {isCompleted && <Check className="w-3 h-3" />}
                     </div>

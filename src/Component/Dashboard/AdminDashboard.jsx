@@ -799,29 +799,31 @@ function Analytics() {
   );
 }
 
+import PaymentHistory from "./pages/PaymentHistory";
+
 const navItems = [
-  { key: "overview", label: "Overview", icon: LayoutDashboard },
-  { key: "verification", label: "User Verification", icon: ShieldCheck },
-  { key: "services", label: "Service Management", icon: Briefcase },
-  { key: "users", label: "User Control", icon: Users },
-  { key: "plans", label: "Business Plans", icon: CreditCard },
-  // { key: "documentation", label: "Documentation Category", icon: FileText },
-  // { key: "documentsub", label: "Document Sub Category", icon: FileText },
-  { key: "documentcat", label: "Document Category", icon: FileText },
-  { key: "security", label: "Security", icon: Lock },
-  { key: "analytics", label: "Analytics", icon: BarChart3 },
+  { key: "overview",      label: "Overview",            icon: LayoutDashboard },
+  { key: "verification",  label: "User Verification",   icon: ShieldCheck     },
+  { key: "services",      label: "Service Management",  icon: Briefcase       },
+  { key: "users",         label: "User Control",        icon: Users           },
+  { key: "plans",         label: "Business Plans",      icon: CreditCard      },
+  { key: "payments",      label: "Payment History",     icon: CreditCard      },
+  { key: "documentcat",   label: "Document Category",   icon: FileText        },
+  { key: "security",      label: "Security",            icon: Lock            },
+  { key: "analytics",     label: "Analytics",           icon: BarChart3       },
 ];
 const sectionMap = {
-  overview: Overview,
+  overview:     Overview,
   verification: UserVerification,
-  services: ServiceListing,
-  users: UserControl,
-  plans: BusinessPlans,
-  security: Security,
-  analytics: Analytics,
+  services:     ServiceListing,
+  users:        UserControl,
+  plans:        BusinessPlans,
+  payments:     PaymentHistory,
+  security:     Security,
+  analytics:    Analytics,
   documentation: DocumantationCategory,
-  documentsub: DocumentSubCategory,
-  documentcat: DocumentCategoryManager,
+  documentsub:  DocumentSubCategory,
+  documentcat:  DocumentCategoryManager,
 };
 
 export default function AdminDashboard() {

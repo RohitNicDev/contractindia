@@ -3,14 +3,33 @@ import { toast } from "sonner";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  CheckCircle2, Briefcase, CreditCard, Eye, Plus,
-  Loader2, X, Lock, IndianRupee, Crown, Calendar,
-  Layers, Clock, Tag, Users, Star,
+  CheckCircle2,
+  Briefcase,
+  CreditCard,
+  Eye,
+  Plus,
+  Loader2,
+  X,
+  Lock,
+  IndianRupee,
+  Crown,
+  Calendar,
+  Layers,
+  Clock,
+  Tag,
+  Users,
+  Star,
 } from "lucide-react";
 import CustomHeading from "../../common/CustomHeading";
 import DataTableComponent from "../../common/dataTable";
 import { useUserStore } from "../../../store/store";
-import { planMasterGet, userBankDetailbyParams, UserSubscriptionDetailGet, userSubscriptionDetailSave, } from "../../../services/api";
+import {
+  planMasterGet,
+  userBankDetailbyParams,
+  UserPaymentHistorySave,
+  UserSubscriptionDetailGet,
+  userSubscriptionDetailSave,
+} from "../../../services/api";
 
 // ─── API helpers ───────────────────────────────────────────────────────────────
 const fetchPlans = async () => {
@@ -39,9 +58,13 @@ const formatDate = (iso) => {
   if (!iso) return "—";
   try {
     return new Date(iso).toLocaleDateString("en-IN", {
-      day: "2-digit", month: "short", year: "numeric",
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
     });
-  } catch { return iso; }
+  } catch {
+    return iso;
+  }
 };
 
 // ─── Plan Detail Modal ─────────────────────────────────────────────────────────
@@ -52,7 +75,9 @@ function PlanDetailModal({ plan, onClose, onSubscribe }) {
     <AnimatePresence>
       <div className="fixed inset-0 z-[1000] flex items-center justify-center px-4 py-6">
         <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
           className="absolute inset-0 bg-slate-950/75 backdrop-blur-sm"
           onClick={onClose}
         />
@@ -73,8 +98,12 @@ function PlanDetailModal({ plan, onClose, onSubscribe }) {
                     {plan?.DurationType ?? "Plan"}
                   </span>
                 </div>
-                <h2 className="text-2xl font-black">{plan?.PlanName ?? "Plan"}</h2>
-                <p className="text-indigo-200 text-xs mt-1">{plan?.Remark ?? ""}</p>
+                <h2 className="text-2xl font-black">
+                  {plan?.PlanName ?? "Plan"}
+                </h2>
+                <p className="text-indigo-200 text-xs mt-1">
+                  {plan?.Remark ?? ""}
+                </p>
               </div>
               <button
                 onClick={onClose}
@@ -85,7 +114,9 @@ function PlanDetailModal({ plan, onClose, onSubscribe }) {
             </div>
             <div className="mt-4 flex items-end gap-1">
               <IndianRupee className="h-6 w-6 mb-0.5 text-white/80" />
-              <span className="text-4xl font-black">{price === 0 ? "Free" : price?.toLocaleString("en-IN")}</span>
+              <span className="text-4xl font-black">
+                {price === 0 ? "Free" : price?.toLocaleString("en-IN")}
+              </span>
               {price > 0 && (
                 <span className="text-indigo-200 text-sm mb-1">
                   / {plan?.DurationType?.toLowerCase() ?? "period"}
@@ -99,24 +130,52 @@ function PlanDetailModal({ plan, onClose, onSubscribe }) {
             <div className="grid grid-cols-2 gap-3">
               {[
                 // { icon: Tag,    label: "Plan ID",      value: `#${plan?.PlanID}` },
-                { icon: Clock, label: "Duration", value: plan?.DurationType ?? "—" },
-                { icon: Star, label: "Credits", value: plan?.CreditsIncluded ?? 0 },
-                { icon: Layers, label: "Max Services", value: plan?.maxNoofServices ?? "—" },
-                { icon: Users, label: "User Type", value: plan?.UserTypeName || "All" },
+                {
+                  icon: Clock,
+                  label: "Duration",
+                  value: plan?.DurationType ?? "—",
+                },
+                {
+                  icon: Star,
+                  label: "Credits",
+                  value: plan?.CreditsIncluded ?? 0,
+                },
+                {
+                  icon: Layers,
+                  label: "Max Services",
+                  value: plan?.maxNoofServices ?? "—",
+                },
+                {
+                  icon: Users,
+                  label: "User Type",
+                  value: plan?.UserTypeName || "All",
+                },
                 {
                   icon: CheckCircle2,
                   label: "Status",
                   value: Number(plan?.IsActive) === 1 ? "Active" : "Inactive",
-                  color: Number(plan?.IsActive) === 1 ? "text-emerald-600" : "text-slate-400",
+                  color:
+                    Number(plan?.IsActive) === 1
+                      ? "text-emerald-600"
+                      : "text-slate-400",
                 },
               ].map(({ icon: Icon, label, value, color }) => (
-                <div key={label} className="flex items-center gap-2.5 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <div
+                  key={label}
+                  className="flex items-center gap-2.5 p-3 bg-slate-50 rounded-xl border border-slate-100"
+                >
                   <div className="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0">
                     <Icon className="h-3.5 w-3.5 text-indigo-500" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[9px] font-bold uppercase tracking-wider text-slate-400">{label}</p>
-                    <p className={`text-xs font-bold truncate ${color ?? "text-slate-800"}`}>{value}</p>
+                    <p className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
+                      {label}
+                    </p>
+                    <p
+                      className={`text-xs font-bold truncate ${color ?? "text-slate-800"}`}
+                    >
+                      {value}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -130,7 +189,8 @@ function PlanDetailModal({ plan, onClose, onSubscribe }) {
                 Close
               </button>
               <motion.button
-                whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => onSubscribe(plan)}
                 className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold text-sm shadow-lg hover:opacity-90 flex items-center justify-center gap-1.5"
               >
@@ -153,7 +213,9 @@ function SubscriptionDetailModal({ sub, planMap, onClose }) {
     <AnimatePresence>
       <div className="fixed inset-0 z-[1000] flex items-center justify-center px-4 py-6">
         <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
           className="absolute inset-0 bg-slate-950/75 backdrop-blur-sm"
           onClick={onClose}
         />
@@ -164,10 +226,13 @@ function SubscriptionDetailModal({ sub, planMap, onClose }) {
           transition={{ duration: 0.22 }}
           className="relative w-full max-w-md rounded-3xl bg-white shadow-2xl overflow-hidden"
         >
-          <div className={`p-6 text-white ${isActive
-            ? "bg-gradient-to-br from-emerald-500 to-teal-600"
-            : "bg-gradient-to-br from-slate-500 to-slate-700"
-            }`}>
+          <div
+            className={`p-6 text-white ${
+              isActive
+                ? "bg-gradient-to-br from-emerald-500 to-teal-600"
+                : "bg-gradient-to-br from-slate-500 to-slate-700"
+            }`}
+          >
             <div className="flex items-start justify-between">
               <div>
                 <div className="flex items-center gap-2 mb-1">
@@ -186,13 +251,18 @@ function SubscriptionDetailModal({ sub, planMap, onClose }) {
               </button>
             </div>
             <div className="mt-3 flex items-center gap-2">
-              <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${isActive
-                ? "bg-white/20 border-white/30 text-white"
-                : "bg-white/10 border-white/20 text-white/70"
-                }`}>
+              <span
+                className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${
+                  isActive
+                    ? "bg-white/20 border-white/30 text-white"
+                    : "bg-white/10 border-white/20 text-white/70"
+                }`}
+              >
                 {isActive ? "● Active" : "○ Inactive"}
               </span>
-              <span className="text-white/70 text-xs">{formatDate(sub?.EnterDate)}</span>
+              <span className="text-white/70 text-xs">
+                {formatDate(sub?.EnterDate)}
+              </span>
             </div>
           </div>
 
@@ -200,19 +270,46 @@ function SubscriptionDetailModal({ sub, planMap, onClose }) {
             <div className="grid grid-cols-2 gap-3">
               {[
                 // { icon: Tag,     label: "Plan ID",      value: `#${sub?.PlanID}` },
-                { icon: Clock, label: "Duration", value: plan?.DurationType ?? "—" },
-                { icon: IndianRupee, label: "Price", value: formatPrice(plan?.Price) },
-                { icon: Star, label: "Credits", value: plan?.CreditsIncluded ?? "—" },
-                { icon: Layers, label: "Max Services", value: plan?.maxNoofServices ?? "—" },
-                { icon: Calendar, label: "Subscribed On", value: formatDate(sub?.EnterDate) },
+                {
+                  icon: Clock,
+                  label: "Duration",
+                  value: plan?.DurationType ?? "—",
+                },
+                {
+                  icon: IndianRupee,
+                  label: "Price",
+                  value: formatPrice(plan?.Price),
+                },
+                {
+                  icon: Star,
+                  label: "Credits",
+                  value: plan?.CreditsIncluded ?? "—",
+                },
+                {
+                  icon: Layers,
+                  label: "Max Services",
+                  value: plan?.maxNoofServices ?? "—",
+                },
+                {
+                  icon: Calendar,
+                  label: "Subscribed On",
+                  value: formatDate(sub?.EnterDate),
+                },
               ].map(({ icon: Icon, label, value }) => (
-                <div key={label} className="flex items-center gap-2.5 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <div
+                  key={label}
+                  className="flex items-center gap-2.5 p-3 bg-slate-50 rounded-xl border border-slate-100"
+                >
                   <div className="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0">
                     <Icon className="h-3.5 w-3.5 text-indigo-500" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[9px] font-bold uppercase tracking-wider text-slate-400">{label}</p>
-                    <p className="text-xs font-bold text-slate-800 truncate">{value}</p>
+                    <p className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
+                      {label}
+                    </p>
+                    <p className="text-xs font-bold text-slate-800 truncate">
+                      {value}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -220,7 +317,9 @@ function SubscriptionDetailModal({ sub, planMap, onClose }) {
 
             {sub?.Remark && (
               <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-xs text-slate-600">
-                <span className="font-bold text-slate-500 uppercase text-[9px] tracking-wider block mb-1">Remark</span>
+                <span className="font-bold text-slate-500 uppercase text-[9px] tracking-wider block mb-1">
+                  Remark
+                </span>
                 {sub.Remark}
               </div>
             )}
@@ -243,15 +342,48 @@ function PaymentModal({ plan, userId, onClose, onSuccess }) {
   const [step, setStep] = useState("form");
 
   const [form, setForm] = useState({
-    cardNumber: "", cardHolder: "", expiry: "", cvv: "",
+    cardNumber: "",
+    cardHolder: "",
+    expiry: "",
+    cvv: "",
     amount: plan?.Price ?? 0,
   });
 
+  const {
+    mutate: saveUserPaymentHistorySave,
+    isPending: isUserPaymentHistorySaving,
+  } = useMutation({
+    mutationFn: UserPaymentHistorySave,
+    onSuccess: (res) => {
+      if (res?.status) {
+        setStep("success");
+
+        toast.success("Payment successful!");
+      } else {
+        toast.error(res?.message ?? "User Payment   failed.");
+        setStep("form");
+      }
+    },
+    onError: () => {
+      toast.error("Failed to save User Payment Save.");
+      setStep("form");
+    },
+  });
   const { mutate: saveSubscription, isPending: isSaving } = useMutation({
     mutationFn: userSubscriptionDetailSave,
     onSuccess: (res) => {
       if (res?.status) {
         setStep("success");
+        saveUserPaymentHistorySave({
+          userID: userId,
+          payment: plan?.Price ?? 0,
+          paymentStatus: plan?.Price === 0 ? "Free" : "Success",
+          paymentMode: "Card",
+          remark: plan?.PlanName ?? "",
+          enterredBy: userId,
+          enterDate: new Date().toISOString(),
+          isActive: 1,
+        });
         toast.success("Payment successful!");
       } else {
         toast.error(res?.message ?? "Subscription failed.");
@@ -270,21 +402,25 @@ function PaymentModal({ plan, userId, onClose, onSuccess }) {
       enabled: !!userId,
       retry: false,
     });
- useEffect(() => {
-  if (bankDetailData?.length > 0) {
-    setForm((prev) => ({
-      ...prev,
-      cardNumber: bankDetailData[0]?.AccountNo,
-    }));
-  }
+  useEffect(() => {
+    if (bankDetailData?.length > 0) {
+      setForm((prev) => ({
+        ...prev,
+        cardNumber: bankDetailData[0]?.AccountNo,
+      }));
+    }
 
-  console.log(bankDetailData, "bankDetailData");
-}, [bankDetailData]);
+    console.log(bankDetailData, "bankDetailData");
+  }, [bankDetailData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     let v = value;
-    if (name === "cardNumber") v = value?.replace(/\D/g, "")?.slice(0, 16)?.replace(/(\d{4})(?=\d)/g, "$1 ");
+    if (name === "cardNumber")
+      v = value
+        ?.replace(/\D/g, "")
+        ?.slice(0, 16)
+        ?.replace(/(\d{4})(?=\d)/g, "$1 ");
     if (name === "expiry") {
       v = value?.replace(/\D/g, "")?.slice(0, 4);
       if (v.length >= 3) v = v?.slice(0, 2) + "/" + v?.slice(2);
@@ -300,7 +436,10 @@ function PaymentModal({ plan, userId, onClose, onSuccess }) {
     form.cvv?.length >= 3;
 
   const handleSubmit = () => {
-    if (!isValid) { toast.error("Please fill in valid card details."); return; }
+    if (!isValid) {
+      toast.error("Please fill in valid card details.");
+      return;
+    }
     setStep("processing");
 
     // Save subscription to API
@@ -318,14 +457,14 @@ function PaymentModal({ plan, userId, onClose, onSuccess }) {
   };
   useEffect(() => {
     console.log(form, "form");
-
-  }, [form])
-
+  }, [form]);
 
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center px-4 py-6">
       <motion.div
-        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
         className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"
         onClick={step === "form" ? onClose : undefined}
       />
@@ -340,14 +479,22 @@ function PaymentModal({ plan, userId, onClose, onSuccess }) {
           <div className="p-6 space-y-5">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-black text-slate-900">Complete Payment</h3>
+                <h3 className="text-lg font-black text-slate-900">
+                  Complete Payment
+                </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Subscribing to <span className="font-bold text-indigo-600">{plan?.PlanName}</span>
+                  Subscribing to{" "}
+                  <span className="font-bold text-indigo-600">
+                    {plan?.PlanName}
+                  </span>
                   {" · "}
                   <span className="text-slate-400">{plan?.DurationType}</span>
                 </p>
               </div>
-              <button onClick={onClose} className="h-9 w-9 rounded-xl border border-slate-200 flex items-center justify-center hover:bg-slate-50">
+              <button
+                onClick={onClose}
+                className="h-9 w-9 rounded-xl border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+              >
                 <X className="h-4 w-4 text-slate-500" />
               </button>
             </div>
@@ -356,18 +503,28 @@ function PaymentModal({ plan, userId, onClose, onSuccess }) {
             <div className="rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-700 p-5 text-white shadow-lg">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-indigo-200 font-semibold uppercase tracking-widest">Total Amount</p>
+                  <p className="text-xs text-indigo-200 font-semibold uppercase tracking-widest">
+                    Total Amount
+                  </p>
                   <p className="text-3xl font-black mt-1 flex items-center gap-1">
-                    {form.amount == 0
-                      ? "Free"
-                      : <><IndianRupee className="h-6 w-6" />{form.amount?.toLocaleString("en-IN")}</>
-                    }
+                    {form.amount == 0 ? (
+                      "Free"
+                    ) : (
+                      <>
+                        <IndianRupee className="h-6 w-6" />
+                        {form.amount?.toLocaleString("en-IN")}
+                      </>
+                    )}
                   </p>
                 </div>
                 <div className="text-right">
                   <p className="text-xs text-indigo-200">Credits</p>
-                  <p className="text-xl font-black">{plan?.CreditsIncluded ?? 0}</p>
-                  <p className="text-[10px] text-indigo-300">Max {plan?.maxNoofServices ?? 0} services</p>
+                  <p className="text-xl font-black">
+                    {plan?.CreditsIncluded ?? 0}
+                  </p>
+                  <p className="text-[10px] text-indigo-300">
+                    Max {plan?.maxNoofServices ?? 0} services
+                  </p>
                 </div>
               </div>
             </div>
@@ -375,51 +532,89 @@ function PaymentModal({ plan, userId, onClose, onSuccess }) {
             {form.amount > 0 ? (
               <div className="space-y-3">
                 <div>
-                  <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-1.5">Card Number</label>
+                  <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-1.5">
+                    Card Number
+                  </label>
                   <div className="relative">
-                    <input type="text" name="cardNumber" value={form.cardNumber} onChange={handleChange}
+                    <input
+                      type="text"
+                      name="cardNumber"
+                      value={form.cardNumber}
+                      onChange={handleChange}
                       placeholder="1234 5678 9012 3456"
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-mono outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100" />
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-mono outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                    />
                     <Lock className="absolute right-3 top-3.5 h-4 w-4 text-slate-300" />
                   </div>
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-1.5">Card Holder</label>
-                  <input type="text" name="cardHolder" value={form.cardHolder} onChange={handleChange}
+                  <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-1.5">
+                    Card Holder
+                  </label>
+                  <input
+                    type="text"
+                    name="cardHolder"
+                    value={form.cardHolder}
+                    onChange={handleChange}
                     placeholder="Name on card"
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm uppercase outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100" />
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm uppercase outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                  />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-1.5">Expiry</label>
-                    <input type="text" name="expiry" value={form.expiry} onChange={handleChange} placeholder="MM/YY"
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-mono outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100" />
+                    <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-1.5">
+                      Expiry
+                    </label>
+                    <input
+                      type="text"
+                      name="expiry"
+                      value={form.expiry}
+                      onChange={handleChange}
+                      placeholder="MM/YY"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-mono outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                    />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-1.5">CVV</label>
-                    <input type="password" name="cvv" value={form.cvv} onChange={handleChange} placeholder="•••"
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-mono outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100" />
+                    <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-1.5">
+                      CVV
+                    </label>
+                    <input
+                      type="password"
+                      name="cvv"
+                      value={form.cvv}
+                      onChange={handleChange}
+                      placeholder="•••"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-mono outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                    />
                   </div>
                 </div>
               </div>
             ) : (
               <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl text-center">
-                <p className="text-sm font-bold text-emerald-700">This plan is free — no payment required.</p>
+                <p className="text-sm font-bold text-emerald-700">
+                  This plan is free — no payment required.
+                </p>
               </div>
             )}
 
             <motion.button
-              whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={handleSubmit}
               disabled={form.amount > 0 && !isValid}
-              className={`w-full py-3.5 rounded-2xl font-bold text-sm text-white shadow-lg transition-opacity ${form.amount > 0 && !isValid
-                ? "bg-slate-300 cursor-not-allowed"
-                : "bg-gradient-to-r from-indigo-600 to-violet-600 hover:opacity-90"
-                }`}
+              className={`w-full py-3.5 rounded-2xl font-bold text-sm text-white shadow-lg transition-opacity ${
+                form.amount > 0 && !isValid
+                  ? "bg-slate-300 cursor-not-allowed"
+                  : "bg-gradient-to-r from-indigo-600 to-violet-600 hover:opacity-90"
+              }`}
             >
-              {form.amount === 0 ? "Activate Free Plan" : `Pay ${formatPrice(form.amount)}`}
+              {form.amount === 0
+                ? "Activate Free Plan"
+                : `Pay ${formatPrice(form.amount)}`}
             </motion.button>
-            <p className="text-center text-[10px] text-slate-400">Secure payment · SSL encrypted</p>
+            <p className="text-center text-[10px] text-slate-400">
+              Secure payment · SSL encrypted
+            </p>
           </div>
         )}
 
@@ -432,18 +627,28 @@ function PaymentModal({ plan, userId, onClose, onSuccess }) {
 
         {step === "success" && (
           <div className="p-10 flex flex-col items-center justify-center gap-4">
-            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", duration: 0.5 }}>
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", duration: 0.5 }}
+            >
               <div className="h-16 w-16 rounded-full bg-emerald-100 flex items-center justify-center">
                 <CheckCircle2 className="h-9 w-9 text-emerald-600" />
               </div>
             </motion.div>
-            <h3 className="text-lg font-black text-slate-900">Subscription Activated!</h3>
+            <h3 className="text-lg font-black text-slate-900">
+              Subscription Activated!
+            </h3>
             <p className="text-sm text-slate-500 text-center">
               You are now subscribed to{" "}
-              <span className="font-bold text-indigo-600">{plan?.PlanName}</span>.
+              <span className="font-bold text-indigo-600">
+                {plan?.PlanName}
+              </span>
+              .
             </p>
             <motion.button
-              whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={onSuccess}
               className="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold text-sm shadow-lg"
             >
@@ -495,7 +700,9 @@ export default function PlansAndSubscriptions() {
   // ── PlanID → plan detail lookup ──────────────────────────────────────────────
   const planMap = useMemo(() => {
     const map = {};
-    plans.forEach((p) => { map[p.PlanID] = p; });
+    plans.forEach((p) => {
+      map[p.PlanID] = p;
+    });
     return map;
   }, [plans]);
 
@@ -517,7 +724,9 @@ export default function PlansAndSubscriptions() {
       render: (_, r) => (
         <div>
           <p className="font-bold text-slate-800">{r.PlanName ?? "—"}</p>
-          <p className="text-[10px] text-slate-400">{r.UserTypeName || "All users"}</p>
+          <p className="text-[10px] text-slate-400">
+            {r.UserTypeName || "All users"}
+          </p>
         </div>
       ),
     },
@@ -525,13 +734,19 @@ export default function PlansAndSubscriptions() {
       title: "Price",
       key: "Price",
       render: (_, r) => (
-        <span className="font-black text-indigo-600">{formatPrice(r.Price)}</span>
+        <span className="font-black text-indigo-600">
+          {formatPrice(r.Price)}
+        </span>
       ),
     },
     {
       title: "Credits",
       key: "CreditsIncluded",
-      render: (_, r) => <span className="font-semibold text-slate-700">{r.CreditsIncluded ?? 0}</span>,
+      render: (_, r) => (
+        <span className="font-semibold text-slate-700">
+          {r.CreditsIncluded ?? 0}
+        </span>
+      ),
     },
     {
       title: "Duration",
@@ -545,7 +760,11 @@ export default function PlansAndSubscriptions() {
     {
       title: "Max Services",
       key: "maxNoofServices",
-      render: (_, r) => <span className="font-semibold text-slate-700">{r.maxNoofServices ?? "—"}</span>,
+      render: (_, r) => (
+        <span className="font-semibold text-slate-700">
+          {r.maxNoofServices ?? "—"}
+        </span>
+      ),
     },
     {
       title: "Action",
@@ -560,7 +779,8 @@ export default function PlansAndSubscriptions() {
             <Eye className="h-4 w-4 text-slate-500" />
           </button>
           <motion.button
-            whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => setPaymentPlan(r)}
             className="h-8 px-3 rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-xs font-bold flex items-center gap-1 hover:opacity-90"
           >
@@ -591,7 +811,11 @@ export default function PlansAndSubscriptions() {
     {
       title: "Subscribed On",
       key: "EnterDate",
-      render: (_, r) => <span className="text-xs text-slate-600">{formatDate(r.EnterDate)}</span>,
+      render: (_, r) => (
+        <span className="text-xs text-slate-600">
+          {formatDate(r.EnterDate)}
+        </span>
+      ),
     },
     {
       title: "Status",
@@ -599,11 +823,16 @@ export default function PlansAndSubscriptions() {
       render: (_, r) => {
         const active = Number(r.IsActive) === 1;
         return (
-          <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold border ${active
-            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-            : "bg-slate-100 text-slate-500 border-slate-200"
-            }`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${active ? "bg-emerald-500" : "bg-slate-400"}`} />
+          <span
+            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold border ${
+              active
+                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                : "bg-slate-100 text-slate-500 border-slate-200"
+            }`}
+          >
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${active ? "bg-emerald-500" : "bg-slate-400"}`}
+            />
             {active ? "Active" : "Inactive"}
           </span>
         );
@@ -630,7 +859,11 @@ export default function PlansAndSubscriptions() {
         title="Plans & Subscriptions"
         subtitle="Browse available plans and manage your subscription history."
         icon={Briefcase}
-        badge={tab === "plans" ? `${plans.length} plans` : `${subscriptions.length} records`}
+        badge={
+          tab === "plans"
+            ? `${plans.length} plans`
+            : `${subscriptions.length} records`
+        }
         badgeColor="violet"
       />
 
@@ -643,7 +876,8 @@ export default function PlansAndSubscriptions() {
               Active: {activeSub.PlanName}
             </p>
             <p className="text-[10px] text-emerald-600">
-              Subscription #{activeSub.SubscriptionID} · since {formatDate(activeSub.EnterDate)}
+              Subscription #{activeSub.SubscriptionID} · since{" "}
+              {formatDate(activeSub.EnterDate)}
             </p>
           </div>
           <button
@@ -664,10 +898,11 @@ export default function PlansAndSubscriptions() {
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`px-5 py-2 text-sm font-bold rounded-lg transition-all duration-200 ${tab === t.key
-              ? "bg-white text-indigo-600 shadow-sm"
-              : "text-slate-500 hover:text-slate-700"
-              }`}
+            className={`px-5 py-2 text-sm font-bold rounded-lg transition-all duration-200 ${
+              tab === t.key
+                ? "bg-white text-indigo-600 shadow-sm"
+                : "text-slate-500 hover:text-slate-700"
+            }`}
           >
             {t.label}
           </button>
@@ -693,23 +928,21 @@ export default function PlansAndSubscriptions() {
               loading={plansFetching && !plansLoading}
             />
           )
+        ) : subsLoading ? (
+          <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white py-20">
+            <Loader2 className="h-8 w-8 animate-spin text-violet-400" />
+            <p className="text-xs text-slate-400">Loading subscriptions…</p>
+          </div>
         ) : (
-          subsLoading ? (
-            <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white py-20">
-              <Loader2 className="h-8 w-8 animate-spin text-violet-400" />
-              <p className="text-xs text-slate-400">Loading subscriptions…</p>
-            </div>
-          ) : (
-            <DataTableComponent
-              title="My Subscriptions"
-              icon={CreditCard}
-              accent="violet"
-              cols={subscriptionColumns}
-              rows={subscriptions}
-              onRefresh={refetchSubs}
-              loading={subsFetching && !subsLoading}
-            />
-          )
+          <DataTableComponent
+            title="My Subscriptions"
+            icon={CreditCard}
+            accent="violet"
+            cols={subscriptionColumns}
+            rows={subscriptions}
+            onRefresh={refetchSubs}
+            loading={subsFetching && !subsLoading}
+          />
         )}
       </div>
 
@@ -721,7 +954,10 @@ export default function PlansAndSubscriptions() {
             key="plan-detail"
             plan={detailPlan}
             onClose={() => setDetailPlan(null)}
-            onSubscribe={(p) => { setDetailPlan(null); setPaymentPlan(p); }}
+            onSubscribe={(p) => {
+              setDetailPlan(null);
+              setPaymentPlan(p);
+            }}
           />
         )}
 

@@ -10,6 +10,7 @@ const initialStoreState = {
     email: "",
     mobile: "",
     address: "",
+    companyPhotos: [],
     emailVerified: false,
     mobileVerified: false,
     password: "",
@@ -107,57 +108,65 @@ export const useProfileWizardStore = create()(
 
 // Helper function to calculate completion percentage dynamically
 export const calculateProgress = (state) => {
-  let score = 0;
+  let completed = 0;
+  let total = 0;
 
-  // Step 1: Company Type (15%)
-  if (state.companyType) score += 15;
+  const check = (value) => {
+    total++;
+    if (
+      value !== null &&
+      value !== undefined &&
+      value !== "" &&
+      !(Array.isArray(value) && value.length === 0)
+    ) {
+      completed++;
+    }
+  };
 
-  // Step 2: Basic Info (15% total, 3% per field)
+  // Company Type
+  check(state.companyType);
+
+  // Basic Info
   const bi = state.basicInfo;
-  if (bi.companyName?.trim()) score += 3;
-  if (bi.contactPerson?.trim()) score += 3;
-  if (bi.email?.trim()) score += 3;
-  if (bi.mobile?.trim()) score += 3;
-  if (bi.address?.trim()) score += 3;
+  check(bi.companyName?.trim());
+  check(bi.contactPerson?.trim());
+  check(bi.email?.trim());
+  check(bi.mobile?.trim());
+  check(bi.address?.trim());
 
-  // Step 3: Registration & Compliance (15% total, 3% per key field)
+  // Registration
   const rd = state.registrationDetails;
-  if (rd.gstNo?.trim()) score += 3;
-  if (rd.panNo?.trim()) score += 3;
-  if (rd.cinNo?.trim()) score += 3;
-  if (rd.aadharNo?.trim()) score += 3;
-  // If any compliance is filled (PF, ESI, MSME or MSME import certificates)
-  if (
-    rd.pfNo?.trim() ||
-    rd.esiNo?.trim() ||
-    rd.msmeNo?.trim() ||
-    rd.importExportCertFiles?.length > 0
-  ) {
-    score += 3;
-  }
+  check(rd.gstNo?.trim());
+  check(rd.panNo?.trim());
+  check(rd.cinNo?.trim());
+  check(rd.aadharNo?.trim());
+  check(rd.pfNo?.trim());
+  check(rd.esiNo?.trim());
+  check(rd.msmeNo?.trim());
+  check(rd.importExportCertFiles);
 
-  // Step 4: Banking Details (15% total, 3% per field)
+  // Banking
   const bd = state.bankingDetails;
-  if (bd.bankName?.trim()) score += 3;
-  // if (bd.accountType?.trim()) score += 3;
-  if (bd.accountNumber?.trim()) score += 3;
-  if (bd.ifscCode?.trim()) score += 6;
-  if (bd.micrCode?.trim()) score += 3;
+  check(bd.bankName?.trim());
+  check(bd.accountType?.trim());
+  check(bd.accountNumber?.trim());
+  check(bd.ifscCode?.trim());
 
-  // Step 5: Document Upload Center (20% total, 5% per section containing files)
+  // Documents
   const docs = state.documents;
-  const countSecFiles = (sections) =>
-    sections.reduce((acc, sec) => acc + (sec.files?.length || 0), 0);
 
-  if (countSecFiles(docs.businessRegistration) > 0) score += 5;
-  if (countSecFiles(docs.identityAddress) > 0) score += 5;
-  if (countSecFiles(docs.complianceCertificates) > 0) score += 5;
-  if (countSecFiles(docs.otherDocuments) > 0) score += 5;
+  const hasFiles = (sections = []) =>
+    sections.some((section) => section?.files?.length > 0);
 
-  // Step 6: Service Listing (20% total)
-  if (state.services?.length > 0) score += 20;
+  check(hasFiles(docs.businessRegistration));
+  check(hasFiles(docs.identityAddress));
+  check(hasFiles(docs.complianceCertificates));
+  check(hasFiles(docs.otherDocuments));
 
-  return score;
+  // Services
+  check(state.services?.length > 0);
+
+  return Math.round((completed / total) * 100);
 };
 
 // Suggestions helper based on incomplete details
