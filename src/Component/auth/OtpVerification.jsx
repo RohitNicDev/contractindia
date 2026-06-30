@@ -299,8 +299,10 @@ const OtpVerification = () => {
         toast.error(res?.message || `Failed to resend OTP to ${target}`);
         return;
       }
-      toast.success(res?.remark || "`OTP resent ", {
-        autoClose: 30000,
+      toast.success(res?.message || " resent ", {
+        closeOnClick: true,
+        closeButton: true,           
+        autoClose: 50000
       });
       setvalueId(res?.value || valueId);
     },
