@@ -340,7 +340,7 @@ const BusinessPlans = () => {
       <div className="mx-auto max-w-7xl space-y-6">
         <CustomHeading
           title="Business Plans"
-          subtitle="Manage plan master entries with create, update, delete, and list operations."
+          subtitle="Manage plan master entries with create, update, delete."
           icon={Briefcase}
           badge={isLoading ? undefined : `${plans.length} plan(s)`}
           badgeColor="violet"

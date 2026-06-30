@@ -4,7 +4,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ShieldCheck, CheckCircle, XCircle, Users, Eye } from "lucide-react";
 import CustomHeading from "../../common/CustomHeading";
 import DataTableComponent from "../../common/dataTable";
-import { userType, UserVerificationGet, verifyUserRegistration } from "../../../services/api";
+import {
+  userType,
+  UserVerificationGet,
+  verifyUserRegistration,
+} from "../../../services/api";
 import { useQuery } from "@tanstack/react-query";
 import { ConfirmModal } from "../../common/ConfirmModal";
 import { UserDetailDrawer } from "../../common/UserDetailDrawer";
@@ -32,9 +36,9 @@ const getuserTypeApi = async () => {
 // ── Main component ─────────────────────────────────────────────────────────
 export default function UserVerification() {
   const [tab, setTab] = useState(1);
-  const [status, setStatus] = useState(0);            // 0=Pending 1=Approved 2=Rejected
-  const [selectedUser, setSelectedUser] = useState(null);      // drawer (individual)
-  const [confirmState, setConfirmState] = useState(null);      // { action, row }
+  const [status, setStatus] = useState(0); // 0=Pending 1=Approved 2=Rejected
+  const [selectedUser, setSelectedUser] = useState(null); // drawer (individual)
+  const [confirmState, setConfirmState] = useState(null); // { action, row }
   const [companyDetailUserId, setCompanyDetailUserId] = useState(null); // full modal (commercial)
   const [companyDetailRow, setCompanyDetailRow] = useState(null);
 
@@ -84,22 +88,61 @@ export default function UserVerification() {
   // ── Column definitions ───────────────────────────────────────────────────
   const columns = [
     ...(tab === 2
-      ? [{ title: "Company Name", dataIndex: "CompanyName", key: "CompanyName", render: (val) => val ?? "—" }]
+      ? [
+          {
+            title: "Company Name",
+            dataIndex: "CompanyName",
+            key: "CompanyName",
+            render: (val) => val ?? "—",
+          },
+        ]
       : []),
-    { title: "Name",     dataIndex: "Name",      key: "Name",      render: (val) => val ?? "—" },
-    { title: "Email",    dataIndex: "EmailId",   key: "EmailId",   render: (val) => val ?? "—" },
-    { title: "Mobile",   dataIndex: "MobileNo",  key: "MobileNo",  render: (val) => val ?? "—" },
-    { title: "State",    dataIndex: "StateName", key: "StateName", render: (val) => val ?? "—" },
-    { title: "Pin Code", dataIndex: "PinCode",   key: "PinCode",   render: (val) => val ?? "—" },
+    {
+      title: "Name",
+      dataIndex: "Name",
+      key: "Name",
+      render: (val) => val ?? "—",
+    },
+    {
+      title: "Email",
+      dataIndex: "EmailId",
+      key: "EmailId",
+      render: (val) => val ?? "—",
+    },
+    {
+      title: "Mobile",
+      dataIndex: "MobileNo",
+      key: "MobileNo",
+      render: (val) => val ?? "—",
+    },
+    {
+      title: "State",
+      dataIndex: "StateName",
+      key: "StateName",
+      render: (val) => val ?? "—",
+    },
+    {
+      title: "Pin Code",
+      dataIndex: "PinCode",
+      key: "PinCode",
+      render: (val) => val ?? "—",
+    },
     ...(tab === 2
-      ? [{ title: "Service Name", dataIndex: "ServiceName", key: "ServiceName", render: (val) => val ?? "—" }]
+      ? [
+          {
+            title: "Service Name",
+            dataIndex: "ServiceName",
+            key: "ServiceName",
+            render: (val) => val ?? "—",
+          },
+        ]
       : []),
     {
       title: "Actions",
       key: "actions",
+      width: 200,
       render: (_, row) => (
         <div className="flex items-center gap-1.5 flex-wrap">
-
           {/* ── View (individual = drawer, commercial = full profile modal) ── */}
           {tab === 2 ? (
             <button
@@ -108,7 +151,6 @@ export default function UserVerification() {
               title="View full company profile"
             >
               <Eye className="h-3.5 w-3.5" />
-            
             </button>
           ) : (
             <button
@@ -141,6 +183,7 @@ export default function UserVerification() {
           )}
         </div>
       ),
+      
     },
   ];
 
@@ -148,12 +191,12 @@ export default function UserVerification() {
     userTypeList.find((t) => t.value === tab)?.label ??
     (tab === 1 ? "Individual" : "Commercial");
 
-  const isLoading = userVerificationisLoading || userVerificationisFetching || userTypeLoading;
+  const isLoading =
+    userVerificationisLoading || userVerificationisFetching || userTypeLoading;
 
   return (
     <>
       <div className="space-y-6">
-
         {/* ── Page heading ── */}
         <CustomHeading
           title="User Verification"
@@ -166,30 +209,34 @@ export default function UserVerification() {
         {/* ── Tab + status switcher ── */}
         <div className="rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">
           <div className="flex items-center justify-between gap-4 flex-wrap">
-
             {/* User type tabs */}
             <div className="flex rounded-xl bg-slate-100 p-1">
               {userTypeLoading
-                ? [1, 2].map(i => <div key={i} className="h-9 w-28 rounded-lg bg-slate-200 animate-pulse" />)
+                ? [1, 2].map((i) => (
+                    <div
+                      key={i}
+                      className="h-9 w-28 rounded-lg bg-slate-200 animate-pulse"
+                    />
+                  ))
                 : userTypeList.map((item) => (
-                  <button
-                    key={item.value}
-                    onClick={() => setTab(item.value)}
-                    className={`px-5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${
-                      tab === item.value
-                        ? "bg-white text-indigo-600 shadow-sm"
-                        : "text-slate-500 hover:text-slate-700"
-                    }`}
-                  >
-                    {item.label}
-                  </button>
-                ))}
+                    <button
+                      key={item.value}
+                      onClick={() => setTab(item.value)}
+                      className={`px-5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${
+                        tab === item.value
+                          ? "bg-white text-indigo-600 shadow-sm"
+                          : "text-slate-500 hover:text-slate-700"
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
             </div>
 
             {/* Status filter */}
             <div className="flex rounded-xl bg-slate-100 p-1">
               {[
-                { id: 0, label: "Pending"  },
+                { id: 0, label: "Pending" },
                 { id: 1, label: "Approved" },
                 { id: 2, label: "Rejected" },
               ].map((item) => (

@@ -393,10 +393,10 @@ const Step5ServiceListing = ({ store, nextStep, prevStep, navbar = false }) => {
                     <div className="text-xs font-medium text-violet-600">Total Services</div>
                     <div className="text-2xl font-black text-violet-700">{totalServices}</div>
                 </div>
-                <div className="rounded-xl bg-cyan-50 px-4 py-2 border-2 border-cyan-200">
+                {/* <div className="rounded-xl bg-cyan-50 px-4 py-2 border-2 border-cyan-200">
                     <div className="text-xs font-medium text-cyan-600">Expanded</div>
                     <div className="text-2xl font-black text-cyan-700">{expandedIds.length}</div>
-                </div>
+                </div> */}
             </div>
 
             <div className="flex items-center gap-2 text-sm text-slate-500">

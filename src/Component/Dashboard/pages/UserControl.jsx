@@ -189,7 +189,7 @@ const UserControl = () => {
         {/* Page heading */}
         <CustomHeading
           title="User Control"
-          subtitle="Manage user access and account states."
+          subtitle="Manage user access and account."
           icon={Users}
           badge={`${userData.length} records`}
           badgeColor="indigo"

@@ -1182,7 +1182,7 @@ ${isNodePending ? " pointer-events-none opacity-60" : ""}
           {/* PAGE HEADING */}
           <CustomHeading
             title="Service Listing"
-            subtitle="Manage the full hierarchy of marketplace service categories."
+            subtitle="Manage the full hierarchy of Service and it's categories."
             icon={Layers}
             badge={
               showLoading ? undefined : `${totalAvailableMetrics} services`
@@ -1296,10 +1296,10 @@ ${isNodePending ? " pointer-events-none opacity-60" : ""}
                   <FolderTree className="h-3.5 w-3.5 text-violet-500" />
                   {showLoading ? "…" : totalAvailableMetrics} total
                 </div>
-                <div className="flex items-center gap-1.5 h-8 px-3 rounded-full border border-emerald-200 bg-emerald-50 text-[11px] font-semibold text-emerald-700">
+                {/* <div className="flex items-center gap-1.5 h-8 px-3 rounded-full border border-emerald-200 bg-emerald-50 text-[11px] font-semibold text-emerald-700">
                   <Activity className="h-3.5 w-3.5" />
                   {activeNodeIds.length} active
-                </div>
+                </div> */}
                 {/* source indicator pill */}
                 {/* <div
                   className={`flex items-center gap-1.5 h-8 px-3 rounded-full border text-[11px] font-semibold

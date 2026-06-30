@@ -438,11 +438,11 @@ export const Dashboard = (props) => {
         </div>
         <div className="space-y-2.5">
           {[
-            {
-              dot: "bg-emerald-400",
-              text: "New lead from Rajesh Kumar",
-              time: "2 hrs ago",
-            },
+            // {
+            //   dot: "bg-emerald-400",
+            //   text: "New lead from Rajesh Kumar",
+            //   time: "2 hrs ago",
+            // },
             {
               dot: "bg-blue-400",
               text: "Payment of ₹1,000 received",

@@ -247,13 +247,13 @@ export default function PaymentHistory() {
 
   // ── Table columns ─────────────────────────────────────────────────────────────
   const columns = [
-    {
-      title: "Payment ID",
-      key: "PaymentID",
-      render: (_, r) => (
-        <span className="font-mono text-xs font-bold text-slate-600">#{r.PaymentID}</span>
-      ),
-    },
+    // {
+    //   title: "Payment ID",
+    //   key: "PaymentID",
+    //   render: (_, r) => (
+    //     <span className="font-mono text-xs font-bold text-slate-600">#{r.PaymentID}</span>
+    //   ),
+    // },
     {
       title: "User ID",
       key: "UserID",

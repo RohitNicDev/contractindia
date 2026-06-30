@@ -420,12 +420,7 @@ const adminRoles = [
     email: "admin@contractsindia.com",
     role: "Super Admin",
   },
-  { name: "Ops Manager", email: "ops@contractsindia.com", role: "Manager" },
-  {
-    name: "Support Lead",
-    email: "support@contractsindia.com",
-    role: "Support",
-  },
+   
 ];
 const activityLogs = [
   { action: "Logged in", admin: "Super Admin", time: "Today 10:32 AM" },

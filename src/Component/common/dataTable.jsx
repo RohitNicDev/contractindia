@@ -740,7 +740,7 @@ const DataTableComponent = ({
             <span className="text-xs text-slate-400 font-medium">Loading data...</span>
           </div>
         ) : (
-          <table className="w-full text-sm">
+          <table className="w-full min-w-full text-sm table-auto">
             <thead>
               <tr className="bg-slate-50/80 border-b border-slate-100">
                 {/* Select all checkbox */}
@@ -772,7 +772,11 @@ const DataTableComponent = ({
                   const hasFilter = !!(colFilters[col.key]?.trim());
                   const filterOpen = activeColFilter === col.key;
                   return (
-                    <th key={col.key} className="py-2.5 px-4 text-left relative">
+                    <th
+                      key={col.key}
+                      className="py-2.5 px-4 text-left relative whitespace-normal whitespace-normal"
+                      style={col.width ? { minWidth: col.width } : undefined}
+                    >
                       <div className="flex items-center gap-1.5">
                         <button
                           onClick={() => handleSort(col.key)}
@@ -806,8 +810,6 @@ const DataTableComponent = ({
                   );
                 })}
 
-                {/* Actions column header */}
-                <th className="py-2.5 px-4 w-12" />
               </tr>
             </thead>
 
@@ -866,7 +868,11 @@ const DataTableComponent = ({
                           ? col.render(cellValue, row, rowIdx)
                           : (cellValue ?? "—");
                         return (
-                          <td key={col.key} className={`${densityPadding} text-slate-700`}>
+                          <td
+                            key={col.key}
+                            className={`${densityPadding} text-slate-700 whitespace-normal break-words`}
+                            style={col.width ? { minWidth: col.width } : undefined}
+                          >
                             {!col.render &&
                               typeof displayValue === "string" &&
                               STATUS_STYLES[displayValue] ? (
