@@ -142,12 +142,12 @@ function Node({ node, depth, activeId, onSelect, expandedIds, toggleExpand }) {
         className="w-full text-left flex items-center gap-2 rounded-xl pr-3 py-2 mb-0.5 font-semibold transition-all duration-150 hover:opacity-90 group"
       >
         {/* Depth line — visual connector */}
-        {depth > 0 && (
+        {/* {depth > 0 && (
           <span
             className="absolute left-0 top-0 bottom-0 w-0.5 rounded-full opacity-20 pointer-events-none"
             style={{ background: p(depth - 1).line, marginLeft: 12 + (depth - 1) * 16 + 4 }}
           />
-        )}
+        )} */}
 
         {/* Dot */}
         <span
@@ -451,9 +451,7 @@ const CompanySubServices = () => {
               >
                 {treeLoading ? (
                   <div className="space-y-2 p-2 animate-pulse">
-                    {/* {[...Array(8)].map((_, i) => (
-                      <div key={i} className="h-8 rounded-xl bg-slate-100" style={{ width: `${90 - i * 5}%`, marginLeft: (i % 3) * 12 }} />
-                    ))} */}
+                 
                   </div>
                 ) : tree.length === 0 ? (
                   <p className="text-center text-xs text-slate-400 py-8">No categories found</p>
