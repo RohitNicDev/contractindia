@@ -178,7 +178,7 @@ export function RegisterForm() {
         return;
       }
       toast.success(response?.remark || "Registration successful", {
-        autoClose: 30000,
+        duration: Infinity,
       });
       navigate("/otp", {
         state: {

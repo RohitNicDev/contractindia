@@ -183,8 +183,8 @@ const OtpVerification = () => {
         toast.success(res.message || "Mobile verified!");
         setSuccessPulse(true);
         setStep("complete");
-        console.log(state?.response,"ok");
-        
+        console.log(state?.response, "ok");
+
         setloginResponce(state?.response || null);
         setTimeout(redirectUser, 600);
         return;
@@ -300,9 +300,7 @@ const OtpVerification = () => {
         return;
       }
       toast.success(res?.message || " resent ", {
-        closeOnClick: true,
-        closeButton: true,           
-        autoClose: 50000
+        duration: Infinity,
       });
       setvalueId(res?.value || valueId);
     },
@@ -369,12 +367,13 @@ const OtpVerification = () => {
             return (
               <div key={s} className="flex flex-1 items-center gap-1.5">
                 <div
-                  className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${done
+                  className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${
+                    done
                       ? "bg-[var(--auth-accent-strong)]"
                       : active
                         ? "bg-[var(--auth-accent-strong)] opacity-60"
                         : "bg-[var(--auth-step-inactive)]"
-                    }`}
+                  }`}
                 />
               </div>
             );

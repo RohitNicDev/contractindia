@@ -65,7 +65,7 @@ const LoginForm = () => {
         // window.dispatchEvent(new Event("auth_changed"));
 
         toast.success(response?.remark || "Login successful", {
-          autoClose: 30000,
+          duration: Infinity,
         });
         // response?.userType === 2
         // ? "/commercial/dashboard"
@@ -80,13 +80,15 @@ const LoginForm = () => {
             mobile: response.mobileNo || null,
             guId: response?.value || null,
             response: response,
-            
+
             // Pass the entire data object for OTP screen to use (if needed)
           },
         });
+      } else {
+        toast.error(
+          response?.message || "Login failed. Please check your credentials.",
+        );
       }
-        else {
-        toast.error(response?.message || "Login failed. Please check your credentials.");}
     },
 
     onError: (error) => {
