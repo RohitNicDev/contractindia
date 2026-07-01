@@ -4,7 +4,7 @@
  * Pages: Overview · My Profile · Change Password · Subscription Plan
  */
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   useNavigate,
   useLocation,
@@ -580,9 +580,9 @@ export default function IndividualDashboard() {
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState(loadUser);
-  const { loginResponce } = useUserStore();
+  const { loginResponce ,resetUserStore} = useUserStore();
   const activeTab = resolveTabByRoute(location.pathname);
-
+ 
   const handleTabChange = (tab) => {
     const path = getPathForNav(tab) || (typeof tab === "string" ? tab : null);
     if (!path) return;
@@ -618,11 +618,12 @@ export default function IndividualDashboard() {
       pinCode: userObj?.PinCode || "",
     });
   }, [UserData]);
-  const handleSignOut = () => {
+
+  const handleSignOut = useCallback(() => {
+    resetUserStore();
     resetAllStores();
-    window.dispatchEvent(new Event("auth_changed"));
     navigate("/login");
-  };
+  }, [navigate]);
 
   return (
     <DashboardLayout

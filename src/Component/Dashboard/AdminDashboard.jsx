@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -794,7 +794,7 @@ function Analytics() {
 }
 
 import PaymentHistory from "./pages/PaymentHistory";
-import { resetAllStores } from "../../store/store";
+import { resetAllStores, useUserStore } from "../../store/store";
 
 const navItems = [
   { key: "overview", label: "Overview", icon: LayoutDashboard },
@@ -825,6 +825,7 @@ export default function AdminDashboard() {
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [active, setActive] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const { resetUserStore } = useUserStore();
   const navigate = useNavigate();
   const Section = sectionMap[active];
   const [user, setUser] = useState({
@@ -833,11 +834,12 @@ export default function AdminDashboard() {
     email: "Admin@gmail.com",
     mobile: "9876543210",
   });
-  const signOut = () => {
+
+  const signOut = useCallback(() => {
+    resetUserStore();
     resetAllStores();
-    toast.success("Signed out");
     navigate("/login");
-  };
+  }, [navigate]);
   return (
     <div
       className="flex h-screen overflow-hidden"
