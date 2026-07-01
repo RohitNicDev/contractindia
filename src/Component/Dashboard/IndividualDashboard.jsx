@@ -38,7 +38,7 @@ import DashboardLayout, {
 } from "../Dashboard/Layout/DashboardLayout";
 import SubscriptionPlansFlow from "./pages/SubscriptionPlansFlow";
 import { UserRegistrationUserIdGet } from "../../services/api";
-import { useUserStore } from "../../store/store";
+import { resetAllStores, useUserStore } from "../../store/store";
 import { useQuery } from "@tanstack/react-query";
 
 /* ── Nav definition ─────────────────────────────────────────────────────── */
@@ -595,9 +595,9 @@ export default function IndividualDashboard() {
     retry: false,
   });
   useEffect(() => {
-    console.log(UserData,"UserData");
+    console.log(UserData, "UserData");
   }, [UserData]);
-    
+
   useEffect(() => {
     if (
       !UserData ||
@@ -619,15 +619,7 @@ export default function IndividualDashboard() {
     });
   }, [UserData]);
   const handleSignOut = () => {
-    [
-      "individual_user_v1",
-      "login_mock_v1",
-      "isLoggedIn",
-      "otp_verified_v1",
-      "registration_form_v1",
-      "commercial_user_v1",
-      "admin_auth_v1",
-    ].forEach((k) => localStorage.removeItem(k));
+    resetAllStores();
     window.dispatchEvent(new Event("auth_changed"));
     navigate("/login");
   };

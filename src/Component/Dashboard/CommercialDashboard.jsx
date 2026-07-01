@@ -35,7 +35,7 @@ import {
   calculateProgress,
 } from "../../store/profileWizardStore";
 import DashboardLayout from "../Dashboard/Layout/DashboardLayout";
-import { useUserStore } from "../../store/store";
+import { resetAllStores, useUserStore } from "../../store/store";
 import { useQuery } from "@tanstack/react-query";
 import { UserRegistrationUserIdGet } from "../../services/api";
 // ─── Design tokens ────────────────────────────────────────────────────────────
@@ -542,19 +542,8 @@ export default function CommercialDashboard() {
   }, [UserData]);
 
   const handleSignOut = useCallback(() => {
-    [
-      "commercial_user_v1",
-      "login_mock_v1",
-      "isLoggedIn",
-      "otp_verified_v1",
-      "registration_form_v1",
-      "individual_user_v1",
-      "admin_auth_v1",
-      "commercial_gst_v1",
-    ].forEach((k) => localStorage.removeItem(k));
     resetUserStore();
-
-    window.dispatchEvent(new Event("auth_changed"));
+    resetAllStores();
     navigate("/login");
   }, [navigate]);
   const initials = (user.companyName || user.contactPerson || "C")

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { useProfileWizardStore } from "./profileWizardStore";
 
 export const useUserStore = create(
   persist(
@@ -10,20 +11,15 @@ export const useUserStore = create(
       token: null,
       user: null,
 
-      setloginResponce: (responce) =>
-        set({ loginResponce: responce }),
+      setloginResponce: (responce) => set({ loginResponce: responce }),
 
-      setUserDetails: (data) =>
-        set({ userDetails: data }),
+      setUserDetails: (data) => set({ userDetails: data }),
 
-      setUserProfile: (userProfile) =>
-        set({ userProfile }),
+      setUserProfile: (userProfile) => set({ userProfile }),
 
-      setToken: (token) =>
-        set({ token }),
+      setToken: (token) => set({ token }),
 
-      setUser: (user) =>
-        set({ user }),
+      setUser: (user) => set({ user }),
 
       resetUserStore: () =>
         set({
@@ -36,8 +32,8 @@ export const useUserStore = create(
     }),
     {
       name: "user-storage", // localStorage key
-    }
-  )
+    },
+  ),
 );
 
 export const useServiceStore = create(
@@ -57,6 +53,11 @@ export const useServiceStore = create(
     }),
     {
       name: "service-store", // localStorage key
-    }
-  )
+    },
+  ),
 );
+export const resetAllStores = () => {
+  // Reset state
+  localStorage.removeItem("user-storage");
+  localStorage.removeItem("contracts_india_profile_wizard_draft_v1");
+};

@@ -27,7 +27,7 @@ import { Button, Badge, Drawer, Collapse, Dropdown, Avatar } from "antd";
 import logo from "../../assets/IMG/logo_con1.png";
 import { ServiceMenuGet, ServiceRootGet, UserRegistrationUserIdGet } from "../../services/api";
 import { useQuery } from "@tanstack/react-query";
-import { useServiceStore, useUserStore } from "../../store/store";
+import { resetAllStores, useServiceStore, useUserStore } from "../../store/store";
 import LogoutPopup from "../common/Logoutpopup";
 const { Panel } = Collapse;
 
@@ -186,15 +186,7 @@ const Header = () => {
   };
 
   const handleSignOut = () => {
-    localStorage.removeItem("commercial_user_v1");
-    localStorage.removeItem("login_mock_v1");
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("otp_verified_v1");
-    localStorage.removeItem("registration_form_v1");
-    localStorage.removeItem("individual_user_v1");
-    localStorage.removeItem("admin_auth_v1");
-    localStorage.removeItem("commercial_gst_v1");
-    window.dispatchEvent(new Event("auth_changed"));
+       resetAllStores();
     resetUserStore();
     navigate("/login");
   };

@@ -420,7 +420,6 @@ const adminRoles = [
     email: "admin@contractsindia.com",
     role: "Super Admin",
   },
-   
 ];
 const activityLogs = [
   { action: "Logged in", admin: "Super Admin", time: "Today 10:32 AM" },
@@ -795,30 +794,31 @@ function Analytics() {
 }
 
 import PaymentHistory from "./pages/PaymentHistory";
+import { resetAllStores } from "../../store/store";
 
 const navItems = [
-  { key: "overview",      label: "Overview",            icon: LayoutDashboard },
-  { key: "verification",  label: "User Verification",   icon: ShieldCheck     },
-  { key: "services",      label: "Service Management",  icon: Briefcase       },
-  { key: "users",         label: "User Control",        icon: Users           },
-  { key: "plans",         label: "Business Plans",      icon: CreditCard      },
-  { key: "payments",      label: "Payment History",     icon: CreditCard      },
-  { key: "documentcat",   label: "Document Category",   icon: FileText        },
-  { key: "security",      label: "Security",            icon: Lock            },
-  { key: "analytics",     label: "Analytics",           icon: BarChart3       },
+  { key: "overview", label: "Overview", icon: LayoutDashboard },
+  { key: "verification", label: "User Verification", icon: ShieldCheck },
+  { key: "services", label: "Service Management", icon: Briefcase },
+  { key: "users", label: "User Control", icon: Users },
+  { key: "plans", label: "Business Plans", icon: CreditCard },
+  { key: "payments", label: "Payment History", icon: CreditCard },
+  { key: "documentcat", label: "Document Category", icon: FileText },
+  { key: "security", label: "Security", icon: Lock },
+  { key: "analytics", label: "Analytics", icon: BarChart3 },
 ];
 const sectionMap = {
-  overview:     Overview,
+  overview: Overview,
   verification: UserVerification,
-  services:     ServiceListing,
-  users:        UserControl,
-  plans:        BusinessPlans,
-  payments:     PaymentHistory,
-  security:     Security,
-  analytics:    Analytics,
+  services: ServiceListing,
+  users: UserControl,
+  plans: BusinessPlans,
+  payments: PaymentHistory,
+  security: Security,
+  analytics: Analytics,
   documentation: DocumantationCategory,
-  documentsub:  DocumentSubCategory,
-  documentcat:  DocumentCategoryManager,
+  documentsub: DocumentSubCategory,
+  documentcat: DocumentCategoryManager,
 };
 
 export default function AdminDashboard() {
@@ -834,14 +834,7 @@ export default function AdminDashboard() {
     mobile: "9876543210",
   });
   const signOut = () => {
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("admin_auth_v1");
-    localStorage.removeItem("login_mock_v1");
-    localStorage.removeItem("otp_verified_v1");
-    localStorage.removeItem("registration_form_v1");
-    localStorage.removeItem("individual_user_v1");
-    localStorage.removeItem("commercial_user_v1");
-    window.dispatchEvent(new Event("auth_changed"));
+    resetAllStores();
     toast.success("Signed out");
     navigate("/login");
   };
