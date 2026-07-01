@@ -183,6 +183,10 @@ export const UserVerificationGet = async (type, usertype) => {
 
   return await api.get(url);
 };
+export const userRegistrationByParam = async (params) => {
+  return await api.get(`/UserRegistration/get?${params}` );
+};
+
 export const verifyUserRegistration = async (payload) => {
   return await api.post(`/UserRegistration/verify/admin`, payload);
 };
