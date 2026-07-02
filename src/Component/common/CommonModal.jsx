@@ -33,7 +33,8 @@ import { X, Loader2 } from "lucide-react";
 const VARIANTS = {
   default: {
     gradient: "from-violet-600 to-fuchsia-600",
-    confirmBtn: "bg-gradient-to-r from-violet-600 to-fuchsia-600 shadow-violet-200",
+    confirmBtn:
+      "bg-gradient-to-r from-violet-600 to-fuchsia-600 shadow-violet-200",
   },
   danger: {
     gradient: "from-red-500 to-rose-600",
@@ -41,11 +42,13 @@ const VARIANTS = {
   },
   success: {
     gradient: "from-emerald-500 to-teal-600",
-    confirmBtn: "bg-gradient-to-r from-emerald-500 to-teal-600 shadow-emerald-200",
+    confirmBtn:
+      "bg-gradient-to-r from-emerald-500 to-teal-600 shadow-emerald-200",
   },
   warning: {
     gradient: "from-amber-500 to-orange-500",
-    confirmBtn: "bg-gradient-to-r from-amber-500 to-orange-500 shadow-amber-200",
+    confirmBtn:
+      "bg-gradient-to-r from-amber-500 to-orange-500 shadow-amber-200",
   },
   info: {
     gradient: "from-sky-500 to-blue-600",
@@ -82,19 +85,38 @@ export function CommonModal({
 }) {
   const { gradient, confirmBtn } = VARIANTS[variant] ?? VARIANTS.default;
   const sizeClass = SIZES[size] ?? SIZES.md;
+  const modalRef = useRef(null);
 
   /* close on Escape */
   useEffect(() => {
     if (!isOpen) return;
-    const handler = (e) => { if (e.key === "Escape") onClose?.(); };
+    const handler = (e) => {
+      if (e.key === "Escape") onClose?.();
+    };
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
+  }, [isOpen, onClose]);
+
+  /* close on outside click */
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleClickOutside = (e) => {
+      if (modalRef.current && !modalRef.current.contains(e.target)) {
+        onClose?.();
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, [isOpen, onClose]);
 
   /* lock body scroll while open */
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [isOpen]);
 
   return (
@@ -112,7 +134,7 @@ export function CommonModal({
             onClick={onClose}
           />
 
-          {/* ── panel ── */}
+          {/* ── panel container (captures outside clicks) ── */}
           <motion.div
             key="cm-panel"
             initial={{ opacity: 0, scale: 0.94, y: 24 }}
@@ -120,16 +142,18 @@ export function CommonModal({
             exit={{ opacity: 0, scale: 0.94, y: 16 }}
             transition={{ type: "spring", stiffness: 380, damping: 32 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            onClick={(e) => e.stopPropagation()}
           >
+            {/* ── actual modal card ── */}
             <div
+              ref={modalRef}
               className={`  ${sizeClass}
-              
-              w-full max-w-6xl max-h-[80vh] flex flex-col rounded-3xl bg-white shadow-2xl border border-slate-200/70 
+                            w-full max-w-6xl max-h-[80vh] flex flex-col rounded-3xl bg-white shadow-2xl border border-slate-200/70 
               `}
             >
               {/* ── header ── */}
-              <div className={`bg-gradient-to-r ${gradient} px-5 py-4 flex-shrink-0`}>
+              <div
+                className={`bg-gradient-to-r ${gradient} px-5 py-4 flex-shrink-0`}
+              >
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
                     {icon && (
@@ -138,9 +162,13 @@ export function CommonModal({
                       </div>
                     )}
                     <div className="min-w-0">
-                      <h2 className="text-sm font-extrabold text-white truncate">{title}</h2>
+                      <h2 className="text-sm font-extrabold text-white truncate">
+                        {title}
+                      </h2>
                       {subtitle && (
-                        <p className="text-[11px] text-white/70 mt-0.5 truncate">{subtitle}</p>
+                        <p className="text-[11px] text-white/70 mt-0.5 truncate">
+                          {subtitle}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -181,7 +209,9 @@ export function CommonModal({
                           disabled={isLoading}
                           className={`flex h-9 items-center gap-1.5 rounded-xl ${confirmBtn} px-5 text-xs font-bold text-white shadow-md transition-all hover:scale-[1.02] disabled:opacity-60 disabled:cursor-not-allowed`}
                         >
-                          {isLoading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                          {isLoading && (
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          )}
                           {confirmLabel}
                         </button>
                       )}
@@ -198,7 +228,6 @@ export function CommonModal({
 }
 
 export default CommonModal;
-
 
 /* ==========================================================================
    SECTION HELPERS  (re-exported so forms stay clean)
@@ -223,7 +252,9 @@ export function ModalSection({ label, icon, children }) {
 export function ModalField({ label, children, span }) {
   return (
     <div className={span === "full" ? "sm:col-span-2" : ""}>
-      <label className="block text-[11px] font-semibold text-slate-500 mb-1">{label}</label>
+      <label className="block text-[11px] font-semibold text-slate-500 mb-1">
+        {label}
+      </label>
       {children}
     </div>
   );
@@ -251,7 +282,6 @@ export function ModalInputStyles() {
     `}</style>
   );
 }
-
 
 /* ==========================================================================
    USAGE EXAMPLES
@@ -347,5 +377,5 @@ export function ModalInputStyles() {
 
 
    ── 4. Body-only (no footer) ─────────────────────────────────────────────────
-i
+
    ========================================================================== */
