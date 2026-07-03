@@ -119,18 +119,18 @@ const OtpVerification = () => {
     const circumference = 2 * Math.PI * 18;
     return circumference * (seconds / RESEND_SEC);
   }, [seconds]);
+  const userType = user.userType || state?.userType;
 
   // ── Navigation helper ────────────────────────────────────────────────────
   const redirectUser = () => {
-    if (user.email === "admin@gmail.com") {
-      navigate("/admin/dashboard");
-      return;
-    }
-    const userType = user.userType || state?.userType;
+    // if (user.email === "admin@gmail.com") {
+    //   navigate("/admin/dashboard");
+    //   return;
+    // }
     userType === 2
       ? navigate("/commercial/dashboard")
       : userType === 1
-        ? navigate("/")
+        ? navigate("/individual/dashboard")
         : navigate("/admin/dashboard");
   };
 
@@ -187,6 +187,7 @@ const OtpVerification = () => {
 
         setloginResponce(state?.response || null);
         setTimeout(redirectUser, 600);
+        
         return;
       } else {
         setStep("password");
@@ -216,10 +217,17 @@ const OtpVerification = () => {
   const { mutate: doSetPassword, isPending: passwordPending } = useMutation({
     mutationFn: setPasswordApi,
     onSuccess: (res) => {
+      console.log(res,"res");
+      
       if (!res.status) {
-        toast.error(res.message || res.error || "Failed to set password");
+        console.log(!res.status,"!ress");
+        
+        toast.error(res.message || res.error || "Failed to set password", {
+        duration: Infinity,
+      });
         return;
       }
+      console.log(res.status,"res.status");
 
       // try {
       //   const registrationData = localStorage.getItem("registration_form_v1");
@@ -243,9 +251,8 @@ const OtpVerification = () => {
       toast.success(res.message || "Registration complete!");
       setSuccessPulse(true);
       setStep("complete");
-      setTimeout(redirectUser, 600);
-      if (userType === 2) navigate("/commercial/dashboard");
-      else navigate("/individual/dashboard");
+      setloginResponce(state?.response || null);
+      setTimeout(redirectUser, 600); 
     },
     onError: (err) => {
       toast.error(err?.message || "Failed to set password");
