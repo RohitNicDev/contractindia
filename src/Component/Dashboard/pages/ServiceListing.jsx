@@ -492,7 +492,7 @@ function ServiceFormModal({
                     ))}
                   </div>
                 </ModalSection> */}
-                <ModalSection
+                {/* <ModalSection
                   label="Links & URLs"
                   icon={<Link className="h-3.5 w-3.5" />}
                 >
@@ -544,7 +544,7 @@ function ServiceFormModal({
                       />
                     </ModalField>
                   </div>
-                </ModalSection>
+                </ModalSection> */}
               </div>
               <div className="border-t border-slate-100 px-5 py-4 flex items-center justify-end gap-2">
                 <button
