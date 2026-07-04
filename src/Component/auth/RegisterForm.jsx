@@ -186,6 +186,7 @@ export function RegisterForm() {
           email,
           phone,
           userType,
+          selectedServiceGroup,
           guId: response?.value || null, // Pass the entire data object for OTP screen to use (if needed)
         },
       });

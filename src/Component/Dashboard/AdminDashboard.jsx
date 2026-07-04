@@ -41,37 +41,37 @@ import DocumentCategoryManager from "../Public/Services/DocumentCategoryManager"
 const stats = [
   {
     label: "Total Users",
-    value: "4,821",
+    value: "0",
     grad: "linear-gradient(135deg,#6366f1,#8b5cf6)",
     icon: Users,
   },
   {
     label: "Commercial Users",
-    value: "1,204",
+    value: "0",
     grad: "linear-gradient(135deg,#0ea5e9,#6366f1)",
     icon: Briefcase,
   },
   {
     label: "Individual Users",
-    value: "3,617",
+    value: "0",
     grad: "linear-gradient(135deg,#10b981,#0ea5e9)",
     icon: Users,
   },
   {
     label: "Active Services",
-    value: "10",
+    value: "0",
     grad: "linear-gradient(135deg,#f59e0b,#ef4444)",
     icon: Activity,
   },
   {
     label: "Revenue",
-    value: "₹12.4L",
+    value: "0",
     grad: "linear-gradient(135deg,#ec4899,#8b5cf6)",
     icon: TrendingUp,
   },
   {
     label: "Subscriptions",
-    value: "284",
+    value: "0",
     grad: "linear-gradient(135deg,#14b8a6,#6366f1)",
     icon: CreditCard,
   },

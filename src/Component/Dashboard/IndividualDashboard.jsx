@@ -133,14 +133,14 @@ export function Overview(props) {
   const stats = [
     {
       label: "Credits",
-      value: "250",
+      value: "0",
       icon: CreditCard,
       grad: "from-indigo-500 to-violet-500",
       tab: "mycredits",
     },
     {
       label: "Active Plans",
-      value: "2",
+      value: "0",
       icon: CheckCircle2,
       grad: "from-emerald-500 to-teal-500",
       tab: "plans-and-subscriptions",
@@ -154,7 +154,7 @@ export function Overview(props) {
     // },
     {
       label: "Services",
-      value: "3",
+      value: "0",
       icon: ShoppingBag,
       grad: "from-pink-500 to-rose-500",
       tab: "MyServices",

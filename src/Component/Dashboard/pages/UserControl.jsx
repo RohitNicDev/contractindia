@@ -281,26 +281,78 @@ const UserControl = () => {
 
       {/* Confirm modal */}
       <AnimatePresence>
-        {confirmState && (
-          <ConfirmModal
-            action={confirmState?.action}
-            user={confirmState?.row}
-            onConfirm={async ({ reason }) => {
-              const response = await verifyUserRegistrationApi({
-                userId: confirmState?.row?.userId,
-                approved: confirmState?.action === "Verified" ? 1 : 2,
-                reason,
-              });
+  {confirmState && (
+    <ConfirmModal
+      isOpen={!!confirmState}
+      variant={
+        confirmState.action === "Verified"
+          ? "verify"
+          : "reject"
+      }
+      title={
+        confirmState.action === "Verified"
+          ? "Approve User"
+          : "Reject User"
+      }
+      message={`Are you sure you want to ${
+        confirmState.action === "Verified"
+          ? "approve"
+          : "reject"
+      } this user?`}
+      data={{
+        username: confirmState.row?.Name,
+      }}
+      showDetails={[
+        {
+          label: "Name",
+          value: confirmState.row?.Name,
+        },
+        {
+          label: "Email",
+          value: confirmState.row?.EmailId,
+        },
+        {
+          label: "Mobile",
+          value: confirmState.row?.MobileNo,
+        },
+        ...(tab === 2
+          ? [
+              {
+                label: "Company",
+                value: confirmState.row?.CompanyName,
+              },
+            ]
+          : []),
+      ]}
+      requireReason={confirmState.action === "Rejected"}
+      reasonLabel="Reason"
+      reasonPlaceholder="Enter rejection reason..."
+      actionLabel={
+        confirmState.action === "Verified"
+          ? "Approve"
+          : "Reject"
+      }
+      onConfirm={async ({ reason }) => {
+        const response = await verifyUserRegistrationApi({
+          userId:
+            confirmState.row?.UserId ??
+            confirmState.row?.userId,
+          approved:
+            confirmState.action === "Verified"
+              ? 1
+              : 2,
+          reason,
+        });
 
-              userDataRefetch();
-              setConfirmState(null);
+        await userDataRefetch();
+        setConfirmState(null);
 
-              return response;
-            }}
-            onCancel={() => setConfirmState(null)}
-          />
-        )}
-      </AnimatePresence>
+        return response;
+      }}
+      onCancel={() => setConfirmState(null)}
+    />
+  )}
+</AnimatePresence>
     </>
   );
 };

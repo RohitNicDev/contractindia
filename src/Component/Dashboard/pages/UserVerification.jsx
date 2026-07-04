@@ -41,6 +41,9 @@ export default function UserVerification() {
   const [confirmState, setConfirmState] = useState(null); // { action, row }
   const [companyDetailUserId, setCompanyDetailUserId] = useState(null); // full modal (commercial)
   const [companyDetailRow, setCompanyDetailRow] = useState(null);
+  useEffect(() => {
+    console.log(confirmState, "confirmState");
+  }, [confirmState]);
 
   // ── Fetch user-type tabs ─────────────────────────────────────────────────
   const { data: userTypeList = [], isLoading: userTypeLoading } = useQuery({
@@ -183,7 +186,6 @@ export default function UserVerification() {
           )}
         </div>
       ),
-      
     },
   ];
 
@@ -320,6 +322,12 @@ export default function UserVerification() {
               return response;
             }}
             onCancel={() => setConfirmState(null)}
+            isOpen={!!confirmState}
+            variant={confirmState.action === "Verified" ? "verify" : "reject"}
+            message={`Are you sure you want to ${
+              confirmState.action === "Verified" ? "verify" : "reject"
+            } this user?`}
+              requireReason={confirmState.action === "Rejected"}
           />
         )}
       </AnimatePresence>

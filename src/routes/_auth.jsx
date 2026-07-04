@@ -40,7 +40,7 @@ const HERO_BY_PATH = {
     subtitle: "Enter the verification code sent to your email or mobile number.",
     bullets: [
       { icon: ShieldCheck, text: "Fast and secure verification" },
-      { icon: Zap, text: "Auto-detect & resend support" },
+      // { icon: Zap, text: "Auto-detect & resend support" },
       { icon: Sparkles, text: "Protected access to your account" },
     ],
   },
