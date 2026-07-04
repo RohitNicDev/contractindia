@@ -130,7 +130,7 @@ const OtpVerification = () => {
     userType === 2
       ? navigate("/commercial/dashboard")
       : userType === 1
-        ? navigate("/")
+        ? navigate("/individual/dashboard")
         : navigate("/admin/dashboard");
   };
 
