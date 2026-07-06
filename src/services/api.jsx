@@ -184,7 +184,7 @@ export const UserVerificationGet = async (type, usertype) => {
   return await api.get(url);
 };
 export const userRegistrationByParam = async (params) => {
-  return await api.get(`/UserRegistration/get?${params}` );
+  return await api.get(`/UserRegistration/get?${params}`);
 };
 
 export const verifyUserRegistration = async (payload) => {
@@ -197,7 +197,7 @@ export const userBasicInformationUpdate = async (payload) => {
   return await api.put("/UserBasicInformation/Update", payload);
 };
 export const userBasicInformationbyParam = async (params) => {
-  return await api.get(`/UserBasicInformation/get?${params}` );
+  return await api.get(`/UserBasicInformation/get?${params}`);
 };
 
 export const userBankDetailSave = async (payload) => {
@@ -229,10 +229,9 @@ export const userCommonlistType = async (commenlist) => {
 // GET /api/UserSubscriptionDetail/get?userId=xxx
 export const UserSubscriptionDetailGet = async (params) => {
   return await api.get(`/UserSubscriptionDetail/get?${params}`);
-
 };
 
- export const UserPaymentHistorySave = async (payload) => {
+export const UserPaymentHistorySave = async (payload) => {
   return await api.post(`/UserPaymentHistory/save`, payload);
 };
 export const UserPaymentHistoryUpdate = async (payload) => {
@@ -247,4 +246,11 @@ export const UserPaymentHistoryGet = async () => {
 // http://97.74.91.115/contractsindiamainapi/api/UserPaymentHistory/get?paymentId=4243242&userId=30098855
 export const UserPaymentHistoryGetById = async (params) => {
   return await api.get(`/UserPaymentHistory/get?${params}`);
+};
+export const UserDocumentStoreGetByparam = async (params) => {
+  return await api.get(`/UserDocumentStore/image?${params}`);
+};
+export const userServicesdetailsGetByparam = async (serviceId) => {
+    const response = await api.get(`/ServiceMaster/userservicesdetails?serviceId=${serviceId}`);
+    return response?.data || [];
 };

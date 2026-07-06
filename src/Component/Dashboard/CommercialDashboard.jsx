@@ -300,7 +300,7 @@ export const Dashboard = (props) => {
   const onTabChange =
     props.onTabChange || context?.handleTabChange || (() => {});
   const resetUserStore = useUserStore((state) => state?.resetUserStore);
-  const name = user.companyName || user.contactPerson || "there";
+  const name = user?.companyName || user?.contactPerson || "there";
 
   const stats = [
     // {
@@ -359,7 +359,7 @@ export const Dashboard = (props) => {
             </p>
             <h1 className="mt-1 text-2xl font-black bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-700 bg-clip-text text-transparent">
               Hello,
-              {/* {name}  */}
+              {name} 
               👋
             </h1>
             {/* <p className="mt-1.5 text-sm text-slate-500">

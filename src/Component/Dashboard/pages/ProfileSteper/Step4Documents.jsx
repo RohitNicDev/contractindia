@@ -324,7 +324,7 @@ function UploadCard({ category, subCategory, userId, existingDoc, onRefresh }) {
               </button>
 
               {/* Replace / Update */}
-              <label className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-white border border-amber-200 text-amber-600 hover:bg-amber-50 transition-colors cursor-pointer">
+              {/* <label className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-white border border-amber-200 text-amber-600 hover:bg-amber-50 transition-colors cursor-pointer">
                 <RefreshCw className="w-3 h-3" />
                 {uploading ? "Uploading…" : "Replace"}
                 <input
@@ -337,7 +337,7 @@ function UploadCard({ category, subCategory, userId, existingDoc, onRefresh }) {
                     e.target.value = "";
                   }}
                 />
-              </label>
+              </label> */}
 
               {/* Delete */}
               <button

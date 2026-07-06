@@ -143,7 +143,7 @@ const Step2BasicInfo = ({ store, nextStep, prevStep, triggerOtpSend }) => {
           />
         </div>
 
-        <div className="flex flex-col gap-1.5 md:col-span-2">
+        {/* <div className="flex flex-col gap-1.5 md:col-span-2">
           <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
             Company Photos
           </label>
@@ -176,7 +176,7 @@ const Step2BasicInfo = ({ store, nextStep, prevStep, triggerOtpSend }) => {
               ))}
             </div>
           )}
-        </div>
+        </div> */}
         {/* 
         <div className="flex flex-col gap-1.5">
           <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">

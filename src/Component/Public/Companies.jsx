@@ -1,8 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Star, MapPin, BadgeCheck, ArrowUpRight } from "lucide-react";
-import { UserVerificationGet } from "../../services/api";
+import {
+  UserDocumentStoreGetByparam,
+  UserVerificationGet,
+} from "../../services/api";
 import { useQuery } from "@tanstack/react-query";
+
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  import.meta.env.VITE_BASE_URL ||
+  import.meta.env.BASE_URL;
+console.log(API_URL, "API_URL");
 
 const companies = [
   {
@@ -50,10 +59,86 @@ const companies = [
     grad: "from-amber-500 to-orange-600",
   },
 ];
+
 const userVerificationGetApi = async (type, usertype) => {
   const response = await UserVerificationGet(type, usertype);
   return response?.data ?? [];
 };
+
+const UserDocumentStoreGetByparamApi = async (userId) => {
+  const response = await UserDocumentStoreGetByparam(
+    `?userId=${userId}&documentCategoryId=7&documentSubCategoryId=10`
+  );
+  return response ?? [];
+};
+
+// Image Loading Component
+const CompanyImage = ({ userId, companyName }) => {
+  const [imageUrl, setImageUrl] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
+  React.useEffect(() => {
+    const loadImage = async () => {
+      try {
+        setIsLoading(true);
+        const url = `${API_URL}/UserDocumentStore/image?userId=${userId}&documentCategoryId=7&documentSubCategoryId=10`;
+        // Verify the image loads by creating an Image object
+        const img = new Image();
+        img.onload = () => {
+          setImageUrl(url);
+          setHasError(false);
+        };
+        img.onerror = () => {
+          setHasError(true);
+        };
+        img.src = url;
+      } catch (error) {
+        console.error("Error loading image for userId:", userId, error);
+        setHasError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (userId) {
+      loadImage();
+    }
+  }, [userId]);
+
+  // Fallback gradient based on company name
+  const gradients = [
+    "from-blue-500 to-indigo-600",
+    "from-violet-500 to-purple-600",
+    "from-emerald-500 to-teal-600",
+    "from-amber-500 to-orange-600",
+  ];
+  const fallbackGrad = gradients[Math.floor(Math.random() * gradients.length)];
+
+  if (hasError) {
+    return (
+      <div className={`w-full h-full bg-gradient-to-br ${fallbackGrad} flex items-center justify-center`}>
+        <span className="text-white text-xs font-semibold">{companyName}</span>
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={imageUrl}
+      alt={companyName}
+      className="
+        w-full
+        h-full
+        object-cover
+        group-hover:scale-110
+        transition-transform
+        duration-700
+      "
+    />
+  );
+};
+
 const Companies = () => {
   //1=approved, 0=pending, 2=rejected
   //usertype: 1=individual, 2=Company
@@ -61,6 +146,7 @@ const Companies = () => {
     isVerifiedByAdmin: 1,
     userType: 2,
   };
+
   const {
     data: userVerificationdata = [],
     isLoading: userVerificationisLoading,
@@ -73,6 +159,7 @@ const Companies = () => {
     enabled: true,
     retry: 2,
   });
+
   const companiesForDashboard = userVerificationdata?.map((item) => ({
     userId: item.userId,
     name: item.CompanyName || item.Name,
@@ -82,18 +169,15 @@ const Companies = () => {
     tags: [item.ServiceName || "Business Service", item.Status],
     loc: item.StateName,
     verified: item.Status === "Approved",
-
-    img: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80",
-
     grad:
       item.Status === "Approved"
         ? "from-blue-500 to-indigo-600"
         : "from-amber-500 to-orange-600",
-
     email: item.EmailId,
     mobile: item.MobileNo,
     pincode: item.PinCode,
   }));
+
   return (
     <section className="relative py-24 overflow-hidden bg-slate-100">
       {/* Background glow orbs */}
@@ -175,19 +259,8 @@ const Companies = () => {
               />
 
               {/* Cover Image */}
-              <div className="relative h-40 overflow-hidden">
-                <img
-                  src={elm?.img}
-                  alt={elm?.name}
-                  className="
-                    w-full
-                    h-full
-                    object-cover
-                    group-hover:scale-110
-                    transition-transform
-                    duration-700
-                  "
-                />
+              <div className="relative h-40 overflow-hidden bg-slate-200">
+                <CompanyImage userId={elm?.userId} companyName={elm?.name} />
 
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
 
@@ -198,14 +271,6 @@ const Companies = () => {
                     Verified
                   </div>
                 )}
-
-                {/* Hover Overlay */}
-                {/* <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="flex items-center gap-1.5 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-xl text-xs font-bold text-slate-800 shadow-lg translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                    View Profile
-                    <ArrowUpRight className="w-3.5 h-3.5" />
-                  </div>
-                </div> */}
               </div>
 
               {/* Content */}
@@ -267,15 +332,9 @@ const Companies = () => {
 
                 {/* Contact Info */}
                 <div className="mt-3 space-y-1">
-                  {/* <p className="text-[11px] text-slate-500 truncate">
-                    📧 {elm?.email}
-                  </p>
-
                   <p className="text-[11px] text-slate-500">
-                    📱 {elm?.address}
-                  </p> */}
-
-                  <p className="text-[11px] text-slate-500">📮 {elm?.pincode}</p>
+                    📮 {elm?.pincode}
+                  </p>
                 </div>
 
                 {/* Footer */}
@@ -284,33 +343,13 @@ const Companies = () => {
                     <MapPin className="w-3 h-3" />
                     {elm?.loc}
                   </span>
-
-                  {/* <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`
-                      text-xs
-                      font-bold
-                      text-white
-                      px-3
-                      py-1.5
-                      rounded-lg
-                      bg-gradient-to-r
-                      ${elm?.grad}
-                      shadow-sm
-                      hover:shadow-md
-                      transition-shadow
-                    `}
-                  >
-                    View
-                  </motion.button> */}
                 </div>
               </div>
             </motion.div>
           ))}
         </div>
 
-        {companies?.length === 0 && (
+        {companiesForDashboard?.length === 0 && (
           <div className="text-center py-16">
             <p className="text-slate-500 font-medium">
               No verified companies found.

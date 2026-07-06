@@ -15,7 +15,7 @@ import {
   Star,
   LogIn,
 } from "lucide-react";
-import { ContractorListGet, ServiceMenuGet } from "../../../services/api";
+import { ContractorListGet, ServiceMenuGet, userServicesdetailsGetByparam } from "../../../services/api";
 import { useNavigate, useParams } from "react-router-dom";
 import { useServiceStore, useUserStore } from "../../../store/store";
 import { CommonModal } from "../../common/CommonModal";
@@ -24,7 +24,7 @@ import { ConfirmModal } from "../../common/ConfirmModal";
 /* ─── API ─────────────────────────────────────────────────────────────── */
 const fetchContractors = async (serviceId) => {
   if (!serviceId) return [];
-  return (await ContractorListGet(serviceId)) ?? [];
+  return (await userServicesdetailsGetByparam(serviceId)) ?? [];
 };
 
 /* ─── Tree helpers ─────────────────────────────────────────────────────── */
