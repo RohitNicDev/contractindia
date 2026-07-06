@@ -211,18 +211,18 @@ export default function PaymentHistory() {
 
   // ── Derived stats ────────────────────────────────────────────────────────────
   const stats = useMemo(() => {
-    const total      = rawPayments.reduce((a, r) => a + (Number(r.Payment) || 0), 0);
-    const successful = rawPayments.filter(r => r.PaymentStatus === "Success");
-    const pending    = rawPayments.filter(r => r.PaymentStatus === "Pending");
-    const failed     = rawPayments.filter(r => r.PaymentStatus === "Failed");
+    const total      = rawPayments.reduce((a, r) => a + (Number(r?.Payment) || 0), 0);
+    const successful = rawPayments.filter(r => r?.PaymentStatus === "Success");
+    const pending    = rawPayments.filter(r => r?.PaymentStatus === "Pending");
+    const failed     = rawPayments.filter(r => r?.PaymentStatus === "Failed");
     return { total, successful, pending, failed };
   }, [rawPayments]);
 
   // ── Filter ───────────────────────────────────────────────────────────────────
   const filtered = useMemo(() => {
     return rawPayments.filter(r => {
-      const matchUser   = !searchUser || String(r.UserID).includes(searchUser);
-      const matchStatus = statusFilter === "all" || r.PaymentStatus === statusFilter;
+      const matchUser   = !searchUser || String(r?.UserID).includes(searchUser);
+      const matchStatus = statusFilter === "all" || r?.PaymentStatus === statusFilter;
       return matchUser && matchStatus;
     });
   }, [rawPayments, searchUser, statusFilter]);
@@ -232,10 +232,10 @@ export default function PaymentHistory() {
     if (!filtered.length) { toast.error("No records to export."); return; }
     const headers = ["Payment ID","User ID","Amount","Status","Mode","Transaction ID","Payment Date","Enter Date"];
     const rows = filtered.map(r => [
-      r.PaymentID, r.UserID, r.Payment ?? 0,
-      r.PaymentStatus ?? "—", r.PaymentMode ?? "—",
-      r.TransactionID || "—",
-      formatDate(r.PaymentDate), formatDate(r.EnterDate),
+      r?.PaymentID, r?.UserID, r?.Payment ?? 0,
+      r?.PaymentStatus ?? "—", r?.PaymentMode ?? "—",
+      r?.TransactionID || "—",
+      formatDate(r?.PaymentDate), formatDate(r?.EnterDate),
     ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(","));
     const blob = new Blob([headers.join(",") + "\n" + rows.join("\n")], { type: "text/csv" });
     const url  = URL.createObjectURL(blob);
@@ -247,18 +247,25 @@ export default function PaymentHistory() {
 
   // ── Table columns ─────────────────────────────────────────────────────────────
   const columns = [
-    // {
-    //   title: "Payment ID",
-    //   key: "PaymentID",
-    //   render: (_, r) => (
-    //     <span className="font-mono text-xs font-bold text-slate-600">#{r.PaymentID}</span>
-    //   ),
-    // },
     {
-      title: "User ID",
-      key: "UserID",
+      title: "Name",
+      key: "Name",
       render: (_, r) => (
-        <span className="font-mono text-xs text-slate-600">{r.UserID}</span>
+        <span className="font-mono text-xs font-bold text-slate-600">{r?.Name}</span>
+      ),
+    },
+    {
+      title: "Email ",
+      key: "EmailId",
+      render: (_, r) => (
+        <span className="font-mono text-xs text-slate-600">{r?.EmailId}</span>
+      ),
+    },
+    {
+      title: "User Type",
+      key: "UserTypeName",
+      render: (_, r) => (
+        <span className="font-mono text-xs text-slate-600">{r?.UserTypeName}</span>
       ),
     },
     {
@@ -266,34 +273,41 @@ export default function PaymentHistory() {
       key: "Payment",
       render: (_, r) => (
         <span className="font-black text-indigo-600 text-sm">
-          {formatAmount(r.Payment)}
+          {formatAmount(r?.Payment)}
         </span>
       ),
     },
     {
       title: "Status",
       key: "PaymentStatus",
-      render: (_, r) => <PaymentStatusBadge status={r.PaymentStatus} />,
+      render: (_, r) => <PaymentStatusBadge status={r?.PaymentStatus} />,
     },
     {
       title: "Mode",
       key: "PaymentMode",
       render: (_, r) => (
-        <span className="text-xs font-semibold text-slate-600">{r.PaymentMode ?? "—"}</span>
+        <span className="text-xs font-semibold text-slate-600">{r?.PaymentMode ?? "—"}</span>
       ),
     },
     {
       title: "Transaction ID",
       key: "TransactionID",
       render: (_, r) => (
-        <span className="font-mono text-xs text-slate-500">{r.TransactionID || "—"}</span>
+        <span className="font-mono text-xs text-slate-500">{r?.TransactionID || "—"}</span>
       ),
     },
     {
       title: "Payment Date",
       key: "PaymentDate",
       render: (_, r) => (
-        <span className="text-xs text-slate-600">{formatDateTime(r.PaymentDate)}</span>
+        <span className="text-xs text-slate-600">{formatDateTime(r?.PaymentDate)}</span>
+      ),
+    },
+    {
+      title: "Remark",
+      key: "Remark",
+      render: (_, r) => (
+        <span className="text-xs text-slate-600">{formatDateTime(r?.Remark)}</span>
       ),
     },
     {
@@ -377,7 +391,7 @@ export default function PaymentHistory() {
             icon={CheckCircle2}
             label="Successful"
             value={stats.successful.length}
-            sub={`₹${stats.successful.reduce((a,r)=>a+(Number(r.Payment)||0),0).toLocaleString("en-IN")} collected`}
+            sub={`₹${stats.successful.reduce((a,r)=>a+(Number(r?.Payment)||0),0).toLocaleString("en-IN")} collected`}
             grad="from-emerald-500 to-teal-500"
             corner="bg-emerald-400/10"
           />
@@ -385,7 +399,7 @@ export default function PaymentHistory() {
             icon={Clock}
             label="Pending"
             value={stats.pending.length}
-            sub={`₹${stats.pending.reduce((a,r)=>a+(Number(r.Payment)||0),0).toLocaleString("en-IN")} pending`}
+            sub={`₹${stats.pending.reduce((a,r)=>a+(Number(r?.Payment)||0),0).toLocaleString("en-IN")} pending`}
             grad="from-amber-500 to-orange-400"
             corner="bg-amber-400/10"
           />
@@ -393,7 +407,7 @@ export default function PaymentHistory() {
             icon={AlertCircle}
             label="Failed"
             value={stats.failed.length}
-            sub={`₹${stats.failed.reduce((a,r)=>a+(Number(r.Payment)||0),0).toLocaleString("en-IN")} lost`}
+            sub={`₹${stats.failed.reduce((a,r)=>a+(Number(r?.Payment)||0),0).toLocaleString("en-IN")} lost`}
             grad="from-red-500 to-rose-500"
             corner="bg-red-400/10"
           />
