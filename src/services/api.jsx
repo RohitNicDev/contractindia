@@ -51,7 +51,7 @@ export const planMasterGet = async () => {
   return await api.get(`/PlanMaster/get`);
 };
 export const planMasterGetById = async (planId) => {
-  return await api.get(`/PlanMaster/get/${planId}`);
+  return await api.get(`/PlanMaster/get?${planId}`);
 };
 export const DocumentCategorySave = async (payload) => {
   return await api.post(`/DocumentCategory/save`, payload);

@@ -31,11 +31,13 @@ const Step2BasicInfo = ({ store, nextStep, prevStep, triggerOtpSend }) => {
   // Mutation for saving basic info
   const { mutate: saveBasicInfo, isPending: isSaving } = useMutation({
     mutationFn:
-      store.basicInfo?.address !== "" ||
-      store.basicInfo?.address !== null ||
-      store.basicInfo?.address !== undefined
-        ? userBasicInformationUpdate
-        : userBasicInformationSave,
+      // store.basicInfo?.address !== "" ||
+      // store.basicInfo?.address?.lenght > 0 ||
+      // store.basicInfo?.address !== null ||
+      // store.basicInfo?.address !== undefined
+      //   ? userBasicInformationUpdate
+      //   :
+      userBasicInformationSave,
     onSuccess: (response) => {
       console.log(response, "response");
 

@@ -234,7 +234,7 @@ export function RegisterForm() {
       companyName: isCommercial ? values.businessName || "" : "",
       serviceId: isCommercial ? values.serviceGroup || 0 : 0,
       serviceName: isCommercial
-        ? rootServiceList?.find((elm) => elm?.name == values?.serviceGroup)
+        ? rootServiceList?.find((elm) => elm?.value == values?.serviceGroup)
             ?.label || ""
         : "",
     });

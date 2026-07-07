@@ -25,6 +25,7 @@ import DataTableComponent from "../../common/dataTable";
 import { useUserStore } from "../../../store/store";
 import {
   planMasterGet,
+  planMasterGetById,
   userBankDetailbyParams,
   UserPaymentHistorySave,
   UserSubscriptionDetailGet,
@@ -32,8 +33,10 @@ import {
 } from "../../../services/api";
 
 // ─── API helpers ───────────────────────────────────────────────────────────────
-const fetchPlans = async () => {
-  const res = await planMasterGet();
+const fetchPlans = async (userType) => {
+  const res = await planMasterGetById(`userType=${userType}`);
+  console.log(res?.data,"res?.data");
+  
   return res?.data ?? [];
 };
 
@@ -135,11 +138,11 @@ function PlanDetailModal({ plan, onClose, onSubscribe }) {
                   label: "Duration",
                   value: plan?.DurationType ?? "—",
                 },
-                {
-                  icon: Star,
-                  label: "Credits",
-                  value: plan?.CreditsIncluded ?? 0,
-                },
+                // {
+                //   icon: Star,
+                //   label: "Credits",
+                //   value: plan?.CreditsIncluded ?? 0,
+                // },
                 {
                   icon: Layers,
                   label: "Max Services",
@@ -280,11 +283,11 @@ function SubscriptionDetailModal({ sub, planMap, onClose }) {
                   label: "Price",
                   value: formatPrice(plan?.Price),
                 },
-                {
-                  icon: Star,
-                  label: "Credits",
-                  value: plan?.CreditsIncluded ?? "—",
-                },
+                // {
+                //   icon: Star,
+                //   label: "Credits",
+                //   value: plan?.CreditsIncluded ?? "—",
+                // },
                 {
                   icon: Layers,
                   label: "Max Services",
@@ -665,7 +668,9 @@ function PaymentModal({ plan, userId, onClose, onSuccess }) {
 export default function PlansAndSubscriptions() {
   const { loginResponce } = useUserStore();
   const userId = loginResponce?.userId;
+  const userType = loginResponce?.userType;
   const queryClient = useQueryClient();
+console.log(userType,"userType");
 
   const [tab, setTab] = useState("plans");
   const [detailPlan, setDetailPlan] = useState(null); // plan detail modal
@@ -679,8 +684,8 @@ export default function PlansAndSubscriptions() {
     refetch: refetchPlans,
     isFetching: plansFetching,
   } = useQuery({
-    queryKey: ["planMasterList"],
-    queryFn: fetchPlans,
+    queryKey: ["planMasterGetById",userType],
+    queryFn:()=> fetchPlans(userType),
     retry: 1,
   });
 
@@ -700,8 +705,8 @@ export default function PlansAndSubscriptions() {
   // ── PlanID → plan detail lookup ──────────────────────────────────────────────
   const planMap = useMemo(() => {
     const map = {};
-    plans.forEach((p) => {
-      map[p.PlanID] = p;
+    plans?.forEach((p) => {
+      map[p?.PlanID] = p;
     });
     return map;
   }, [plans]);
@@ -723,9 +728,9 @@ export default function PlansAndSubscriptions() {
       key: "PlanName",
       render: (_, r) => (
         <div>
-          <p className="font-bold text-slate-800">{r.PlanName ?? "—"}</p>
+          <p className="font-bold text-slate-800">{r?.PlanName ?? "—"}</p>
           <p className="text-[10px] text-slate-400">
-            {r.UserTypeName || "All users"}
+            {r?.UserTypeName || "All users"}
           </p>
         </div>
       ),
@@ -735,25 +740,25 @@ export default function PlansAndSubscriptions() {
       key: "Price",
       render: (_, r) => (
         <span className="font-black text-indigo-600">
-          {formatPrice(r.Price)}
+          {formatPrice(r?.Price)}
         </span>
       ),
     },
-    {
-      title: "Credits",
-      key: "CreditsIncluded",
-      render: (_, r) => (
-        <span className="font-semibold text-slate-700">
-          {r.CreditsIncluded ?? 0}
-        </span>
-      ),
-    },
+    // {
+    //   title: "Credits",
+    //   key: "CreditsIncluded",
+    //   render: (_, r) => (
+    //     <span className="font-semibold text-slate-700">
+    //       {r?.CreditsIncluded ?? 0}
+    //     </span>
+    //   ),
+    // },
     {
       title: "Duration",
       key: "DurationType",
       render: (_, r) => (
         <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-violet-50 text-violet-600 border border-violet-100">
-          {r.DurationType ?? "—"}
+          {r?.DurationType ?? "—"}
         </span>
       ),
     },
@@ -762,7 +767,7 @@ export default function PlansAndSubscriptions() {
       key: "maxNoofServices",
       render: (_, r) => (
         <span className="font-semibold text-slate-700">
-          {r.maxNoofServices ?? "—"}
+          {r?.maxNoofServices ?? "—"}
         </span>
       ),
     },
@@ -798,22 +803,22 @@ export default function PlansAndSubscriptions() {
       key: "PlanName",
       render: (_, r) => (
         <div>
-          <p className="font-bold text-slate-800">{r.PlanName ?? "—"}</p>
-          <p className="text-[10px] text-slate-400">ID #{r.SubscriptionID}</p>
+          <p className="font-bold text-slate-800">{r?.PlanName ?? "—"}</p>
+          <p className="text-[10px] text-slate-400">ID #{r?.SubscriptionID}</p>
         </div>
       ),
     },
     // {
     //   title: "Plan ID",
     //   key: "PlanID",
-    //   render: (_, r) => <span className="font-mono text-xs text-slate-500">#{r.PlanID}</span>,
+    //   render: (_, r) => <span className="font-mono text-xs text-slate-500">#{r?.PlanID}</span>,
     // },
     {
       title: "Subscribed On",
       key: "EnterDate",
       render: (_, r) => (
         <span className="text-xs text-slate-600">
-          {formatDate(r.EnterDate)}
+          {formatDate(r?.EnterDate)}
         </span>
       ),
     },
@@ -821,7 +826,7 @@ export default function PlansAndSubscriptions() {
       title: "Status",
       key: "IsActive",
       render: (_, r) => {
-        const active = Number(r.IsActive) === 1;
+        const active = Number(r?.IsActive) === 1;
         return (
           <span
             className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold border ${
@@ -861,7 +866,7 @@ export default function PlansAndSubscriptions() {
         icon={Briefcase}
         badge={
           tab === "plans"
-            ? `${plans.length} plans`
+            ? `${plans?.length} plans`
             : `${subscriptions.length} records`
         }
         badgeColor="violet"

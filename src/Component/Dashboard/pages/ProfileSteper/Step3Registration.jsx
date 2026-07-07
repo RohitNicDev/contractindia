@@ -7,7 +7,7 @@ import Switch from "antd/lib/switch";
 import { useMutation } from "@tanstack/react-query";
 import { useUserStore } from "../../../../store/store";
 import { toast } from "sonner";
-import { userBasicInformationUpdate } from "../../../../services/api";
+import { userBasicInformationSave, } from "../../../../services/api";
 
 const Step3Registration = ({ store, nextStep, prevStep }) => {
   const { loginResponce } = useUserStore();
@@ -46,7 +46,7 @@ const Step3Registration = ({ store, nextStep, prevStep }) => {
     },
   });
   const { mutate: UpdateBasicInfo, isPending: isSaving } = useMutation({
-    mutationFn: userBasicInformationUpdate,
+    mutationFn: userBasicInformationSave,
     onSuccess: (response) => {
       console.log(response, "response");
 

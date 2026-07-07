@@ -669,14 +669,14 @@ const CompanySubServices = () => {
                     </span>
                   )}
                 </h2>
-                {activeNode && (
+                {/* {activeNode && (
                   <p className="text-[10px] text-slate-400 mt-0.5 font-medium">
                     ID #{activeNode.ServiceID}
                     {activeNode.children?.length > 0
                       ? ` · ${activeNode.children.length} sub-categories`
                       : " · leaf"}
                   </p>
-                )}
+                )} */}
               </div>
             </div>
 
