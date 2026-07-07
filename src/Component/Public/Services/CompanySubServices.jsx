@@ -59,7 +59,10 @@ const findNode = (nodes, id) => {
   }
   return null;
 };
-
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  import.meta.env.VITE_BASE_URL ||
+  import.meta.env.BASE_URL;
 const subtreeHasActive = (node, activeId) => {
   if (node.ServiceID === activeId) return true;
   return (node.children ?? []).some((c) => subtreeHasActive(c, activeId));
@@ -366,15 +369,15 @@ function LoginPromptBody({ onLogin }) {
    CONTRACTOR CARD
    ════════════════════════════════════════════════════════════════════════ */
 function ContractorCard({ item, idx, onViewDetails, onCall = () => {} }) {
+  const imgUrl = `${API_URL}/UserDocumentStore/image?userId=${item?.UserID}&documentCategoryId=7&documentSubCategoryId=10`;
   const img =
-    item?.ProfileImage || item?.CompanyImage || IMGS[idx % IMGS.length];
+   imgUrl|| IMGS[idx % IMGS.length];
   const location = item?.CityName || item?.StateName || "India";
   const company = item?.CompanyName || item?.Name || "Contractor";
   const phone = item?.MobileNo || item?.PhoneNo || "";
   const status = item?.Status || "";
   const rating =
     typeof item?.Rating === "number" ? item?.Rating : 4.5 + (idx % 5) * 0.1;
-
   return (
     <motion.div
       layout
@@ -416,7 +419,7 @@ function ContractorCard({ item, idx, onViewDetails, onCall = () => {} }) {
           <MapPin size={10} />
           <span className="text-[10px] truncate">{location}</span>
         </div>
-        <div className="grid grid-cols-2 gap-2 py-3 border-y border-slate-50 mb-3">
+        {/* <div className="grid grid-cols-2 gap-2 py-3 border-y border-slate-50 mb-3">
           <div>
             <p className="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">
               Experience
@@ -433,10 +436,10 @@ function ContractorCard({ item, idx, onViewDetails, onCall = () => {} }) {
               {item?.ProjectsCompleted ? `${item.ProjectsCompleted}+` : "—"}
             </p>
           </div>
-        </div>
-        <p className="text-[11px] text-slate-400 line-clamp-1 mb-4">
+        </div> */}
+        {/* <p className="text-[11px] text-slate-400 line-clamp-1 mb-4">
           {item?.EmailId || "Verified on Contracts India"}
-        </p>
+        </p> */}
         <div className="flex gap-2">
           <button
             onClick={() => onViewDetails(item)}

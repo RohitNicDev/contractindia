@@ -151,7 +151,11 @@ const Step5ServiceListing = ({ store, nextStep, prevStep, navbar = false }) => {
   // Use index 0 if it's active, else no plan
   const latestSub = subscriptions[0] ?? null;
   const hasActivePlan = latestSub?.IsActive === 1;
-  console.log(subscriptions, "hasActivePlan");
+
+  // Max number of services allowed under the current subscription plan.
+  // NOTE: confirm the exact key name your API returns (maxNoofServices /
+  // MaxNoofServices / MaxNoOfServices) and adjust this line to match.
+  const maxServicesAllowed = Number(latestSub?.maxNoofServices ?? 0);
 
   // ── Build tree & initial active ids from API ────────────────────────────────
   const [services, setServices] = useState([]);
@@ -213,16 +217,32 @@ const Step5ServiceListing = ({ store, nextStep, prevStep, navbar = false }) => {
     },
   });
 
-  // ── Toggle active (NO optimistic update, wait for API response) ────────────
+  // ── Toggle active (activate only — no deactivation once active) ────────────
   const toggleActive = async (item) => {
     const id = item?.id;
     const isCurrentlyActive = activeIds.includes(id);
 
-    if (!isCurrentlyActive && !hasActivePlan) {
+    // Activated services can't be turned back off
+    if (isCurrentlyActive) {
+      toast.error("Activated services cannot be deactivated.");
+      return;
+    }
+
+    if (!hasActivePlan) {
       toast.error(
         "An active subscription plan is required to activate services.",
       );
       setShowPlans(true);
+      return;
+    }
+
+    // Enforce max services allowed by the subscription
+    if (maxServicesAllowed > 0 && activeIds.length >= maxServicesAllowed) {
+      toast.error(
+        `You've reached the maximum of ${maxServicesAllowed} active service${
+          maxServicesAllowed !== 1 ? "s" : ""
+        } allowed on your plan.`,
+      );
       return;
     }
 
@@ -238,7 +258,7 @@ const Step5ServiceListing = ({ store, nextStep, prevStep, navbar = false }) => {
         planName: latestSub?.PlanName ?? item?.planName ?? "",
         amount: item?.amount ?? activePlan?.amount ?? 0,
         enterredBy: userId,
-        isActive: isCurrentlyActive ? 0 : 1,
+        isActive: 1, // only ever activating now
       };
 
       // Wait for API response before updating UI
@@ -249,9 +269,7 @@ const Step5ServiceListing = ({ store, nextStep, prevStep, navbar = false }) => {
 
       // Only update UI if API was successful
       if (response?.status) {
-        setActiveIds((prev) =>
-          isCurrentlyActive ? prev.filter((x) => x !== id) : [...prev, id],
-        );
+        setActiveIds((prev) => [...prev, id]);
       }
     } catch (err) {
       console.error("Toggle service error:", err);
@@ -398,10 +416,11 @@ const Step5ServiceListing = ({ store, nextStep, prevStep, navbar = false }) => {
                     </div>
                   </div>
 
-                  {/* Toggle button */}
+                  {/* Toggle button — disabled once active, since activated
+                      services can no longer be deactivated */}
                   <button
                     onClick={() => toggleActive(item)}
-                    disabled={isTogglingNow}
+                    disabled={isTogglingNow || isActive}
                     className="flex items-center gap-1.5 rounded-full border-2 px-3 py-1.5 shrink-0 text-xs font-bold transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{
                       borderColor: isActive ? colors.border : "#e5e7eb",
@@ -418,11 +437,11 @@ const Step5ServiceListing = ({ store, nextStep, prevStep, navbar = false }) => {
                       </>
                     ) : isActive ? (
                       <>
-                        <Zap className="h-3 w-3" /> Active
+                        <Zap className="h-3 w-3" /> Activated
                       </>
                     ) : (
                       <>
-                        <EyeOff className="h-3 w-3 opacity-50" /> Inactive
+                        <EyeOff className="h-3 w-3 opacity-50" /> Click to Active
                       </>
                     )}
                   </button>
@@ -503,6 +522,12 @@ const Step5ServiceListing = ({ store, nextStep, prevStep, navbar = false }) => {
           </div>
           <div className="text-2xl font-black text-emerald-700">
             {activeIds.length}
+            {maxServicesAllowed > 0 ? (
+              <span className="text-sm font-semibold text-emerald-500">
+                {" "}
+                / {maxServicesAllowed}
+              </span>
+            ) : null}
           </div>
         </div>
         <div className="rounded-xl bg-violet-50 px-4 py-2 border-2 border-violet-200">
@@ -518,7 +543,7 @@ const Step5ServiceListing = ({ store, nextStep, prevStep, navbar = false }) => {
       <div className="flex items-center gap-2 text-sm text-slate-500">
         <GripVertical className="h-4 w-4" />
         <span className="font-medium text-xs">
-          Click chevron to expand/collapse · Click status badge to toggle
+          Click chevron to expand/collapse · Click status badge to activate
         </span>
       </div>
 

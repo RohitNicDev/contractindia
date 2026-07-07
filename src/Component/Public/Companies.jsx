@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Star, MapPin, BadgeCheck, ArrowUpRight } from "lucide-react";
 import {
   UserDocumentStoreGetByparam,
+  userRegistrationHomeDetails,
   UserVerificationGet,
 } from "../../services/api";
 import { useQuery } from "@tanstack/react-query";
@@ -60,8 +61,8 @@ const companies = [
   },
 ];
 
-const userVerificationGetApi = async (type, usertype) => {
-  const response = await UserVerificationGet(type, usertype);
+const userRegistrationDetailsGetApi = async (type, usertype) => {
+  const response = await userRegistrationHomeDetails(`isVerifiedByAdmin=${type}&userType=${usertype}`);
   return response?.data ?? [];
 };
 
@@ -148,34 +149,36 @@ const Companies = () => {
   };
 
   const {
-    data: userVerificationdata = [],
-    isLoading: userVerificationisLoading,
-    refetch: userVerificationrefetch,
-    isFetching: userVerificationisFetching,
+    data: userRegistrationDetailsdata = [],
+    isLoading: userRegistrationDetailsisLoading,
+    refetch: userRegistrationDetailsrefetch,
+    isFetching: userRegistrationDetailsisFetching,
   } = useQuery({
-    queryKey: ["userVerificationGetApi", params],
+    queryKey: ["userRegistrationDetailsGetApi", params],
     queryFn: () =>
-      userVerificationGetApi(params?.isVerifiedByAdmin, params?.userType),
+      userRegistrationDetailsGetApi(params?.isVerifiedByAdmin, params?.userType),
     enabled: true,
     retry: 2,
   });
 
-  const companiesForDashboard = userVerificationdata?.map((item) => ({
-    userId: item.userId,
-    name: item.CompanyName || item.Name,
-    type: item.UserTypeName || "Business",
+  const companiesForDashboard = userRegistrationDetailsdata?.map((item) => ({
+    userId: item?.UserId,
+    name: item?.CompanyName || item?.Name,
+    type: item?.UserTypeName || "Business",
     rating: 4.8,
     reviews: 100,
-    tags: [item.ServiceName || "Business Service", item.Status],
-    loc: item.StateName,
-    verified: item.Status === "Approved",
+ tags: item?.ServiceNames
+  ? item?.ServiceNames?.split(",")?.map((t) => t?.trim())?.filter(Boolean)
+  : ["Business Service"],
+    loc: item?.StateName,
+    // verified: item?.Status === "Approved",
     grad:
-      item.Status === "Approved"
+      item?.Status === "Approved"
         ? "from-blue-500 to-indigo-600"
         : "from-amber-500 to-orange-600",
-    email: item.EmailId,
-    mobile: item.MobileNo,
-    pincode: item.PinCode,
+    // email: item?.EmailId,
+    // mobile: item?.MobileNo,
+    // pincode: item?.PinCode,
   }));
 
   return (
@@ -285,7 +288,7 @@ const Companies = () => {
                 </p>
 
                 {/* Rating */}
-                <div className="flex items-center gap-1.5 mt-3">
+                {/* <div className="flex items-center gap-1.5 mt-3">
                   <div className="flex gap-0.5">
                     {[1, 2, 3, 4, 5].map((s) => (
                       <Star
@@ -306,7 +309,7 @@ const Companies = () => {
                   <span className="text-[10px] text-slate-400">
                     ({elm?.reviews})
                   </span>
-                </div>
+                </div> */}
 
                 {/* Tags */}
                 <div className="flex flex-wrap gap-1.5 mt-3">
@@ -331,11 +334,11 @@ const Companies = () => {
                 </div>
 
                 {/* Contact Info */}
-                <div className="mt-3 space-y-1">
+                {/* <div className="mt-3 space-y-1">
                   <p className="text-[11px] text-slate-500">
                     📮 {elm?.pincode}
                   </p>
-                </div>
+                </div> */}
 
                 {/* Footer */}
                 <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">

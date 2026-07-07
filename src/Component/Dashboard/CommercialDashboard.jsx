@@ -332,7 +332,8 @@ export const Dashboard = (props) => {
     // },
     {
       label: "Services",
-      value: user.services ? String(user.services.length || 0) : "0",
+      // value: user.services ? String(user.services.length || 0) : "0",
+      value:  "0",
       sub: "All active",
       grad: "from-violet-500 to-purple-500",
       icon: Briefcase,
@@ -340,6 +341,9 @@ export const Dashboard = (props) => {
       tab: "services",
     },
   ];
+  useEffect(() => {
+    console.log(user, "user.services");
+  }, [user.services]);
 
   return (
     <div className="space-y-6">
@@ -359,7 +363,7 @@ export const Dashboard = (props) => {
             </p>
             <h1 className="mt-1 text-2xl font-black bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-700 bg-clip-text text-transparent">
               Hello,
-              {name} 
+              {name}
               👋
             </h1>
             {/* <p className="mt-1.5 text-sm text-slate-500">
