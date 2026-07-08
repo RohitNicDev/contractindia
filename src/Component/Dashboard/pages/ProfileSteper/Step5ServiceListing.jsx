@@ -42,30 +42,30 @@ const colorMap = {
     text: "#7c3aed",
     glow: "rgba(124,58,237,0.4)",
   },
-  cyan: {
-    border: "#a5f3fc",
-    bg: "#ecfeff",
-    text: "#0891b2",
-    glow: "rgba(8,145,178,0.4)",
-  },
-  amber: {
-    border: "#fde68a",
-    bg: "#fffbeb",
-    text: "#d97706",
-    glow: "rgba(217,119,6,0.4)",
-  },
-  rose: {
-    border: "#fecdd3",
-    bg: "#fff1f2",
-    text: "#e11d48",
-    glow: "rgba(225,29,72,0.4)",
-  },
-  emerald: {
-    border: "#a7f3d0",
-    bg: "#ecfdf5",
-    text: "#059669",
-    glow: "rgba(5,150,105,0.4)",
-  },
+//   cyan: {
+//     border: "#a5f3fc",
+//     bg: "#ecfeff",
+//     text: "#0891b2",
+//     glow: "rgba(8,145,178,0.4)",
+//   },
+//   amber: {
+//     border: "#fde68a",
+//     bg: "#fffbeb",
+//     text: "#d97706",
+//     glow: "rgba(217,119,6,0.4)",
+//   },
+//   rose: {
+//     border: "#fecdd3",
+//     bg: "#fff1f2",
+//     text: "#e11d48",
+//     glow: "rgba(225,29,72,0.4)",
+//   },
+//   emerald: {
+//     border: "#a7f3d0",
+//     bg: "#ecfdf5",
+//     text: "#059669",
+//     glow: "rgba(5,150,105,0.4)",
+//   },
 };
 const COLOR_KEYS = Object.keys(colorMap);
 

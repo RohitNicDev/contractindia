@@ -35,8 +35,7 @@ import {
 // ─── API helpers ───────────────────────────────────────────────────────────────
 const fetchPlans = async (userType) => {
   const res = await planMasterGetById(`userType=${userType}`);
-  console.log(res?.data,"res?.data");
-  
+ 
   return res?.data ?? [];
 };
 
@@ -405,11 +404,17 @@ function PaymentModal({ plan, userId, onClose, onSuccess }) {
       enabled: !!userId,
       retry: false,
     });
+  const formatCardNumber = (value = "") => {
+    return value
+      ?.replace(/\D/g, "")
+      ?.slice(0, 16)
+      ?.replace(/(\d{4})(?=\d)/g, "$1 ");
+  };
   useEffect(() => {
     if (bankDetailData?.length > 0) {
       setForm((prev) => ({
         ...prev,
-        cardNumber: bankDetailData[0]?.AccountNo,
+        cardNumber: formatCardNumber(bankDetailData[0]?.AccountNo ?? ""),
       }));
     }
 
@@ -419,11 +424,7 @@ function PaymentModal({ plan, userId, onClose, onSuccess }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     let v = value;
-    if (name === "cardNumber")
-      v = value
-        ?.replace(/\D/g, "")
-        ?.slice(0, 16)
-        ?.replace(/(\d{4})(?=\d)/g, "$1 ");
+    if (name === "cardNumber") v = formatCardNumber(value);
     if (name === "expiry") {
       v = value?.replace(/\D/g, "")?.slice(0, 4);
       if (v.length >= 3) v = v?.slice(0, 2) + "/" + v?.slice(2);
@@ -670,8 +671,6 @@ export default function PlansAndSubscriptions() {
   const userId = loginResponce?.userId;
   const userType = loginResponce?.userType;
   const queryClient = useQueryClient();
-console.log(userType,"userType");
-
   const [tab, setTab] = useState("plans");
   const [detailPlan, setDetailPlan] = useState(null); // plan detail modal
   const [paymentPlan, setPaymentPlan] = useState(null); // payment modal

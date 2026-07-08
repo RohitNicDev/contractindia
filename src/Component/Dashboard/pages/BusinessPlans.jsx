@@ -336,8 +336,7 @@ const BusinessPlans = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_rgba(139,92,246,0.07),_transparent_55%),#f8fafc] p-4 sm:p-6">
-      <div className="mx-auto max-w-7xl space-y-6">
+       <div className="mx-auto  space-y-6">
         <CustomHeading
           title="Business Plans"
           subtitle="Manage plan master entries with create, update, delete."
@@ -659,7 +658,7 @@ const BusinessPlans = () => {
    
         </Modal> */}
       </div>
-    </div>
+   
   );
 };
 

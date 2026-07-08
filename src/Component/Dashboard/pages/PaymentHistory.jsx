@@ -307,7 +307,7 @@ export default function PaymentHistory() {
       title: "Remark",
       key: "Remark",
       render: (_, r) => (
-        <span className="text-xs text-slate-600">{formatDateTime(r?.Remark)}</span>
+        <span className="text-xs text-slate-600">{r?.Remark}</span>
       ),
     },
     {

@@ -447,11 +447,7 @@ export const Dashboard = (props) => {
             //   text: "New lead from Rajesh Kumar",
             //   time: "2 hrs ago",
             // },
-            {
-              dot: "bg-blue-400",
-              text: "Payment of ₹1,000 received",
-              time: "Yesterday",
-            },
+           
             {
               dot: "bg-violet-400",
               text: "Profile updated successfully",
