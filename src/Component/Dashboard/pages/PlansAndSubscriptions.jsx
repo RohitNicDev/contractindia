@@ -35,7 +35,7 @@ import {
 // ─── API helpers ───────────────────────────────────────────────────────────────
 const fetchPlans = async (userType) => {
   const res = await planMasterGetById(`userType=${userType}`);
- 
+
   return res?.data ?? [];
 };
 
@@ -341,15 +341,8 @@ function SubscriptionDetailModal({ sub, planMap, onClose }) {
 
 // ─── Payment Modal ─────────────────────────────────────────────────────────────
 function PaymentModal({ plan, userId, onClose, onSuccess }) {
-  const [step, setStep] = useState("form");
-
-  const [form, setForm] = useState({
-    cardNumber: "",
-    cardHolder: "",
-    expiry: "",
-    cvv: "",
-    amount: plan?.Price ?? 0,
-  });
+  const [step, setStep] = useState("payment");
+  const { loginResponce } = useUserStore();
 
   const {
     mutate: saveUserPaymentHistorySave,
@@ -358,110 +351,120 @@ function PaymentModal({ plan, userId, onClose, onSuccess }) {
     mutationFn: UserPaymentHistorySave,
     onSuccess: (res) => {
       if (res?.status) {
-        setStep("success");
-
-        toast.success("Payment successful!");
+        toast.success("Payment history saved!");
+        saveSubscription({
+          // userSubscriptionID: 0,
+          userID: userId,
+          planID: plan?.PlanID,
+          planName: plan?.PlanName ?? "",
+          remark: plan?.Remark ?? "",
+          enterredIP: "",
+          enterredBy: userId,
+          enterDate: new Date().toISOString(),
+          isActive: 1,
+        });
       } else {
-        toast.error(res?.message ?? "User Payment   failed.");
-        setStep("form");
+        toast.error(res?.message ?? "Failed to save payment history");
+        setStep("payment");
       }
     },
-    onError: () => {
-      toast.error("Failed to save User Payment Save.");
-      setStep("form");
+    onError: (error) => {
+      toast.error(error?.message ?? "Failed to save payment history");
+      setStep("payment");
     },
   });
+
   const { mutate: saveSubscription, isPending: isSaving } = useMutation({
     mutationFn: userSubscriptionDetailSave,
     onSuccess: (res) => {
       if (res?.status) {
         setStep("success");
-        saveUserPaymentHistorySave({
-          userID: userId,
-          payment: plan?.Price ?? 0,
-          paymentStatus: plan?.Price === 0 ? "Free" : "Success",
-          paymentMode: "Card",
-          remark: plan?.PlanName ?? "",
-          enterredBy: userId,
-          enterDate: new Date().toISOString(),
-          isActive: 1,
-        });
-        toast.success("Payment successful!");
+        // toast.success(res?.message ?? "Subscription saved successfully!");
       } else {
-        toast.error(res?.message ?? "Subscription failed.");
-        setStep("form");
+        toast.error(res?.message ?? "Subscription failed");
+        setStep("payment");
       }
     },
-    onError: () => {
-      toast.error("Failed to save subscription.");
-      setStep("form");
+    onError: (error) => {
+      toast.error(error?.message ?? "Failed to save subscription");
+      setStep("payment");
     },
   });
-  const { data: bankDetailData = [], isLoading: bankDetailDataLoading } =
-    useQuery({
-      queryKey: ["bankDetailData", userId],
-      queryFn: () => userBankDetailbyParamsApi(userId),
-      enabled: !!userId,
-      retry: false,
-    });
-  const formatCardNumber = (value = "") => {
-    return value
-      ?.replace(/\D/g, "")
-      ?.slice(0, 16)
-      ?.replace(/(\d{4})(?=\d)/g, "$1 ");
+
+  // ── Initialize Razorpay Payment ────────────────────────────────────────────
+  const handleRazorpayPayment = async () => {
+    try {
+      // Check if Razorpay script is loaded
+      if (!window.Razorpay) {
+        toast.error("Payment gateway not loaded. Please refresh the page.");
+        return;
+      }
+
+      setStep("processing");
+
+      const options = {
+        key: "rzp_test_TBIngVA6fjYaLH", // Test Key ID
+        amount: Number(plan?.Price || 0) * 100, // Amount in paise
+        currency: "INR",
+        name: "ContractsIndia",
+        description: plan?.PlanName,
+        image: "/logo.png",
+        handler: async function (response) {
+          console.log("Payment Success:", response);
+
+          // Save payment history on successful payment
+          saveUserPaymentHistorySave({
+            userID: userId,
+            TransactionID: response?.razorpay_payment_id ?? "",
+            payment: plan?.Price ?? 0,
+            paymentStatus: "Success",
+            paymentMode: "Card", 
+            remark: plan?.PlanName ?? "",
+            enterredBy: userId,
+            enterDate: new Date().toISOString(),
+            TransactionDate: new Date().toISOString(),
+            isActive: 1,
+          });
+        },
+        prefill: {
+          name: loginResponce?.userName || "",
+          email: loginResponce?.emailId || "",
+          contact: loginResponce?.mobileNo || "",
+        },
+        theme: {
+          color: "#2563eb",
+        },
+        modal: {
+          ondismiss: () => {
+            setStep("payment");
+            toast.error("Payment cancelled by user");
+          },
+        },
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+    } catch (error) {
+      console.error("Razorpay error:", error);
+      toast.error("Failed to initialize payment gateway");
+      setStep("payment");
+    }
   };
-  useEffect(() => {
-    if (bankDetailData?.length > 0) {
-      setForm((prev) => ({
-        ...prev,
-        cardNumber: formatCardNumber(bankDetailData[0]?.AccountNo ?? ""),
-      }));
-    }
 
-    console.log(bankDetailData, "bankDetailData");
-  }, [bankDetailData]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    let v = value;
-    if (name === "cardNumber") v = formatCardNumber(value);
-    if (name === "expiry") {
-      v = value?.replace(/\D/g, "")?.slice(0, 4);
-      if (v.length >= 3) v = v?.slice(0, 2) + "/" + v?.slice(2);
-    }
-    if (name === "cvv") v = value?.replace(/\D/g, "")?.slice(0, 4);
-    setForm((p) => ({ ...p, [name]: v }));
-  };
-
-  const isValid =
-    form.cardNumber?.replace(/\s/g, "").length === 16 &&
-    form.cardHolder?.trim().length > 0 &&
-    form.expiry?.length === 5 &&
-    form.cvv?.length >= 3;
-
-  const handleSubmit = () => {
-    if (!isValid) {
-      toast.error("Please fill in valid card details.");
-      return;
-    }
+  // ── Handle Free Plan ────────────────────────────────────────────────────────
+  const handleFreePlan = () => {
     setStep("processing");
-
-    // Save subscription to API
-    saveSubscription({
-      userSubscriptionID: 0,
+    saveUserPaymentHistorySave({
       userID: userId,
-      planID: plan?.PlanID,
-      planName: plan?.PlanName ?? "",
-      remark: plan?.Remark ?? "",
-      enterredIP: "",
+      payment: 0,
+      paymentStatus: "Free",
+      paymentMode: "Free",
+      remark: plan?.PlanName ?? "",
       enterredBy: userId,
       enterDate: new Date().toISOString(),
       isActive: 1,
     });
   };
-  useEffect(() => {
-    console.log(form, "form");
-  }, [form]);
 
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center px-4 py-6">
@@ -470,7 +473,7 @@ function PaymentModal({ plan, userId, onClose, onSuccess }) {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"
-        onClick={step === "form" ? onClose : undefined}
+        onClick={step === "payment" ? onClose : undefined}
       />
       <motion.div
         initial={{ opacity: 0, y: 30, scale: 0.97 }}
@@ -479,7 +482,7 @@ function PaymentModal({ plan, userId, onClose, onSuccess }) {
         transition={{ duration: 0.2 }}
         className="relative w-full max-w-lg rounded-3xl bg-white shadow-2xl overflow-hidden"
       >
-        {step === "form" && (
+        {step === "payment" && (
           <div className="p-6 space-y-5">
             <div className="flex items-center justify-between">
               <div>
@@ -511,12 +514,12 @@ function PaymentModal({ plan, userId, onClose, onSuccess }) {
                     Total Amount
                   </p>
                   <p className="text-3xl font-black mt-1 flex items-center gap-1">
-                    {form.amount == 0 ? (
+                    {plan?.Price == 0 ? (
                       "Free"
                     ) : (
                       <>
                         <IndianRupee className="h-6 w-6" />
-                        {form.amount?.toLocaleString("en-IN")}
+                        {plan?.Price?.toLocaleString("en-IN")}
                       </>
                     )}
                   </p>
@@ -533,91 +536,54 @@ function PaymentModal({ plan, userId, onClose, onSuccess }) {
               </div>
             </div>
 
-            {form.amount > 0 ? (
-              <div className="space-y-3">
-                <div>
-                  <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-1.5">
-                    Card Number
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      name="cardNumber"
-                      value={form.cardNumber}
-                      onChange={handleChange}
-                      placeholder="1234 5678 9012 3456"
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-mono outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
-                    />
-                    <Lock className="absolute right-3 top-3.5 h-4 w-4 text-slate-300" />
-                  </div>
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-1.5">
-                    Card Holder
-                  </label>
-                  <input
-                    type="text"
-                    name="cardHolder"
-                    value={form.cardHolder}
-                    onChange={handleChange}
-                    placeholder="Name on card"
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm uppercase outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-1.5">
-                      Expiry
-                    </label>
-                    <input
-                      type="text"
-                      name="expiry"
-                      value={form.expiry}
-                      onChange={handleChange}
-                      placeholder="MM/YY"
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-mono outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs font-bold text-slate-600 uppercase tracking-wide block mb-1.5">
-                      CVV
-                    </label>
-                    <input
-                      type="password"
-                      name="cvv"
-                      value={form.cvv}
-                      onChange={handleChange}
-                      placeholder="•••"
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-mono outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
-                    />
-                  </div>
-                </div>
+            {plan?.Price > 0 ? (
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                <p className="text-xs text-blue-700 font-semibold">
+                  💳 You will be redirected to Razorpay secure payment gateway
+                </p>
               </div>
             ) : (
               <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl text-center">
                 <p className="text-sm font-bold text-emerald-700">
-                  This plan is free — no payment required.
+                  ✓ This plan is free — no payment required.
                 </p>
               </div>
             )}
 
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={handleSubmit}
-              disabled={form.amount > 0 && !isValid}
-              className={`w-full py-3.5 rounded-2xl font-bold text-sm text-white shadow-lg transition-opacity ${
-                form.amount > 0 && !isValid
-                  ? "bg-slate-300 cursor-not-allowed"
-                  : "bg-gradient-to-r from-indigo-600 to-violet-600 hover:opacity-90"
-              }`}
-            >
-              {form.amount === 0
-                ? "Activate Free Plan"
-                : `Pay ${formatPrice(form.amount)}`}
-            </motion.button>
+            <div className="flex gap-3">
+              <button
+                onClick={onClose}
+                className="flex-1 py-3 rounded-2xl border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={
+                  plan?.Price === 0 ? handleFreePlan : handleRazorpayPayment
+                }
+                disabled={isUserPaymentHistorySaving || isSaving}
+                className={`flex-1 py-3 rounded-2xl font-bold text-sm text-white shadow-lg transition-all ${
+                  isUserPaymentHistorySaving || isSaving
+                    ? "bg-slate-300 cursor-not-allowed"
+                    : "bg-gradient-to-r from-indigo-600 to-violet-600 hover:opacity-90"
+                }`}
+              >
+                {isUserPaymentHistorySaving || isSaving ? (
+                  <>
+                    <Loader2 className="inline w-4 h-4 animate-spin mr-2" />
+                    Processing…
+                  </>
+                ) : plan?.Price === 0 ? (
+                  "Activate Free Plan"
+                ) : (
+                  `Pay ${formatPrice(plan?.Price)}`
+                )}
+              </motion.button>
+            </div>
             <p className="text-center text-[10px] text-slate-400">
-              Secure payment · SSL encrypted
+              Secure payment · SSL encrypted · Powered by Razorpay
             </p>
           </div>
         )}
@@ -625,7 +591,9 @@ function PaymentModal({ plan, userId, onClose, onSuccess }) {
         {step === "processing" && (
           <div className="p-14 flex flex-col items-center justify-center gap-4">
             <Loader2 className="h-10 w-10 animate-spin text-indigo-500" />
-            <p className="text-sm font-bold text-slate-700">Processing…</p>
+            <p className="text-sm font-bold text-slate-700">
+              Processing your payment…
+            </p>
           </div>
         )}
 
@@ -683,8 +651,9 @@ export default function PlansAndSubscriptions() {
     refetch: refetchPlans,
     isFetching: plansFetching,
   } = useQuery({
-    queryKey: ["planMasterGetById",userType],
-    queryFn:()=> fetchPlans(userType),
+    queryKey: ["planMasterGetById", userType],
+    queryFn: () => fetchPlans(userType),
+    enabled: !!userType,
     retry: 1,
   });
 
@@ -803,24 +772,24 @@ export default function PlansAndSubscriptions() {
       render: (_, r) => (
         <div>
           <p className="font-bold text-slate-800">{r?.PlanName ?? "—"}</p>
-          <p className="text-[10px] text-slate-400">ID #{r?.SubscriptionID}</p>
+          {/* <p className="text-[10px] text-slate-400">ID #{r?.SubscriptionID}</p> */}
         </div>
       ),
     },
-    // {
-    //   title: "Plan ID",
-    //   key: "PlanID",
-    //   render: (_, r) => <span className="font-mono text-xs text-slate-500">#{r?.PlanID}</span>,
-    // },
     {
-      title: "Subscribed On",
-      key: "EnterDate",
-      render: (_, r) => (
-        <span className="text-xs text-slate-600">
-          {formatDate(r?.EnterDate)}
-        </span>
-      ),
+      title: "Amount",
+      key: "amount",
+      render: (_, r) => <span className="font-semibold text-md bold text-slate-500">₹{r?.amount?.toLocaleString("en-IN")}</span>,
     },
+    // {
+    //   title: "Subscribed On",
+    //   key: "EnterDate",
+    //   render: (_, r) => (
+    //     <span className="text-xs text-slate-600">
+    //       {formatDate(r?.EnterDate)}
+    //     </span>
+    //   ),
+    // },
     {
       title: "Status",
       key: "IsActive",

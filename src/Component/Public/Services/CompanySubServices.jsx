@@ -1,11 +1,16 @@
 ﻿/**
  * CompanySubServices
- * Left sidebar: infinite dynamic service tree.
- * "View Details" -> ConfirmModal (check if user wants to proceed) -> CommonModal (logged-in) or login-prompt ConfirmModal (guest).
+ *
+ * Updated Flow:
+ * 1. User clicks "View Details"
+ * 2. Check if user has active plan
+ * 3. If yes → Show contractor details
+ * 4. If no → Show SubscriptionPlansFlow modal for payment
+ * 5. After successful payment → Show contractor details
  */
 
 import { useEffect, useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Building2,
@@ -14,17 +19,38 @@ import {
   PhoneCall,
   Star,
   LogIn,
+  Crown,
+  X,
 } from "lucide-react";
-import { ContractorListGet, ServiceMenuGet, userServicesdetailsGetByparam } from "../../../services/api";
+import {
+  ContractorListGet,
+  ServiceMenuGet,
+  userServicesdetailsGetByparam,
+  UserSubscriptionDetailGet,
+  planMasterGetById,
+  userSubscriptionDetailSave,
+  UserPaymentHistorySave,
+} from "../../../services/api";
 import { useNavigate, useParams } from "react-router-dom";
 import { useServiceStore, useUserStore } from "../../../store/store";
 import { CommonModal } from "../../common/CommonModal";
 import { ConfirmModal } from "../../common/ConfirmModal";
+import { toast } from "sonner";
 
 /* ─── API ─────────────────────────────────────────────────────────────── */
 const fetchContractors = async (serviceId) => {
   if (!serviceId) return [];
   return (await userServicesdetailsGetByparam(serviceId)) ?? [];
+};
+
+const fetchUserSubscriptions = async (userId) => {
+  const response = await UserSubscriptionDetailGet(`userId=${userId}`);
+  return response?.data ?? [];
+};
+
+const fetchPlans = async (userType) => {
+  const res = await planMasterGetById(`userType=${userType}`);
+  return res?.data ?? [];
 };
 
 /* ─── Tree helpers ─────────────────────────────────────────────────────── */
@@ -59,10 +85,12 @@ const findNode = (nodes, id) => {
   }
   return null;
 };
+
 const API_URL =
   import.meta.env.VITE_API_URL ||
   import.meta.env.VITE_BASE_URL ||
   import.meta.env.BASE_URL;
+
 const subtreeHasActive = (node, activeId) => {
   if (node.ServiceID === activeId) return true;
   return (node.children ?? []).some((c) => subtreeHasActive(c, activeId));
@@ -337,30 +365,38 @@ function ContractorDetail({ item }) {
 }
 
 /* ════════════════════════════════════════════════════════════════════════
-   LOGIN PROMPT MODAL BODY
+   PLAN REQUIRED MODAL
    ════════════════════════════════════════════════════════════════════════ */
-function LoginPromptBody({ onLogin }) {
+function PlanRequiredModal({ onUpgrade, onClose }) {
   return (
     <div className="py-4 text-center space-y-4">
-      <div className="w-16 h-16 rounded-2xl bg-indigo-50 flex items-center justify-center mx-auto">
-        <LogIn className="w-8 h-8 text-indigo-500" />
+      <div className="w-16 h-16 rounded-2xl bg-amber-50 flex items-center justify-center mx-auto">
+        <Crown className="w-8 h-8 text-amber-500" />
       </div>
       <div>
         <h3 className="font-black text-slate-900 text-lg">
-          Sign in to view details
+          Active Plan Required
         </h3>
         <p className="text-sm text-slate-500 mt-1">
-          Create a account or log in to see contractor contact details, and
-          more.
+          You need an active subscription to view contractor details. Choose a
+          plan to continue.
         </p>
       </div>
-      <button
-        onClick={onLogin}
-        className="w-full py-3 rounded-2xl font-bold text-sm text-white shadow-lg"
-        style={{ background: "linear-gradient(135deg,#6366f1,#8b5cf6)" }}
-      >
-        Sign in / Register
-      </button>
+      <div className="flex gap-2">
+        <button
+          onClick={onClose}
+          className="flex-1 py-2.5 rounded-2xl border border-slate-200 font-bold text-sm text-slate-600 hover:bg-slate-50 transition-all"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={onUpgrade}
+          className="flex-1 py-2.5 rounded-2xl font-bold text-sm text-white shadow-lg"
+          style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)" }}
+        >
+          Choose Plan
+        </button>
+      </div>
     </div>
   );
 }
@@ -368,16 +404,16 @@ function LoginPromptBody({ onLogin }) {
 /* ════════════════════════════════════════════════════════════════════════
    CONTRACTOR CARD
    ════════════════════════════════════════════════════════════════════════ */
-function ContractorCard({ item, idx, onViewDetails, onCall = () => {} }) {
+function ContractorCard({ item, idx, onViewDetails }) {
   const imgUrl = `${API_URL}/UserDocumentStore/image?userId=${item?.UserID}&documentCategoryId=7&documentSubCategoryId=10`;
-  const img =
-   imgUrl|| IMGS[idx % IMGS.length];
+  const img = imgUrl || IMGS[idx % IMGS.length];
   const location = item?.CityName || item?.StateName || "India";
   const company = item?.CompanyName || item?.Name || "Contractor";
   const phone = item?.MobileNo || item?.PhoneNo || "";
   const status = item?.Status || "";
   const rating =
     typeof item?.Rating === "number" ? item?.Rating : 4.5 + (idx % 5) * 0.1;
+
   return (
     <motion.div
       layout
@@ -419,27 +455,6 @@ function ContractorCard({ item, idx, onViewDetails, onCall = () => {} }) {
           <MapPin size={10} />
           <span className="text-[10px] truncate">{location}</span>
         </div>
-        {/* <div className="grid grid-cols-2 gap-2 py-3 border-y border-slate-50 mb-3">
-          <div>
-            <p className="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">
-              Experience
-            </p>
-            <p className="text-[11px] font-bold text-slate-700">
-              {item?.Experience ? `${item.Experience} Yrs` : "—"}
-            </p>
-          </div>
-          <div className="border-l border-slate-100 pl-2">
-            <p className="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">
-              Projects
-            </p>
-            <p className="text-[11px] font-bold text-slate-700">
-              {item?.ProjectsCompleted ? `${item.ProjectsCompleted}+` : "—"}
-            </p>
-          </div>
-        </div> */}
-        {/* <p className="text-[11px] text-slate-400 line-clamp-1 mb-4">
-          {item?.EmailId || "Verified on Contracts India"}
-        </p> */}
         <div className="flex gap-2">
           <button
             onClick={() => onViewDetails(item)}
@@ -449,7 +464,7 @@ function ContractorCard({ item, idx, onViewDetails, onCall = () => {} }) {
           </button>
           {phone && (
             <a
-              onClick={()=>onCall(item)}
+              href={`tel:${phone}`}
               className="flex-1 inline-flex items-center justify-center gap-1.5 border border-emerald-200 text-emerald-700 py-2 rounded-xl text-[11px] font-bold hover:bg-emerald-50 transition-all"
             >
               <PhoneCall className="w-3.5 h-3.5" /> Call
@@ -469,11 +484,6 @@ function CardSkeleton() {
       <div className="px-4 pb-4 space-y-3 mt-2">
         <div className="h-3 bg-slate-100 rounded w-3/4" />
         <div className="h-2 bg-slate-100 rounded w-1/2" />
-        <div className="grid grid-cols-2 gap-2 py-3 border-y border-slate-50">
-          <div className="h-4 bg-slate-100 rounded" />
-          <div className="h-4 bg-slate-100 rounded" />
-        </div>
-        <div className="h-2 bg-slate-100 rounded" />
         <div className="flex gap-2">
           <div className="flex-1 h-8 bg-slate-100 rounded-xl" />
           <div className="flex-1 h-8 bg-slate-100 rounded-xl" />
@@ -494,18 +504,18 @@ const CompanySubServices = () => {
     loginResponce?.isLoginSuccessful || loginResponce?.userId
   );
 
+  const userId = loginResponce?.userId || 0;
+  const userType = loginResponce?.userType || 0;
+
   const menuServicesInStore = useServiceStore(
     (state) => state?.allMenuServices ?? state?.allServices ?? [],
   );
 
   const [activeId, setActiveId] = useState(null);
   const [expandedIds, setExpandedIds] = useState(new Set());
-
-  /* Modal state */
-  const [detailItem, setDetailItem] = useState(null); // contractor being viewed
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [pendingItem, setPendingItem] = useState(null); // contractor awaiting confirmation
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [detailItem, setDetailItem] = useState(null);
+  const [showPlanModal, setShowPlanModal] = useState(false);
+  const [showPlansFlow, setShowPlansFlow] = useState(false);
 
   /* ── Fetch service menu ── */
   const { data: menuServicesApi = [], isLoading: menuServicesLoading } =
@@ -530,6 +540,25 @@ const CompanySubServices = () => {
 
   const treeLoading = menuServicesLoading && !menuServicesInStore?.length;
   const totalNodes = useMemo(() => flattenTree(tree)?.length, [tree]);
+
+  /* ── Fetch user subscriptions ── */
+  const { data: subscriptions = [], refetch: refetchSubscriptions } = useQuery(
+    {
+      queryKey: ["userSubscriptions", userId],
+      queryFn: () => fetchUserSubscriptions(userId),
+      enabled: !!userId && isLoggedIn,
+      retry: false,
+    },
+  );
+
+  const hasActivePlan = subscriptions.some((s) => s.IsActive === 1);
+
+  /* ── Fetch plans ── */
+  const { data: plans = [] } = useQuery({
+    queryKey: ["planMasterGetById", userType],
+    queryFn: () => fetchPlans(userType),
+    enabled: !!userType && showPlansFlow,
+  });
 
   /* Auto-select first leaf */
   useEffect(() => {
@@ -577,29 +606,129 @@ const CompanySubServices = () => {
     staleTime: 2 * 60 * 1000,
   });
 
-  /* ── View Details handler with confirmation ── */
+  /* ── Handle View Details ── */
   const handleViewDetails = (item) => {
-    setPendingItem(item);
-    setShowConfirmModal(true);
-  };
-
-  /* ── Handle confirmation modal submit ── */
-  const handleConfirmView = async () => {
-    if (isLoggedIn) {
-      setDetailItem(pendingItem);
-      setShowConfirmModal(false);
-      setPendingItem(null);
-    } else {
-      setShowConfirmModal(false);
-      setPendingItem(null);
-      setShowLoginModal(true);
+    if (!isLoggedIn) {
+      navigate("/login");
+      return;
     }
+
+    if (!hasActivePlan) {
+      setShowPlanModal(true);
+      return;
+    }
+
+    setDetailItem(item);
   };
 
-  /* ── Handle confirmation modal cancel ── */
-  const handleCancelConfirm = () => {
-    setShowConfirmModal(false);
-    setPendingItem(null);
+  /* ── Handle plan upgrade ── */
+  const handleUpgradePlan = () => {
+    setShowPlanModal(false);
+    setShowPlansFlow(true);
+  };
+
+  /* ── Mutations ── */
+  const { mutateAsync: saveSubscription } = useMutation({
+    mutationFn: userSubscriptionDetailSave,
+  });
+
+  const { mutateAsync: savePaymentHistory } = useMutation({
+    mutationFn: UserPaymentHistorySave,
+  });
+
+  /* ── Handle Select Plan from Flow ── */
+  const handleSelectPlan = async (plan) => {
+    try {
+      // Step 1: Save subscription (inactive)
+      const subPayload = {
+        userSubscriptionID: 0,
+        userID: userId,
+        planID: plan.PlanID,
+        planName: plan.PlanName || "",
+        remark: plan.Remark || "",
+        enterredBy: userId,
+        enterDate: new Date().toISOString(),
+        isActive: 0,
+      };
+
+      const subRes = await saveSubscription(subPayload);
+      if (!subRes?.status) {
+        toast.error(subRes?.message || "Failed to prepare subscription");
+        return;
+      }
+
+      // Step 2: Trigger Razorpay
+      if (!window.Razorpay) {
+        toast.error("Payment gateway not loaded. Please refresh the page.");
+        return;
+      }
+
+      const options = {
+        key: "rzp_test_TBIngVA6fjYaLH",
+        amount: Number(plan.Price || 0) * 100,
+        currency: "INR",
+        name: "ContractsIndia",
+        description: plan.PlanName,
+        image: "/logo.png",
+        handler: async function (response) {
+          try {
+            // Step 3a: Save payment history
+            await savePaymentHistory({
+              userID: userId,
+              payment: plan.Price ?? 0,
+              paymentStatus: "Success",
+              paymentMode: "Razorpay",
+              remark: plan.PlanName ?? "",
+              enterredBy: userId,
+              enterDate: new Date().toISOString(),
+              isActive: 1,
+            });
+
+            // Step 3b: Activate subscription
+            const activatePayload = {
+              userSubscriptionID: 0,
+              userID: userId,
+              planID: plan.PlanID,
+              planName: plan.PlanName || "",
+              remark: plan.Remark || "",
+              enterredBy: userId,
+              enterDate: new Date().toISOString(),
+              isActive: 1,
+            };
+
+            await saveSubscription(activatePayload);
+
+            // Step 4: Close modal and refetch
+            setShowPlansFlow(false);
+            setShowPlanModal(false);
+            refetchSubscriptions();
+            toast.success("Payment successful! Your plan is now active.");
+          } catch (err) {
+            console.error("Error after payment:", err);
+            toast.error("Payment received but activation failed. Please contact support.");
+          }
+        },
+        prefill: {
+          name: loginResponce?.userName || "",
+          email: loginResponce?.emailId || "",
+          contact: loginResponce?.mobileNo || "",
+        },
+        theme: {
+          color: "#2563eb",
+        },
+        modal: {
+          ondismiss: () => {
+            toast.error("Payment cancelled by user");
+          },
+        },
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+    } catch (err) {
+      console.error("Plan selection error:", err);
+      toast.error(err?.message || "Error processing plan selection");
+    }
   };
 
   const company = detailItem?.CompanyName || detailItem?.Name || "Contractor";
@@ -672,14 +801,6 @@ const CompanySubServices = () => {
                     </span>
                   )}
                 </h2>
-                {/* {activeNode && (
-                  <p className="text-[10px] text-slate-400 mt-0.5 font-medium">
-                    ID #{activeNode.ServiceID}
-                    {activeNode.children?.length > 0
-                      ? ` · ${activeNode.children.length} sub-categories`
-                      : " · leaf"}
-                  </p>
-                )} */}
               </div>
             </div>
 
@@ -696,14 +817,7 @@ const CompanySubServices = () => {
                       key={item?.userId ?? idx}
                       item={item}
                       idx={idx}
-                      onViewDetails={
-                        isLoggedIn ? handleViewDetails : handleConfirmView
-                      }
-                      onCall={() => {
-                        isLoggedIn
-                          ? (window.location.href = `tel:${item?.MobileNo || item?.PhoneNo}`)
-                          : setShowLoginModal(true);
-                      }}
+                      onViewDetails={handleViewDetails}
                     />
                   ))}
                 </AnimatePresence>
@@ -729,23 +843,22 @@ const CompanySubServices = () => {
         </div>
       </div>
 
-      {/* ── Confirmation modal before viewing details ── */}
-      <ConfirmModal
-        isOpen={showConfirmModal}
-        onClose={handleCancelConfirm}
-        action="View Details"
-        contractor={pendingItem}
-        message="You are about to view the contact details of this contractor. Please confirm to proceed."
-        confirmText="Yes, View Details"
-        cancelText="Cancel"
-        title="Confirm Action"
+      {/* ── Plan Required Modal ── */}
+      <CommonModal
+        isOpen={showPlanModal}
+        onClose={() => setShowPlanModal(false)}
+        title="Active Plan Required"
         variant="warning"
         size="sm"
-        onConfirm={handleConfirmView}
-        onCancel={handleCancelConfirm}
-      />
+        hideFooter
+      >
+        <PlanRequiredModal
+          onUpgrade={handleUpgradePlan}
+          onClose={() => setShowPlanModal(false)}
+        />
+      </CommonModal>
 
-      {/* ── Contractor detail modal (logged-in users) ── */}
+      {/* ── Contractor Detail Modal ── */}
       <CommonModal
         isOpen={!!detailItem}
         onClose={() => setDetailItem(null)}
@@ -758,24 +871,108 @@ const CompanySubServices = () => {
         {detailItem && <ContractorDetail item={detailItem} />}
       </CommonModal>
 
-      {/* ── Login prompt modal (guest users) ── */}
-      <CommonModal
-        isOpen={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-        title="Sign in required"
-        variant="default"
-        size="sm"
-        hideFooter
-      >
-        <LoginPromptBody
-          onLogin={() => {
-            setShowLoginModal(false);
-            navigate("/login");
-          }}
+      {/* ── Plans Flow (Simplified) ── */}
+      {showPlansFlow && (
+        <PlansFlowModal
+          open={showPlansFlow}
+          onClose={() => setShowPlansFlow(false)}
+          plans={plans}
+          userId={userId}
+          loginResponce={loginResponce}
+          onSelectPlan={handleSelectPlan}
         />
-      </CommonModal>
+      )}
     </div>
   );
 };
+
+/* ── Simple Plans Flow Modal Component ── */
+function PlansFlowModal({
+  open,
+  onClose,
+  plans,
+  userId,
+  loginResponce,
+  onSelectPlan,
+}) {
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            onClick={onClose}
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="relative w-full max-w-3xl max-h-[80vh] bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b border-slate-100">
+              <div>
+                <h2 className="text-xl font-black text-slate-900">
+                  Choose a Plan
+                </h2>
+                <p className="text-sm text-slate-500 mt-1">
+                  No hidden fees. Cancel anytime.
+                </p>
+              </div>
+              <button
+                onClick={onClose}
+                className="h-9 w-9 rounded-xl border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+              >
+                <X className="w-4 h-4 text-slate-500" />
+              </button>
+            </div>
+
+            {/* Plans Grid */}
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {plans.map((plan) => (
+                  <div
+                    key={plan.PlanID}
+                    className="rounded-2xl border-2 border-slate-200 p-5 hover:border-blue-300 transition-all"
+                  >
+                    <h3 className="font-black text-slate-900 mb-2">
+                      {plan.PlanName}
+                    </h3>
+                    <p className="text-3xl font-black text-blue-600 mb-4">
+                      ₹{plan.Price}
+                    </p>
+                    <p className="text-xs text-slate-500 mb-4">
+                      {plan.DurationType}
+                    </p>
+                    <ul className="space-y-1.5 mb-4 text-xs text-slate-600">
+                      <li>✓ Up to {plan.maxNoofServices} services</li>
+                      <li>✓ {plan.CreditsIncluded} credits</li>
+                      <li>✓ {plan.Remark}</li>
+                    </ul>
+                    <button
+                      onClick={() => {
+                        setIsProcessing(true);
+                        onSelectPlan(plan);
+                      }}
+                      disabled={isProcessing}
+                      className="w-full py-2.5 rounded-xl bg-blue-600 text-white font-bold text-sm hover:bg-blue-700 disabled:opacity-50 transition-all"
+                    >
+                      {isProcessing ? "Processing..." : "Select"}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+}
 
 export default CompanySubServices;

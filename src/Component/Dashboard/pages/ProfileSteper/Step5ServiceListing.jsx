@@ -8,9 +8,19 @@ import {
   ChevronDown,
   Loader,
   Crown,
+  Plus,
+  X,
+  IndianRupee,
+  Clock,
+  Layers,
+  Users,
+  CheckCircle2,
+  Calendar,
+  Star,
+  Eye,
 } from "lucide-react";
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { useUserStore } from "../../../../store/store";
 import { useProfileWizardStore } from "../../../../store/profileWizardStore";
@@ -20,6 +30,7 @@ import {
   UserSubscriptionDetailGet,
   UserServiceDetailsSave,
   UserServiceDetailsUpdate,
+  planMasterGetById,
 } from "../../../../services/api";
 import SubscriptionPlansFlow from "../SubscriptionPlansFlow";
 
@@ -34,6 +45,11 @@ const fetchUserSubscriptions = async (userId) => {
   return response?.data ?? [];
 };
 
+const fetchPlans = async (userType) => {
+  const res = await planMasterGetById(`userType=${userType}`);
+  return res?.data ?? [];
+};
+
 // ─── Color palette ─────────────────────────────────────────────────────────────
 const colorMap = {
   violet: {
@@ -42,30 +58,6 @@ const colorMap = {
     text: "#7c3aed",
     glow: "rgba(124,58,237,0.4)",
   },
-//   cyan: {
-//     border: "#a5f3fc",
-//     bg: "#ecfeff",
-//     text: "#0891b2",
-//     glow: "rgba(8,145,178,0.4)",
-//   },
-//   amber: {
-//     border: "#fde68a",
-//     bg: "#fffbeb",
-//     text: "#d97706",
-//     glow: "rgba(217,119,6,0.4)",
-//   },
-//   rose: {
-//     border: "#fecdd3",
-//     bg: "#fff1f2",
-//     text: "#e11d48",
-//     glow: "rgba(225,29,72,0.4)",
-//   },
-//   emerald: {
-//     border: "#a7f3d0",
-//     bg: "#ecfdf5",
-//     text: "#059669",
-//     glow: "rgba(5,150,105,0.4)",
-//   },
 };
 const COLOR_KEYS = Object.keys(colorMap);
 
@@ -109,22 +101,287 @@ const countTotalChildren = (item) => {
   return children.reduce((acc, c) => acc + 1 + countTotalChildren(c), 0);
 };
 
-// ─── Flatten tree to get all node ids ─────────────────────────────────────────
-const flattenTree = (nodes) => {
-  const result = [];
-  const walk = (list) =>
-    list.forEach((n) => {
-      result.push(n);
-      walk(n.children || []);
-    });
-  walk(nodes);
-  return result;
+// ─── Formatters ────────────────────────────────────────────────────────────────
+const formatPrice = (price) => {
+  if (price == null || price === "") return "—";
+  const num = Number(price);
+  if (isNaN(num)) return price;
+  return num === 0 ? "Free" : `₹${num?.toLocaleString("en-IN")}`;
 };
+
+const formatDate = (iso) => {
+  if (!iso) return "—";
+  try {
+    return new Date(iso).toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  } catch {
+    return iso;
+  }
+};
+
+// ─── Confirmation Modal ─────────────────────────────────────────────────────────
+function ActivateServiceModal({ service, plan, onConfirm, onCancel, isLoading }) {
+  return (
+    <AnimatePresence>
+      <div className="fixed inset-0 z-[1001] flex items-center justify-center px-4 py-6">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="absolute inset-0 bg-slate-950/75 backdrop-blur-sm"
+          onClick={onCancel}
+        />
+        <motion.div
+          initial={{ opacity: 0, y: 24, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 16, scale: 0.96 }}
+          transition={{ duration: 0.22 }}
+          className="relative w-full max-w-md rounded-3xl bg-white shadow-2xl overflow-hidden"
+        >
+          {/* Header */}
+          <div className="bg-gradient-to-br from-indigo-600 to-violet-700 p-6 text-white">
+            <div className="flex items-start justify-between">
+              <div>
+                <h2 className="text-2xl font-black">Activate Service?</h2>
+                <p className="text-indigo-200 text-xs mt-1">
+                  Confirm to activate this service
+                </p>
+              </div>
+              <button
+                onClick={onCancel}
+                className="h-8 w-8 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="p-6 space-y-4">
+            {/* Service Details */}
+            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
+                    Service
+                  </p>
+                  <p className="text-sm font-black text-slate-800">
+                    {service?.name}
+                  </p>
+                  <p className="text-xs text-slate-500 mt-1">
+                    {service?.description}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Plan Details */}
+            {plan && (
+              <div className="p-4 bg-gradient-to-br from-indigo-50 to-violet-50 rounded-2xl border border-indigo-200">
+                <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-2">
+                  Required Plan
+                </p>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-slate-600">
+                      Plan Name
+                    </span>
+                    <span className="font-bold text-indigo-700">
+                      {plan?.PlanName}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-slate-600">
+                      Price
+                    </span>
+                    <span className="font-bold text-indigo-700">
+                      {formatPrice(plan?.Price)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-slate-600">
+                      Duration
+                    </span>
+                    <span className="font-bold text-indigo-700">
+                      {plan?.DurationType}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={onCancel}
+                disabled={isLoading}
+                className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={onConfirm}
+                disabled={isLoading}
+                className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold text-sm shadow-lg hover:opacity-90 flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader className="h-4 w-4 animate-spin" /> Activating…
+                  </>
+                ) : (
+                  <>
+                    <Zap className="h-4 w-4" /> Confirm & Activate
+                  </>
+                )}
+              </motion.button>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </AnimatePresence>
+  );
+}
+
+// ─── Plan Detail Modal (from Available Plans) ─────────────────────────────────
+function PlanDetailModal({ plan, onClose, onSubscribe }) {
+  const price = plan?.Price ?? 0;
+
+  return (
+    <AnimatePresence>
+      <div className="fixed inset-0 z-[1001] flex items-center justify-center px-4 py-6">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="absolute inset-0 bg-slate-950/75 backdrop-blur-sm"
+          onClick={onClose}
+        />
+        <motion.div
+          initial={{ opacity: 0, y: 24, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 16, scale: 0.96 }}
+          transition={{ duration: 0.22 }}
+          className="relative w-full max-w-md rounded-3xl bg-white shadow-2xl overflow-hidden"
+        >
+          {/* Header gradient */}
+          <div className="bg-gradient-to-br from-indigo-600 to-violet-700 p-6 text-white">
+            <div className="flex items-start justify-between">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <Crown className="h-4 w-4 text-yellow-300" />
+                  <span className="text-xs font-bold uppercase tracking-widest text-indigo-200">
+                    {plan?.DurationType ?? "Plan"}
+                  </span>
+                </div>
+                <h2 className="text-2xl font-black">
+                  {plan?.PlanName ?? "Plan"}
+                </h2>
+                <p className="text-indigo-200 text-xs mt-1">
+                  {plan?.Remark ?? ""}
+                </p>
+              </div>
+              <button
+                onClick={onClose}
+                className="h-8 w-8 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="mt-4 flex items-end gap-1">
+              <IndianRupee className="h-6 w-6 mb-0.5 text-white/80" />
+              <span className="text-4xl font-black">
+                {price === 0 ? "Free" : price?.toLocaleString("en-IN")}
+              </span>
+              {price > 0 && (
+                <span className="text-indigo-200 text-sm mb-1">
+                  / {plan?.DurationType?.toLowerCase() ?? "period"}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Details */}
+          <div className="p-6 space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                {
+                  icon: Clock,
+                  label: "Duration",
+                  value: plan?.DurationType ?? "—",
+                },
+                {
+                  icon: Layers,
+                  label: "Max Services",
+                  value: plan?.maxNoofServices ?? "—",
+                },
+                {
+                  icon: Users,
+                  label: "User Type",
+                  value: plan?.UserTypeName || "All",
+                },
+                {
+                  icon: CheckCircle2,
+                  label: "Status",
+                  value: Number(plan?.IsActive) === 1 ? "Active" : "Inactive",
+                  color:
+                    Number(plan?.IsActive) === 1
+                      ? "text-emerald-600"
+                      : "text-slate-400",
+                },
+              ].map(({ icon: Icon, label, value, color }) => (
+                <div
+                  key={label}
+                  className="flex items-center gap-2.5 p-3 bg-slate-50 rounded-xl border border-slate-100"
+                >
+                  <div className="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0">
+                    <Icon className="h-3.5 w-3.5 text-indigo-500" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
+                      {label}
+                    </p>
+                    <p
+                      className={`text-xs font-bold truncate ${color ?? "text-slate-800"}`}
+                    >
+                      {value}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={onClose}
+                className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition-colors"
+              >
+                Close
+              </button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => onSubscribe(plan)}
+                className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold text-sm shadow-lg hover:opacity-90 flex items-center justify-center gap-1.5"
+              >
+                <Plus className="h-4 w-4" /> Subscribe
+              </motion.button>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </AnimatePresence>
+  );
+}
 
 // ═══════════════════════════════════════════════════════════════════════════════
 const Step5ServiceListing = ({ store, nextStep, prevStep, navbar = false }) => {
   const { loginResponce } = useUserStore();
   const userId = loginResponce?.userId;
+  const userType = loginResponce?.userType;
 
   // ── Fetch services ──────────────────────────────────────────────────────────
   const { data: rawServices = [], isLoading: servicesLoading } = useQuery({
@@ -146,15 +403,29 @@ const Step5ServiceListing = ({ store, nextStep, prevStep, navbar = false }) => {
     retry: false,
   });
 
-  // ── Derive active plan: index [0] = most recent, must be IsActive === 1 ───
-  const activePlan = subscriptions.find((s) => s.IsActive === 1) ?? null;
-  // Use index 0 if it's active, else no plan
+  // ── Fetch available plans ───────────────────────────────────────────────────
+  const {
+    data: plans = [],
+    isLoading: plansLoading,
+  } = useQuery({
+    queryKey: ["planMasterGetById", userType],
+    queryFn: () => fetchPlans(userType),
+    enabled: !!userType,
+    retry: false,
+  });
+
+  // ── Plan map for quick lookup ───────────────────────────────────────────────
+  const planMap = useMemo(() => {
+    const map = {};
+    plans?.forEach((p) => {
+      map[p?.PlanID] = p;
+    });
+    return map;
+  }, [plans]);
+
+  // ── Derive active plan ──────────────────────────────────────────────────────
   const latestSub = subscriptions[0] ?? null;
   const hasActivePlan = latestSub?.IsActive === 1;
-
-  // Max number of services allowed under the current subscription plan.
-  // NOTE: confirm the exact key name your API returns (maxNoofServices /
-  // MaxNoofServices / MaxNoOfServices) and adjust this line to match.
   const maxServicesAllowed = Number(latestSub?.maxNoofServices ?? 0);
 
   // ── Build tree & initial active ids from API ────────────────────────────────
@@ -164,6 +435,12 @@ const Step5ServiceListing = ({ store, nextStep, prevStep, navbar = false }) => {
   const [showPlans, setShowPlans] = useState(false);
   const [saving, setSaving] = useState(false);
   const [toggling, setToggling] = useState({});
+  const [confirmModal, setConfirmModal] = useState({
+    open: false,
+    service: null,
+    plan: null,
+  });
+  const [detailPlan, setDetailPlan] = useState(null);
   const profileStore = store ?? useProfileWizardStore();
 
   useEffect(() => {
@@ -183,17 +460,17 @@ const Step5ServiceListing = ({ store, nextStep, prevStep, navbar = false }) => {
     mutationFn: UserServiceDetailsSave,
     onSuccess: (response) => {
       if (response?.status) {
-        toast.success(response?.message || "Service saved successfully");
+        toast.success(response?.message || "Service activated successfully");
         refetchSubscriptions();
       } else {
         toast.error(
-          response?.message || "Failed to save service. Please try again.",
+          response?.message || "Failed to activate service. Please try again.",
         );
       }
     },
     onError: (error) => {
       toast.error(
-        error?.message || "Failed to save service. Please try again.",
+        error?.message || "Failed to activate service. Please try again.",
       );
     },
   });
@@ -202,22 +479,22 @@ const Step5ServiceListing = ({ store, nextStep, prevStep, navbar = false }) => {
     mutationFn: UserServiceDetailsUpdate,
     onSuccess: (response) => {
       if (response?.status) {
-        toast.success(response?.message || "Service updated successfully");
+        toast.success(response?.message || "Service activated successfully");
         refetchSubscriptions();
       } else {
         toast.error(
-          response?.message || "Failed to update service. Please try again",
+          response?.message || "Failed to activate service. Please try again",
         );
       }
     },
     onError: (error) => {
       toast.error(
-        error?.message || "Failed to update service. Please try again.",
+        error?.message || "Failed to activate service. Please try again.",
       );
     },
   });
 
-  // ── Toggle active (activate only — no deactivation once active) ────────────
+  // ── Toggle active with confirmation modal ────────────────────────────────
   const toggleActive = async (item) => {
     const id = item?.id;
     const isCurrentlyActive = activeIds.includes(id);
@@ -243,22 +520,37 @@ const Step5ServiceListing = ({ store, nextStep, prevStep, navbar = false }) => {
           maxServicesAllowed !== 1 ? "s" : ""
         } allowed on your plan.`,
       );
+      // Show current plan details
+      setDetailPlan(planMap[latestSub?.PlanID]);
       return;
     }
+
+    // Show confirmation modal
+    setConfirmModal({
+      open: true,
+      service: item,
+      plan: planMap[latestSub?.PlanID],
+    });
+  };
+
+  // ── Confirm activation ──────────────────────────────────────────────────────
+  const confirmActivation = async () => {
+    const { service } = confirmModal;
+    const id = service?.id;
 
     setToggling((prev) => ({ ...prev, [id]: true }));
 
     try {
       const payload = {
-        userServiceID: item?.userServiceId ?? 0,
+        userServiceID: service?.userServiceId ?? 0,
         userID: userId,
-        serviceID: item?.serviceId,
-        serviceName: item?.name,
-        planID: latestSub?.PlanID ?? item?.planId ?? 0,
-        planName: latestSub?.PlanName ?? item?.planName ?? "",
-        amount: item?.amount ?? activePlan?.amount ?? 0,
+        serviceID: service?.serviceId,
+        serviceName: service?.name,
+        planID: latestSub?.PlanID ?? service?.planId ?? 0,
+        planName: latestSub?.PlanName ?? service?.planName ?? "",
+        amount: service?.amount ?? 0,
         enterredBy: userId,
-        isActive: 1, // only ever activating now
+        isActive: 1,
       };
 
       // Wait for API response before updating UI
@@ -270,10 +562,10 @@ const Step5ServiceListing = ({ store, nextStep, prevStep, navbar = false }) => {
       // Only update UI if API was successful
       if (response?.status) {
         setActiveIds((prev) => [...prev, id]);
+        setConfirmModal({ open: false, service: null, plan: null });
       }
     } catch (err) {
       console.error("Toggle service error:", err);
-      // Do NOT update UI on error - subscription will be refetched
     } finally {
       setToggling((prev) => ({ ...prev, [id]: false }));
     }
@@ -416,8 +708,7 @@ const Step5ServiceListing = ({ store, nextStep, prevStep, navbar = false }) => {
                     </div>
                   </div>
 
-                  {/* Toggle button — disabled once active, since activated
-                      services can no longer be deactivated */}
+                  {/* Toggle button — disabled once active */}
                   <button
                     onClick={() => toggleActive(item)}
                     disabled={isTogglingNow || isActive}
@@ -477,6 +768,7 @@ const Step5ServiceListing = ({ store, nextStep, prevStep, navbar = false }) => {
     0,
   );
   const isLoading = servicesLoading || subscriptionsLoading;
+console.log(latestSub,"latestSub.EnterDate");
 
   return (
     <div className="space-y-6">
@@ -489,8 +781,8 @@ const Step5ServiceListing = ({ store, nextStep, prevStep, navbar = false }) => {
               Active Plan: {latestSub.PlanName}
             </p>
             <p className="text-[10px] text-emerald-600">
-              Subscription #{latestSub.SubscriptionID} · activated{" "}
-              {new Date(latestSub.EnterDate).toLocaleDateString()}
+              Subscription {latestSub.SubscriptionID} · activated{" "}
+              {/* {new Date(latestSub.EnterDate).toLocaleDateString()} */}
             </p>
           </div>
           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200">
@@ -538,13 +830,6 @@ const Step5ServiceListing = ({ store, nextStep, prevStep, navbar = false }) => {
             {totalServices}
           </div>
         </div>
-      </div>
-
-      <div className="flex items-center gap-2 text-sm text-slate-500">
-        <GripVertical className="h-4 w-4" />
-        <span className="font-medium text-xs">
-          Click chevron to expand/collapse · Click status badge to activate
-        </span>
       </div>
 
       {/* Service tree */}
@@ -595,7 +880,35 @@ const Step5ServiceListing = ({ store, nextStep, prevStep, navbar = false }) => {
         </div>
       )}
 
-      {/* Plans modal */}
+      {/* Modals */}
+      <AnimatePresence>
+        {/* Confirmation Modal */}
+        {confirmModal.open && (
+          <ActivateServiceModal
+            key="activate-confirmation"
+            service={confirmModal.service}
+            plan={confirmModal.plan}
+            onConfirm={confirmActivation}
+            onCancel={() => setConfirmModal({ open: false, service: null, plan: null })}
+            isLoading={toggling[confirmModal.service?.id]}
+          />
+        )}
+
+        {/* Plan Detail Modal */}
+        {detailPlan && (
+          <PlanDetailModal
+            key="plan-detail"
+            plan={detailPlan}
+            onClose={() => setDetailPlan(null)}
+            onSubscribe={(p) => {
+              setDetailPlan(null);
+              setShowPlans(true);
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Plans Flow Modal */}
       <SubscriptionPlansFlow
         open={showPlans}
         onClose={() => {
