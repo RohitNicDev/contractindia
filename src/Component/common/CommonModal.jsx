@@ -24,264 +24,248 @@
  *  isLoading     boolean?                 — shows spinner on confirm button
  *  hideFooter    boolean?                 — render body only, no footer at all
  */
+import { useEffect, useRef } from "react";  
+import { motion, AnimatePresence } from "framer-motion";  
+import { X, Loader2 } from "lucide-react";  
+  
+/* ── variant map ───────────────────────────────────────────────────────────── */  
+const VARIANTS = {  
+  default: {  
+    gradient: "from-violet-600 to-fuchsia-600",  
+    confirmBtn:  
+      "bg-gradient-to-r from-violet-600 to-fuchsia-600 shadow-violet-200",  
+  },  
+  danger: {  
+    gradient: "from-red-500 to-rose-600",  
+    confirmBtn: "bg-gradient-to-r from-red-500 to-rose-600 shadow-rose-200",  
+  },  
+  success: {  
+    gradient: "from-emerald-500 to-teal-600",  
+    confirmBtn:  
+      "bg-gradient-to-r from-emerald-500 to-teal-600 shadow-emerald-200",  
+  },  
+  warning: {  
+    gradient: "from-amber-500 to-orange-500",  
+    confirmBtn:  
+      "bg-gradient-to-r from-amber-500 to-orange-500 shadow-amber-200",  
+  },  
+  info: {  
+    gradient: "from-sky-500 to-blue-600",  
+    confirmBtn: "bg-gradient-to-r from-sky-500 to-blue-600 shadow-sky-200",  
+  },  
+};  
+  
+/* ── size map ──────────────────────────────────────────────────────────────── */  
+const SIZES = {  
+  sm: "max-w-sm",  
+  md: "max-w-lg",  
+  lg: "max-w-2xl",  
+  xl: "max-w-4xl",  
+  xxl: "max-w-6xl",  
+};  
+  
+/* ========================================================================== */  
+export function CommonModal({  
+  isOpen,  
+  onClose,  
+  title,  
+  subtitle,  
+  icon,  
+  variant = "default",  
+  size = "md",  
+  hideCloseBtn = false,  
+  children,  
+  footer,  
+  confirmLabel = "Confirm",  
+  cancelLabel = "Cancel",  
+  onConfirm,  
+  isLoading = false,  
+  hideFooter = false,  
+}) {  
+  const { gradient, confirmBtn } = VARIANTS[variant] ?? VARIANTS.default;  
+  const sizeClass = SIZES[size] ?? SIZES.md;  
+  const modalRef = useRef(null);  
+  
+  /* close on Escape */  
+  useEffect(() => {  
+    if (!isOpen) return;  
+    const handler = (e) => {  
+      if (e.key === "Escape") onClose?.();  
+    };  
+    document.addEventListener("keydown", handler);  
+    return () => document.removeEventListener("keydown", handler);  
+  }, [isOpen, onClose]);  
+  
+  /* lock body scroll while open */  
+  useEffect(() => {  
+    document.body.style.overflow = isOpen ? "hidden" : "";  
+    return () => {  
+      document.body.style.overflow = "";  
+    };  
+  }, [isOpen]);  
+  
+  return (  
+    <AnimatePresence>  
+      {isOpen && (  
+        <>  
+          {/* ── backdrop (handles outside clicks safely) ── */}  
+          <motion.div  
+            key="cm-backdrop"  
+            initial={{ opacity: 0 }}  
+            animate={{ opacity: 1 }}  
+            exit={{ opacity: 0 }}  
+            transition={{ duration: 0.18 }}  
+            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"  
+            onClick={onClose}  
+          />  
+  
+          {/* ── panel container (pointer-events-none lets clicks on portal-dropdowns pass through safely without closing modal!) ── */}  
+          <motion.div  
+            key="cm-panel"  
+            initial={{ opacity: 0, scale: 0.94, y: 24 }}  
+            animate={{ opacity: 1, scale: 1, y: 0 }}  
+            exit={{ opacity: 0, scale: 0.94, y: 16 }}  
+            transition={{ type: "spring", stiffness: 380, damping: 32 }}  
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"  
+          >  
+            {/* ── actual modal card (pointer-events-auto restores clicks inside the card) ── */}  
+            <div  
+              ref={modalRef}  
+              className={`${sizeClass} w-full max-h-[85vh] flex flex-col rounded-3xl bg-white shadow-2xl border border-slate-200/70 pointer-events-auto`}  
+            >  
+              {/* ── header ── */}  
+              <div  
+                className={`bg-gradient-to-r ${gradient} px-6 py-4.5 flex-shrink-0 rounded-t-3xl`}  
+              >  
+                <div className="flex items-center justify-between gap-3">  
+                  <div className="flex items-center gap-3 min-w-0">  
+                    {icon && (  
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-white/20 text-white">  
+                        {icon}  
+                      </div>  
+                    )}  
+                    <div className="min-w-0">  
+                      <h2 className="text-sm font-extrabold text-white truncate">  
+                        {title}  
+                      </h2>  
+                      {subtitle && (  
+                        <p className="text-[11px] text-white/70 mt-0.5 truncate">  
+                          {subtitle}  
+                        </p>  
+                      )}  
+                    </div>  
+                  </div>  
+                  {!hideCloseBtn && (  
+                    <button  
+                      type="button"  
+                      onClick={onClose}  
+                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white/20 text-white hover:bg-white/30 transition-all"  
+                      aria-label="Close modal"  
+                    >  
+                      <X className="h-4 w-4" />  
+                    </button>  
+                  )}  
+                </div>  
+              </div>  
+  
+              {/* ── body ── */}  
+              <div className="flex-1 overflow-y-auto p-6 space-y-5">  
+                {children}  
+              </div>  
+  
+              {/* ── footer ── */}  
+              {!hideFooter && (  
+                <div className="flex-shrink-0 border-t border-slate-100 px-6 py-4 flex items-center justify-end gap-2.5 bg-slate-50/50 rounded-b-3xl">  
+                  {footer ?? (  
+                    <>  
+                      <button  
+                        type="button"  
+                        onClick={onClose}  
+                        className="h-9 rounded-xl border border-slate-200 bg-white px-4 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all"  
+                      >  
+                        {cancelLabel}  
+                      </button>  
+                      {onConfirm && (  
+                        <button  
+                          type="button"  
+                          onClick={onConfirm}  
+                          disabled={isLoading}  
+                          className={`flex h-9 items-center gap-1.5 rounded-xl ${confirmBtn} px-5 text-xs font-bold text-white shadow-md transition-all hover:scale-[1.02] disabled:opacity-60 disabled:cursor-not-allowed`}  
+                        >  
+                          {isLoading && (  
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />  
+                          )}  
+                          {confirmLabel}  
+                        </button>  
+                      )}  
+                    </>  
+                  )}  
+                </div>  
+              )}  
+            </div>  
+          </motion.div>  
+        </>  
+      )}  
+    </AnimatePresence>  
+  );  
+}  
+  
+export default CommonModal;  
+  
+/* ==========================================================================  
+   SECTION HELPERS  
+   ========================================================================== */  
+  
+/** Labelled section with an icon + title divider */  
+export function ModalSection({ label, icon, children }) {  
+  return (  
+    <div>  
+      <div className="flex items-center gap-1.5 mb-2.5">  
+        <span className="text-slate-400">{icon}</span>  
+        <span className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400">  
+          {label}  
+        </span>  
+      </div>  
+      <div className="space-y-3">{children}</div>  
+    </div>  
+  );  
+}  
+  
+/** Labelled form field wrapper */  
+export function ModalField({ label, children, span }) {  
+  return (  
+    <div className={span === "full" ? "sm:col-span-2" : ""}>  
+      <label className="block text-[11px] font-semibold text-slate-500 mb-1">  
+        {label}  
+      </label>  
+      {children}  
+    </div>  
+  );  
+}  
+  
+/** Shared input style injected once at app level */  
+export function ModalInputStyles() {  
+  return (  
+    <style>{`  
+      .modal-input {  
+        width: 100%;  
+        border-radius: 10px;  
+        border: 1px solid #e2e8f0;  
+        background: #f8fafc;  
+        padding: 7px 12px;  
+        font-size: 12px;  
+        color: #0f172a;  
+        outline: none;  
+        transition: border-color .15s, background .15s;  
+      }  
+      .modal-input:focus {  
+        border-color: #a78bfa;  
+        background: #fff;  
+      }  
+    `}</style>  
+  );  
+}  
 
-import { useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { X, Loader2 } from "lucide-react";
-
-/* ── variant map ───────────────────────────────────────────────────────────── */
-const VARIANTS = {
-  default: {
-    gradient: "from-violet-600 to-fuchsia-600",
-    confirmBtn:
-      "bg-gradient-to-r from-violet-600 to-fuchsia-600 shadow-violet-200",
-  },
-  danger: {
-    gradient: "from-red-500 to-rose-600",
-    confirmBtn: "bg-gradient-to-r from-red-500 to-rose-600 shadow-rose-200",
-  },
-  success: {
-    gradient: "from-emerald-500 to-teal-600",
-    confirmBtn:
-      "bg-gradient-to-r from-emerald-500 to-teal-600 shadow-emerald-200",
-  },
-  warning: {
-    gradient: "from-amber-500 to-orange-500",
-    confirmBtn:
-      "bg-gradient-to-r from-amber-500 to-orange-500 shadow-amber-200",
-  },
-  info: {
-    gradient: "from-sky-500 to-blue-600",
-    confirmBtn: "bg-gradient-to-r from-sky-500 to-blue-600 shadow-sky-200",
-  },
-};
-
-/* ── size map ──────────────────────────────────────────────────────────────── */
-const SIZES = {
-  sm: "max-w-sm",
-  md: "max-w-lg",
-  lg: "max-w-2xl",
-  xl: "max-w-4xl",
-  xxl: "max-w-6xl",
-};
-
-/* ========================================================================== */
-export function CommonModal({
-  isOpen,
-  onClose,
-  title,
-  subtitle,
-  icon,
-  variant = "default",
-  size = "md",
-  hideCloseBtn = false,
-  children,
-  footer,
-  confirmLabel = "Confirm",
-  cancelLabel = "Cancel",
-  onConfirm,
-  isLoading = false,
-  hideFooter = false,
-}) {
-  const { gradient, confirmBtn } = VARIANTS[variant] ?? VARIANTS.default;
-  const sizeClass = SIZES[size] ?? SIZES.md;
-  const modalRef = useRef(null);
-
-  /* close on Escape */
-  useEffect(() => {
-    if (!isOpen) return;
-    const handler = (e) => {
-      if (e.key === "Escape") onClose?.();
-    };
-    document.addEventListener("keydown", handler);
-    return () => document.removeEventListener("keydown", handler);
-  }, [isOpen, onClose]);
-
-  /* close on outside click */
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleClickOutside = (e) => {
-      if (modalRef.current && !modalRef.current.contains(e.target)) {
-        onClose?.();
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isOpen, onClose]);
-
-  /* lock body scroll while open */
-  useEffect(() => {
-    document.body.style.overflow = isOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isOpen]);
-
-  return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          {/* ── backdrop ── */}
-          <motion.div
-            key="cm-backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.18 }}
-            className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
-            onClick={onClose}
-          />
-
-          {/* ── panel container (captures outside clicks) ── */}
-          <motion.div
-            key="cm-panel"
-            initial={{ opacity: 0, scale: 0.94, y: 24 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.94, y: 16 }}
-            transition={{ type: "spring", stiffness: 380, damping: 32 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          >
-            {/* ── actual modal card ── */}
-            <div
-              ref={modalRef}
-              className={`  ${sizeClass}
-                            w-full max-w-6xl max-h-[80vh] flex flex-col rounded-3xl bg-white shadow-2xl border border-slate-200/70 
-              `}
-            >
-              {/* ── header ── */}
-              <div
-                className={`bg-gradient-to-r ${gradient} px-5 py-4 flex-shrink-0`}
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3 min-w-0">
-                    {icon && (
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-white/20 text-white">
-                        {icon}
-                      </div>
-                    )}
-                    <div className="min-w-0">
-                      <h2 className="text-sm font-extrabold text-white truncate">
-                        {title}
-                      </h2>
-                      {subtitle && (
-                        <p className="text-[11px] text-white/70 mt-0.5 truncate">
-                          {subtitle}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  {!hideCloseBtn && (
-                    <button
-                      type="button"
-                      onClick={onClose}
-                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white/20 text-white hover:bg-white/30 transition-all"
-                      aria-label="Close modal"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              {/* ── body ── */}
-              <div className="flex-1 overflow-y-auto p-5 space-y-5">
-                {children}
-              </div>
-
-              {/* ── footer ── */}
-              {!hideFooter && (
-                <div className="flex-shrink-0 border-t border-slate-100 px-5 py-4 flex items-center justify-end gap-2 bg-white">
-                  {footer ?? (
-                    <>
-                      <button
-                        type="button"
-                        onClick={onClose}
-                        className="h-9 rounded-xl border border-slate-200 bg-white px-4 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all"
-                      >
-                        {cancelLabel}
-                      </button>
-                      {onConfirm && (
-                        <button
-                          type="button"
-                          onClick={onConfirm}
-                          disabled={isLoading}
-                          className={`flex h-9 items-center gap-1.5 rounded-xl ${confirmBtn} px-5 text-xs font-bold text-white shadow-md transition-all hover:scale-[1.02] disabled:opacity-60 disabled:cursor-not-allowed`}
-                        >
-                          {isLoading && (
-                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                          )}
-                          {confirmLabel}
-                        </button>
-                      )}
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
-  );
-}
-
-export default CommonModal;
-
-/* ==========================================================================
-   SECTION HELPERS  (re-exported so forms stay clean)
-   ========================================================================== */
-
-/** Labelled section with an icon + title divider */
-export function ModalSection({ label, icon, children }) {
-  return (
-    <div>
-      <div className="flex items-center gap-1.5 mb-2.5">
-        <span className="text-slate-400">{icon}</span>
-        <span className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400">
-          {label}
-        </span>
-      </div>
-      <div className="space-y-3">{children}</div>
-    </div>
-  );
-}
-
-/** Labelled form field wrapper */
-export function ModalField({ label, children, span }) {
-  return (
-    <div className={span === "full" ? "sm:col-span-2" : ""}>
-      <label className="block text-[11px] font-semibold text-slate-500 mb-1">
-        {label}
-      </label>
-      {children}
-    </div>
-  );
-}
-
-/** Shared input style injected once at app level — or import this style tag anywhere */
-export function ModalInputStyles() {
-  return (
-    <style>{`
-      .modal-input {
-        width: 100%;
-        border-radius: 10px;
-        border: 1px solid #e2e8f0;
-        background: #f8fafc;
-        padding: 7px 12px;
-        font-size: 12px;
-        color: #0f172a;
-        outline: none;
-        transition: border-color .15s, background .15s;
-      }
-      .modal-input:focus {
-        border-color: #a78bfa;
-        background: #fff;
-      }
-    `}</style>
-  );
-}
 
 /* ==========================================================================
    USAGE EXAMPLES
