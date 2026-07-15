@@ -146,7 +146,7 @@ export const ConfirmModal = ({
       iconColor: "text-amber-600",
       actionColor: "bg-amber-600 hover:bg-amber-700",
       actionLabel: "Confirm",
-      toastMessage: (data) => `Action confirmed`,
+      toastMessage: (data) => `${data}`,
     },
     info: {
       icon: "help",
@@ -228,7 +228,7 @@ export const ConfirmModal = ({
 
       if (response !== false) {
         if (onShowToast) {
-          toast.success(config.toastMessage(data));
+          // toast.success(config.toastMessage(data));
         }
 
         if (autoClose) {

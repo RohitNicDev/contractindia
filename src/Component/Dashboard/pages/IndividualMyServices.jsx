@@ -3,7 +3,7 @@
  * A browse & enquire page for individual users.
  * Shows available services from the platform in a clean card grid with a search/filter bar.
  */
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useEffectEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -30,12 +30,17 @@ import {
   Megaphone,
   Wrench,
 } from "lucide-react";
-import { ServiceMasterGet } from "../../../services/api";
+import { ServiceMasterGet, UserServiceDetailsGetbyParam } from "../../../services/api";
 import { SectionHeader, glassCard } from "../Layout/DashboardLayout";
+import { useUserStore } from "../../../store/store";
 
 /* ── API ─────────────────────────────────────────────────────────────────── */
 const fetchServices = async () => {
   const res = await ServiceMasterGet();
+  return res?.data ?? [];
+};
+const UserServiceDetails = async (userId) => {
+  const res = await UserServiceDetailsGetbyParam(`userId=${userId}`);
   return res?.data ?? [];
 };
 
@@ -91,9 +96,16 @@ function EnquiryModal({ service, onClose }) {
     setLoading(true);
     await new Promise((r) => setTimeout(r, 800));
     setLoading(false);
-    toast.success(`Enquiry sent for "${service.name}"! We'll contact you soon.`);
+    toast.success(
+      `Enquiry sent for "${service.name}"! We'll contact you soon.`,
+    );
     onClose();
   };
+ 
+useEffect(() => {
+  console.log(service,"service");
+  
+}, [service])
 
   return (
     <AnimatePresence>
@@ -122,7 +134,9 @@ function EnquiryModal({ service, onClose }) {
                 <Mail className="h-4 w-4" />
               </div>
               <div>
-                <h2 className="text-sm font-extrabold text-white">Send Enquiry</h2>
+                <h2 className="text-sm font-extrabold text-white">
+                  Send Enquiry
+                </h2>
                 <p className="text-[11px] text-white/70 mt-0.5 truncate max-w-[200px]">
                   {service.name}
                 </p>
@@ -137,37 +151,47 @@ function EnquiryModal({ service, onClose }) {
           </div>
 
           {/* Form */}
-          <div className="p-5 space-y-4">
-            {[
-              { label: "Full Name *", key: "name", placeholder: "Rahul Sharma", type: "text" },
-              { label: "Mobile Number *", key: "mobile", placeholder: "+91 98765 43210", type: "tel" },
-            ].map(({ label, key, placeholder, type }) => (
-              <div key={key}>
-                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-                  {label}
-                </label>
-                <input
-                  type={type}
-                  value={form[key]}
-                  onChange={set(key)}
-                  placeholder={placeholder}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 h-10 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all"
-                />
-              </div>
-            ))}
-            <div>
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-                Message (Optional)
-              </label>
-              <textarea
-                rows={3}
-                value={form.message}
-                onChange={set("message")}
-                placeholder="Tell us what you need..."
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 resize-none transition-all"
-              />
+         <div className="p-5 space-y-4">
+          <div>
+            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+              Full Name
+            </label>
+            <div className="h-10 flex items-center rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm text-slate-700">
+              {service?.Name}
             </div>
           </div>
+
+          <div>
+            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+              Email Address
+            </label>
+            <div className="h-10 flex items-center rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm text-slate-700">
+              {service?.EmailId}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+              Mobile Number
+            </label>
+            <div className="h-10 flex items-center rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm text-slate-700">
+              {service?.MobileNo}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+              Message (Optional)
+            </label>
+            <textarea
+              rows={3}
+              value={form.message}
+              onChange={set("message")}
+              placeholder="Tell us what you need..."
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 resize-none transition-all"
+            />
+          </div>
+        </div>
 
           {/* Footer */}
           <div className="border-t border-slate-100 px-5 py-4 flex items-center justify-end gap-2">
@@ -228,7 +252,9 @@ function ServiceCard({ service, index, onEnquire }) {
 
       {/* Name & description */}
       <div className="flex-1">
-        <h3 className="text-sm font-black text-slate-900 leading-tight">{service.name}</h3>
+        <h3 className="text-sm font-black text-slate-900 leading-tight">
+          {service.name}
+        </h3>
         {service._raw?.serviceDescription && (
           <p className="mt-1 text-[11.5px] text-slate-500 line-clamp-2">
             {service._raw.serviceDescription}
@@ -280,7 +306,9 @@ function buildDisplayList(flatList) {
     map[id] = {
       id: String(id),
       name: item.ServiceName ?? item.serviceName ?? "",
-      isActive: (item.IsActive ?? item.isActive) === 1 || (item.IsActive ?? item.isActive) === true,
+      isActive:
+        (item.IsActive ?? item.isActive) === 1 ||
+        (item.IsActive ?? item.isActive) === true,
       children: [],
       _raw: item,
     };
@@ -297,47 +325,108 @@ function buildDisplayList(flatList) {
 /* ── LOCAL FALLBACK DATA ─────────────────────────────────────────────────── */
 const LOCAL_SERVICES = [
   {
-    id: "1", name: "Consulting Services", isActive: true, children: [
+    id: "1",
+    name: "Consulting Services",
+    isActive: true,
+    children: [
       { id: "1-1", name: "EPC Consultancy", isActive: true, children: [] },
       { id: "1-2", name: "Project Management", isActive: true, children: [] },
-    ], _raw: { serviceDescription: "Expert consulting for construction & infrastructure projects." }
+    ],
+    _raw: {
+      serviceDescription:
+        "Expert consulting for construction & infrastructure projects.",
+    },
   },
   {
-    id: "2", name: "Contractor Services", isActive: true, children: [
+    id: "2",
+    name: "Contractor Services",
+    isActive: true,
+    children: [
       { id: "2-1", name: "Civil Contractor", isActive: true, children: [] },
-      { id: "2-2", name: "Electrical Contractor", isActive: true, children: [] },
-    ], _raw: { serviceDescription: "Connect with verified contractors for your projects." }
+      {
+        id: "2-2",
+        name: "Electrical Contractor",
+        isActive: true,
+        children: [],
+      },
+    ],
+    _raw: {
+      serviceDescription:
+        "Connect with verified contractors for your projects.",
+    },
   },
   {
-    id: "3", name: "Legal & Contracts", isActive: true, children: [
+    id: "3",
+    name: "Legal & Contracts",
+    isActive: true,
+    children: [
       { id: "3-1", name: "Contract Drafting", isActive: true, children: [] },
       { id: "3-2", name: "Legal Advisory", isActive: true, children: [] },
-    ], _raw: { serviceDescription: "Comprehensive legal support for construction contracts and agreements." }
+    ],
+    _raw: {
+      serviceDescription:
+        "Comprehensive legal support for construction contracts and agreements.",
+    },
   },
   {
-    id: "4", name: "Marketing & Branding", isActive: true, children: [
+    id: "4",
+    name: "Marketing & Branding",
+    isActive: true,
+    children: [
       { id: "4-1", name: "Digital Marketing", isActive: true, children: [] },
       { id: "4-2", name: "Brand Strategy", isActive: true, children: [] },
-    ], _raw: { serviceDescription: "Boost your brand presence in the construction industry." }
+    ],
+    _raw: {
+      serviceDescription:
+        "Boost your brand presence in the construction industry.",
+    },
   },
   {
-    id: "5", name: "Assets Management", isActive: true, children: [], _raw: { serviceDescription: "Professional management of your construction assets and equipment." }
+    id: "5",
+    name: "Assets Management",
+    isActive: true,
+    children: [],
+    _raw: {
+      serviceDescription:
+        "Professional management of your construction assets and equipment.",
+    },
   },
   {
-    id: "6", name: "Tender Services", isActive: true, children: [
+    id: "6",
+    name: "Tender Services",
+    isActive: true,
+    children: [
       { id: "6-1", name: "Tender Documentation", isActive: true, children: [] },
       { id: "6-2", name: "Bid Management", isActive: true, children: [] },
-    ], _raw: { serviceDescription: "End-to-end tender management for government and private projects." }
+    ],
+    _raw: {
+      serviceDescription:
+        "End-to-end tender management for government and private projects.",
+    },
   },
   {
-    id: "7", name: "Material Supply", isActive: true, children: [
+    id: "7",
+    name: "Material Supply",
+    isActive: true,
+    children: [
       { id: "7-1", name: "Cement & Aggregates", isActive: true, children: [] },
       { id: "7-2", name: "Steel & Metals", isActive: true, children: [] },
       { id: "7-3", name: "Electrical Materials", isActive: true, children: [] },
-    ], _raw: { serviceDescription: "Source quality construction materials from verified suppliers." }
+    ],
+    _raw: {
+      serviceDescription:
+        "Source quality construction materials from verified suppliers.",
+    },
   },
   {
-    id: "8", name: "Contraction Audit", isActive: true, children: [], _raw: { serviceDescription: "Independent audit services to ensure quality and compliance on-site." }
+    id: "8",
+    name: "Contraction Audit",
+    isActive: true,
+    children: [],
+    _raw: {
+      serviceDescription:
+        "Independent audit services to ensure quality and compliance on-site.",
+    },
   },
 ];
 
@@ -345,26 +434,37 @@ const LOCAL_SERVICES = [
 export default function IndividualMyServices() {
   const [search, setSearch] = useState("");
   const [enquiryService, setEnquiryService] = useState(null);
+  const { loginResponce } = useUserStore();
 
-  const { data: rawServices, isLoading, isError, refetch, isFetching } = useQuery({
-    queryKey: ["individualServiceList"],
-    queryFn: fetchServices,
-    retry: 1,
-  });
+  const userId = loginResponce?.userId || 0;
 
+   
+  const { data: userservicesdetails = [], isLoading: userservicesdetailsLoading,isError,isFetching  } =
+    useQuery({
+      queryKey: ["userservicesdetails", userId],
+      queryFn: () => UserServiceDetails(userId),
+      enabled: !!userId,
+      retry: false,
+    });
+    useEffect(() => {
+      console.log(userservicesdetails,"UserServiceDetails");
+      
+    }, [userservicesdetails])
+    
   const services = useMemo(() => {
-    const list = isError || !rawServices?.length
-      ? LOCAL_SERVICES
-      : buildDisplayList(rawServices);
+    const list =
+      isError || !userservicesdetails?.length
+        ? LOCAL_SERVICES
+        : buildDisplayList(userservicesdetails);
     if (!search.trim()) return list;
     const term = search.toLowerCase();
     return list.filter(
       (s) =>
         s.name.toLowerCase().includes(term) ||
         s._raw?.serviceDescription?.toLowerCase().includes(term) ||
-        s.children?.some((c) => c.name.toLowerCase().includes(term))
+        s.children?.some((c) => c.name.toLowerCase().includes(term)),
     );
-  }, [rawServices, isError, search]);
+  }, [userservicesdetails, isError, search]);
 
   return (
     <div className="space-y-6">
@@ -401,7 +501,9 @@ export default function IndividualMyServices() {
           disabled={isFetching}
           className="flex items-center gap-1.5 h-10 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-500 text-xs font-semibold hover:bg-slate-50 transition-all disabled:opacity-50"
         >
-          <RefreshCw className={`h-3.5 w-3.5 ${isFetching ? "animate-spin" : ""}`} />
+          <RefreshCw
+            className={`h-3.5 w-3.5 ${isFetching ? "animate-spin" : ""}`}
+          />
           Refresh
         </button>
 
@@ -411,15 +513,17 @@ export default function IndividualMyServices() {
       </div>
 
       {/* Loading */}
-      {isLoading && (
+      {userservicesdetailsLoading && (
         <div className="flex flex-col items-center justify-center gap-3 py-20">
           <Loader2 className="h-8 w-8 animate-spin text-indigo-400" />
-          <p className="text-xs font-medium text-slate-400">Loading services…</p>
+          <p className="text-xs font-medium text-slate-400">
+            Loading services…
+          </p>
         </div>
       )}
 
       {/* Fallback notice */}
-      {isError && !isLoading && (
+      {isError && !userservicesdetailsLoading && (
         <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-50 border border-amber-200 text-xs font-semibold text-amber-700">
           <Zap className="h-3.5 w-3.5 flex-shrink-0" />
           Showing demo data — live services unavailable right now.
@@ -427,7 +531,7 @@ export default function IndividualMyServices() {
       )}
 
       {/* Empty state */}
-      {!isLoading && services.length === 0 && (
+      {!userservicesdetailsLoading && services.length === 0 && (
         <div className="flex flex-col items-center justify-center gap-3 py-20">
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100">
             <Briefcase className="h-7 w-7 text-slate-400" />
@@ -445,9 +549,9 @@ export default function IndividualMyServices() {
       )}
 
       {/* Grid */}
-      {!isLoading && services.length > 0 && (
+      {!userservicesdetailsLoading && services?.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {services.map((svc, i) => (
+          {services?.map((svc, i) => (
             <ServiceCard
               key={svc.id}
               service={svc}

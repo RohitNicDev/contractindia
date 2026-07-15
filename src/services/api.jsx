@@ -6,6 +6,9 @@ export const authentication = async (payload) => {
 export const userType = async () => {
   return await api.get(`/Common/commonlist/userType`);
 };
+export const membershipType = async () => {
+  return await api.get(`/Common/commonlist/membershipType`);
+};
 
 export const saveUserRegistration = async (payload) => {
   return await api.post("/UserRegistration/save", payload);
@@ -254,6 +257,11 @@ export const UserDocumentStoreGetByparam = async (params) => {
   return await api.get(`/UserDocumentStore/image?${params}`);
 };
 export const userServicesdetailsGetByparam = async (serviceId) => {
-    const response = await api.get(`/ServiceMaster/userservicesdetails?serviceId=${serviceId}`);
-    return response?.data || [];
+  const response = await api.get(
+    `/ServiceMaster/userservicesdetails?serviceId=${serviceId}`,
+  );
+  return response?.data || [];
+};
+export const CheckValidityGet = async (params) => {
+  return await api.get(`/UserSubscriptionDetail/checkvalidity?${params}`);
 };

@@ -25,12 +25,19 @@ import {
   planMasterDelete,
   planMasterGet,
   userType,
+  membershipType,
 } from "../../../services/api";
 import DataTableComponent from "../../common/dataTable";
 
 const planMasterGetApi = async () => {
   const response = await planMasterGet();
   return response?.data ?? [];
+};
+const membershipTypeGetApi = async () => {
+  const response = await membershipType();
+  console.log(response, "123");
+
+  return response ?? [];
 };
 
 const planMasterDeleteApi = async (planId) => {
@@ -84,6 +91,18 @@ const BusinessPlans = () => {
     queryFn: getuserTypeApi,
     staleTime: Infinity,
   });
+  const {
+    data: membershipTypeGetApiList = [],
+    isLoading: membershipTypeGetApiLoading,
+  } = useQuery({
+    queryKey: ["membershipTypeGetApi"],
+    queryFn: membershipTypeGetApi,
+    staleTime: Infinity,
+  });
+  useEffect(() => {
+    console.log(membershipTypeGetApiList, "membershipTypeGetApiList");
+  }, [membershipTypeGetApiList]);
+
   const resetForm = () => {
     setSelectedPlanId(0);
     form.resetFields();
@@ -336,186 +355,188 @@ const BusinessPlans = () => {
   ];
 
   return (
-       <div className="mx-auto  space-y-6">
-        <CustomHeading
-          title="Business Plans"
-          subtitle="Manage plan master entries with create, update, delete."
-          icon={Briefcase}
-          badge={isLoading ? undefined : `${plans.length} plan(s)`}
-          badgeColor="violet"
-          actions={
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => refetch()}
-                disabled={isFetching}
-                title="Refresh"
-                className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-sm transition-all hover:bg-slate-50 disabled:opacity-40"
-              >
-                <RefreshCw
-                  className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`}
-                />
-              </button>
-              <button
-                onClick={handleOpenCreateModal}
-                className="flex h-9 items-center gap-1.5 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 text-xs font-bold text-white shadow-sm hover:opacity-90"
-              >
-                <Plus className="h-4 w-4" />
-                Create New Plan
-              </button>
-            </div>
-          }
-        />
+    <div className="mx-auto  space-y-6">
+      <CustomHeading
+        title="Business Plans"
+        subtitle="Manage plan master entries with create, update, delete."
+        icon={Briefcase}
+        badge={isLoading ? undefined : `${plans.length} plan(s)`}
+        badgeColor="violet"
+        actions={
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => refetch()}
+              disabled={isFetching}
+              title="Refresh"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-sm transition-all hover:bg-slate-50 disabled:opacity-40"
+            >
+              <RefreshCw
+                className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`}
+              />
+            </button>
+            <button
+              onClick={handleOpenCreateModal}
+              className="flex h-9 items-center gap-1.5 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 text-xs font-bold text-white shadow-sm hover:opacity-90"
+            >
+              <Plus className="h-4 w-4" />
+              Create New Plan
+            </button>
+          </div>
+        }
+      />
 
-        {/* <div style={{ ...glass, padding: "20px" }}> */}
-        <DataTableComponent
-          title="Business Plans"
-          icon={Users}
-          accent="emerald"
-          cols={columns}
-          rows={plans}
-          onRefresh={refetch}
-          // onExport={handleExport}
-          loading={isFetching && !isLoading}
-        
-         
-          rowKey={(record) =>
-            record.PlanID ?? record.planID ?? record.id ?? Math.random()
-          }
-        />
-        {/* </div> */}
-        <CommonModal
-          isOpen={planModal}
-          onClose={handleCancelModal}
-          title={
-            selectedPlanId ? "Update Business Plan" : "Create Business Plan"
-          }
-          subtitle="Manage pricing and credits"
-          icon={<Briefcase className="h-4 w-4" />}
-          variant="default"
-          size="lg"
-          confirmLabel={selectedPlanId ? "Update Plan" : "Create Plan"}
-          onConfirm={() => form.submit()}
-          isLoading={planMasterSaveIsPending || updateIsLoading}
+      {/* <div style={{ ...glass, padding: "20px" }}> */}
+      <DataTableComponent
+        title="Business Plans"
+        icon={Users}
+        accent="emerald"
+        cols={columns}
+        rows={plans}
+        onRefresh={refetch}
+        // onExport={handleExport}
+        loading={isFetching && !isLoading}
+        rowKey={(record) =>
+          record.PlanID ?? record.planID ?? record.id ?? Math.random()
+        }
+      />
+      {/* </div> */}
+      <CommonModal
+        isOpen={planModal}
+        onClose={handleCancelModal}
+        title={selectedPlanId ? "Update Business Plan" : "Create Business Plan"}
+        subtitle="Manage pricing and credits"
+        icon={<Briefcase className="h-4 w-4" />}
+        variant="default"
+        size="lg"
+        confirmLabel={selectedPlanId ? "Update Plan" : "Create Plan"}
+        onConfirm={() => form.submit()}
+        isLoading={planMasterSaveIsPending || updateIsLoading}
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={onFinish}
+          className="mt-4"
+          initialValues={{ durationType: "Monthly" }}
         >
-          <Form
-            form={form}
-            layout="vertical"
-            onFinish={onFinish}
-            className="mt-4"
-            initialValues={{ durationType: "Monthly",   }}
+          <Form.Item
+            name="planName"
+            label={
+              <span className="font-medium text-slate-600">Plan Name</span>
+            }
+            rules={[{ required: true, message: "Please enter the plan name" }]}
           >
+            <Input
+              placeholder="e.g. Basic Plan"
+              className="rounded-xl px-3 py-2"
+            />
+          </Form.Item>
+
+          <div className="grid grid-cols-2 gap-4">
             <Form.Item
-              name="planName"
+              name="price"
               label={
-                <span className="font-medium text-slate-600">Plan Name</span>
+                <span className="font-medium text-slate-600">Price (₹)</span>
               }
+              rules={[{ required: true, message: "Please enter the price" }]}
+            >
+              <InputNumber
+                className="w-full rounded-xl"
+                placeholder="0"
+                min={0}
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="creditsIncluded"
+              label={
+                <span className="font-medium text-slate-600">
+                  Credits Included
+                </span>
+              }
+              rules={[{ required: true, message: "Please enter credits" }]}
+            >
+              <InputNumber
+                className="w-full rounded-xl"
+                placeholder="0"
+                min={0}
+              />
+            </Form.Item>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Form.Item
+              name="maxNoofServices"
+              label="Max No Of Services"
               rules={[
-                { required: true, message: "Please enter the plan name" },
+                { required: true, message: "Please enter no of services" },
               ]}
             >
-              <Input
-                placeholder="e.g. Basic Plan"
-                className="rounded-xl px-3 py-2"
+              <InputNumber
+                min={1}
+                max={1000}
+                className="w-full"
+                placeholder="Enter max services"
               />
             </Form.Item>
-
-            <div className="grid grid-cols-2 gap-4">
-              <Form.Item
-                name="price"
-                label={
-                  <span className="font-medium text-slate-600">Price (₹)</span>
-                }
-                rules={[{ required: true, message: "Please enter the price" }]}
-              >
-                <InputNumber
-                  className="w-full rounded-xl"
-                  placeholder="0"
-                  min={0}
-                />
-              </Form.Item>
-
-              <Form.Item
-                name="creditsIncluded"
-                label={
-                  <span className="font-medium text-slate-600">
-                    Credits Included
-                  </span>
-                }
-                rules={[{ required: true, message: "Please enter credits" }]}
-              >
-                <InputNumber
-                  className="w-full rounded-xl"
-                  placeholder="0"
-                  min={0}
-                />
-              </Form.Item>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <Form.Item
-                name="maxNoofServices"
-                label="Max No Of Services"
-                rules={[
-                  { required: true, message: "Please enter no of services" },
-                ]}
-              >
-                <InputNumber
-                  min={1}
-                  max={1000}
-                  className="w-full"
-                  placeholder="Enter max services"
-                />
-              </Form.Item>
-              <Form.Item
-                name="userType"
-                label="User Type"
-                rules={[{ required: true, message: "Select user type" }]}
-              >
-                <Select
-                  placeholder="Select User Type"
-                  options={userTypeList?.map((item) => ({
-                    value: item?.value,
-                    label: item?.label || item?.name,
-                  }))}
-                />
-              </Form.Item>
-            </div>
-
             <Form.Item
-              name="durationType"
-              label={
-                <span className="font-medium text-slate-600">
-                  Duration Type
-                </span>
-              }
+              name="userType"
+              label="User Type"
+              rules={[{ required: true, message: "Select user type" }]}
             >
-              <Select className="rounded-xl">
-                <Select.Option value="Weekly">Weekly</Select.Option>
-                <Select.Option value="Monthly">Monthly</Select.Option>
-                <Select.Option value="Yearly">Yearly</Select.Option>
-              </Select>
-            </Form.Item>
-
-            <Form.Item
-              name="remark"
-              label={
-                <span className="font-medium text-slate-600">
-                  Remark / Features
-                </span>
-              }
-            >
-              <Input.TextArea
-                rows={3}
-                placeholder="Add any details or features..."
-                className="rounded-xl resize-none"
+              <Select
+                placeholder="Select User Type"
+                options={userTypeList?.map((item) => ({
+                  value: item?.value,
+                  label: item?.label || item?.name,
+                }))}
               />
             </Form.Item>
+          </div>
 
-            {/* <Form.Item name="isActive" valuePropName="checked">
+          <Form.Item
+  name="durationType"
+  label={
+    <span className="font-medium text-slate-600">
+      Duration Type
+    </span>
+  }
+>
+  <Select
+    className="rounded-xl"
+    placeholder="Select Duration Type"
+  >
+    {membershipTypeGetApiList?.map((item) => (
+      <Select.Option
+        key={item.value}
+        value={item.value}
+      >
+        {item.label}
+      </Select.Option>
+    ))}
+  </Select>
+</Form.Item>
+
+          <Form.Item
+            name="remark"
+            label={
+              <span className="font-medium text-slate-600">
+                Remark / Features
+              </span>
+            }
+          >
+            <Input.TextArea
+              rows={3}
+              placeholder="Add any details or features..."
+              className="rounded-xl resize-none"
+            />
+          </Form.Item>
+
+          {/* <Form.Item name="isActive" valuePropName="checked">
               <Switch checkedChildren="Active" unCheckedChildren="Inactive" />
             </Form.Item> */}
 
-            {/* <div className="flex justify-end gap-3 mt-6">
+          {/* <div className="flex justify-end gap-3 mt-6">
               <Button
                 onClick={handleCancelModal}
                 className="rounded-xl font-semibold"
@@ -532,45 +553,45 @@ const BusinessPlans = () => {
                 {selectedPlanId ? "Update Plan" : "Create Plan"}
               </Button>
             </div> */}
-          </Form>
-        </CommonModal>
-        <CommonModal
-          isOpen={viewModal.open}
-          onClose={() =>
-            setViewModal({
-              open: false,
-              plan: null,
-            })
-          }
-          title="Plan Details"
-          subtitle="View plan information"
-          icon={<Eye className="h-4 w-4" />}
-          variant="info"
-          size="md"
-          hideFooter
-        >
-          <div className="space-y-4">
-            <div>
-              <p className="text-xs text-slate-500">Plan Name</p>
-              <p className="font-semibold">{viewModal.plan?.PlanName}</p>
-            </div>
+        </Form>
+      </CommonModal>
+      <CommonModal
+        isOpen={viewModal.open}
+        onClose={() =>
+          setViewModal({
+            open: false,
+            plan: null,
+          })
+        }
+        title="Plan Details"
+        subtitle="View plan information"
+        icon={<Eye className="h-4 w-4" />}
+        variant="info"
+        size="md"
+        hideFooter
+      >
+        <div className="space-y-4">
+          <div>
+            <p className="text-xs text-slate-500">Plan Name</p>
+            <p className="font-semibold">{viewModal.plan?.PlanName}</p>
+          </div>
 
-            <div>
-              <p className="text-xs text-slate-500">Price</p>
-              <p className="font-semibold">₹{viewModal.plan?.Price}</p>
-            </div>
+          <div>
+            <p className="text-xs text-slate-500">Price</p>
+            <p className="font-semibold">₹{viewModal.plan?.Price}</p>
+          </div>
 
-            <div>
-              <p className="text-xs text-slate-500">Credits</p>
-              <p className="font-semibold">{viewModal.plan?.CreditsIncluded}</p>
-            </div>
+          <div>
+            <p className="text-xs text-slate-500">Credits</p>
+            <p className="font-semibold">{viewModal.plan?.CreditsIncluded}</p>
+          </div>
 
-            <div>
-              <p className="text-xs text-slate-500">Duration</p>
-              <p className="font-semibold">{viewModal.plan?.DurationType}</p>
-            </div>
+          <div>
+            <p className="text-xs text-slate-500">Duration</p>
+            <p className="font-semibold">{viewModal.plan?.DurationType}</p>
+          </div>
 
-            {/* <div>
+          {/* <div>
               <p className="text-xs text-slate-500">Status</p>
               <p className="font-semibold">
                 <Badge
@@ -585,69 +606,69 @@ const BusinessPlans = () => {
               </p>
             </div> */}
 
-            <div>
-              <p className="text-xs text-slate-500">User Type</p>
-              <p className="font-semibold">
-                {userTypeList.find(
-                  (item) => item.value === viewModal.plan?.UserType,
-                )?.label || "-"}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-xs text-slate-500">Max No Of Services</p>
-              <p className="font-semibold">
-                {viewModal.plan?.maxNoofServices ?? 0}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-xs text-slate-500">Remark</p>
-              <p className="font-semibold">{viewModal.plan?.Remark}</p>
-            </div>
+          <div>
+            <p className="text-xs text-slate-500">User Type</p>
+            <p className="font-semibold">
+              {userTypeList.find(
+                (item) => item.value === viewModal.plan?.UserType,
+              )?.label || "-"}
+            </p>
           </div>
-        </CommonModal>
-        <CommonModal
-          isOpen={deleteModal.open}
-          onClose={() =>
+
+          <div>
+            <p className="text-xs text-slate-500">Max No Of Services</p>
+            <p className="font-semibold">
+              {viewModal.plan?.maxNoofServices ?? 0}
+            </p>
+          </div>
+
+          <div>
+            <p className="text-xs text-slate-500">Remark</p>
+            <p className="font-semibold">{viewModal.plan?.Remark}</p>
+          </div>
+        </div>
+      </CommonModal>
+      <CommonModal
+        isOpen={deleteModal.open}
+        onClose={() =>
+          setDeleteModal({
+            open: false,
+            plan: null,
+          })
+        }
+        title="Delete Plan"
+        subtitle="This action cannot be undone"
+        icon={<Trash2 className="h-4 w-4" />}
+        variant="danger"
+        size="sm"
+        confirmLabel="Delete"
+        onConfirm={async () => {
+          const response = await planMasterDeleteApi(deleteModal.plan.PlanID);
+
+          if (response?.status) {
+            toast.success(response.message);
+
+            refetch();
+
             setDeleteModal({
               open: false,
               plan: null,
-            })
+            });
+          } else {
+            toast.error(response?.message || "Delete failed");
           }
-          title="Delete Plan"
-          subtitle="This action cannot be undone"
-          icon={<Trash2 className="h-4 w-4" />}
-          variant="danger"
-          size="sm"
-          confirmLabel="Delete"
-          onConfirm={async () => {
-            const response = await planMasterDeleteApi(deleteModal.plan.PlanID);
-
-            if (response?.status) {
-              toast.success(response.message);
-
-              refetch();
-
-              setDeleteModal({
-                open: false,
-                plan: null,
-              });
-            } else {
-              toast.error(response?.message || "Delete failed");
-            }
-          }}
-        >
-          <p className="text-sm text-slate-600">
-            Are you sure you want to delete
-            <span className="font-semibold text-slate-900">
-              {" "}
-              {deleteModal.plan?.PlanName}
-            </span>
-            ?
-          </p>
-        </CommonModal>
-        {/* <Modal
+        }}
+      >
+        <p className="text-sm text-slate-600">
+          Are you sure you want to delete
+          <span className="font-semibold text-slate-900">
+            {" "}
+            {deleteModal.plan?.PlanName}
+          </span>
+          ?
+        </p>
+      </CommonModal>
+      {/* <Modal
           title={selectedPlanId ? "Update Plan" : "Create New Plan"}
           open={isModalOpen}
           onCancel={handleCancelModal}
@@ -657,8 +678,7 @@ const BusinessPlans = () => {
         >
    
         </Modal> */}
-      </div>
-   
+    </div>
   );
 };
 

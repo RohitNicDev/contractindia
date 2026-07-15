@@ -135,7 +135,7 @@ export function CommonModal({
             >  
               {/* ── header ── */}  
               <div  
-                className={`bg-gradient-to-r ${gradient} px-6 py-4.5 flex-shrink-0 rounded-t-3xl`}  
+                className={`bg-gradient-to-r ${gradient} px-6 py-2 flex-shrink-0 rounded-t-3xl`}  
               >  
                 <div className="flex items-center justify-between gap-3">  
                   <div className="flex items-center gap-3 min-w-0">  
@@ -145,7 +145,7 @@ export function CommonModal({
                       </div>  
                     )}  
                     <div className="min-w-0">  
-                      <h2 className="text-sm font-extrabold text-white truncate">  
+                      <h2 className="text-md font-extrabold text-white truncate">  
                         {title}  
                       </h2>  
                       {subtitle && (  

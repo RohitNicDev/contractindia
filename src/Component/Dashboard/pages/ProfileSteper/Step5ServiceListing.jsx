@@ -49,7 +49,10 @@ const fetchPlans = async (userType) => {
   const res = await planMasterGetById(`userType=${userType}`);
   return res?.data ?? [];
 };
-
+const CheckValidityGet = async (userId) => {
+  const response = await CheckValidityGet(`userId=${userId}`);
+  return response ?? [];
+};
 // ─── Color palette ─────────────────────────────────────────────────────────────
 const colorMap = {
   violet: {
