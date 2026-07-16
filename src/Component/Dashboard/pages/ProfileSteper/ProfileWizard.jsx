@@ -261,7 +261,7 @@ export default function ProfileWizard() {
 
       {/* Grid Layout Container */}
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative z-10">
-        <main className="flex-1 overflow-y-auto px-4 py-1 [scrollbar-width:none] flex flex-col gap-2 lg:max-w-[75%]">
+        <main className="flex-1 overflow-y-auto px-4 py-1 [scrollbar-width:none] flex flex-col gap-2 lg:max-w-[100%]">
           {/* Circular progress & Stepper Header Row */}
           <div className="flex flex-col md:flex-row items-center gap-4 bg-white/80 backdrop-blur-xl border border-white/90 shadow-[0_2px_20px_rgba(99,102,241,0.07)] p-2 rounded-2xl">
             <div className="relative shrink-0 flex items-center justify-center">
@@ -500,7 +500,7 @@ export default function ProfileWizard() {
         </main>
 
         {/* Right Side Summary Panel */}
-        <aside className="w-full lg:w-[25%] border-t lg:border-t-0 lg:border-l border-slate-200 bg-white/70 backdrop-blur-xl p-6 flex flex-col gap-6 overflow-y-auto">
+        {/* <aside className="w-full lg:w-[25%] border-t lg:border-t-0 lg:border-l border-slate-200 bg-white/70 backdrop-blur-xl p-6 flex flex-col gap-6 overflow-y-auto">
           <div>
             <h3 className="text-xs uppercase font-extrabold tracking-widest text-slate-400">
               Onboarding Health
@@ -509,8 +509,7 @@ export default function ProfileWizard() {
               Profile Summary
             </h2>
           </div>
-
-          {/* Strength progress indicator */}
+ 
           <div className="bg-slate-50 border border-slate-150 p-4 rounded-2xl flex flex-col gap-2 shadow-inner">
             <div className="flex justify-between text-xs">
               <span className="font-bold text-slate-500">Completion</span>
@@ -534,8 +533,7 @@ export default function ProfileWizard() {
               )}
             </div>
           </div>
-
-          {/* Completed steps checklist */}
+ 
           <div className="space-y-3">
             <h4 className="text-[10px] uppercase font-extrabold tracking-widest text-slate-400">
               Verification Steps Checklist
@@ -582,8 +580,7 @@ export default function ProfileWizard() {
               })}
             </div>
           </div>
-
-          {/* Statistics summary */}
+ 
           <div className="bg-slate-50 border border-slate-150 rounded-2xl p-4 space-y-2 text-xs">
             <div className="flex justify-between border-b border-slate-100 pb-2">
               <span className="text-slate-500">Selected Entity:</span>
@@ -598,8 +595,7 @@ export default function ProfileWizard() {
               </span>
             </div>
           </div>
-
-          {/* Suggested improvements */}
+ 
           {suggestions.length > 0 && (
             <div className="space-y-2">
               <h4 className="text-[10px] uppercase font-extrabold tracking-widest text-slate-400">
@@ -618,7 +614,7 @@ export default function ProfileWizard() {
               </ul>
             </div>
           )}
-        </aside>
+        </aside> */}
       </div>
 
       {/* OTP verification Modal Overlay */}

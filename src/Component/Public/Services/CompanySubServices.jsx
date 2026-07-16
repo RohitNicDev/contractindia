@@ -1,13 +1,13 @@
 ﻿/**
  * INDIVIDUAL USER SERVICE FLOW
- * 
+ *
  * Complete user journey with payment integration:
  * 1. View available services (free browsing)
  * 2. Click "View Details" → Check subscription status
  * 3. If NO active plan → Payment Modal (Razorpay)
  * 4. If HAS active plan → Service Detail Modal
  * 5. Post-payment → Auto-refresh subscriptions → Show Details Modal
- * 
+ *
  * State Management: Each modal has isolated state with proper cleanup
  * Error Handling: Comprehensive error cases with user feedback
  * Testing: All flows documented with example scenarios
@@ -37,6 +37,7 @@ import {
   userSubscriptionDetailSave,
   UserPaymentHistorySave,
   UserServiceDetailsSave,
+  CheckValidityGet,
 } from "../../../services/api";
 import { useNavigate, useParams } from "react-router-dom";
 import { useServiceStore, useUserStore } from "../../../store/store";
@@ -53,9 +54,9 @@ const fetchUserSubscriptions = async (userId) => {
   const response = await UserSubscriptionDetailGet(`userId=${userId}`);
   return response?.data ?? [];
 };
-const CheckValidityGet = async (userId) => {
+const CheckValidityGetQuery = async (userId) => {
   const response = await CheckValidityGet(`userId=${userId}`);
-  return response ?? [];
+  return response;
 };
 
 const fetchPlans = async (userType) => {
@@ -94,7 +95,9 @@ const normalizeServiceMenu = (payload) => {
   if (Array.isArray(payload?.items)) return payload.items;
 
   if (payload && typeof payload === "object") {
-    const nestedArray = Object.values(payload).find((value) => Array.isArray(value));
+    const nestedArray = Object.values(payload).find((value) =>
+      Array.isArray(value),
+    );
     if (nestedArray) return nestedArray;
   }
 
@@ -138,12 +141,42 @@ const subtreeHasActive = (node, activeId) => {
 
 // ─── COLOR PALETTE ────────────────────────────────────────────────────
 const PALETTE = [
-  { activeBg: "#4f46e5", softBg: "#eef2ff", softText: "#4338ca", dot: "#6366f1" },
-  { activeBg: "#0e7490", softBg: "#ecfeff", softText: "#0e7490", dot: "#0891b2" },
-  { activeBg: "#047857", softBg: "#ecfdf5", softText: "#047857", dot: "#059669" },
-  { activeBg: "#b45309", softBg: "#fffbeb", softText: "#b45309", dot: "#d97706" },
-  { activeBg: "#be123c", softBg: "#fff1f2", softText: "#be123c", dot: "#e11d48" },
-  { activeBg: "#6d28d9", softBg: "#f5f3ff", softText: "#6d28d9", dot: "#7c3aed" },
+  {
+    activeBg: "#4f46e5",
+    softBg: "#eef2ff",
+    softText: "#4338ca",
+    dot: "#6366f1",
+  },
+  {
+    activeBg: "#0e7490",
+    softBg: "#ecfeff",
+    softText: "#0e7490",
+    dot: "#0891b2",
+  },
+  {
+    activeBg: "#047857",
+    softBg: "#ecfdf5",
+    softText: "#047857",
+    dot: "#059669",
+  },
+  {
+    activeBg: "#b45309",
+    softBg: "#fffbeb",
+    softText: "#b45309",
+    dot: "#d97706",
+  },
+  {
+    activeBg: "#be123c",
+    softBg: "#fff1f2",
+    softText: "#be123c",
+    dot: "#e11d48",
+  },
+  {
+    activeBg: "#6d28d9",
+    softBg: "#f5f3ff",
+    softText: "#6d28d9",
+    dot: "#7c3aed",
+  },
 ];
 
 const col = (d) => PALETTE[d % PALETTE.length];
@@ -154,7 +187,10 @@ const FALLBACK_IMAGES = [
   "https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=800&auto=format&fit=crop",
 ];
 
-const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_BASE_URL || import.meta.env.BASE_URL;
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  import.meta.env.VITE_BASE_URL ||
+  import.meta.env.BASE_URL;
 
 // ═══════════════════════════════════════════════════════════════════════
 // PAYMENT MODAL - Payment confirmation and Razorpay integration
@@ -234,7 +270,8 @@ function PaymentModal({ plan, onConfirm, onCancel, isLoading }) {
               </div>
               {price === 0 && (
                 <p className="text-xs text-indigo-600 mt-3 flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3" /> Free plan - No payment required
+                  <CheckCircle2 className="w-3 h-3" /> Free plan - No payment
+                  required
                 </p>
               )}
             </div>
@@ -372,7 +409,8 @@ function PlanSelectionModal({ plans, onSelectPlan, onCancel, isLoading }) {
                     >
                       {isLoading ? (
                         <>
-                          <Loader className="w-3 h-3 animate-spin" /> Processing…
+                          <Loader className="w-3 h-3 animate-spin" />{" "}
+                          Processing…
                         </>
                       ) : (
                         <>
@@ -500,7 +538,8 @@ function ContractorCard({ item, idx, onViewDetails, hasActivePlan }) {
   const location = item?.CityName || item?.StateName || "India";
   const phone = item?.MobileNo || item?.PhoneNo || "";
   const status = item?.Status || "";
-  const rating = typeof item?.Rating === "number" ? item?.Rating : 4.5 + (idx % 5) * 0.1;
+  const rating =
+    typeof item?.Rating === "number" ? item?.Rating : 4.5 + (idx % 5) * 0.1;
   const imgUrl = `${API_URL}/UserDocumentStore/image?userId=${item?.UserID}&documentCategoryId=7&documentSubCategoryId=10`;
 
   return (
@@ -559,7 +598,8 @@ function ContractorCard({ item, idx, onViewDetails, hasActivePlan }) {
                 : "bg-amber-500 hover:bg-amber-600 text-white"
             }`}
           >
-            {hasActivePlan ? "View Details" : "Subscribe"}
+            {/* {hasActivePlan ? "View Details" : "Subscribe"} */}
+            {"View Details"}
           </button>
           {phone && (
             <a
@@ -593,7 +633,14 @@ function CardSkeleton() {
 }
 
 // ─── Sidebar Node ─────────────────────────────────────────────────────
-function SidebarNode({ node, depth, activeId, onSelect, expandedIds, toggleExpand }) {
+function SidebarNode({
+  node,
+  depth,
+  activeId,
+  onSelect,
+  expandedIds,
+  toggleExpand,
+}) {
   const hasKids = node.children?.length > 0;
   const isActive = node.ServiceID === activeId;
   const isOpen = expandedIds.has(node.ServiceID);
@@ -735,12 +782,14 @@ function Breadcrumb({ tree, activeId, onSelect }) {
 // ═══════════════════════════════════════════════════════════════════════
 // MAIN COMPONENT - Individual User Service Flow
 // ═══════════════════════════════════════════════════════════════════════
-const CompanySubServices  = () => {
+const CompanySubServices = () => {
   const { serviceId } = useParams();
   const navigate = useNavigate();
   const { loginResponce } = useUserStore();
 
-  const isLoggedIn = !!(loginResponce?.isLoginSuccessful || loginResponce?.userId);
+  const isLoggedIn = !!(
+    loginResponce?.isLoginSuccessful || loginResponce?.userId
+  );
   const userId = loginResponce?.userId || 0;
   const userType = loginResponce?.userType || 0;
 
@@ -760,13 +809,17 @@ const CompanySubServices  = () => {
   const [paymentError, setPaymentError] = useState(null);
 
   // ── QUERIES ────────────────────────────────────────────────────────
-  const { data: menuServicesRaw = [], isLoading: menuServicesLoading } = useQuery({
-    queryKey: ["ServiceMenuGetList"],
-    queryFn: ServiceMenuGet,
-    staleTime: 5 * 60 * 1000,
-  });
+  const { data: menuServicesRaw = [], isLoading: menuServicesLoading } =
+    useQuery({
+      queryKey: ["ServiceMenuGetList"],
+      queryFn: ServiceMenuGet,
+      staleTime: 5 * 60 * 1000,
+    });
 
-  const menuServices = useMemo(() => normalizeServiceMenu(menuServicesRaw), [menuServicesRaw]);
+  const menuServices = useMemo(
+    () => normalizeServiceMenu(menuServicesRaw),
+    [menuServicesRaw],
+  );
 
   const tree = useMemo(() => {
     if (!menuServices?.length) return [];
@@ -785,8 +838,18 @@ const CompanySubServices  = () => {
     retry: false,
   });
 
-  const hasActivePlan = subscriptions.some((s) => s.IsActive === 1);
+  const { data: CheckValidityData, refetch: refetchCheckValidity } = useQuery({
+    queryKey: ["CheckValidity", userId],
+    queryFn: () => CheckValidityGetQuery(userId),
+    enabled: !!userId && isLoggedIn,
+    retry: false,
+  });
+
+  const hasActivePlan = CheckValidityData?.status;
   const activeSub = subscriptions.find((s) => s.IsActive === 1);
+  useEffect(() => {
+    console.log(CheckValidityData?.status, "CheckValidityData");
+  }, [CheckValidityData]);
 
   const { data: plans = [], isLoading: plansLoading } = useQuery({
     queryKey: ["planMasterGetById", userType],
@@ -861,15 +924,19 @@ const CompanySubServices  = () => {
   );
 
   const parentName = useMemo(() => {
-    const s = menuServices?.find((el) =>
-      Number(el.ServiceID ?? el.value) === Number(serviceId)
+    const s = menuServices?.find(
+      (el) => Number(el.ServiceID ?? el.value) === Number(serviceId),
     );
     return s?.ServiceName || s?.name || "Services";
   }, [menuServices, serviceId]);
 
   // ── MAIN FLOW: View Details ────────────────────────────────────────
   const handleViewDetails = (item) => {
-    console.log("🔍 handleViewDetails called", { item, isLoggedIn, hasActivePlan });
+    console.log("🔍 handleViewDetails called", {
+      item,
+      isLoggedIn,
+      hasActivePlan,
+    });
 
     // Step 1: Check login
     if (!isLoggedIn) {
@@ -884,7 +951,6 @@ const CompanySubServices  = () => {
       setShowPlanSelection(true);
       return;
     }
-
 
     // Step 3: Confirm before showing details
     console.log("✅ Active plan found - asking for confirmation");
@@ -954,7 +1020,7 @@ const CompanySubServices  = () => {
         planName: plan.PlanName || "",
         remark: plan.Remark || "",
         enterredBy: userId,
-        enterDate: new Date().toISOString(),
+        // enterDate: new Date().toISOString(),
         isActive: 1,
       };
 
@@ -998,7 +1064,7 @@ const CompanySubServices  = () => {
         planName: plan.PlanName || "",
         remark: plan.Remark || "",
         enterredBy: userId,
-        enterDate: new Date().toISOString(),
+        // enterDate: new Date().toISOString(),
         isActive: 0,
       };
 
@@ -1032,7 +1098,7 @@ const CompanySubServices  = () => {
               paymentMode: "Razorpay",
               remark: plan.PlanName ?? "",
               enterredBy: userId,
-              enterDate: new Date().toISOString(),
+              // enterDate: new Date().toISOString(),
               isActive: 1,
             });
 
@@ -1044,7 +1110,7 @@ const CompanySubServices  = () => {
               planName: plan.PlanName || "",
               remark: plan.Remark || "",
               enterredBy: userId,
-              enterDate: new Date().toISOString(),
+              // enterDate: new Date().toISOString(),
               isActive: 1,
             };
 
@@ -1069,7 +1135,9 @@ const CompanySubServices  = () => {
           } catch (err) {
             console.error("Post-payment error:", err);
             setPaymentError("Payment received but activation failed");
-            toast.error("Payment received but activation failed. Please contact support.");
+            toast.error(
+              "Payment received but activation failed. Please contact support.",
+            );
           }
         },
         prefill: {
@@ -1162,42 +1230,73 @@ const CompanySubServices  = () => {
 
             {/* Subscription Status */}
             {isLoggedIn && (
-              <div className="mt-4 p-3 rounded-2xl border-2 bg-white">
-                {hasActivePlan ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                    <div className="min-w-0">
-                      <p className="text-[10px] font-bold text-slate-500 uppercase">
-                        Subscription
-                      </p>
-                      <p className="text-xs font-bold text-slate-800 truncate">
-                        {activeSub?.PlanName}
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-amber-500" />
-                    <div>
-                      <p className="text-[10px] font-bold text-slate-500 uppercase">
-                        No Active Plan
-                      </p>
-                      <button
-                        onClick={() => setShowPlanSelection(true)}
-                        className="text-[10px] font-bold text-indigo-600 hover:text-indigo-700"
+              <div className="mt-4">
+                <div
+                  className={`rounded-2xl border p-4 transition-all ${
+                    hasActivePlan
+                      ? "border-violet-100 bg-gradient-to-r from-violet-50 via-white to-white"
+                      : "border-amber-200 bg-gradient-to-r from-amber-50 via-white to-white"
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div
+                        className={`flex h-11 w-11 items-center justify-center rounded-xl ${
+                          hasActivePlan ? "bg-[#492a78]/10" : "bg-amber-100"
+                        }`}
                       >
-                        View Plans →
-                      </button>
+                        {hasActivePlan ? (
+                          <Crown className="h-5 w-5 text-[#492a78]" />
+                        ) : (
+                          <AlertCircle className="h-5 w-5 text-amber-600" />
+                        )}
+                      </div>
+
+                      <div className="min-w-0">
+                        <p
+                          className={`text-[12px]   ${
+                            hasActivePlan ? "text-slate-500" : "text-amber-600"
+                          }`}
+                        >
+                          {hasActivePlan
+                            ? "Active Membership"
+                            : "Membership Required"}
+                        </p>
+
+                        <p className="text-sm font-bold text-slate-900 truncate">
+                          {hasActivePlan
+                            ? activeSub?.PlanName
+                            : "No Active Plan"}
+                        </p>
+
+                        <p className="text-[11px] text-slate-500">
+                          {hasActivePlan
+                            ? `Expires on ${activeSub?.ExpiryDate}`
+                            : "Purchase a plan to unlock premium features"}
+                        </p>
+                      </div>
                     </div>
+
+                    <button
+                  
+                      onClick={() => setShowPlanSelection(true)}
+                      className="shrink-0 rounded-xl bg-[#492a78] px-2 py-2 text-xs font-bold text-white shadow-sm transition-all hover:scale-[1.02] hover:bg-[#5a3592]"
+                    >
+                      {hasActivePlan ? "Upgrade" : "Buy Plan"}
+                    </button>
                   </div>
-                )}
+                </div>
               </div>
             )}
           </aside>
 
           {/* MAIN CONTENT */}
           <section className="min-w-0">
-            <Breadcrumb tree={tree} activeId={activeId} onSelect={handleSelect} />
+            <Breadcrumb
+              tree={tree}
+              activeId={activeId}
+              onSelect={handleSelect}
+            />
 
             <div className="flex items-start justify-between gap-4 mb-5">
               <div>
@@ -1260,7 +1359,9 @@ const CompanySubServices  = () => {
         message="Are you sure you want to view details for {contractor}?"
         data={{
           contractor:
-            pendingDetailItem?.CompanyName || pendingDetailItem?.Name || "this contractor",
+            pendingDetailItem?.CompanyName ||
+            pendingDetailItem?.Name ||
+            "this contractor",
         }}
         actionLabel="Yes, View Details"
         cancelLabel="Cancel"
@@ -1272,15 +1373,18 @@ const CompanySubServices  = () => {
       {/* MODALS */}
       <AnimatePresence mode="wait">
         {/* Plan Selection Modal */}
-        {showPlanSelection && (
-          <PlanSelectionModal
-            key="plan-selection"
-            plans={plans}
-            onSelectPlan={handleSelectPlan}
-            onCancel={handleClosePlanSelection}
-            isLoading={isSavingSubscription}
-          />
-        )}
+        {
+          // !CheckValidityData?.status &&
+          showPlanSelection && (
+            <PlanSelectionModal
+              key="plan-selection"
+              plans={plans}
+              onSelectPlan={handleSelectPlan}
+              onCancel={handleClosePlanSelection}
+              isLoading={isSavingSubscription}
+            />
+          )
+        }
 
         {/* Payment Modal */}
         {showPaymentModal && selectedPlanForPayment && (
@@ -1307,4 +1411,4 @@ const CompanySubServices  = () => {
   );
 };
 
-export default CompanySubServices ;
+export default CompanySubServices;

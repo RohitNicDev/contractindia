@@ -1,11 +1,6 @@
-/**
- * IndividualMyServices
- * A browse & enquire page for individual users.
- * Shows available services from the platform in a clean card grid with a search/filter bar.
- */
-import { useState, useMemo, useEffect, useEffectEvent } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
   Briefcase,
@@ -29,18 +24,32 @@ import {
   ShieldCheck,
   Megaphone,
   Wrench,
+  MapPin,
 } from "lucide-react";
-import { ServiceMasterGet, UserServiceDetailsGetbyParam } from "../../../services/api";
+import {
+  getUserRegistrationbyParam,
+  ServiceMasterGet,
+  UserServiceDetailsGetbyParam,
+} from "../../../services/api";
 import { SectionHeader, glassCard } from "../Layout/DashboardLayout";
 import { useUserStore } from "../../../store/store";
+
+// Custom Modal component
+import { CommonModal } from "../../common/CommonModal";
 
 /* ── API ─────────────────────────────────────────────────────────────────── */
 const fetchServices = async () => {
   const res = await ServiceMasterGet();
   return res?.data ?? [];
 };
+
 const UserServiceDetails = async (userId) => {
   const res = await UserServiceDetailsGetbyParam(`userId=${userId}`);
+  return res?.data ?? [];
+};
+
+const userRegistrationbyDetails = async (userId) => {
+  const res = await getUserRegistrationbyParam(`?userId=${userId}`);
   return res?.data ?? [];
 };
 
@@ -82,151 +91,147 @@ function getGrad(index) {
   return CATEGORY_GRADIENTS[index % CATEGORY_GRADIENTS.length];
 }
 
-/* ── Enquiry Modal ───────────────────────────────────────────────────────── */
+/* ═════════════════════════════════════════════════════════════════════════  
+   ENQUIRY MODAL (Re-designed with premium, read-only registration details)  
+   ========================================================================= */
 function EnquiryModal({ service, onClose }) {
-  const [form, setForm] = useState({ name: "", mobile: "", message: "" });
+  const [messageText, setMessageText] = useState("");
   const [loading, setLoading] = useState(false);
-  const set = (k) => (e) => setForm((p) => ({ ...p, [k]: e.target.value }));
+
+  const userData = service?.userData || {};
+  const userName = userData.Name || "—";
+  const userEmail = userData.EmailId || "—";
+  const userMobile = userData.MobileNo || "—";
+  const userState = userData.StateName || "—";
+  const userPincode = userData.PinCode || "—";
 
   const handleSubmit = async () => {
-    if (!form.name.trim() || !form.mobile.trim()) {
-      toast.error("Name and mobile are required.");
+    // Validation matches direct registration data now
+    if (userName === "—" || userMobile === "—") {
+      toast.error("User registration details (Name and Mobile) are missing.");
       return;
     }
+
+    if (!messageText.trim()) {
+      toast.error("Please enter a message for your enquiry.");
+      return;
+    }
+
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setLoading(false);
-    toast.success(
-      `Enquiry sent for "${service.name}"! We'll contact you soon.`,
-    );
-    onClose();
+    try {
+      await new Promise((r) => setTimeout(r, 800));
+      toast.success(
+        `Enquiry sent for "${service.name}"! We'll contact you soon.`
+      );
+      setMessageText("");
+      onClose();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to send enquiry. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
- 
-useEffect(() => {
-  console.log(service,"service");
-  
-}, [service])
 
   return (
-    <AnimatePresence>
-      <motion.div
-        key="bd"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-40 bg-black/40"
-        onClick={onClose}
-      />
-      <motion.div
-        key="modal"
-        initial={{ opacity: 0, scale: 0.94, y: 24 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.94, y: 16 }}
-        transition={{ type: "spring", stiffness: 380, damping: 32 }}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="w-full max-w-md rounded-3xl bg-white shadow-2xl border border-slate-100 overflow-hidden">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-indigo-600 to-violet-600 p-5 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-white/20 text-white">
-                <Mail className="h-4 w-4" />
-              </div>
-              <div>
-                <h2 className="text-sm font-extrabold text-white">
-                  Send Enquiry
-                </h2>
-                <p className="text-[11px] text-white/70 mt-0.5 truncate max-w-[200px]">
-                  {service.name}
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={onClose}
-              className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/20 text-white hover:bg-white/30 transition-all"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
+    <CommonModal
+      isOpen={!!service}
+      onClose={onClose}
+      title="SERVICE DETAILS"
+      subtitle={service?.name}
+      icon={<Mail className="h-4 w-4" />}
+      variant="default"
+      size="md"
+      // confirmLabel="Send Enquiry"
+      cancelLabel="Cancel"
+      // onConfirm={handleSubmit}
+      isLoading={loading}
+    >
+      <div className="space-y-5">
+        {/* Verification Checklist Banner */}
+        {/* <div className="p-4 bg-indigo-50/50 border border-indigo-100/50 rounded-2xl">
+          <span className="text-[10px] font-black text-indigo-600 uppercase tracking-wider block">
+            Verification Checklist
+          </span>
+          <p className="text-[10px] text-slate-400 mt-0.5">
+            Please review your read-only profile records below before submitting
+            your request details.
+          </p>
+        </div> */}
 
-          {/* Form */}
-         <div className="p-5 space-y-4">
-          <div>
-            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+        {/* User Registration Details (Read-only Fields) */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+            <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest">
               Full Name
             </label>
-            <div className="h-10 flex items-center rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm text-slate-700">
-              {service?.Name}
-            </div>
+            <p className="text-xs font-bold text-slate-700 mt-1">
+              {userName}
+            </p>
           </div>
-
-          <div>
-            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+          <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+            <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest">
               Email Address
             </label>
-            <div className="h-10 flex items-center rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm text-slate-700">
-              {service?.EmailId}
-            </div>
+            <p className="text-xs font-bold text-slate-700 mt-1 truncate">
+              {userEmail}
+            </p>
           </div>
-
-          <div>
-            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+          <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+            <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest">
               Mobile Number
             </label>
-            <div className="h-10 flex items-center rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm text-slate-700">
-              {service?.MobileNo}
-            </div>
+            <p className="text-xs font-bold text-slate-700 mt-1">
+              {userMobile}
+            </p>
           </div>
-
-          <div>
-            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-              Message (Optional)
+          <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+            <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest">
+              State Region
             </label>
-            <textarea
-              rows={3}
-              value={form.message}
-              onChange={set("message")}
-              placeholder="Tell us what you need..."
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 resize-none transition-all"
-            />
+            <p className="text-xs font-bold text-slate-700 mt-1">
+              {userState}
+            </p>
+          </div>
+          <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100 col-span-2">
+            <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest">
+              Location Pin Code
+            </label>
+            <p className="text-xs font-bold text-slate-700 mt-1">
+              {userPincode}
+            </p>
           </div>
         </div>
 
-          {/* Footer */}
-          <div className="border-t border-slate-100 px-5 py-4 flex items-center justify-end gap-2">
-            <button
-              onClick={onClose}
-              className="h-9 rounded-xl border border-slate-200 bg-white px-4 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all"
-            >
-              Cancel
-            </button>
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={handleSubmit}
-              disabled={loading}
-              className="flex h-9 items-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 text-xs font-bold text-white shadow-md disabled:opacity-60 transition-all"
-            >
-              {loading ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              ) : (
-                <Mail className="h-3.5 w-3.5" />
-              )}
-              {loading ? "Sending…" : "Send Enquiry"}
-            </motion.button>
-          </div>
-        </div>
-      </motion.div>
-    </AnimatePresence>
+        {/* Message Input Box */}
+        {/* <div>
+          <label className="block text-[11px] font-semibold text-slate-500 mb-2">
+            Your Message <span className="text-red-500">*</span>
+          </label>
+          <textarea
+            value={messageText}
+            onChange={(e) => setMessageText(e.target.value)}
+            placeholder="Tell us more about your enquiry and requirements..."
+            rows={4}
+            className="w-full px-3.5 py-2.5 border border-slate-200 bg-slate-50 rounded-xl text-sm text-slate-700 placeholder-slate-400 outline-none focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-100 transition-all resize-none"
+          />
+          <p className="text-[10px] text-slate-400 mt-1">
+            {messageText.length} / 500 characters
+          </p>
+        </div> */}
+      </div>
+    </CommonModal>
   );
 }
 
-/* ── Service Card ────────────────────────────────────────────────────────── */
-function ServiceCard({ service, index, onEnquire }) {
+/* ==========================================================================  
+   SERVICE CARD  
+   ========================================================================== */
+function ServiceCard({ service, index, onEnquire, activeEnquiryId }) {
   const Icon = getIcon(service.name);
   const grad = getGrad(index);
   const hasChildren = service.children?.length > 0;
+  const isPendingOnCard = activeEnquiryId === service.id;
 
   return (
     <motion.div
@@ -286,10 +291,16 @@ function ServiceCard({ service, index, onEnquire }) {
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.97 }}
         onClick={() => onEnquire(service)}
-        className={`w-full flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r ${grad} shadow-sm hover:shadow-md transition-all`}
+        disabled={isPendingOnCard}
+        className={`w-full flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r ${grad} shadow-sm hover:shadow-md transition-all disabled:opacity-75`}
       >
-        <Phone className="h-3.5 w-3.5" /> Enquire Now
-        <ArrowRight className="h-3 w-3" />
+        {isPendingOnCard ? (
+          <Loader2 className="h-3.5 w-3.5 animate-spin text-white" />
+        ) : (
+          <Phone className="h-3.5 w-3.5" />
+        )}
+        {isPendingOnCard ? "Retrieving Details..." : "Enquire Now"}
+        {!isPendingOnCard && <ArrowRight className="h-3 w-3" />}
       </motion.button>
     </motion.div>
   );
@@ -302,7 +313,6 @@ function buildDisplayList(flatList) {
   const roots = [];
   flatList.forEach((item) => {
     const id = item.ServiceID ?? item.serviceID;
-    const pid = item.ParentServiceID ?? item.parentServiceID ?? 0;
     map[id] = {
       id: String(id),
       name: item.ServiceName ?? item.serviceName ?? "",
@@ -316,10 +326,13 @@ function buildDisplayList(flatList) {
   flatList.forEach((item) => {
     const id = item.ServiceID ?? item.serviceID;
     const pid = item.ParentServiceID ?? item.parentServiceID ?? 0;
-    if (!pid || !map[pid]) roots.push(map[id]);
-    else map[pid].children.push(map[id]);
+    if (!pid || !map[pid]) {
+      if (map[id]) roots.push(map[id]);
+    } else {
+      if (map[pid] && map[id]) map[pid].children.push(map[id]);
+    }
   });
-  return roots.filter((s) => s.isActive);
+  return roots.filter((s) => s && s.isActive);
 }
 
 /* ── LOCAL FALLBACK DATA ─────────────────────────────────────────────────── */
@@ -430,27 +443,38 @@ const LOCAL_SERVICES = [
   },
 ];
 
-/* ── Main Component ──────────────────────────────────────────────────────── */
+/* ==========================================================================  
+   MAIN COMPONENT  
+   ========================================================================== */
 export default function IndividualMyServices() {
   const [search, setSearch] = useState("");
   const [enquiryService, setEnquiryService] = useState(null);
+  const [activeEnquiryId, setActiveEnquiryId] = useState(null); // Tracks which card clicked "Enquire" to show spinner
   const { loginResponce } = useUserStore();
 
   const userId = loginResponce?.userId || 0;
 
-   
-  const { data: userservicesdetails = [], isLoading: userservicesdetailsLoading,isError,isFetching  } =
-    useQuery({
-      queryKey: ["userservicesdetails", userId],
-      queryFn: () => UserServiceDetails(userId),
-      enabled: !!userId,
-      retry: false,
-    });
-    useEffect(() => {
-      console.log(userservicesdetails,"UserServiceDetails");
-      
-    }, [userservicesdetails])
-    
+  const {
+    mutate: userRegistrationMutate,
+    data: userRegistrationData,
+    isPending: userRegistrationpending,
+  } = useMutation({
+    mutationFn: userRegistrationbyDetails,
+  });
+
+  const {
+    data: userservicesdetails = [],
+    isLoading: userservicesdetailsLoading,
+    isError,
+    refetch,
+    isFetching,
+  } = useQuery({
+    queryKey: ["userservicesdetails", userId],
+    queryFn: () => UserServiceDetails(userId),
+    enabled: !!userId,
+    retry: false,
+  });
+
   const services = useMemo(() => {
     const list =
       isError || !userservicesdetails?.length
@@ -462,9 +486,40 @@ export default function IndividualMyServices() {
       (s) =>
         s.name.toLowerCase().includes(term) ||
         s._raw?.serviceDescription?.toLowerCase().includes(term) ||
-        s.children?.some((c) => c.name.toLowerCase().includes(term)),
+        s.children?.some((c) => c.name.toLowerCase().includes(term))
     );
   }, [userservicesdetails, isError, search]);
+
+  // Triggers mutation, fetches user profile sequentially, and binds to EnquiryModal automatically!
+  const handleEnquireClick = (service) => {
+    if (!userId) {
+      toast.error("Please login to enquire about this service");
+      return;
+    }
+
+    setActiveEnquiryId(service.id);
+    userRegistrationMutate(userId, {
+      onSuccess: (response) => {
+        const userData = response?.[0] || response?.data?.[0] || {};
+        setEnquiryService({
+          ...service,
+          userData: userData,
+        });
+        setActiveEnquiryId(null);
+      },
+      onError: (err) => {
+        console.error(err);
+        toast.error(
+          "Failed to retrieve your registration details. Proceeding with default enquiry."
+        );
+        setEnquiryService({
+          ...service,
+          userData: {},
+        });
+        setActiveEnquiryId(null);
+      },
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -556,13 +611,14 @@ export default function IndividualMyServices() {
               key={svc.id}
               service={svc}
               index={i}
-              onEnquire={setEnquiryService}
+              onEnquire={handleEnquireClick}
+              activeEnquiryId={activeEnquiryId}
             />
           ))}
         </div>
       )}
 
-      {/* Enquiry modal */}
+      {/* Enquiry modal (Renders dynamic, verified read-only user profile from the mutation!) */}
       {enquiryService && (
         <EnquiryModal
           service={enquiryService}

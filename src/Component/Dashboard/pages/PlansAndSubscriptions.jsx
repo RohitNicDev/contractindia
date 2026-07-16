@@ -781,15 +781,24 @@ export default function PlansAndSubscriptions() {
       key: "amount",
       render: (_, r) => <span className="font-semibold text-md bold text-slate-500">₹{r?.amount?.toLocaleString("en-IN")}</span>,
     },
-    // {
-    //   title: "Subscribed On",
-    //   key: "EnterDate",
-    //   render: (_, r) => (
-    //     <span className="text-xs text-slate-600">
-    //       {formatDate(r?.EnterDate)}
-    //     </span>
-    //   ),
-    // },
+    {
+      title: "Subscribed On",
+      key: "subscriptionDate",
+      render: (_, r) => (
+        <span className="text-xs text-slate-600">
+          {(r?.subscriptionDate)}
+        </span>
+      ),
+    },
+    {
+      title: "Plan Expiry Date",
+      key: "planExpiryDate",
+      render: (_, r) => (
+        <span className="text-xs text-slate-600">
+          {(r?.planExpiryDate)}
+        </span>
+      ),
+    },
     {
       title: "Status",
       key: "IsActive",

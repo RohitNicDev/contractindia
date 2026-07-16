@@ -126,7 +126,13 @@ const formatDate = (iso) => {
 };
 
 // ─── Confirmation Modal ─────────────────────────────────────────────────────────
-function ActivateServiceModal({ service, plan, onConfirm, onCancel, isLoading }) {
+function ActivateServiceModal({
+  service,
+  plan,
+  onConfirm,
+  onCancel,
+  isLoading,
+}) {
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-[1001] flex items-center justify-center px-4 py-6">
@@ -407,10 +413,7 @@ const Step5ServiceListing = ({ store, nextStep, prevStep, navbar = false }) => {
   });
 
   // ── Fetch available plans ───────────────────────────────────────────────────
-  const {
-    data: plans = [],
-    isLoading: plansLoading,
-  } = useQuery({
+  const { data: plans = [], isLoading: plansLoading } = useQuery({
     queryKey: ["planMasterGetById", userType],
     queryFn: () => fetchPlans(userType),
     enabled: !!userType,
@@ -450,6 +453,7 @@ const Step5ServiceListing = ({ store, nextStep, prevStep, navbar = false }) => {
     if (!rawServices.length) return;
     const tree = mapFlatToTree(rawServices);
     setServices(tree);
+    console.log(rawServices,"rawServices");
 
     // Pre-select services that are already active from API
     const alreadyActive = rawServices
@@ -735,7 +739,8 @@ const Step5ServiceListing = ({ store, nextStep, prevStep, navbar = false }) => {
                       </>
                     ) : (
                       <>
-                        <EyeOff className="h-3 w-3 opacity-50" /> Click to Active
+                        <EyeOff className="h-3 w-3 opacity-50" /> Click to
+                        Active
                       </>
                     )}
                   </button>
@@ -771,7 +776,7 @@ const Step5ServiceListing = ({ store, nextStep, prevStep, navbar = false }) => {
     0,
   );
   const isLoading = servicesLoading || subscriptionsLoading;
-console.log(latestSub,"latestSub.EnterDate");
+  console.log(latestSub, "latestSub.EnterDate");
 
   return (
     <div className="space-y-6">
@@ -816,7 +821,7 @@ console.log(latestSub,"latestSub.EnterDate");
             Active Services
           </div>
           <div className="text-2xl font-black text-emerald-700">
-            {activeIds.length}
+            {activeIds?.length}
             {maxServicesAllowed > 0 ? (
               <span className="text-sm font-semibold text-emerald-500">
                 {" "}
@@ -892,7 +897,9 @@ console.log(latestSub,"latestSub.EnterDate");
             service={confirmModal.service}
             plan={confirmModal.plan}
             onConfirm={confirmActivation}
-            onCancel={() => setConfirmModal({ open: false, service: null, plan: null })}
+            onCancel={() =>
+              setConfirmModal({ open: false, service: null, plan: null })
+            }
             isLoading={toggling[confirmModal.service?.id]}
           />
         )}

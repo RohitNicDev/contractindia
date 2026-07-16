@@ -13,6 +13,9 @@ export const membershipType = async () => {
 export const saveUserRegistration = async (payload) => {
   return await api.post("/UserRegistration/save", payload);
 };
+export const getUserRegistrationbyParam = async (Param) => {
+  return await api.get(`/UserRegistration/get${Param}`);
+};
 
 export const verifyEmail = async (payload) => {
   return await api.post("/UserRegistration/verify/email", payload);
