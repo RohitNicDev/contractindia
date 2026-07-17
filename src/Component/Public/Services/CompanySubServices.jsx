@@ -38,6 +38,7 @@ import {
   UserPaymentHistorySave,
   UserServiceDetailsSave,
   CheckValidityGet,
+  getUserRegistrationbyParam,
 } from "../../../services/api";
 import { useNavigate, useParams } from "react-router-dom";
 import { useServiceStore, useUserStore } from "../../../store/store";
@@ -61,6 +62,10 @@ const CheckValidityGetQuery = async (userId) => {
 
 const fetchPlans = async (userType) => {
   const res = await planMasterGetById(`userType=${userType}`);
+  return res?.data ?? [];
+};
+const userRegistrationbyDetails = async (userId) => {
+  const res = await getUserRegistrationbyParam(`?userId=${userId}`);
   return res?.data ?? [];
 };
 
@@ -434,6 +439,7 @@ function PlanSelectionModal({ plans, onSelectPlan, onCancel, isLoading }) {
 // ═══════════════════════════════════════════════════════════════════════
 function ContractorDetailModal({ item, onClose, canAccess }) {
   if (!item) return null;
+  console.log(item, "item");
 
   const company = item?.CompanyName || item?.Name || "Contractor";
   const email = item?.EmailId || "—";
@@ -820,6 +826,31 @@ const CompanySubServices = () => {
     () => normalizeServiceMenu(menuServicesRaw),
     [menuServicesRaw],
   );
+  const {
+    mutate: userRegistrationMutate,
+    data: userRegistrationData,
+    isPending: userRegistrationpending,
+  } = useMutation({
+    mutationFn: userRegistrationbyDetails,
+    onSuccess: (response) => {
+      const userData = response?.[0] || response?.data?.[0] || {};
+
+      // setEnquiryService({
+
+      // });
+      setDetailItem(userData);
+    },
+    onError: (err) => {
+      console.error(err);
+      toast.error(
+        "Failed to retrieve your registration details. Proceeding with default enquiry.",
+      );
+      // setEnquiryService({
+
+      // });
+      // s
+    },
+  });
 
   const tree = useMemo(() => {
     if (!menuServices?.length) return [];
@@ -953,13 +984,13 @@ const CompanySubServices = () => {
     }
 
     // Step 3: Confirm before showing details
-    console.log("✅ Active plan found - asking for confirmation");
+    console.log("✅ Active plan found - asking for confirmation", item);
     setPendingDetailItem(item);
   };
 
   const handleConfirmViewDetails = async () => {
     if (!pendingDetailItem) return false;
-
+    // console.log(pendingDetailItem,"pendingDetailItem");
     try {
       const payload = {
         userServiceID: 0,
@@ -976,8 +1007,12 @@ const CompanySubServices = () => {
       const response = await saveService(payload);
 
       if (response?.status) {
-        setDetailItem(pendingDetailItem);
+        console.log(activeNode, "activeNode");
+        console.log(pendingDetailItem, "pendingDetailItem");
+
+        // setDetailItem(pendingDetailItem);
         setPendingDetailItem(null);
+        userRegistrationMutate(pendingDetailItem?.UserID);
         return true;
       }
 
@@ -1088,16 +1123,22 @@ const CompanySubServices = () => {
         description: plan.PlanName,
         image: "/logo.png",
         handler: async (response) => {
-          console.log("✅ Payment successful, activating subscription");
+          console.log(
+            "✅ Payment successful, activating subscription",
+            response,
+          );
           try {
             // Step 3a: Save payment history
             await savePaymentHistory({
               userID: userId,
+              TransactionID: response?.razorpay_payment_id ?? "",
               payment: plan.Price ?? 0,
               paymentStatus: "Success",
               paymentMode: "Razorpay",
               remark: plan.PlanName ?? "",
               enterredBy: userId,
+              enterDate: new Date().toISOString(),
+              TransactionDate: new Date().toISOString(),
               // enterDate: new Date().toISOString(),
               isActive: 1,
             });
@@ -1241,7 +1282,7 @@ const CompanySubServices = () => {
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-3 min-w-0">
                       <div
-                        className={`flex h-11 w-11 items-center justify-center rounded-xl ${
+                        className={`flex h-6 w-6 items-center justify-center rounded-xl ${
                           hasActivePlan ? "bg-[#492a78]/10" : "bg-amber-100"
                         }`}
                       >
@@ -1278,7 +1319,6 @@ const CompanySubServices = () => {
                     </div>
 
                     <button
-                  
                       onClick={() => setShowPlanSelection(true)}
                       className="shrink-0 rounded-xl bg-[#492a78] px-2 py-2 text-xs font-bold text-white shadow-sm transition-all hover:scale-[1.02] hover:bg-[#5a3592]"
                     >

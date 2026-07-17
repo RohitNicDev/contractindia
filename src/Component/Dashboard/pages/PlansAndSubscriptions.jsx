@@ -31,7 +31,7 @@ import {
   UserSubscriptionDetailGet,
   userSubscriptionDetailSave,
 } from "../../../services/api";
-
+import dayjs from "dayjs";
 // ─── API helpers ───────────────────────────────────────────────────────────────
 const fetchPlans = async (userType) => {
   const res = await planMasterGetById(`userType=${userType}`);
@@ -779,43 +779,71 @@ export default function PlansAndSubscriptions() {
     {
       title: "Amount",
       key: "amount",
-      render: (_, r) => <span className="font-semibold text-md bold text-slate-500">₹{r?.amount?.toLocaleString("en-IN")}</span>,
+      render: (_, r) => (
+        <span className="font-semibold text-md bold text-slate-500">
+          ₹{r?.amount?.toLocaleString("en-IN")}
+        </span>
+      ),
     },
     {
       title: "Subscribed On",
       key: "subscriptionDate",
       render: (_, r) => (
-        <span className="text-xs text-slate-600">
-          {(r?.subscriptionDate)}
-        </span>
+        <span className="text-xs text-slate-600">{r?.subscriptionDate}</span>
       ),
     },
-    {
-      title: "Plan Expiry Date",
-      key: "planExpiryDate",
-      render: (_, r) => (
-        <span className="text-xs text-slate-600">
-          {(r?.planExpiryDate)}
-        </span>
-      ),
-    },
+    // {
+    //   title: "Plan Expiry Date",
+    //   key: "planExpiryDate",
+    //   render: (_, r) => (
+    //     <span className="text-xs text-slate-600">
+    //       {(r?.planExpiryDate)}
+    //     </span>
+    //   ),
+    // },
+    // {
+    //   title: "",
+    //   key: "planExpiryDate",
+    //   render: (_, r) => (
+    //     <span className="text-xs text-slate-600">
+    //       {(r?.planExpiryDate)}
+    //     </span>
+    //   ),
+    // },
     {
       title: "Status",
       key: "IsActive",
+
       render: (_, r) => {
-        const active = Number(r?.IsActive) === 1;
+        const isActive = Number(r?.IsActive) === 1;
+
+        const expiryDate = dayjs(r?.planExpiryDate, "DD/MM/YYYY");
+        const isExpired = expiryDate.isBefore(dayjs(), "day");
+
+        let status = "Inactive";
+        let classes = "bg-slate-100 text-slate-500 border-slate-200";
+        let dotClass = "bg-slate-400";
+
+        if (isExpired) {
+          status = "Expired";
+          classes = "bg-red-50 text-red-700 border-red-200";
+          dotClass = "bg-red-500";
+        } else if (isActive) {
+          status = "Active";
+          classes = "bg-emerald-50 text-emerald-700 border-emerald-200";
+          dotClass = "bg-emerald-500";
+        }
+
         return (
           <span
-            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold border ${
-              active
-                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                : "bg-slate-100 text-slate-500 border-slate-200"
-            }`}
+            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold border ${classes}`}
           >
             <span
-              className={`w-1.5 h-1.5 rounded-full ${active ? "bg-emerald-500" : "bg-slate-400"}`}
+              className={`w-1.5 h-1.5 rounded-full ${dotClass} ${
+                status !== "Inactive" ? "animate-pulse" : ""
+              }`}
             />
-            {active ? "Active" : "Inactive"}
+            {status}
           </span>
         );
       },
