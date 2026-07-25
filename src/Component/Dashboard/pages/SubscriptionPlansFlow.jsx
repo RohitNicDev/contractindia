@@ -1,20 +1,9 @@
 /**
- * SubscriptionPlansFlow
- *
- * Full flow triggered by "Subscribe" or "View Plans" in the app.
- * Screens:
- *   1. PlansPage      — pick a plan (Duration filter)
- *   2. SuccessPage    — confirmation after payment
- *
- * Payment flow:
- *   - User selects plan
- *   - Saves subscription to API (inactive state)
- *   - Triggers Razorpay payment gateway
- *   - On success: saves payment history + activates subscription
- *   - Shows success screen
+ * SubscriptionPlansFlow - FIXED VERSION
  */
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -24,7 +13,6 @@ import {
   Shield,
   Crown,
   ArrowRight,
-  CreditCard,
   Lock,
   Sparkles,
   Check,
@@ -38,8 +26,8 @@ import {
   IndianRupee,
   Clock,
   Layers,
+  Loader2,
 } from "lucide-react";
-import CommonModal from "../../common/CommonModal";
 import { useUserStore } from "../../../store/store";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import {
@@ -49,6 +37,7 @@ import {
 } from "../../../services/api";
 import { toast } from "sonner";
 
+/* ── helpers ─────────────────────────────────────────────────────────────── */
 const getPlanStyle = (index, planName) => {
   const styles = [
     {
@@ -85,17 +74,16 @@ const getPlanStyle = (index, planName) => {
     nameLower.includes("standard") ||
     nameLower.includes("basic") ||
     nameLower.includes("starter")
-  ) {
+  )
     return styles[0];
-  } else if (nameLower.includes("gold") || nameLower.includes("pro")) {
+  if (nameLower.includes("gold") || nameLower.includes("pro"))
     return styles[1];
-  } else if (
+  if (
     nameLower.includes("premium") ||
     nameLower.includes("enterprise") ||
     nameLower.includes("platinum")
-  ) {
+  )
     return styles[2];
-  }
   return styles[index % styles.length];
 };
 
@@ -106,8 +94,7 @@ const TRUST = [
   { icon: Headphones, label: "24/7 support" },
 ];
 
-/* ── sub-components ─────────────────────────────────────────────────────── */
-
+/* ── PlanCard ────────────────────────────────────────────────────────────── */
 function PlanCard({ plan, selected, onSelect }) {
   const Icon = plan.icon || Zap;
   const isSelected = selected?.PlanID === plan.PlanID;
@@ -119,24 +106,22 @@ function PlanCard({ plan, selected, onSelect }) {
       onClick={() => onSelect(plan)}
       className={`relative rounded-2xl border-2 p-5 cursor-pointer transition-all duration-200 ${
         isSelected
-          ? `${plan.border} shadow-lg bg-white`
+          ? `${plan.border} shadow-lg bg-white ring-2 ring-offset-2 ${
+              plan.color === "sky"
+                ? "ring-sky-400"
+                : plan.color === "violet"
+                  ? "ring-violet-500"
+                  : "ring-amber-400"
+            }`
           : "border-slate-200 bg-white hover:border-slate-300"
       }`}
     >
-      {/* popular / value badge */}
       {plan.badge && (
         <div
-          className={`absolute -top-0 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest text-white bg-gradient-to-r z-999 ${plan.gradient} shadow`}
+          className={`absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest text-white bg-gradient-to-r ${plan.gradient} shadow z-10`}
         >
           {plan.badge}
         </div>
-      )}
-
-      {/* selected ring */}
-      {isSelected && (
-        <div
-          className={`absolute inset-0 rounded-2xl ring-2 ring-offset-2 bg-gradient-to-r ${plan.gradient} opacity-0`}
-        />
       )}
 
       <div className="flex items-start justify-between mb-4">
@@ -170,7 +155,6 @@ function PlanCard({ plan, selected, onSelect }) {
         </span>
       </div>
 
-      {/* Features */}
       <ul className="space-y-1.5">
         <li className="flex items-center gap-2 text-xs text-slate-600">
           <CheckCircle2 className={`h-3.5 w-3.5 flex-shrink-0 ${plan.text}`} />
@@ -188,11 +172,10 @@ function PlanCard({ plan, selected, onSelect }) {
 
       <button
         type="button"
-        className={`mt-5 w-full h-9 rounded-xl text-xs font-black transition-all ${
-          isSelected
-            ? `bg-gradient-to-r ${plan.gradient} text-white shadow-md`
-            : "border border-slate-200 text-slate-700 hover:bg-slate-50"
-        }`}
+        className={`mt-5 w-full h-9 rounded-xl text-xs font-black transition-all ${isSelected
+          ? `bg-gradient-to-r ${plan.gradient} text-white shadow-md`
+          : "border border-slate-200 text-slate-700 hover:bg-slate-50"
+          }`}
       >
         {isSelected ? "Selected" : "Select plan"}
       </button>
@@ -200,7 +183,7 @@ function PlanCard({ plan, selected, onSelect }) {
   );
 }
 
-/* ── SCREEN 1: Plans ────────────────────────────────────────────────────── */
+/* ── PlansPage ───────────────────────────────────────────────────────────── */
 function PlansPage({ onNext, currentPlanId, plans = [], isLoading = false }) {
   const durations = [
     "All",
@@ -210,7 +193,7 @@ function PlansPage({ onNext, currentPlanId, plans = [], isLoading = false }) {
   const [selected, setSelected] = useState(null);
 
   useEffect(() => {
-    if (plans && plans.length > 0 && !selected) {
+    if (plans.length > 0 && !selected) {
       setSelected(plans.find((p) => p.PlanID !== currentPlanId) ?? plans[0]);
     }
   }, [plans, selected, currentPlanId]);
@@ -222,19 +205,18 @@ function PlansPage({ onNext, currentPlanId, plans = [], isLoading = false }) {
 
   useEffect(() => {
     if (filteredPlans.length > 0) {
-      const isStillVisible = filteredPlans.some(
-        (p) => p.PlanID === selected?.PlanID,
+      const stillVisible = filteredPlans.some(
+        (p) => p.PlanID === selected?.PlanID
       );
-      if (!isStillVisible) {
-        setSelected(filteredPlans[0]);
-      }
+      if (!stillVisible) setSelected(filteredPlans[0]);
     }
   }, [selectedDuration, filteredPlans, selected]);
 
   return (
-    <div className="flex flex-col h-full">
+    /* ✅ FIX: full height flex column, internal scroll only on cards area */
+    <div className="flex flex-col h-full min-h-0">
       {/* heading */}
-      <div className="text-center px-6 pt-6 pb-4">
+      <div className="text-center px-6 pt-4 pb-3 flex-shrink-0">
         <div className="inline-flex items-center gap-1.5 mb-3 px-3 py-1 rounded-full bg-violet-50 border border-violet-200">
           <Sparkles className="h-3.5 w-3.5 text-violet-500" />
           <span className="text-[11px] font-bold text-violet-700">
@@ -244,14 +226,12 @@ function PlansPage({ onNext, currentPlanId, plans = [], isLoading = false }) {
         <h2 className="text-xl font-black text-slate-900 mb-1">
           Select the right plan for you
         </h2>
-        <p className="text-sm text-slate-500">
-          No hidden fees. Cancel anytime.
-        </p>
+        <p className="text-sm text-slate-500">No hidden fees. Cancel anytime.</p>
       </div>
 
       {/* billing toggle */}
       {durations.length > 1 && (
-        <div className="flex justify-center mb-5">
+        <div className="flex justify-center mb-4 flex-shrink-0">
           <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-100 border border-slate-200">
             {durations.map((duration) => {
               const active = selectedDuration === duration;
@@ -260,11 +240,10 @@ function PlansPage({ onNext, currentPlanId, plans = [], isLoading = false }) {
                   key={duration}
                   type="button"
                   onClick={() => setSelectedDuration(duration)}
-                  className={`flex items-center gap-1.5 h-7 px-4 rounded-lg text-xs font-bold transition-all duration-200 ${
-                    active
-                      ? "bg-white text-violet-700 shadow-sm border border-violet-200"
-                      : "text-slate-500 hover:text-slate-700"
-                  }`}
+                  className={`flex items-center gap-1.5 h-7 px-4 rounded-lg text-xs font-bold transition-all duration-200 ${active
+                    ? "bg-white text-violet-700 shadow-sm border border-violet-200"
+                    : "text-slate-500 hover:text-slate-700"
+                    }`}
                 >
                   {duration}
                 </button>
@@ -274,12 +253,14 @@ function PlansPage({ onNext, currentPlanId, plans = [], isLoading = false }) {
         </div>
       )}
 
-      {/* plan cards */}
-      <div className="flex-1 overflow-y-auto px-6 pb-4">
+      {/* ✅ FIX: scrollable cards area */}
+      <div className="flex-1 overflow-y-auto px-6 pb-4 min-h-0">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-violet-500 border-t-transparent" />
-            <p className="text-sm text-slate-500 font-bold">Loading plans...</p>
+            <Loader2 className="h-8 w-8 animate-spin text-violet-500" />
+            <p className="text-sm text-slate-500 font-bold">
+              Loading plans...
+            </p>
           </div>
         ) : filteredPlans.length === 0 ? (
           <div className="text-center py-20">
@@ -314,8 +295,8 @@ function PlansPage({ onNext, currentPlanId, plans = [], isLoading = false }) {
         </div>
       </div>
 
-      {/* footer */}
-      <div className="flex-shrink-0 border-t border-slate-100 px-6 py-4 flex items-center justify-between bg-white">
+      {/* ✅ FIX: footer always pinned at bottom */}
+      <div className="flex-shrink-0 border-t border-slate-100 px-6 py-4 flex items-center justify-between bg-white rounded-b-3xl">
         <div>
           <p className="text-xs text-slate-500">
             Selected:{" "}
@@ -343,16 +324,13 @@ function PlansPage({ onNext, currentPlanId, plans = [], isLoading = false }) {
   );
 }
 
-/* ── SCREEN 2: Success ──────────────────────────────────────────────────── */
+/* ── SuccessPage ─────────────────────────────────────────────────────────── */
 function SuccessPage({ plan, onClose, onDashboard }) {
   const today = new Date();
   const expires = new Date(today);
-
-  const isYearly = plan?.DurationType === "Yearly";
-  const isWeekly = plan?.DurationType === "Weekly";
-  if (isYearly) {
+  if (plan?.DurationType === "Yearly") {
     expires.setFullYear(today.getFullYear() + 1);
-  } else if (isWeekly) {
+  } else if (plan?.DurationType === "Weekly") {
     expires.setDate(today.getDate() + 7);
   } else {
     expires.setMonth(today.getMonth() + 1);
@@ -372,14 +350,8 @@ function SuccessPage({ plan, onClose, onDashboard }) {
     { icon: Star, label: `Next billing on ${fmt(expires)}` },
   ];
 
-  const displayPrice = plan?.Price || 0;
-  const displayDuration = plan?.DurationType
-    ? `/${plan.DurationType.toLowerCase().replace("ly", "")}`
-    : "/mo";
-
   return (
-    <div className="flex flex-col items-center justify-center h-full px-8 py-10 text-center">
-      {/* animated checkmark */}
+    <div className="flex flex-col items-center justify-center h-full px-8 py-10 text-center overflow-y-auto">
       <motion.div
         initial={{ scale: 0.4, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -406,7 +378,6 @@ function SuccessPage({ plan, onClose, onDashboard }) {
         </p>
       </motion.div>
 
-      {/* perks */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -431,7 +402,6 @@ function SuccessPage({ plan, onClose, onDashboard }) {
         ))}
       </motion.div>
 
-      {/* summary pill */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -440,8 +410,10 @@ function SuccessPage({ plan, onClose, onDashboard }) {
       >
         <PlanIcon className={`h-4 w-4 ${plan?.text}`} />
         <span className={`text-xs font-black ${plan?.text}`}>
-          {plan?.PlanName} · ₹{displayPrice}
-          {displayDuration}
+          {plan?.PlanName} · ₹{plan?.Price || 0}/
+          {plan?.DurationType
+            ? plan.DurationType.toLowerCase().replace("ly", "")
+            : "mo"}
         </span>
         <span className="text-[10px] text-slate-400">
           · renews {fmt(expires)}
@@ -461,29 +433,33 @@ function SuccessPage({ plan, onClose, onDashboard }) {
   );
 }
 
-/* ── Step indicator ─────────────────────────────────────────────────────── */
+/* ── StepBar ─────────────────────────────────────────────────────────────── */
 function StepBar({ step }) {
   const steps = ["Choose plan", "Done"];
   return (
-    <div className="flex items-center justify-center gap-2 px-6 py-3 border-b border-slate-100 bg-slate-50/60">
+    <div className="flex items-center justify-center gap-2 px-6 py-3 border-b border-slate-100 bg-slate-50/60 flex-shrink-0">
       {steps.map((label, i) => {
         const done = i < step;
         const current = i === step;
         return (
           <div key={label} className="flex items-center gap-2">
             <div
-              className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-black transition-all ${
-                done
-                  ? "bg-violet-600 text-white"
-                  : current
-                    ? "bg-violet-100 text-violet-700 ring-2 ring-violet-300"
-                    : "bg-slate-100 text-slate-400"
-              }`}
+              className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-black transition-all ${done
+                ? "bg-violet-600 text-white"
+                : current
+                  ? "bg-violet-100 text-violet-700 ring-2 ring-violet-300"
+                  : "bg-slate-100 text-slate-400"
+                }`}
             >
               {done ? <Check className="h-3 w-3" /> : i + 1}
             </div>
             <span
-              className={`text-[11px] font-bold ${current ? "text-slate-800" : done ? "text-violet-600" : "text-slate-400"}`}
+              className={`text-[11px] font-bold ${current
+                ? "text-slate-800"
+                : done
+                  ? "text-violet-600"
+                  : "text-slate-400"
+                }`}
             >
               {label}
             </span>
@@ -509,14 +485,12 @@ export default function SubscriptionPlansFlow({
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [selectedPlan, setSelectedPlan] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isPaymentLoading, setIsPaymentLoading] = useState(false);
 
-  // Retrieve logged-in user details
   const loginResponse = useUserStore((state) => state?.loginResponce);
   const userId = loginResponse?.userId || 0;
   const userType = loginResponse?.userType || 0;
 
-  // Fetch plans dynamically
   const { data: rawPlans = [], isLoading: isPlansLoading } = useQuery({
     queryKey: ["planMasterGetById", userType],
     queryFn: async () => {
@@ -526,7 +500,6 @@ export default function SubscriptionPlansFlow({
     enabled: open && !!userType,
   });
 
-  // Map API plans to UI structure with dynamic styling
   const plans = rawPlans.map((plan, idx) => {
     const style = getPlanStyle(idx, plan.PlanName || "");
     return {
@@ -543,31 +516,48 @@ export default function SubscriptionPlansFlow({
     };
   });
 
+  /* reset on close */
   useEffect(() => {
     if (!open) {
-      setTimeout(() => {
+      const t = setTimeout(() => {
         setStep(0);
         setSelectedPlan(null);
-        setIsLoading(false);
+        setIsPaymentLoading(false);
       }, 400);
+      return () => clearTimeout(t);
     }
   }, [open]);
 
-  // ── Save subscription + trigger Razorpay ────────────────────────────────
+  /* Escape key */
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e) => {
+      if (e.key === "Escape") onClose?.();
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [open, onClose]);
+
+  /* body scroll lock */
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
   const { mutateAsync: saveSubscription } = useMutation({
     mutationFn: userSubscriptionDetailSave,
   });
-
   const { mutateAsync: savePaymentHistory } = useMutation({
     mutationFn: UserPaymentHistorySave,
   });
 
   const handleSelectPlan = async (plan) => {
     setSelectedPlan(plan);
-    setIsLoading(true);
+    setIsPaymentLoading(true);
 
     try {
-      // Step 1: Save subscription (inactive state)
       const subPayload = {
         userSubscriptionID: 0,
         userID: userId,
@@ -576,35 +566,31 @@ export default function SubscriptionPlansFlow({
         remark: plan.Remark || "",
         enterredBy: userId,
         enterDate: new Date().toISOString(),
-        isActive: 0, // Will be activated after payment
+        isActive: 0,
       };
 
       const subRes = await saveSubscription(subPayload);
       if (!subRes?.status) {
         toast.error(subRes?.message || "Failed to prepare subscription");
-        setIsLoading(false);
+        setIsPaymentLoading(false);
         return;
       }
 
-      // Step 2: Trigger Razorpay Payment
       if (!window.Razorpay) {
         toast.error("Payment gateway not loaded. Please refresh the page.");
-        setIsLoading(false);
+        setIsPaymentLoading(false);
         return;
       }
 
       const options = {
-        key: "rzp_test_TBIngVA6fjYaLH", // Test Key ID
-        amount: Number(plan.Price || 0) * 100, // Amount in paise
+        key: "rzp_test_TBIngVA6fjYaLH",
+        amount: Number(plan.Price || 0) * 100,
         currency: "INR",
         name: "ContractsIndia",
         description: plan.PlanName,
         image: "/logo.png",
         handler: async function (response) {
-          console.log("Payment Success:", response);
-
           try {
-            // Step 3a: Save payment history
             await savePaymentHistory({
               userID: userId,
               TransactionID: response?.razorpay_payment_id ?? "",
@@ -618,32 +604,24 @@ export default function SubscriptionPlansFlow({
               isActive: 1,
             });
 
-            // Step 3b: Activate subscription
-            const activatePayload = {
-              // userSubscriptionID: 0,
+            await saveSubscription({
               userID: userId,
               planID: plan.PlanID,
               planName: plan.PlanName || "",
               remark: plan.Remark || "",
               enterredBy: userId,
               enterDate: new Date().toISOString(),
-              isActive: 1, // Activate after payment
-            };
+              isActive: 1,
+            });
 
-            await saveSubscription(activatePayload);
-
-            // Step 4: Show success screen
             setStep(1);
-            toast.success(
-              "Payment successful! Your subscription is now active.",
-            );
+            toast.success("Payment successful! Your subscription is now active.");
           } catch (err) {
-            console.error("Error after payment:", err);
             toast.error(
-              "Payment received but activation failed. Please contact support.",
+              "Payment received but activation failed. Please contact support."
             );
           } finally {
-            setIsLoading(false);
+            setIsPaymentLoading(false);
           }
         },
         prefill: {
@@ -651,12 +629,10 @@ export default function SubscriptionPlansFlow({
           email: loginResponse?.emailId || "",
           contact: loginResponse?.mobileNo || "",
         },
-        theme: {
-          color: "#2563eb",
-        },
+        theme: { color: "#2563eb" },
         modal: {
           ondismiss: () => {
-            setIsLoading(false);
+            setIsPaymentLoading(false);
             toast.error("Payment cancelled by user");
           },
         },
@@ -665,79 +641,122 @@ export default function SubscriptionPlansFlow({
       const razorpay = new window.Razorpay(options);
       razorpay.open();
     } catch (err) {
-      console.error("Plan selection error:", err);
       toast.error(err?.message || "Error processing plan selection");
-      setIsLoading(false);
+      setIsPaymentLoading(false);
     }
   };
 
-  const handleClose = () => {
-    onClose?.();
-  };
-
+  const handleClose = () => onClose?.();
   const handleDashboard = () => {
     onClose?.();
-    if (dashboardPath) {
-      navigate(dashboardPath);
-    }
+    if (dashboardPath) navigate(dashboardPath);
   };
 
-  return (
-    <>
+  return createPortal(
+    <AnimatePresence mode="wait">
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <CommonModal
-            isOpen={open}
-            onClose={handleClose}
-            title="Subscription Plans"
-            variant="info"
-            size="xxl"
-            hideFooter
-          >
-            {/* step bar */}
-            <StepBar step={step} />
+        <>
+          {/* full-viewport backdrop */}
+          <motion.div
+            key="spf-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-md"
+            style={{ zIndex: 9998 }}
+            onClick={handleClose}
+          />
 
-            {/* screen */}
-            <div className="flex-1 overflow-hidden flex flex-col">
-              <AnimatePresence mode="wait">
-                {step === 0 && (
-                  <motion.div
-                    key="s0"
-                    className="flex-1 flex flex-col overflow-hidden"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.2 }}
+          {/* centered panel */}
+          <motion.div
+            key="spf-panel"
+            initial={{ opacity: 0, scale: 0.93, y: 28 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.93, y: 20 }}
+            transition={{ type: "spring", stiffness: 360, damping: 30 }}
+            className="fixed inset-0 flex items-center justify-center p-4 pointer-events-none"
+            style={{ zIndex: 9999 }}
+          >
+            {/* modal card */}
+            <div
+              className="w-full max-w-5xl h-[90vh] flex flex-col rounded-3xl bg-white shadow-2xl border border-slate-200/70 pointer-events-auto overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* ── header ── */}
+              <div className="bg-gradient-to-r from-sky-500 to-blue-600 px-6 py-4 flex-shrink-0">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-white/20 text-white">
+                      <Crown className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <h2 className="text-sm font-extrabold text-white">
+                        Subscription Plans
+                      </h2>
+                      <p className="text-[11px] text-white/70 mt-0.5">
+                        Choose the right plan for your business
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleClose}
+                    className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/20 text-white hover:bg-white/30 transition-all"
+                    aria-label="Close"
                   >
-                    <PlansPage
-                      onNext={handleSelectPlan}
-                      currentPlanId={currentPlanId}
-                      plans={plans}
-                      isLoading={isPlansLoading || isLoading}
-                    />
-                  </motion.div>
-                )}
-                {step === 1 && selectedPlan && (
-                  <motion.div
-                    key="s2"
-                    className="flex-1 flex flex-col overflow-hidden"
-                    initial={{ opacity: 0, scale: 0.97 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.25 }}
-                  >
-                    <SuccessPage
-                      plan={selectedPlan}
-                      onClose={handleClose}
-                      onDashboard={handleDashboard}
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+
+              {/* ── step bar ── */}
+              <StepBar step={step} />
+
+              {/* ── screen content ── */}
+              <div className="flex-1 min-h-0 overflow-hidden">
+                <AnimatePresence mode="wait">
+                  {step === 0 && (
+                    <motion.div
+                      key="s0"
+                      className="h-full flex flex-col"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <PlansPage
+                        onNext={handleSelectPlan}
+                        currentPlanId={currentPlanId}
+                        plans={plans}
+                        isLoading={isPlansLoading || isPaymentLoading}
+                      />
+                    </motion.div>
+                  )}
+
+                  {step === 1 && selectedPlan && (
+                    <motion.div
+                      key="s1"
+                      className="h-full flex flex-col"
+                      initial={{ opacity: 0, scale: 0.97 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.25 }}
+                    >
+                      <SuccessPage
+                        plan={selectedPlan}
+                        onClose={handleClose}
+                        onDashboard={handleDashboard}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
-          </CommonModal>
-        </div>
+          </motion.div>
+        </>
       )}
-    </>
+    </AnimatePresence>,
+    document.body
   );
 }
