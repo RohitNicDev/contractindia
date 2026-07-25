@@ -772,8 +772,8 @@ const TreeNode = ({
             <button
               onClick={(e) => { e.stopPropagation(); onToggleActive(node); }}
               className={`px-3 h-8 rounded-xl text-xs font-bold transition-all ${node.isActive
-                  ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
-                  : "bg-red-100 text-red-700 hover:bg-red-200"
+                ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
+                : "bg-red-100 text-red-700 hover:bg-red-200"
                 }`}
             >
               {node.isActive ? "Active" : "Inactive"}
@@ -1005,28 +1005,33 @@ const ServiceListing = ({
         return;
       }
       if (mode === "edit") {
+
         setPendingApiNodeId(targetNode.id);
-        updateServiceMutate({
+        const payload =
+        {
           ...targetNode._raw,
           // ✅ spread camelCase form fields, then ensure PascalCase IDs win
-          serviceName: formData.serviceName,
-          serviceCode: formData.serviceCode,
-          serviceDescription: formData.serviceDescription,
-          serviceURL: formData.serviceURL,
-          metaTitle: formData.metaTitle,
-          metaKeywords: formData.metaKeywords,
-          metaDescription: formData.metaDescription,
-          searchKeywords: formData.searchKeywords,
+          ServiceName: formData.serviceName,
+          ServiceCode: formData.serviceCode,
+          ServiceDescription: formData.serviceDescription,
+          ServiceURL: formData.serviceURL,
+          MetaTitle: formData.metaTitle,
+          MetaKeywords: formData.metaKeywords,
+          MetaDescription: formData.metaDescription,
+          SearchKeywords: formData.searchKeywords,
           displayOrder: formData.displayOrder,
-          isFeatured: formData.isFeatured,
-          displayOnHomePage: formData.displayOnHomePage,
-          isActive: formData.isActive,
-          isPopular: formData.isPopular,
-          isVerifiedRequired: formData.isVerifiedRequired,
-          minSubscriptionLevel: formData.minSubscriptionLevel,
+          IsFeatured: formData.isFeatured,
+          DisplayOnHomePage: formData.displayOnHomePage,
+          IsActive: formData.isActive,
+          IsPopular: formData.isPopular,
+          IsVerifiedRequired: formData.isVerifiedRequired,
+          MinSubscriptionLevel: formData.minSubscriptionLevel,
           ServiceID: targetNode.apiId,
           UpdatedDate: new Date().toISOString(),
-        });
+        }
+        console.log(payload, "formData");
+
+        updateServiceMutate(payload);
       }
     },
     [modal, services.length, saveServiceMutate, updateServiceMutate]
