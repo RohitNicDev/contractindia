@@ -10,6 +10,7 @@ const initialStoreState = {
     email: "",
     mobile: "",
     address: "",
+    pinCode: "",
     companyPhotos: [],
     emailVerified: false,
     mobileVerified: false,
@@ -133,6 +134,7 @@ export const calculateProgress = (state) => {
   check(bi.email?.trim());
   check(bi.mobile?.trim());
   check(bi.address?.trim());
+  check(bi.pinCode?.trim());
 
   // Registration
   const rd = state.registrationDetails;
@@ -182,7 +184,8 @@ export const getProfileSuggestions = (state) => {
     !bi.contactPerson ||
     !bi.email ||
     !bi.mobile ||
-    !bi.address
+    !bi.address ||
+    !bi.pinCode
   ) {
     suggestions.push("Complete all fields in Basic Company Information");
   }

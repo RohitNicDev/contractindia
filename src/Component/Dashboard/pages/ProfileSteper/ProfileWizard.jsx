@@ -160,6 +160,7 @@ export default function ProfileWizard() {
           email: userObj.EmailId || "",
           mobile: userObj.MobileNo || "",
           address: userObj.Address || "",
+          pinCode: userObj.PinCode || "",
         });
       }
     }
@@ -197,6 +198,7 @@ export default function ProfileWizard() {
         email: store.basicInfo.email || info.Email || "",
         mobile: store.basicInfo.mobile || info.ContactNo || "",
         address: store.basicInfo.address || info.Address || "",
+        pinCode: store.basicInfo.pinCode || info.PinCode || "",
       });
 
       // populate registration details if available

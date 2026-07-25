@@ -63,7 +63,7 @@ const Step3Registration = ({ store, nextStep, prevStep }) => {
     onError: (error) => {
       toast.error(
         error?.message ||
-          "Failed to Update basic information. Please try again.",
+        "Failed to Update basic information. Please try again.",
       );
     },
   });
@@ -79,6 +79,7 @@ const Step3Registration = ({ store, nextStep, prevStep }) => {
       email: store?.basicInfo?.email || "",
       contactNo: store?.basicInfo?.mobile || "",
       address: store?.basicInfo?.address || "",
+      pinCode: store?.basicInfo?.pinCode || "",
       aadharNo: data?.aadharNo || "",
       gstNo: data?.gstNo || "",
       panNo: data?.panNo || "",
@@ -139,11 +140,10 @@ const Step3Registration = ({ store, nextStep, prevStep }) => {
               type="text"
               placeholder="e.g. 07AAAAA1111A1Z1"
               maxLength="15"
-              className={`bg-white border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 text-slate-800 placeholder-slate-400 shadow-sm transition-all ${
-                validationStatus.gstNo
+              className={`bg-white border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 text-slate-800 placeholder-slate-400 shadow-sm transition-all ${validationStatus.gstNo
                   ? "border-red-300 focus:border-red-400 focus:ring-red-100"
                   : "border-slate-200 focus:border-blue-400 focus:ring-blue-100"
-              }`}
+                }`}
               {...registerStep3("gstNo")}
               onBlur={(e) =>
                 handleFieldBlur("gstNo", e.target.value.toUpperCase())
@@ -174,11 +174,10 @@ const Step3Registration = ({ store, nextStep, prevStep }) => {
               type="text"
               placeholder="e.g. ABCDE1234F"
               maxLength="10"
-              className={`bg-white border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 text-slate-800 placeholder-slate-400 shadow-sm transition-all ${
-                validationStatus.pan
+              className={`bg-white border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 text-slate-800 placeholder-slate-400 shadow-sm transition-all ${validationStatus.pan
                   ? "border-red-300 focus:border-red-400 focus:ring-red-100"
                   : "border-slate-200 focus:border-blue-400 focus:ring-blue-100"
-              }`}
+                }`}
               {...registerStep3("panNo")}
               onBlur={(e) =>
                 handleFieldBlur("pan", e.target.value.toUpperCase())
@@ -203,11 +202,10 @@ const Step3Registration = ({ store, nextStep, prevStep }) => {
             <input
               type="text"
               placeholder="e.g. L27020MH1919PLC000540"
-              className={`bg-white border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 text-slate-800 placeholder-slate-400 shadow-sm transition-all ${
-                validationStatus.cin
+              className={`bg-white border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 text-slate-800 placeholder-slate-400 shadow-sm transition-all ${validationStatus.cin
                   ? "border-red-300 focus:border-red-400 focus:ring-red-100"
                   : "border-slate-200 focus:border-blue-400 focus:ring-blue-100"
-              }`}
+                }`}
               {...registerStep3("cinNo")}
               onBlur={(e) =>
                 handleFieldBlur("cin", e.target.value.toUpperCase())
@@ -233,11 +231,10 @@ const Step3Registration = ({ store, nextStep, prevStep }) => {
               type="text"
               placeholder="e.g. 123456789012"
               maxLength="12"
-              className={`bg-white border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 text-slate-800 placeholder-slate-400 shadow-sm transition-all ${
-                validationStatus.aadhaar
+              className={`bg-white border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 text-slate-800 placeholder-slate-400 shadow-sm transition-all ${validationStatus.aadhaar
                   ? "border-red-300 focus:border-red-400 focus:ring-red-100"
                   : "border-slate-200 focus:border-blue-400 focus:ring-blue-100"
-              }`}
+                }`}
               {...registerStep3("aadharNo")}
               onBlur={(e) => handleFieldBlur("aadhaar", e.target.value)}
             />

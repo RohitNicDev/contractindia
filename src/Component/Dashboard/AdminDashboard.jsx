@@ -649,39 +649,39 @@ function Security() {
 }
 
 const barData = [
-  { month: "Jan", value: 65 },
-  { month: "Feb", value: 78 },
-  { month: "Mar", value: 90 },
-  { month: "Apr", value: 72 },
-  { month: "May", value: 110 },
-  { month: "Jun", value: 124 },
+  { month: "Jan", value: 0 },
+  { month: "Feb", value: 0 },
+  { month: "Mar", value: 0 },
+  { month: "Apr", value: 0 },
+  { month: "May", value: 0 },
+  { month: "Jun", value: 0 },
 ];
 const metricCards = [
   {
     label: "Total Revenue",
-    value: "Rs.12.4L",
+    value: "Rs.0L",
     grad: "linear-gradient(135deg,#6366f1,#8b5cf6)",
   },
   {
     label: "Active Subscriptions",
-    value: "284",
+    value: "0",
     grad: "linear-gradient(135deg,#0ea5e9,#6366f1)",
   },
   {
     label: "Marketplace Listings",
-    value: "1,240",
+    value: "0",
     grad: "linear-gradient(135deg,#10b981,#0ea5e9)",
   },
   {
     label: "Service Requests",
-    value: "3,892",
+    value: "0",
     grad: "linear-gradient(135deg,#f59e0b,#ef4444)",
   },
 ];
 const pieData = [
-  { label: "Basic", pct: 40, color: "#6366f1" },
-  { label: "Pro", pct: 35, color: "#8b5cf6" },
-  { label: "Enterprise", pct: 25, color: "#0ea5e9" },
+  { label: "Basic", pct: 0, color: "#6366f1" },
+  { label: "Pro", pct: 0, color: "#8b5cf6" },
+  { label: "Enterprise", pct: 0, color: "#0ea5e9" },
 ];
 function Analytics() {
   return (

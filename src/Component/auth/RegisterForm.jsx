@@ -95,7 +95,7 @@ export function RegisterForm() {
       stateName: "", // stores state label (string) — hidden
       city: "", // stores city value/id
       cityName: "", // stores city label — hidden
-      pinCode: "",
+      // pinCode: "",
       serviceGroup: "",
       captcha: "",
     },
@@ -229,13 +229,13 @@ export function RegisterForm() {
       stateId: stateObj?.value ?? 0,
       stateName: stateObj?.label ?? values.state,
       cityName: values.cityName,
-      pinCode: values.pinCode,
+      // pinCode: values.pinCode,
       userType: Number(values.userType),
       companyName: isCommercial ? values.businessName || "" : "",
       serviceId: isCommercial ? values.serviceGroup || 0 : 0,
       serviceName: isCommercial
         ? rootServiceList?.find((elm) => elm?.value == values?.serviceGroup)
-            ?.label || ""
+          ?.label || ""
         : "",
     });
   };
@@ -279,19 +279,17 @@ export function RegisterForm() {
                   className={`
           flex items-center gap-2.5 rounded-xl border-2 px-3 py-2.5
           text-left text-xs font-semibold transition-all duration-200
-          ${
-            active
-              ? "border-[var(--auth-input-border-focus)] bg-indigo-50 text-indigo-700 shadow-sm"
-              : "border-[var(--auth-input-border)] bg-white/60 text-[var(--auth-text-body)] hover:border-indigo-200 hover:bg-white"
-          }
+          ${active
+                      ? "border-[var(--auth-input-border-focus)] bg-indigo-50 text-indigo-700 shadow-sm"
+                      : "border-[var(--auth-input-border)] bg-white/60 text-[var(--auth-text-body)] hover:border-indigo-200 hover:bg-white"
+                    }
         `}
                 >
                   <span
-                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
-                      active
+                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${active
                         ? "bg-indigo-600 text-white"
                         : "bg-slate-100 text-slate-400"
-                    }`}
+                      }`}
                   >
                     {Number(type.value) === 1 ? (
                       <UserCircle className="h-4 w-4" />
@@ -468,7 +466,7 @@ export function RegisterForm() {
               })}
             </AuthFormSelect>
 
-            <AuthFormField
+            {/* <AuthFormField
               compact
               label="Pin code"
               placeholder="6-digit pin code"
@@ -481,7 +479,7 @@ export function RegisterForm() {
                   message: "Invalid pin code (must be 6 digits)",
                 },
               })}
-            />
+            /> */}
 
             {/* ── Captcha ── */}
             <div className="col-span-2">
