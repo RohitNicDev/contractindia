@@ -575,11 +575,10 @@ function ContractorCard({ item, idx, onViewDetails, hasActivePlan }) {
         </div>
         {status && (
           <span
-            className={`absolute top-2 right-2 text-[9px] font-black px-2 py-0.5 rounded-lg ${
-              status === "Approved"
-                ? "bg-emerald-500/90 text-white"
-                : "bg-amber-400/90 text-white"
-            }`}
+            className={`absolute top-2 right-2 text-[9px] font-black px-2 py-0.5 rounded-lg ${status === "Approved"
+              ? "bg-emerald-500/90 text-white"
+              : "bg-amber-400/90 text-white"
+              }`}
           >
             {status}
           </span>
@@ -598,11 +597,10 @@ function ContractorCard({ item, idx, onViewDetails, hasActivePlan }) {
         <div className="flex gap-2">
           <button
             onClick={() => onViewDetails(item)}
-            className={`flex-1 py-2 rounded-xl text-[11px] font-bold transition-all active:scale-95 ${
-              hasActivePlan
-                ? "bg-slate-900 hover:bg-indigo-600 text-white"
-                : "bg-amber-500 hover:bg-amber-600 text-white"
-            }`}
+            className={`flex-1 py-2 rounded-xl text-[11px] font-bold transition-all active:scale-95 ${hasActivePlan
+              ? "bg-slate-900 hover:bg-indigo-600 text-white"
+              : "bg-amber-500 hover:bg-amber-600 text-white"
+              }`}
           >
             {/* {hasActivePlan ? "View Details" : "Subscribe"} */}
             {"View Details"}
@@ -655,22 +653,21 @@ function SidebarNode({
   const indent = depth * 16;
   const fs = Math.max(11, 13 - depth * 0.5);
   const dotSize = Math.max(6, 10 - depth * 1.5);
+  console.log(node, "node");
 
   return (
     <div>
-      <button
-        onClick={() => {
-          onSelect(node.ServiceID);
-          if (hasKids) toggleExpand(node.ServiceID);
-        }}
+      <div
+        onClick={() => onSelect(node.ServiceID)}
         style={{
           paddingLeft: 12 + indent,
           fontSize: fs,
           background: isActive ? c.activeBg : isAnc ? c.softBg : "transparent",
           color: isActive ? "#fff" : isAnc ? c.softText : "#475569",
         }}
-        className="w-full text-left flex items-center gap-2 rounded-xl pr-3 py-2 mb-0.5 font-semibold transition-all duration-150 hover:opacity-90"
+        className="w-full text-left flex items-center gap-2 rounded-xl pr-3 py-2 mb-0.5 font-semibold transition-all duration-150 hover:opacity-90 cursor-pointer"
       >
+        {/* Dot */}
         <span
           className="shrink-0 rounded-full"
           style={{
@@ -681,11 +678,22 @@ function SidebarNode({
             opacity: isActive ? 1 : 0.85,
           }}
         />
+
+        {/* Name */}
         <span className="flex-1 line-clamp-2 leading-snug">
           {node.ServiceName}
         </span>
+
+        {/* Chevron - Click only to toggle */}
         {hasKids && (
-          <span className="flex items-center gap-1 shrink-0 ml-1">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleExpand(node.ServiceID);
+            }}
+            className="flex items-center gap-1 shrink-0 ml-1 hover:bg-white/10 rounded p-0.5 transition-colors"
+          >
             <span
               className="text-[9px] font-black px-1.5 py-0.5 rounded-md leading-none"
               style={{
@@ -698,18 +706,20 @@ function SidebarNode({
             <ChevronRight
               size={11}
               style={{
-                transform: isOpen ? "rotate(90deg)" : "none",
-                transition: "transform 0.2s",
+                transform: isOpen ? "rotate(90deg)" : "rotate(0deg)",
+                transition: "transform 0.2s ease-out",
                 color: isActive ? "rgba(255,255,255,0.8)" : "#94a3b8",
               }}
             />
-          </span>
+          </button>
         )}
-      </button>
+      </div>
+
+      {/* Children - Only render when open */}
       <AnimatePresence initial={false}>
         {hasKids && isOpen && (
           <motion.div
-            key="kids"
+            key={`children-${node.ServiceID}`}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -769,10 +779,10 @@ function Breadcrumb({ tree, activeId, onSelect }) {
               style={
                 isLast
                   ? {
-                      background: c.softBg,
-                      color: c.softText,
-                      cursor: "default",
-                    }
+                    background: c.softBg,
+                    color: c.softText,
+                    cursor: "default",
+                  }
                   : { color: "#94a3b8" }
               }
             >
@@ -861,7 +871,10 @@ const CompanySubServices = () => {
   }, [menuServices, serviceId]);
 
   const totalNodes = useMemo(() => flattenTree(tree)?.length, [tree]);
-
+  useEffect(() => {
+    console.log(tree, "tree");
+    console.log(totalNodes, "tree");
+  }, [tree]);
   const { data: subscriptions = [], refetch: refetchSubscriptions } = useQuery({
     queryKey: ["userSubscriptions", userId],
     queryFn: () => fetchUserSubscriptions(userId),
@@ -922,20 +935,37 @@ const CompanySubServices = () => {
     mutationFn: UserPaymentHistorySave,
   });
 
-  // ── AUTO-SELECT FIRST LEAF ────────────────────────────────────────
+  // ──────────────────────────────────────────
+  // ── AUTO-SELECT PARENT SERVICE FROM URL ────────────────────────────────
+  // ── AUTO-SELECT PARENT SERVICE FROM URL ────────────────────────────────
   useEffect(() => {
     if (!tree.length) {
       setActiveId(null);
       setExpandedIds(new Set());
       return;
     }
+
+    if (serviceId) {
+      const targetNode = findNode(tree, Number(serviceId));
+      if (targetNode) {
+        setActiveId(Number(serviceId));
+        // Get ALL ancestors (parents, grandparents, etc.)
+        const ancestors = getAncestorIds(tree, Number(serviceId));
+        // Include the service itself in expanded list
+        ancestors.add(Number(serviceId));
+        setExpandedIds(ancestors);
+        return;
+      }
+    }
+
+    // Fallback logic...
     const isInTree = activeId !== null && !!findNode(tree, activeId);
     if (isInTree) return;
+
     const leaf = findFirstLeaf(tree[0]) ?? tree[0];
     setActiveId(leaf.ServiceID);
     setExpandedIds(getAncestorIds(tree, leaf.ServiceID));
-  }, [tree, activeId]);
-
+  }, [tree, serviceId]);
   // ── HANDLERS ───────────────────────────────────────────────────────
   const handleSelect = (id) => {
     setActiveId(id);
@@ -1134,7 +1164,7 @@ const CompanySubServices = () => {
               TransactionID: response?.razorpay_payment_id ?? "",
               payment: plan.Price ?? 0,
               paymentStatus: "Success",
-              paymentMode: "Razorpay",
+              paymentMode: "Card",
               remark: plan.PlanName ?? "",
               enterredBy: userId,
               enterDate: new Date().toISOString(),
@@ -1273,18 +1303,16 @@ const CompanySubServices = () => {
             {isLoggedIn && (
               <div className="mt-4">
                 <div
-                  className={`rounded-2xl border p-4 transition-all ${
-                    hasActivePlan
-                      ? "border-violet-100 bg-gradient-to-r from-violet-50 via-white to-white"
-                      : "border-amber-200 bg-gradient-to-r from-amber-50 via-white to-white"
-                  }`}
+                  className={`rounded-2xl border p-4 transition-all ${hasActivePlan
+                    ? "border-violet-100 bg-gradient-to-r from-violet-50 via-white to-white"
+                    : "border-amber-200 bg-gradient-to-r from-amber-50 via-white to-white"
+                    }`}
                 >
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-3 min-w-0">
                       <div
-                        className={`flex h-6 w-6 items-center justify-center rounded-xl ${
-                          hasActivePlan ? "bg-[#492a78]/10" : "bg-amber-100"
-                        }`}
+                        className={`flex h-6 w-6 items-center justify-center rounded-xl ${hasActivePlan ? "bg-[#492a78]/10" : "bg-amber-100"
+                          }`}
                       >
                         {hasActivePlan ? (
                           <Crown className="h-5 w-5 text-[#492a78]" />
@@ -1295,9 +1323,8 @@ const CompanySubServices = () => {
 
                       <div className="min-w-0">
                         <p
-                          className={`text-[12px]   ${
-                            hasActivePlan ? "text-slate-500" : "text-amber-600"
-                          }`}
+                          className={`text-[12px]   ${hasActivePlan ? "text-slate-500" : "text-amber-600"
+                            }`}
                         >
                           {hasActivePlan
                             ? "Active Membership"

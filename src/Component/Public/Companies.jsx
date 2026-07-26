@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Star, MapPin, BadgeCheck, ArrowUpRight } from "lucide-react";
 import {
@@ -163,13 +163,13 @@ const Companies = () => {
 
   const companiesForDashboard = userRegistrationDetailsdata?.map((item) => ({
     userId: item?.UserId,
-    name: item?.CompanyName || item?.Name,
-    type: item?.UserTypeName || "Business",
+    name: item?.CompanyName || '',
+    type: item?.UserTypeName || "",
     rating: 4.8,
     reviews: 100,
- tags: item?.ServiceNames
-  ? item?.ServiceNames?.split(",")?.map((t) => t?.trim())?.filter(Boolean)
-  : ["Business Service"],
+    tags: item?.ServiceNames
+      ? item?.ServiceNames?.split(",")?.map((t) => t?.trim())?.filter(Boolean)
+      : ["Business Service"],
     loc: item?.StateName,
     // verified: item?.Status === "Approved",
     grad:
@@ -180,7 +180,12 @@ const Companies = () => {
     // mobile: item?.MobileNo,
     // pincode: item?.PinCode,
   }));
-
+  useEffect(() => {
+    console.log(companiesForDashboard, "companiesForDashboard");
+  }, [companiesForDashboard]);
+  useEffect(() => {
+    console.log(userRegistrationDetailsdata, "userRegistrationDetailsdata");
+  }, [userRegistrationDetailsdata]);
   return (
     <section className="relative py-24 overflow-hidden bg-slate-100">
       {/* Background glow orbs */}

@@ -229,11 +229,10 @@ function SubscriptionDetailModal({ sub, planMap, onClose }) {
           className="relative w-full max-w-md rounded-3xl bg-white shadow-2xl overflow-hidden"
         >
           <div
-            className={`p-6 text-white ${
-              isActive
-                ? "bg-gradient-to-br from-emerald-500 to-teal-600"
-                : "bg-gradient-to-br from-slate-500 to-slate-700"
-            }`}
+            className={`p-6 text-white ${isActive
+              ? "bg-gradient-to-br from-emerald-500 to-teal-600"
+              : "bg-gradient-to-br from-slate-500 to-slate-700"
+              }`}
           >
             <div className="flex items-start justify-between">
               <div>
@@ -254,11 +253,10 @@ function SubscriptionDetailModal({ sub, planMap, onClose }) {
             </div>
             <div className="mt-3 flex items-center gap-2">
               <span
-                className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${
-                  isActive
-                    ? "bg-white/20 border-white/30 text-white"
-                    : "bg-white/10 border-white/20 text-white/70"
-                }`}
+                className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${isActive
+                  ? "bg-white/20 border-white/30 text-white"
+                  : "bg-white/10 border-white/20 text-white/70"
+                  }`}
               >
                 {isActive ? "● Active" : "○ Inactive"}
               </span>
@@ -418,7 +416,7 @@ function PaymentModal({ plan, userId, onClose, onSuccess }) {
             TransactionID: response?.razorpay_payment_id ?? "",
             payment: plan?.Price ?? 0,
             paymentStatus: "Success",
-            paymentMode: "Card", 
+            paymentMode: "Card",
             remark: plan?.PlanName ?? "",
             enterredBy: userId,
             enterDate: new Date().toISOString(),
@@ -457,8 +455,8 @@ function PaymentModal({ plan, userId, onClose, onSuccess }) {
     saveUserPaymentHistorySave({
       userID: userId,
       payment: 0,
-      paymentStatus: "Free",
-      paymentMode: "Free",
+      paymentStatus: "Success",
+      paymentMode: "Card",
       remark: plan?.PlanName ?? "",
       enterredBy: userId,
       enterDate: new Date().toISOString(),
@@ -560,15 +558,12 @@ function PaymentModal({ plan, userId, onClose, onSuccess }) {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={
-                  plan?.Price === 0 ? handleFreePlan : handleRazorpayPayment
-                }
+                onClick={() => handleRazorpayPayment()}
                 disabled={isUserPaymentHistorySaving || isSaving}
-                className={`flex-1 py-3 rounded-2xl font-bold text-sm text-white shadow-lg transition-all ${
-                  isUserPaymentHistorySaving || isSaving
-                    ? "bg-slate-300 cursor-not-allowed"
-                    : "bg-gradient-to-r from-indigo-600 to-violet-600 hover:opacity-90"
-                }`}
+                className={`flex-1 py-3 rounded-2xl font-bold text-sm text-white shadow-lg transition-all ${isUserPaymentHistorySaving || isSaving
+                  ? "bg-slate-300 cursor-not-allowed"
+                  : "bg-gradient-to-r from-indigo-600 to-violet-600 hover:opacity-90"
+                  }`}
               >
                 {isUserPaymentHistorySaving || isSaving ? (
                   <>
@@ -839,9 +834,8 @@ export default function PlansAndSubscriptions() {
             className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold border ${classes}`}
           >
             <span
-              className={`w-1.5 h-1.5 rounded-full ${dotClass} ${
-                status !== "Inactive" ? "animate-pulse" : ""
-              }`}
+              className={`w-1.5 h-1.5 rounded-full ${dotClass} ${status !== "Inactive" ? "animate-pulse" : ""
+                }`}
             />
             {status}
           </span>
@@ -908,11 +902,10 @@ export default function PlansAndSubscriptions() {
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`px-5 py-2 text-sm font-bold rounded-lg transition-all duration-200 ${
-              tab === t.key
-                ? "bg-white text-indigo-600 shadow-sm"
-                : "text-slate-500 hover:text-slate-700"
-            }`}
+            className={`px-5 py-2 text-sm font-bold rounded-lg transition-all duration-200 ${tab === t.key
+              ? "bg-white text-indigo-600 shadow-sm"
+              : "text-slate-500 hover:text-slate-700"
+              }`}
           >
             {t.label}
           </button>

@@ -67,6 +67,8 @@ import SettingsPanel from "./Component/Dashboard/SettingsPanel";
 import LeadManagement from "./Component/Dashboard/pages/LeadManagement";
 import IndividualMyServices from "./Component/Dashboard/pages/IndividualMyServices";
 import Step5ServiceListing from "./Component/Dashboard/pages/ProfileSteper/Step5ServiceListing";
+import InvoicesPage from "./Component/Dashboard/pages/InvoicesPage";
+import InvoicePrintPage from "./Component/Dashboard/pages/Invoice/InvoicePrintPage";
 
 export const router = createBrowserRouter([
   // ── Public routes (Header + Footer via PublicLayout) ─────────────────────
@@ -131,6 +133,8 @@ export const router = createBrowserRouter([
       { path: "servicesListing", element: <Step5ServiceListing navbar={true} /> },
       { path: "leads", element: <LeadManagement /> },
       { path: "settings", element: <SettingsPanel /> },
+      { path: "invoices", element: <InvoicesPage /> },
+      // { path: "invoices/print/:invoiceId", element: <InvoicePrintPage /> },
     ],
   },
 
