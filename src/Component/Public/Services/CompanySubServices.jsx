@@ -694,15 +694,7 @@ function SidebarNode({
             }}
             className="flex items-center gap-1 shrink-0 ml-1 hover:bg-white/10 rounded p-0.5 transition-colors"
           >
-            <span
-              className="text-[9px] font-black px-1.5 py-0.5 rounded-md leading-none"
-              style={{
-                background: isActive ? "rgba(255,255,255,0.2)" : "#f1f5f9",
-                color: isActive ? "#fff" : "#64748b",
-              }}
-            >
-              {node.children.length}
-            </span>
+ 
             <ChevronRight
               size={11}
               style={{
