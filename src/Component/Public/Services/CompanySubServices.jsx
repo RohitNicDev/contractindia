@@ -51,7 +51,7 @@ import { toast } from "sonner";
 //   if (!serviceId) return [];
 //   return (await userServicesdetailsGetByservices(serviceId)) ?? [];
 // };
-const fetchContractors = async (serviceId,userId) => {
+const fetchContractors = async (serviceId, userId) => {
   if (!serviceId) return [];
   return (await userServicesdetailsGetByParam(`serviceId=${0}?userId=${userId}`)) ?? [];
 };
@@ -444,7 +444,6 @@ function PlanSelectionModal({ plans, onSelectPlan, onCancel, isLoading }) {
 // ═══════════════════════════════════════════════════════════════════════
 function ContractorDetailModal({ item, onClose, canAccess }) {
   if (!item) return null;
-  console.log(item, "item");
 
   const company = item?.CompanyName || item?.Name || "Contractor";
   const email = item?.EmailId || "—";
@@ -602,13 +601,13 @@ function ContractorCard({ item, idx, onViewDetails, hasActivePlan }) {
         <div className="flex gap-2">
           <button
             onClick={() => onViewDetails(item)}
-            className={`flex-1 py-2 rounded-xl text-[11px] font-bold transition-all active:scale-95 ${hasActivePlan
+            className={`flex-1 py-2 rounded-xl text-[11px] font-bold transition-all active:scale-95 ${item.IsActive
               ? "bg-slate-900 hover:bg-indigo-600 text-white"
               : "bg-amber-500 hover:bg-amber-600 text-white"
               }`}
           >
             {/* {hasActivePlan ? "View Details" : "Subscribe"} */}
-            {"View Details"}
+            {item.IsActive == 1 ? "Viewed" : "View Details"}
           </button>
           {phone && (
             <a
@@ -658,7 +657,6 @@ function SidebarNode({
   const indent = depth * 16;
   const fs = Math.max(11, 13 - depth * 0.5);
   const dotSize = Math.max(6, 10 - depth * 1.5);
-  console.log(node, "node");
 
   return (
     <div>
@@ -699,7 +697,7 @@ function SidebarNode({
             }}
             className="flex items-center gap-1 shrink-0 ml-1 hover:bg-white/10 rounded p-0.5 transition-colors"
           >
- 
+
             <ChevronRight
               size={11}
               style={{
@@ -841,10 +839,6 @@ const CompanySubServices = () => {
     mutationFn: userRegistrationbyDetails,
     onSuccess: (response) => {
       const userData = response?.[0] || response?.data?.[0] || {};
-
-      // setEnquiryService({
-
-      // });
       setDetailItem(userData);
     },
     onError: (err) => {
@@ -852,10 +846,6 @@ const CompanySubServices = () => {
       toast.error(
         "Failed to retrieve your registration details. Proceeding with default enquiry.",
       );
-      // setEnquiryService({
-
-      // });
-      // s
     },
   });
 
@@ -868,10 +858,7 @@ const CompanySubServices = () => {
   }, [menuServices, serviceId]);
 
   const totalNodes = useMemo(() => flattenTree(tree)?.length, [tree]);
-  useEffect(() => {
-    console.log(tree, "tree");
-    console.log(totalNodes, "tree");
-  }, [tree]);
+
   const { data: subscriptions = [], refetch: refetchSubscriptions } = useQuery({
     queryKey: ["userSubscriptions", userId],
     queryFn: () => fetchUserSubscriptions(userId),
@@ -888,9 +875,6 @@ const CompanySubServices = () => {
 
   const hasActivePlan = CheckValidityData?.status;
   const activeSub = subscriptions.find((s) => s.IsActive === 1);
-  useEffect(() => {
-    console.log(CheckValidityData?.status, "CheckValidityData");
-  }, [CheckValidityData]);
 
   const { data: plans = [], isLoading: plansLoading } = useQuery({
     queryKey: ["planMasterGetById", userType],
@@ -917,10 +901,23 @@ const CompanySubServices = () => {
   });
   const { data: contractors = [], isLoading: contractorsLoading } = useQuery({
     queryKey: ["contractors", activeId],
-    queryFn: () => fetchContractors(activeId,userId),
+    queryFn: () => fetchContractors(activeId, userId),
     enabled: !!activeId,
     staleTime: 2 * 60 * 1000,
   });
+
+  // ── FILTER: only show contractors whose ServiceID matches the
+  // currently selected sidebar node (activeId), falling back to the
+  // default URL param (serviceId) before activeId settles.
+  // NOTE: no API call is changed here — this filters the response
+  // already returned by fetchContractors on the client side.
+  const filteredContractors = useMemo(() => {
+    const targetServiceId = Number(activeId ?? serviceId ?? 0);
+    if (!targetServiceId) return contractors;
+    return contractors.filter(
+      (item) => Number(item?.ServiceID) === targetServiceId,
+    );
+  }, [contractors, activeId, serviceId]);
 
   // ── MUTATIONS ──────────────────────────────────────────────────────
   const { mutateAsync: saveSubscription, isPending: isSavingSubscription } =
@@ -932,9 +929,7 @@ const CompanySubServices = () => {
     mutationFn: UserPaymentHistorySave,
   });
 
-  // ──────────────────────────────────────────
-  // ── AUTO-SELECT PARENT SERVICE FROM URL ────────────────────────────────
-  // ── AUTO-SELECT PARENT SERVICE FROM URL ────────────────────────────────
+  // ── AUTO-SELECT PARENT SERVICE FROM URL ────────────────────────────
   useEffect(() => {
     if (!tree.length) {
       setActiveId(null);
@@ -963,6 +958,7 @@ const CompanySubServices = () => {
     setActiveId(leaf.ServiceID);
     setExpandedIds(getAncestorIds(tree, leaf.ServiceID));
   }, [tree, serviceId]);
+
   // ── HANDLERS ───────────────────────────────────────────────────────
   const handleSelect = (id) => {
     setActiveId(id);
@@ -989,35 +985,9 @@ const CompanySubServices = () => {
   }, [menuServices, serviceId]);
 
   // ── MAIN FLOW: View Details ────────────────────────────────────────
-  const handleViewDetails = (item) => {
-    console.log("🔍 handleViewDetails called", {
-      item,
-      isLoggedIn,
-      hasActivePlan,
-    });
-
-    // Step 1: Check login
-    if (!isLoggedIn) {
-      toast.error("Please login to view contractor details");
-      navigate("/login");
-      return;
-    }
-
-    // Step 2: Check active plan
-    if (!hasActivePlan) {
-      console.log("❌ No active plan - showing plan selection");
-      setShowPlanSelection(true);
-      return;
-    }
-
-    // Step 3: Confirm before showing details
-    console.log("✅ Active plan found - asking for confirmation", item);
-    setPendingDetailItem(item);
-  };
-
-  const handleConfirmViewDetails = async () => {
-    if (!pendingDetailItem) return false;
-    // console.log(pendingDetailItem,"pendingDetailItem");
+  // Shared logic for actually saving the service + loading registration
+  // details (used by both the confirmed flow and the skip-confirm flow).
+  const proceedToViewDetails = async (item) => {
     try {
       const payload = {
         userServiceID: 0,
@@ -1035,12 +1005,7 @@ const CompanySubServices = () => {
       const response = await saveService(payload);
 
       if (response?.status) {
-        console.log(activeNode, "activeNode");
-        console.log(pendingDetailItem, "pendingDetailItem");
-
-        // setDetailItem(pendingDetailItem);
-        setPendingDetailItem(null);
-        userRegistrationMutate(pendingDetailItem?.UserID);
+        userRegistrationMutate(item?.UserID);
         return true;
       }
 
@@ -1051,14 +1016,49 @@ const CompanySubServices = () => {
     }
   };
 
+  const handleViewDetails = (item) => {
+    // Step 1: Check login
+    if (!isLoggedIn) {
+      toast.error("Please login to view contractor details");
+      navigate("/login");
+      return;
+    }
+
+    // Step 2: Check active plan
+    if (!hasActivePlan) {
+      setShowPlanSelection(true);
+      return;
+    }
+
+    // Step 3: Already active for this user (IsActive: 1) → skip the
+    // confirmation popup and go straight to ContractorDetailModal.
+    if (Number(item?.IsActive) === 1) {
+      // proceedToViewDetails(item);
+      userRegistrationMutate(item?.UserID);
+      return;
+    }
+
+    // Otherwise confirm before showing details
+    setPendingDetailItem(item);
+  };
+
+  const handleConfirmViewDetails = async () => {
+    console.log(activeNode, "activeNode");
+    if (!pendingDetailItem) return false;
+    const item = pendingDetailItem;
+    const ok = await proceedToViewDetails(item);
+    if (ok) {
+      setPendingDetailItem(null);
+    }
+    return ok;
+  };
+
   const handleCancelViewDetails = () => {
     setPendingDetailItem(null);
   };
 
   // ── PLAN SELECTION ─────────────────────────────────────────────────
   const handleSelectPlan = async (plan) => {
-    console.log("📋 Plan selected:", plan.PlanName);
-
     if (plan.Price === 0) {
       // Free plan - direct activation
       await handleFreeplanActivation(plan);
@@ -1083,8 +1083,8 @@ const CompanySubServices = () => {
         planName: plan.PlanName || "",
         remark: plan.Remark || "",
         enterredBy: userId,
-        // enterDate: new Date().toISOString(),
         isActive: 1,
+        CompanyUserID: activeNode?.UserID,
       };
 
       const res = await saveSubscription(subPayload);
@@ -1114,7 +1114,6 @@ const CompanySubServices = () => {
     const plan = selectedPlanForPayment;
     if (!plan) return;
 
-    console.log("💳 Confirming payment for:", plan.PlanName);
     setIsProcessingPayment(true);
     setPaymentError(null);
 
@@ -1127,7 +1126,6 @@ const CompanySubServices = () => {
         planName: plan.PlanName || "",
         remark: plan.Remark || "",
         enterredBy: userId,
-        // enterDate: new Date().toISOString(),
         isActive: 0,
       };
 
@@ -1135,8 +1133,6 @@ const CompanySubServices = () => {
       if (!subRes?.status) {
         throw new Error(subRes?.message || "Failed to prepare subscription");
       }
-
-      console.log("✓ Subscription prepared, initiating Razorpay");
 
       // Step 2: Initiate Razorpay
       if (!window.Razorpay) {
@@ -1151,10 +1147,6 @@ const CompanySubServices = () => {
         description: plan.PlanName,
         image: "/logo.png",
         handler: async (response) => {
-          console.log(
-            "✅ Payment successful, activating subscription",
-            response,
-          );
           try {
             // Step 3a: Save payment history
             await savePaymentHistory({
@@ -1167,7 +1159,6 @@ const CompanySubServices = () => {
               enterredBy: userId,
               enterDate: new Date().toISOString(),
               TransactionDate: new Date().toISOString(),
-              // enterDate: new Date().toISOString(),
               isActive: 1,
             });
 
@@ -1179,7 +1170,6 @@ const CompanySubServices = () => {
               planName: plan.PlanName || "",
               remark: plan.Remark || "",
               enterredBy: userId,
-              // enterDate: new Date().toISOString(),
               isActive: 1,
             };
 
@@ -1217,7 +1207,6 @@ const CompanySubServices = () => {
         theme: { color: "#4f46e5" },
         modal: {
           ondismiss: () => {
-            console.log("❌ Payment cancelled");
             setIsProcessingPayment(false);
             toast.error("Payment cancelled");
           },
@@ -1369,7 +1358,7 @@ const CompanySubServices = () => {
                   {activeNode?.ServiceName ?? "Select a category"}
                   {!contractorsLoading && activeId && (
                     <span className="text-sm font-bold bg-indigo-200 text-indigo-700 px-2 py-0.5 rounded-lg">
-                      {contractors.length}
+                      {filteredContractors.length}
                     </span>
                   )}
                 </h2>
@@ -1385,7 +1374,7 @@ const CompanySubServices = () => {
                 [...Array(6)].map((_, i) => <CardSkeleton key={i} />)
               ) : (
                 <AnimatePresence mode="popLayout">
-                  {contractors?.map((item, idx) => (
+                  {filteredContractors?.map((item, idx) => (
                     <ContractorCard
                       key={item?.userId ?? idx}
                       item={item}
@@ -1398,7 +1387,7 @@ const CompanySubServices = () => {
               )}
             </motion.div>
 
-            {!contractorsLoading && contractors.length === 0 && activeId && (
+            {!contractorsLoading && filteredContractors.length === 0 && activeId && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -1438,18 +1427,15 @@ const CompanySubServices = () => {
       {/* MODALS */}
       <AnimatePresence mode="wait">
         {/* Plan Selection Modal */}
-        {
-          // !CheckValidityData?.status &&
-          showPlanSelection && (
-            <PlanSelectionModal
-              key="plan-selection"
-              plans={plans}
-              onSelectPlan={handleSelectPlan}
-              onCancel={handleClosePlanSelection}
-              isLoading={isSavingSubscription}
-            />
-          )
-        }
+        {showPlanSelection && (
+          <PlanSelectionModal
+            key="plan-selection"
+            plans={plans}
+            onSelectPlan={handleSelectPlan}
+            onCancel={handleClosePlanSelection}
+            isLoading={isSavingSubscription}
+          />
+        )}
 
         {/* Payment Modal */}
         {showPaymentModal && selectedPlanForPayment && (
