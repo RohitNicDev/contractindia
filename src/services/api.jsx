@@ -259,10 +259,14 @@ export const UserPaymentHistoryGetById = async (params) => {
 export const UserDocumentStoreGetByparam = async (params) => {
   return await api.get(`/UserDocumentStore/image?${params}`);
 };
-export const userServicesdetailsGetByparam = async (serviceId) => {
+export const userServicesdetailsGetByservices = async (serviceId) => {
   const response = await api.get(
     `/ServiceMaster/userservicesdetails?serviceId=${serviceId}`,
   );
+  return response?.data || [];
+};
+export const userServicesdetailsGetByParam = async (Param) => {
+  const response = await api.get(`/ServiceMaster/userservicesdetails?${Param}`);
   return response?.data || [];
 };
 export const CheckValidityGet = async (params) => {

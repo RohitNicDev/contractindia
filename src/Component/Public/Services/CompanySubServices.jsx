@@ -31,7 +31,7 @@ import {
 import {
   ContractorListGet,
   ServiceMenuGet,
-  userServicesdetailsGetByparam,
+  userServicesdetailsGetByservices,
   UserSubscriptionDetailGet,
   planMasterGetById,
   userSubscriptionDetailSave,
@@ -39,6 +39,7 @@ import {
   UserServiceDetailsSave,
   CheckValidityGet,
   getUserRegistrationbyParam,
+  userServicesdetailsGetByParam,
 } from "../../../services/api";
 import { useNavigate, useParams } from "react-router-dom";
 import { useServiceStore, useUserStore } from "../../../store/store";
@@ -46,9 +47,13 @@ import { ConfirmModal } from "../../common/ConfirmModal";
 import { toast } from "sonner";
 
 // ─── API HELPERS ───────────────────────────────────────────────────────
-const fetchContractors = async (serviceId) => {
+// const fetchContractors = async (serviceId) => {
+//   if (!serviceId) return [];
+//   return (await userServicesdetailsGetByservices(serviceId)) ?? [];
+// };
+const fetchContractors = async (serviceId,userId) => {
   if (!serviceId) return [];
-  return (await userServicesdetailsGetByparam(serviceId)) ?? [];
+  return (await userServicesdetailsGetByParam(`serviceId=${0}?userId=${userId}`)) ?? [];
 };
 
 const fetchUserSubscriptions = async (userId) => {
@@ -912,7 +917,7 @@ const CompanySubServices = () => {
   });
   const { data: contractors = [], isLoading: contractorsLoading } = useQuery({
     queryKey: ["contractors", activeId],
-    queryFn: () => fetchContractors(activeId),
+    queryFn: () => fetchContractors(activeId,userId),
     enabled: !!activeId,
     staleTime: 2 * 60 * 1000,
   });
@@ -1024,6 +1029,7 @@ const CompanySubServices = () => {
         amount: 0,
         enterredBy: userId,
         isActive: 1,
+        CompanyUserID: activeNode.UserID
       };
 
       const response = await saveService(payload);
