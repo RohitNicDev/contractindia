@@ -54,7 +54,7 @@ import { toast } from "sonner";
 const fetchContractors = async (serviceId, userId) => {
   if (!serviceId) return [];
   return (
-    (await userServicesdetailsGetByParam(`serviceId=${0}?userId=${userId}`)) ??
+    (await userServicesdetailsGetByParam(`serviceId=${0}?userId=${userId}?U serType=1`)) ??
     []
   );
 };
