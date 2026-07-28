@@ -53,7 +53,10 @@ import { toast } from "sonner";
 // };
 const fetchContractors = async (serviceId, userId) => {
   if (!serviceId) return [];
-  return (await userServicesdetailsGetByParam(`serviceId=${0}?userId=${userId}`)) ?? [];
+  return (
+    (await userServicesdetailsGetByParam(`serviceId=${0}?userId=${userId}`)) ??
+    []
+  );
 };
 
 const fetchUserSubscriptions = async (userId) => {
@@ -551,6 +554,7 @@ function ContractorCard({ item, idx, onViewDetails, hasActivePlan }) {
   const rating =
     typeof item?.Rating === "number" ? item?.Rating : 4.5 + (idx % 5) * 0.1;
   const imgUrl = `${API_URL}/UserDocumentStore/image?userId=${item?.UserID}&documentCategoryId=7&documentSubCategoryId=10`;
+  console.log(item, "item");
 
   return (
     <motion.div
@@ -579,10 +583,11 @@ function ContractorCard({ item, idx, onViewDetails, hasActivePlan }) {
         </div>
         {status && (
           <span
-            className={`absolute top-2 right-2 text-[9px] font-black px-2 py-0.5 rounded-lg ${status === "Approved"
-              ? "bg-emerald-500/90 text-white"
-              : "bg-amber-400/90 text-white"
-              }`}
+            className={`absolute top-2 right-2 text-[9px] font-black px-2 py-0.5 rounded-lg ${
+              status === "Approved"
+                ? "bg-emerald-500/90 text-white"
+                : "bg-amber-400/90 text-white"
+            }`}
           >
             {status}
           </span>
@@ -601,10 +606,11 @@ function ContractorCard({ item, idx, onViewDetails, hasActivePlan }) {
         <div className="flex gap-2">
           <button
             onClick={() => onViewDetails(item)}
-            className={`flex-1 py-2 rounded-xl text-[11px] font-bold transition-all active:scale-95 ${item.IsActive
-              ? "bg-slate-900 hover:bg-indigo-600 text-white"
-              : "bg-amber-500 hover:bg-amber-600 text-white"
-              }`}
+            className={`flex-1 py-2 rounded-xl text-[11px] font-bold transition-all active:scale-95 ${
+              item.IsActive
+                ? "bg-slate-900 hover:bg-indigo-600 text-white"
+                : "bg-amber-500 hover:bg-amber-600 text-white"
+            }`}
           >
             {/* {hasActivePlan ? "View Details" : "Subscribe"} */}
             {item.IsActive == 1 ? "Viewed" : "View Details"}
@@ -697,7 +703,6 @@ function SidebarNode({
             }}
             className="flex items-center gap-1 shrink-0 ml-1 hover:bg-white/10 rounded p-0.5 transition-colors"
           >
-
             <ChevronRight
               size={11}
               style={{
@@ -774,10 +779,10 @@ function Breadcrumb({ tree, activeId, onSelect }) {
               style={
                 isLast
                   ? {
-                    background: c.softBg,
-                    color: c.softText,
-                    cursor: "default",
-                  }
+                      background: c.softBg,
+                      color: c.softText,
+                      cursor: "default",
+                    }
                   : { color: "#94a3b8" }
               }
             >
@@ -797,6 +802,7 @@ const CompanySubServices = () => {
   const { serviceId } = useParams();
   const navigate = useNavigate();
   const { loginResponce } = useUserStore();
+  const [companyUserID, setCompanyUserID] = useState(0);
 
   const isLoggedIn = !!(
     loginResponce?.isLoginSuccessful || loginResponce?.userId
@@ -886,6 +892,7 @@ const CompanySubServices = () => {
     onSuccess: (response) => {
       if (response?.status) {
         toast.success(response?.message || "Service activated successfully");
+        refetch();
         refetchSubscriptions();
       } else {
         toast.error(
@@ -899,7 +906,11 @@ const CompanySubServices = () => {
       );
     },
   });
-  const { data: contractors = [], isLoading: contractorsLoading } = useQuery({
+  const {
+    data: contractors = [],
+    isLoading: contractorsLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["contractors", activeId],
     queryFn: () => fetchContractors(activeId, userId),
     enabled: !!activeId,
@@ -999,8 +1010,9 @@ const CompanySubServices = () => {
         amount: 0,
         enterredBy: userId,
         isActive: 1,
-        CompanyUserID: activeNode.UserID
+        CompanyUserID: companyUserID,
       };
+      console.log(payload, "payload", activeNode);
 
       const response = await saveService(payload);
 
@@ -1017,6 +1029,8 @@ const CompanySubServices = () => {
   };
 
   const handleViewDetails = (item) => {
+    console.log(item, "item");
+    setCompanyUserID(item?.UserID);
     // Step 1: Check login
     if (!isLoggedIn) {
       toast.error("Please login to view contractor details");
@@ -1084,7 +1098,7 @@ const CompanySubServices = () => {
         remark: plan.Remark || "",
         enterredBy: userId,
         isActive: 1,
-        CompanyUserID: activeNode?.UserID,
+        CompanyUserID: companyUserID,
       };
 
       const res = await saveSubscription(subPayload);
@@ -1127,6 +1141,7 @@ const CompanySubServices = () => {
         remark: plan.Remark || "",
         enterredBy: userId,
         isActive: 0,
+        CompanyUserID: companyUserID,
       };
 
       const subRes = await saveSubscription(subPayload);
@@ -1171,6 +1186,7 @@ const CompanySubServices = () => {
               remark: plan.Remark || "",
               enterredBy: userId,
               isActive: 1,
+              CompanyUserID: companyUserID,
             };
 
             await saveSubscription(activatePayload);
@@ -1290,16 +1306,18 @@ const CompanySubServices = () => {
             {isLoggedIn && (
               <div className="mt-4">
                 <div
-                  className={`rounded-2xl border p-4 transition-all ${hasActivePlan
-                    ? "border-violet-100 bg-gradient-to-r from-violet-50 via-white to-white"
-                    : "border-amber-200 bg-gradient-to-r from-amber-50 via-white to-white"
-                    }`}
+                  className={`rounded-2xl border p-4 transition-all ${
+                    hasActivePlan
+                      ? "border-violet-100 bg-gradient-to-r from-violet-50 via-white to-white"
+                      : "border-amber-200 bg-gradient-to-r from-amber-50 via-white to-white"
+                  }`}
                 >
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-3 min-w-0">
                       <div
-                        className={`flex h-6 w-6 items-center justify-center rounded-xl ${hasActivePlan ? "bg-[#492a78]/10" : "bg-amber-100"
-                          }`}
+                        className={`flex h-6 w-6 items-center justify-center rounded-xl ${
+                          hasActivePlan ? "bg-[#492a78]/10" : "bg-amber-100"
+                        }`}
                       >
                         {hasActivePlan ? (
                           <Crown className="h-5 w-5 text-[#492a78]" />
@@ -1310,8 +1328,9 @@ const CompanySubServices = () => {
 
                       <div className="min-w-0">
                         <p
-                          className={`text-[12px]   ${hasActivePlan ? "text-slate-500" : "text-amber-600"
-                            }`}
+                          className={`text-[12px]   ${
+                            hasActivePlan ? "text-slate-500" : "text-amber-600"
+                          }`}
                         >
                           {hasActivePlan
                             ? "Active Membership"
@@ -1376,7 +1395,7 @@ const CompanySubServices = () => {
                 <AnimatePresence mode="popLayout">
                   {filteredContractors?.map((item, idx) => (
                     <ContractorCard
-                      key={item?.userId ?? idx}
+                      key={item?.UserID ?? idx}
                       item={item}
                       idx={idx}
                       onViewDetails={handleViewDetails}
@@ -1387,21 +1406,26 @@ const CompanySubServices = () => {
               )}
             </motion.div>
 
-            {!contractorsLoading && filteredContractors.length === 0 && activeId && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="bg-white rounded-[40px] border border-dashed border-slate-200 py-20 text-center mt-4"
-              >
-                <Building2 size={40} className="text-slate-200 mx-auto mb-4" />
-                <h3 className="text-lg font-bold text-slate-700">
-                  No Specialists Found
-                </h3>
-                <p className="text-slate-400 text-sm mt-1">
-                  Try a different category
-                </p>
-              </motion.div>
-            )}
+            {!contractorsLoading &&
+              filteredContractors.length === 0 &&
+              activeId && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="bg-white rounded-[40px] border border-dashed border-slate-200 py-20 text-center mt-4"
+                >
+                  <Building2
+                    size={40}
+                    className="text-slate-200 mx-auto mb-4"
+                  />
+                  <h3 className="text-lg font-bold text-slate-700">
+                    No Specialists Found
+                  </h3>
+                  <p className="text-slate-400 text-sm mt-1">
+                    Try a different category
+                  </p>
+                </motion.div>
+              )}
           </section>
         </div>
       </div>

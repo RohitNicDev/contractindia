@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { Drawer } from "antd";
 import { Star, MapPin, BadgeCheck, ArrowUpRight } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   UserDocumentStoreGetByparam,
   userRegistrationHomeDetails,
@@ -141,6 +143,12 @@ const CompanyImage = ({ userId, companyName }) => {
 };
 
 const Companies = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isHomePage = location.pathname === "/";
+  const [selectedCompany, setSelectedCompany] = useState(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   //1=approved, 0=pending, 2=rejected
   //usertype: 1=individual, 2=Company
   const params = {
@@ -186,6 +194,28 @@ const Companies = () => {
   useEffect(() => {
     console.log(userRegistrationDetailsdata, "userRegistrationDetailsdata");
   }, [userRegistrationDetailsdata]);
+
+  const displayedCompanies = isHomePage
+    ? companiesForDashboard.slice(0, 4)
+    : companiesForDashboard;
+
+  const openCompanyDetails = (company) => {
+    setSelectedCompany(company);
+    setDrawerOpen(true);
+  };
+
+  const handleServiceClick = (serviceName) => {
+    const slug = String(serviceName)
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
+console.log(selectedCompany,"selectedCompany");
+
+    setDrawerOpen(false);
+    navigate(`/service/${slug || "service"}`);
+  };
+
   return (
     <section className="relative py-24 overflow-hidden bg-slate-100">
       {/* Background glow orbs */}
@@ -227,12 +257,24 @@ const Companies = () => {
               Work with the top-rated contractors and consultants in the region.
             </p>
           </div>
+
+          {isHomePage && (
+            <button
+              type="button"
+              onClick={() => navigate("/company-list")}
+              className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-white px-4 py-2 text-sm font-semibold text-indigo-600 shadow-sm transition hover:border-indigo-300 hover:bg-indigo-50"
+            >
+              View more
+              <ArrowUpRight className="h-4 w-4" />
+            </button>
+          )}
         </motion.div>
 
         {/* Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {companiesForDashboard?.map((elm, idx) => (
-            <motion.div
+            <motion.button
+              type="button"
               key={elm?.userId}
               initial={{ opacity: 0, y: 28 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -246,9 +288,15 @@ const Companies = () => {
                 y: -8,
                 transition: { duration: 0.25 },
               }}
+              onClick={() => {
+                if (elm?.userId) {
+                  navigate(`/company/${elm.userId}`);
+                }
+              }}
               className="
                 group
                 relative
+                w-full
                 rounded-2xl
                 overflow-hidden
                 bg-white
@@ -259,6 +307,7 @@ const Companies = () => {
                 hover:shadow-2xl
                 transition-all
                 duration-400
+                text-left
               "
             >
               {/* Top Gradient */}
@@ -346,14 +395,24 @@ const Companies = () => {
                 </div> */}
 
                 {/* Footer */}
-                <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
+                <div className="mt-4 flex items-center justify-between gap-3 border-t border-slate-100 pt-4">
                   <span className="flex items-center gap-1 text-xs text-slate-500">
                     <MapPin className="w-3 h-3" />
                     {elm?.loc}
                   </span>
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      // openCompanyDetails(elm);
+                    }}
+                    className="rounded-full bg-slate-900 px-3 py-1.5 text-[11px] font-semibold text-white transition hover:bg-indigo-600"
+                  >
+                    View details
+                  </button>
                 </div>
               </div>
-            </motion.div>
+            </motion.button>
           ))}
         </div>
 
@@ -365,6 +424,63 @@ const Companies = () => {
           </div>
         )}
       </div>
+
+      <Drawer
+       open={drawerOpen}
+  onClose={() => setDrawerOpen(false)}
+  placement="right"
+  width={420}
+  destroyOnClose
+  // ✅ Add these props
+  getContainer={false}        // Renders inside parent, not body
+  mask={true}
+  maskClosable={true}
+  styles={{
+    body: { padding: 0, background: "#f8fafc" },
+    header: { borderBottom: "none", padding: "16px 20px 0" },
+    wrapper: { zIndex: 999 },  // ✅ Lower z-index
+    mask: { zIndex: 998 },     // ✅ Control mask separately
+  }}
+      >
+        {selectedCompany ? (
+          <div className="space-y-5">
+            <div className="overflow-hidden rounded-[24px] border border-slate-200 bg-slate-100">
+              <div className="relative h-44 w-full">
+                <CompanyImage userId={selectedCompany?.userId} companyName={selectedCompany?.name} />
+              </div>
+              <div className="p-4">
+                <h3 className="text-xl font-black text-slate-900">{selectedCompany?.name || "Company"}</h3>
+                <p className="mt-1 text-sm text-slate-500">{selectedCompany?.type || "Verified company"}</p>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 p-4">
+              <h4 className="text-sm font-black uppercase tracking-[0.2em] text-slate-500">Services</h4>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {selectedCompany?.tags?.length ? (
+                  selectedCompany.tags.map((service, index) => (
+                    <button
+                      key={`${service}-${index}`}
+                      type="button"
+                      onClick={() => handleServiceClick(service)}
+                      className="rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-100"
+                    >
+                      {service}
+                    </button>
+                  ))
+                ) : (
+                  <span className="text-sm text-slate-500">No services listed yet.</span>
+                )}
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 p-4 text-sm text-slate-600">
+              <p className="font-semibold text-slate-700">Location</p>
+              <p className="mt-1">{selectedCompany?.loc || "Location available on request"}</p>
+            </div>
+          </div>
+        ) : null}
+      </Drawer>
     </section>
   );
 };

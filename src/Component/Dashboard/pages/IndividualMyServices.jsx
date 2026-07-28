@@ -25,6 +25,9 @@ import {
   Megaphone,
   Wrench,
   MapPin,
+  CrossIcon,
+  CalendarDays,
+  CalendarClock,
 } from "lucide-react";
 import {
   getUserRegistrationbyParam,
@@ -121,7 +124,7 @@ function EnquiryModal({ service, onClose }) {
     try {
       await new Promise((r) => setTimeout(r, 800));
       toast.success(
-        `Enquiry sent for "${service.name}"! We'll contact you soon.`
+        `Enquiry sent for "${service.name}"! We'll contact you soon.`,
       );
       setMessageText("");
       onClose();
@@ -165,9 +168,7 @@ function EnquiryModal({ service, onClose }) {
             <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest">
               Full Name
             </label>
-            <p className="text-xs font-bold text-slate-700 mt-1">
-              {userName}
-            </p>
+            <p className="text-xs font-bold text-slate-700 mt-1">{userName}</p>
           </div>
           <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100">
             <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest">
@@ -189,9 +190,7 @@ function EnquiryModal({ service, onClose }) {
             <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest">
               State Region
             </label>
-            <p className="text-xs font-bold text-slate-700 mt-1">
-              {userState}
-            </p>
+            <p className="text-xs font-bold text-slate-700 mt-1">{userState}</p>
           </div>
           <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100 col-span-2">
             <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest">
@@ -248,9 +247,14 @@ function ServiceCard({ service, index, onEnquire, activeEnquiryId }) {
         >
           <Icon className="h-5 w-5 text-white" />
         </div>
-        {service.isActive !== false && (
+        {service.isActive !== false ? (
           <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">
             <CheckCircle2 className="w-3 h-3" /> Active
+          </span>
+        ) : (
+          <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-600 border border-amber-100">
+            <CalendarDays className="w-3 h-3" />
+            Expiry
           </span>
         )}
       </div>
@@ -288,19 +292,35 @@ function ServiceCard({ service, index, onEnquire, activeEnquiryId }) {
 
       {/* Enquire button */}
       <motion.button
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.97 }}
-        onClick={() => onEnquire(service)}
-        disabled={isPendingOnCard}
-        className={`w-full flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r ${grad} shadow-sm hover:shadow-md transition-all disabled:opacity-75`}
+        whileHover={service.isActive == 1 ? { scale: 1.02 } : {}}
+        whileTap={service.isActive == 1 ? { scale: 0.97 } : {}}
+        onClick={() => service.isActive == 1 && onEnquire(service)}
+        disabled={isPendingOnCard || service.isActive != 1}
+        className={`w-full flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-bold transition-all shadow-sm
+    ${
+      service.isActive == 1
+        ? `text-white bg-gradient-to-r ${grad} hover:shadow-md`
+        : "bg-slate-100 text-slate-500 cursor-not-allowed border border-slate-200"
+    }
+    disabled:opacity-75`}
       >
         {isPendingOnCard ? (
-          <Loader2 className="h-3.5 w-3.5 animate-spin text-white" />
-        ) : (
+          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+        ) : service.isActive == 1 ? (
           <Phone className="h-3.5 w-3.5" />
+        ) : (
+          <CalendarClock className="h-3.5 w-3.5" />
         )}
-        {isPendingOnCard ? "Retrieving Details..." : "Enquire Now"}
-        {!isPendingOnCard && <ArrowRight className="h-3 w-3" />}
+
+        {isPendingOnCard
+          ? "Retrieving Details..."
+          : service.isActive == 1
+            ? "Enquire Now"
+            : "Expired"}
+
+        {!isPendingOnCard && service.isActive == 1 && (
+          <ArrowRight className="h-3 w-3" />
+        )}
       </motion.button>
     </motion.div>
   );
@@ -309,138 +329,124 @@ function ServiceCard({ service, index, onEnquire, activeEnquiryId }) {
 /* ── Flat list builder from API ──────────────────────────────────────────── */
 function buildDisplayList(flatList) {
   if (!Array.isArray(flatList) || !flatList.length) return [];
-  const map = {};
-  const roots = [];
-  flatList.forEach((item) => {
-    const id = item.ServiceID ?? item.serviceID;
-    map[id] = {
-      id: String(id),
-      name: item.ServiceName ?? item.serviceName ?? "",
-      isActive:
-        (item.IsActive ?? item.isActive) === 1 ||
-        (item.IsActive ?? item.isActive) === true,
-      children: [],
-      _raw: item,
-    };
-  });
-  flatList.forEach((item) => {
-    const id = item.ServiceID ?? item.serviceID;
-    const pid = item.ParentServiceID ?? item.parentServiceID ?? 0;
-    if (!pid || !map[pid]) {
-      if (map[id]) roots.push(map[id]);
-    } else {
-      if (map[pid] && map[id]) map[pid].children.push(map[id]);
-    }
-  });
-  return roots.filter((s) => s && s.isActive);
+
+  return flatList.map((item, index) => ({
+    id: String(item?.ServiceID ?? item?.serviceID ?? index + 1),
+    name: item?.ServiceName ?? item?.serviceName ?? "Service",
+    isActive:
+      (item?.IsActive ?? item?.isActive) === 1 ||
+      (item?.IsActive ?? item?.isActive) === true,
+    children: [],
+    _raw: item,
+  }));
 }
 
 /* ── LOCAL FALLBACK DATA ─────────────────────────────────────────────────── */
 const LOCAL_SERVICES = [
-  {
-    id: "1",
-    name: "Consulting Services",
-    isActive: true,
-    children: [
-      { id: "1-1", name: "EPC Consultancy", isActive: true, children: [] },
-      { id: "1-2", name: "Project Management", isActive: true, children: [] },
-    ],
-    _raw: {
-      serviceDescription:
-        "Expert consulting for construction & infrastructure projects.",
-    },
-  },
-  {
-    id: "2",
-    name: "Contractor Services",
-    isActive: true,
-    children: [
-      { id: "2-1", name: "Civil Contractor", isActive: true, children: [] },
-      {
-        id: "2-2",
-        name: "Electrical Contractor",
-        isActive: true,
-        children: [],
-      },
-    ],
-    _raw: {
-      serviceDescription:
-        "Connect with verified contractors for your projects.",
-    },
-  },
-  {
-    id: "3",
-    name: "Legal & Contracts",
-    isActive: true,
-    children: [
-      { id: "3-1", name: "Contract Drafting", isActive: true, children: [] },
-      { id: "3-2", name: "Legal Advisory", isActive: true, children: [] },
-    ],
-    _raw: {
-      serviceDescription:
-        "Comprehensive legal support for construction contracts and agreements.",
-    },
-  },
-  {
-    id: "4",
-    name: "Marketing & Branding",
-    isActive: true,
-    children: [
-      { id: "4-1", name: "Digital Marketing", isActive: true, children: [] },
-      { id: "4-2", name: "Brand Strategy", isActive: true, children: [] },
-    ],
-    _raw: {
-      serviceDescription:
-        "Boost your brand presence in the construction industry.",
-    },
-  },
-  {
-    id: "5",
-    name: "Assets Management",
-    isActive: true,
-    children: [],
-    _raw: {
-      serviceDescription:
-        "Professional management of your construction assets and equipment.",
-    },
-  },
-  {
-    id: "6",
-    name: "Tender Services",
-    isActive: true,
-    children: [
-      { id: "6-1", name: "Tender Documentation", isActive: true, children: [] },
-      { id: "6-2", name: "Bid Management", isActive: true, children: [] },
-    ],
-    _raw: {
-      serviceDescription:
-        "End-to-end tender management for government and private projects.",
-    },
-  },
-  {
-    id: "7",
-    name: "Material Supply",
-    isActive: true,
-    children: [
-      { id: "7-1", name: "Cement & Aggregates", isActive: true, children: [] },
-      { id: "7-2", name: "Steel & Metals", isActive: true, children: [] },
-      { id: "7-3", name: "Electrical Materials", isActive: true, children: [] },
-    ],
-    _raw: {
-      serviceDescription:
-        "Source quality construction materials from verified suppliers.",
-    },
-  },
-  {
-    id: "8",
-    name: "Contraction Audit",
-    isActive: true,
-    children: [],
-    _raw: {
-      serviceDescription:
-        "Independent audit services to ensure quality and compliance on-site.",
-    },
-  },
+  // {
+  //   id: "1",
+  //   name: "Consulting Services",
+  //   isActive: true,
+  //   children: [
+  //     { id: "1-1", name: "EPC Consultancy", isActive: true, children: [] },
+  //     { id: "1-2", name: "Project Management", isActive: true, children: [] },
+  //   ],
+  //   _raw: {
+  //     serviceDescription:
+  //       "Expert consulting for construction & infrastructure projects.",
+  //   },
+  // },
+  // {
+  //   id: "2",
+  //   name: "Contractor Services",
+  //   isActive: true,
+  //   children: [
+  //     { id: "2-1", name: "Civil Contractor", isActive: true, children: [] },
+  //     {
+  //       id: "2-2",
+  //       name: "Electrical Contractor",
+  //       isActive: true,
+  //       children: [],
+  //     },
+  //   ],
+  //   _raw: {
+  //     serviceDescription:
+  //       "Connect with verified contractors for your projects.",
+  //   },
+  // },
+  // {
+  //   id: "3",
+  //   name: "Legal & Contracts",
+  //   isActive: true,
+  //   children: [
+  //     { id: "3-1", name: "Contract Drafting", isActive: true, children: [] },
+  //     { id: "3-2", name: "Legal Advisory", isActive: true, children: [] },
+  //   ],
+  //   _raw: {
+  //     serviceDescription:
+  //       "Comprehensive legal support for construction contracts and agreements.",
+  //   },
+  // },
+  // {
+  //   id: "4",
+  //   name: "Marketing & Branding",
+  //   isActive: true,
+  //   children: [
+  //     { id: "4-1", name: "Digital Marketing", isActive: true, children: [] },
+  //     { id: "4-2", name: "Brand Strategy", isActive: true, children: [] },
+  //   ],
+  //   _raw: {
+  //     serviceDescription:
+  //       "Boost your brand presence in the construction industry.",
+  //   },
+  // },
+  // {
+  //   id: "5",
+  //   name: "Assets Management",
+  //   isActive: true,
+  //   children: [],
+  //   _raw: {
+  //     serviceDescription:
+  //       "Professional management of your construction assets and equipment.",
+  //   },
+  // },
+  // {
+  //   id: "6",
+  //   name: "Tender Services",
+  //   isActive: true,
+  //   children: [
+  //     { id: "6-1", name: "Tender Documentation", isActive: true, children: [] },
+  //     { id: "6-2", name: "Bid Management", isActive: true, children: [] },
+  //   ],
+  //   _raw: {
+  //     serviceDescription:
+  //       "End-to-end tender management for government and private projects.",
+  //   },
+  // },
+  // {
+  //   id: "7",
+  //   name: "Material Supply",
+  //   isActive: true,
+  //   children: [
+  //     { id: "7-1", name: "Cement & Aggregates", isActive: true, children: [] },
+  //     { id: "7-2", name: "Steel & Metals", isActive: true, children: [] },
+  //     { id: "7-3", name: "Electrical Materials", isActive: true, children: [] },
+  //   ],
+  //   _raw: {
+  //     serviceDescription:
+  //       "Source quality construction materials from verified suppliers.",
+  //   },
+  // },
+  // {
+  //   id: "8",
+  //   name: "Contraction Audit",
+  //   isActive: true,
+  //   children: [],
+  //   _raw: {
+  //     serviceDescription:
+  //       "Independent audit services to ensure quality and compliance on-site.",
+  //   },
+  // },
 ];
 
 /* ==========================================================================  
@@ -480,16 +486,16 @@ export default function IndividualMyServices() {
       isError || !userservicesdetails?.length
         ? LOCAL_SERVICES
         : buildDisplayList(userservicesdetails);
+
     if (!search.trim()) return list;
     const term = search.toLowerCase();
     return list.filter(
       (s) =>
         s.name.toLowerCase().includes(term) ||
         s._raw?.serviceDescription?.toLowerCase().includes(term) ||
-        s.children?.some((c) => c.name.toLowerCase().includes(term))
+        s.children?.some((c) => c.name.toLowerCase().includes(term)),
     );
   }, [userservicesdetails, isError, search]);
-
   // Triggers mutation, fetches user profile sequentially, and binds to EnquiryModal automatically!
   const handleEnquireClick = (service) => {
     if (!userId) {
@@ -510,7 +516,7 @@ export default function IndividualMyServices() {
       onError: (err) => {
         console.error(err);
         toast.error(
-          "Failed to retrieve your registration details. Proceeding with default enquiry."
+          "Failed to retrieve your registration details. Proceeding with default enquiry.",
         );
         setEnquiryService({
           ...service,

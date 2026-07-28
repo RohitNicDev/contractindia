@@ -54,6 +54,7 @@ import AdminDashboard from "./Component/Dashboard/AdminDashboard";
 import BuyingService from "./Component/Public/Services/Buyingservice";
 import BuyingService2 from "./Component/Public/Services/Buyingservice2";
 import Companies from "./Component/Public/Companies";
+import CompanyDetailPage from "./Component/Public/CompanyDetailPage";
 import CompanySubServices from "./Component/Public/Services/CompanySubServices";
 import DashboardLayout from "./Component/Dashboard/Layout/DashboardLayout";
 import ProfileWizard from "./Component/Dashboard/pages/ProfileSteper/ProfileWizard";
@@ -79,6 +80,7 @@ export const router = createBrowserRouter([
       { path: "/", element: <HomePage /> },
       { path: "/about", element: <AboutUs /> },
       { path: "/company-list", element: <Companies /> },
+      { path: "/company/:userId", element: <CompanyDetailPage /> },
       { path: "/contact", element: <ContactPage /> },
       { path: "/projects", element: <Projects /> },
       { path: "/marketplace", element: <Marketplace /> },

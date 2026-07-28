@@ -1,28 +1,51 @@
 import React, { useEffect, useState } from "react";
-import {
-  Card,
-  Table,
-  Button,
-  Popconfirm,
-  message,
-  Tag,
-  Avatar,
-  Empty,
-} from "antd";
+import { Card, Table, Button, Popconfirm, message, Tag, Avatar, Empty, Drawer } from "antd";
 import {
   DeleteOutlined,
   MailOutlined,
   PhoneOutlined,
   GlobalOutlined,
   PlusOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 const CompanyList = () => {
+  const navigate = useNavigate();
   const [data, setData] = useState([]);
+  const [selectedCompany, setSelectedCompany] = useState(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const normalizeCompany = (item, index) => {
+    const companyName = item?.companyName || item?.CompanyName || item?.name || `Company ${index + 1}`;
+    const fallbackServices = [
+      { id: "consulting", name: "Consulting" },
+      { id: "contractor", name: "Contractor" },
+      { id: "tender", name: "Tender" },
+    ];
+
+    const services = Array.isArray(item?.services) && item.services.length
+      ? item.services.map((service) =>
+          typeof service === "string"
+            ? { id: service.toLowerCase().replace(/\s+/g, "-"), name: service }
+            : service,
+        )
+      : fallbackServices;
+
+    return {
+      ...item,
+      id: item?.id ?? `company-${index + 1}`,
+      companyName,
+      image:
+        item?.image ||
+        "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=900&q=80",
+      services,
+    };
+  };
 
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("companies")) || [];
-    setData(stored);
+    setData(stored.map(normalizeCompany));
   }, []);
 
   const handleDelete = (id) => {
@@ -30,6 +53,16 @@ const CompanyList = () => {
     setData(updated);
     localStorage.setItem("companies", JSON.stringify(updated));
     message.success("Company deleted successfully");
+  };
+
+  const openCompanyDetails = (company) => {
+    setSelectedCompany(company);
+    setDrawerOpen(true);
+  };
+
+  const handleServiceClick = (serviceId) => {
+    setDrawerOpen(false);
+    navigate(`/service/${serviceId}`);
   };
 
   // 🎨 Random Gradient Avatar Color
@@ -105,18 +138,28 @@ const CompanyList = () => {
       title: "ACTION",
       align: "center",
       render: (_, record) => (
-        <Popconfirm
-          title="Delete company?"
-          description="This cannot be undone"
-          onConfirm={() => handleDelete(record.id)}
-        >
+        <div className="flex items-center justify-center gap-2">
           <Button
-            danger
-            type="text"
-            icon={<DeleteOutlined />}
-            className="hover:bg-red-100 hover:scale-110 transition rounded-xl"
-          />
-        </Popconfirm>
+            type="link"
+            icon={<EyeOutlined />}
+            className="text-indigo-600 font-semibold"
+            onClick={() => openCompanyDetails(record)}
+          >
+            View
+          </Button>
+          <Popconfirm
+            title="Delete company?"
+            description="This cannot be undone"
+            onConfirm={() => handleDelete(record.id)}
+          >
+            <Button
+              danger
+              type="text"
+              icon={<DeleteOutlined />}
+              className="hover:bg-red-100 hover:scale-110 transition rounded-xl"
+            />
+          </Popconfirm>
+        </div>
       ),
     },
   ];
@@ -168,6 +211,61 @@ const CompanyList = () => {
           />
         </div>
       </Card>
+
+      <Drawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        width={420}
+        placement="right"
+        destroyOnClose
+        className="company-details-drawer"
+      >
+        {selectedCompany ? (
+          <div className="space-y-5">
+            <div className="overflow-hidden rounded-[24px] border border-slate-200 bg-gradient-to-br from-indigo-600 to-blue-500 text-white shadow-sm">
+              {/* <img
+                src={selectedCompany.image}
+                alt={selectedCompany.companyName}
+                className="h-44 w-full object-cover"
+              /> */}
+              <div className="p-4">
+                <h3 className="text-xl font-black">{selectedCompany.companyName}</h3>
+                <p className="mt-1 text-sm text-white/80">
+                  {selectedCompany.contactPerson || "Verified company"}
+                </p>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 p-4">
+              <h4 className="text-sm font-black uppercase tracking-[0.18em] text-slate-500">
+                Services
+              </h4>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {selectedCompany.services?.length ? (
+                  selectedCompany.services.map((service, idx) => (
+                    <button
+                      key={service?.id || `${service?.name}-${idx}`}
+                      type="button"
+                      onClick={() => handleServiceClick(service?.id || service?.name)}
+                      className="rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-100"
+                    >
+                      {service?.name || "Service"}
+                    </button>
+                  ))
+                ) : (
+                  <span className="text-sm text-slate-500">No services available yet.</span>
+                )}
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 p-4 text-sm text-slate-600">
+              <p className="font-semibold text-slate-700">Contact</p>
+              <p className="mt-1">{selectedCompany.email || "—"}</p>
+              <p>{selectedCompany.phone || "—"}</p>
+            </div>
+          </div>
+        ) : null}
+      </Drawer>
 
       {/* 🎨 STYLE */}
       <style jsx global>{`
