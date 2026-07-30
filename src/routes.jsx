@@ -56,6 +56,7 @@ import BuyingService2 from "./Component/Public/Services/Buyingservice2";
 import Companies from "./Component/Public/Companies";
 import CompanyDetailPage from "./Component/Public/CompanyDetailPage";
 import CompanySubServices from "./Component/Public/Services/CompanySubServices";
+import UnderMaintenance from "./Component/Public/UnderMaintenance";
 import DashboardLayout from "./Component/Dashboard/Layout/DashboardLayout";
 import ProfileWizard from "./Component/Dashboard/pages/ProfileSteper/ProfileWizard";
 import AddCredits from "./Component/Dashboard/pages/AddCredits";
@@ -72,97 +73,97 @@ import InvoicesPage from "./Component/Dashboard/pages/InvoicesPage";
 import InvoicePrintPage from "./Component/Dashboard/pages/Invoice/InvoicePrintPage";
 
 export const router = createBrowserRouter([
-  // ── Public routes (Header + Footer via PublicLayout) ─────────────────────
-  {
-    element: <PublicLayout />,
-    children: [
-      { path: "/service/:serviceId", element: <CompanySubServices /> },
-      { path: "/", element: <HomePage /> },
-      { path: "/about", element: <AboutUs /> },
-      { path: "/company-list", element: <Companies /> },
-      { path: "/company/:userId", element: <CompanyDetailPage /> },
-      { path: "/contact", element: <ContactPage /> },
-      { path: "/projects", element: <Projects /> },
-      { path: "/marketplace", element: <Marketplace /> },
-      { path: "/services/buy2", element: <BuyingService2 /> },
-      { path: "/services/buy", element: <BuyingService /> },
-      { path: "/services/contractor", element: <ContractorService /> },
-      { path: "/services/consulting", element: <ConsultingService /> },
-      { path: "/services/assets-management", element: <AssetsManagement /> },
-      { path: "/services/brand-development", element: <BrandDevelopment /> },
-      { path: "/services/legal-contracts", element: <LegalContracts /> },
-      { path: "/services/marketing", element: <MarketingManagement /> },
-      {
-        path: "/services/material-manufacturing",
-        element: <MaterialManufacture />,
-      },
-      { path: "/services/material-supply", element: <MaterialSuppler /> },
-      { path: "/services/tender", element: <TenderServices /> },
-      { path: "/services/contraction-audit", element: <ContractionAudit /> },
-    ],
-  },
-
-  // ── Auth routes (AuthLayout: animated split-screen) ───────────────────────
-  {
-    element: <AuthLayout />,
-    children: [
-      { path: "/login", element: <LoginForm /> },
-      { path: "/otp", element: <OtpVerification /> },
-      { path: "/register", element: <RegisterForm /> },
-
-    ],
-  },
-
-  // ── Main dashboard (collapsible sidebar via DashboardLayout) ─────────────
+  // // ── Public routes (Header + Footer via PublicLayout) ─────────────────────
   // {
-  //   path: "/dashboard",
+  //   element: <PublicLayout />,
+  //   children: [
+  //     { path: "/service/:serviceId", element: <CompanySubServices /> },
+  //     { path: "/", element: <HomePage /> },
+  //     { path: "/about", element: <AboutUs /> },
+  //     { path: "/company-list", element: <Companies /> },
+  //     { path: "/company/:userId", element: <CompanyDetailPage /> },
+  //     { path: "/contact", element: <ContactPage /> },
+  //     { path: "/projects", element: <Projects /> },
+  //     { path: "/marketplace", element: <Marketplace /> },
+  //     { path: "/services/buy2", element: <BuyingService2 /> },
+  //     { path: "/services/buy", element: <BuyingService /> },
+  //     { path: "/services/contractor", element: <ContractorService /> },
+  //     { path: "/services/consulting", element: <ConsultingService /> },
+  //     { path: "/services/assets-management", element: <AssetsManagement /> },
+  //     { path: "/services/brand-development", element: <BrandDevelopment /> },
+  //     { path: "/services/legal-contracts", element: <LegalContracts /> },
+  //     { path: "/services/marketing", element: <MarketingManagement /> },
+  //     {
+  //       path: "/services/material-manufacturing",
+  //       element: <MaterialManufacture />,
+  //     },
+  //     { path: "/services/material-supply", element: <MaterialSuppler /> },
+  //     { path: "/services/tender", element: <TenderServices /> },
+  //     { path: "/services/contraction-audit", element: <ContractionAudit /> },
   //   ],
   // },
 
-  // ── Commercial Dashboard ──────────────────────────────────────────────────
-  {
-    path: "/commercial/dashboard",
-    element: <CommercialDashboard />,
-    children: [
-      { index: true, element: <Dashboard /> },
-      { path: "profile", element: <ProfileWizard /> },
-      { path: "credits", element: <AddCredits /> },
-      { path: "subscription", element: <SubscriptionHistory /> },
-      { path: "plans-and-subscriptions", element: <PlansAndSubscriptions /> },
-      { path: "mycredits", element: <MyCredits /> },
-      { path: "clients", element: <ClientsHistory /> },
-      // { path: "services", element: <ServiceListing dashboardMode={true} /> },
-      { path: "servicesListing", element: <Step5ServiceListing navbar={true} /> },
-      { path: "leads", element: <LeadManagement /> },
-      { path: "settings", element: <SettingsPanel /> },
-      { path: "invoices", element: <InvoicesPage /> },
-      // { path: "invoices/print/:invoiceId", element: <InvoicePrintPage /> },
-    ],
-  },
+  // // ── Auth routes (AuthLayout: animated split-screen) ───────────────────────
+  // {
+  //   element: <AuthLayout />,
+  //   children: [
+  //     { path: "/login", element: <LoginForm /> },
+  //     { path: "/otp", element: <OtpVerification /> },
+  //     { path: "/register", element: <RegisterForm /> },
 
-  // ── Individual user dashboard (standalone — own sidebar) ─────────────────
-  {
-    path: "/individual/dashboard",
-    element: <IndividualDashboard />,
-    children: [
-      { index: true, element: <Overview /> },
-      { path: "MyServices", element: <IndividualMyServices /> },
-      { path: "subscription", element: <SubscriptionPlan /> },
-      { path: "plans-and-subscriptions", element: <PlansAndSubscriptions /> },
-      { path: "mycredits", element: <MyCredits /> },
-      { path: "profile", element: <MyProfile /> },
-      { path: "password", element: <ChangePassword /> },
-    ],
-  },
+  //   ],
+  // },
 
-  // ── User action review panel (opened from admin verification table) ───────
-  // Receives: location.state = { actionType, userRow, userTab }
-  { path: "/admin/user-action/:applicationId", element: <ActionWrapperMain /> },
+  // // ── Main dashboard (collapsible sidebar via DashboardLayout) ─────────────
+  // // {
+  // //   path: "/dashboard",
+  // //   ],
+  // // },
 
-  // ── Admin panel ───────────────────────────────────────────────────────────
-  { path: "/admin/login", element: <AdminLogin /> },
-  { path: "/admin/dashboard", element: <AdminDashboard /> },
+  // // ── Commercial Dashboard ──────────────────────────────────────────────────
+  // {
+  //   path: "/commercial/dashboard",
+  //   element: <CommercialDashboard />,
+  //   children: [
+  //     { index: true, element: <Dashboard /> },
+  //     { path: "profile", element: <ProfileWizard /> },
+  //     { path: "credits", element: <AddCredits /> },
+  //     { path: "subscription", element: <SubscriptionHistory /> },
+  //     { path: "plans-and-subscriptions", element: <PlansAndSubscriptions /> },
+  //     { path: "mycredits", element: <MyCredits /> },
+  //     { path: "clients", element: <ClientsHistory /> },
+  //     // { path: "services", element: <ServiceListing dashboardMode={true} /> },
+  //     { path: "servicesListing", element: <Step5ServiceListing navbar={true} /> },
+  //     { path: "leads", element: <LeadManagement /> },
+  //     { path: "settings", element: <SettingsPanel /> },
+  //     { path: "invoices", element: <InvoicesPage /> },
+  //     // { path: "invoices/print/:invoiceId", element: <InvoicePrintPage /> },
+  //   ],
+  // },
 
-  // ── Fallback ──────────────────────────────────────────────────────────────
-  // { path: "*", element: <Navigate to="/" replace /> },
+  // // ── Individual user dashboard (standalone — own sidebar) ─────────────────
+  // {
+  //   path: "/individual/dashboard",
+  //   element: <IndividualDashboard />,
+  //   children: [
+  //     { index: true, element: <Overview /> },
+  //     { path: "MyServices", element: <IndividualMyServices /> },
+  //     { path: "subscription", element: <SubscriptionPlan /> },
+  //     { path: "plans-and-subscriptions", element: <PlansAndSubscriptions /> },
+  //     { path: "mycredits", element: <MyCredits /> },
+  //     { path: "profile", element: <MyProfile /> },
+  //     { path: "password", element: <ChangePassword /> },
+  //   ],
+  // },
+
+  // // ── User action review panel (opened from admin verification table) ───────
+  // // Receives: location.state = { actionType, userRow, userTab }
+  // { path: "/admin/user-action/:applicationId", element: <ActionWrapperMain /> },
+
+  // // ── Admin panel ───────────────────────────────────────────────────────────
+  // { path: "/admin/login", element: <AdminLogin /> },
+  // { path: "/admin/dashboard", element: <AdminDashboard /> },
+
+  // ── Maintenance fallback ────────────────────────────────────────────────
+  { path: "*", element: <UnderMaintenance /> },
 ]);
