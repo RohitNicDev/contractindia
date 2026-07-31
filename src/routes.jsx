@@ -155,7 +155,7 @@ export const router = createBrowserRouter([
   //     { path: "password", element: <ChangePassword /> },
   //   ],
   // },
-
+ 
   // // ── User action review panel (opened from admin verification table) ───────
   // // Receives: location.state = { actionType, userRow, userTab }
   // { path: "/admin/user-action/:applicationId", element: <ActionWrapperMain /> },
