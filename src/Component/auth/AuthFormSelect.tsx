@@ -19,7 +19,6 @@ export type AuthFormSelectProps = SelectHTMLAttributes<HTMLSelectElement> & {
   compact?: boolean;
 };
 
-/** Extract { value, label } pairs from <option> children — handles nested arrays */
 function parseOptions(children: React.ReactNode): { value: string; label: string }[] {
   const opts: { value: string; label: string }[] = [];
 
@@ -62,24 +61,28 @@ export const AuthFormSelect = forwardRef<HTMLSelectElement, AuthFormSelectProps>
 
     const [open, setOpen] = useState(false);
     const [selected, setSelected] = useState<string>(String(value ?? defaultValue ?? ""));
-    const [dropPos, setDropPos] = useState<DropdownPos>({ top: 0, left: 0, width: 0, openUp: false });
+    const [dropPos, setDropPos] = useState<DropdownPos>({ 
+      top: 0, left: 0, width: 0, openUp: false 
+    });
     const [search, setSearch] = useState("");
 
     const triggerRef = useRef<HTMLButtonElement>(null);
     const panelRef = useRef<HTMLDivElement>(null);
     const searchRef = useRef<HTMLInputElement>(null);
+    
+    // Track whether interaction is inside panel — used for mobile
+    const isInsidePanelRef = useRef(false);
 
-    // Sync controlled value from outside (RHF reset / watch)
+    // Sync controlled value
     useEffect(() => {
       if (value !== undefined) setSelected(String(value));
     }, [value]);
 
-    // Recalculate position (called on open and on window scroll/resize)
     const calcPosition = useCallback(() => {
       const rect = triggerRef.current?.getBoundingClientRect();
       if (!rect) return;
 
-      const PANEL_HEIGHT = 280; // max expected height
+      const PANEL_HEIGHT = 300;
       const spaceBelow = window.innerHeight - rect.bottom;
       const spaceAbove = rect.top;
       const openUp = spaceBelow < PANEL_HEIGHT && spaceAbove > spaceBelow;
@@ -99,45 +102,47 @@ export const AuthFormSelect = forwardRef<HTMLSelectElement, AuthFormSelectProps>
       calcPosition();
       setOpen(true);
       setSearch("");
-      // Focus search input after dropdown renders
-      setTimeout(() => searchRef.current?.focus(), 50);
+      setTimeout(() => searchRef.current?.focus(), 80);
     }, [disabled, calcPosition]);
 
-    // Close only on outside click — NOT on scroll
+    // ─── Unified outside-click handler for BOTH mouse & touch ───
     useEffect(() => {
       if (!open) return;
 
-      const handleMouseDown = (e: MouseEvent) => {
+      // We use a single "pointerdown" event which fires on BOTH
+      // mouse clicks and touch taps, reliably on all mobile browsers.
+      const handlePointerDown = (e: PointerEvent) => {
         const target = e.target as Node;
-        if (
-          triggerRef.current?.contains(target) ||
-          panelRef.current?.contains(target)
-        ) return;
-        setOpen(false);
+
+        const insideTrigger = triggerRef.current?.contains(target);
+        const insidePanel   = panelRef.current?.contains(target);
+
+        // If the tap/click is outside both trigger and panel → close
+        if (!insideTrigger && !insidePanel) {
+          setOpen(false);
+        }
       };
 
-      // Reposition (don't close) on scroll
       const handleScroll = (e: Event) => {
-        // If scroll happens inside the panel itself, do nothing
         if (panelRef.current?.contains(e.target as Node)) return;
         calcPosition();
       };
 
-      // Close on resize (layout shift)
       const handleResize = () => setOpen(false);
 
-      document.addEventListener("mousedown", handleMouseDown);
+      // Use "pointerdown" so it fires before focus shifts on mobile
+      document.addEventListener("pointerdown", handlePointerDown, true);
       window.addEventListener("scroll", handleScroll, true);
       window.addEventListener("resize", handleResize);
 
       return () => {
-        document.removeEventListener("mousedown", handleMouseDown);
+        document.removeEventListener("pointerdown", handlePointerDown, true);
         window.removeEventListener("scroll", handleScroll, true);
         window.removeEventListener("resize", handleResize);
       };
     }, [open, calcPosition]);
 
-    // Keyboard navigation
+    // Keyboard close
     useEffect(() => {
       if (!open) return;
       const handleKey = (e: KeyboardEvent) => {
@@ -154,7 +159,7 @@ export const AuthFormSelect = forwardRef<HTMLSelectElement, AuthFormSelectProps>
     );
 
     const selectedLabel = options.find((o) => o.value === selected)?.label ?? "";
-    const placeholder = options.find((o) => o.value === "")?.label ?? `${label}…`;
+    const placeholder   = options.find((o) => o.value === "")?.label ?? `${label}…`;
     const isPlaceholder = !selected;
 
     const handleSelect = useCallback(
@@ -173,6 +178,16 @@ export const AuthFormSelect = forwardRef<HTMLSelectElement, AuthFormSelectProps>
       },
       [onChange, props.name],
     );
+
+    // ─── Trigger click handler ─────────────────────────────────
+    // On mobile, "click" fires after touch, so this is safe to use.
+    const handleTriggerClick = () => {
+      if (open) {
+        setOpen(false);
+      } else {
+        openDropdown();
+      }
+    };
 
     const dropdownPanel = (
       <AnimatePresence>
@@ -193,7 +208,7 @@ export const AuthFormSelect = forwardRef<HTMLSelectElement, AuthFormSelectProps>
             className="overflow-hidden rounded-xl border border-indigo-100 bg-white shadow-[0_8px_32px_rgba(99,102,241,0.18),0_2px_8px_rgba(0,0,0,0.10)]"
           >
             {/* Search bar */}
-            <div className="flex items-center gap-2 border-b border-slate-100 px-3 py-2">
+            <div className="flex items-center gap-2 border-b border-slate-100 px-3 py-2.5">
               <Search className="h-3.5 w-3.5 shrink-0 text-slate-400" />
               <input
                 ref={searchRef}
@@ -201,14 +216,21 @@ export const AuthFormSelect = forwardRef<HTMLSelectElement, AuthFormSelectProps>
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder={`Search ${label.toLowerCase()}…`}
-                className="flex-1 bg-transparent text-xs font-medium text-slate-700 placeholder-slate-400 outline-none"
-                // Prevent the select from closing when typing
-                onMouseDown={(e) => e.stopPropagation()}
+                className="flex-1 bg-transparent text-xs font-medium text-slate-700 
+                           placeholder-slate-400 outline-none"
+                // Prevent the dropdown from closing when tapping search on mobile
+                onPointerDown={(e) => e.stopPropagation()}
               />
               {search && (
                 <button
                   type="button"
-                  onMouseDown={(e) => { e.preventDefault(); setSearch(""); searchRef.current?.focus(); }}
+                  // Use onPointerDown to clear reliably on mobile
+                  onPointerDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setSearch("");
+                    searchRef.current?.focus();
+                  }}
                   className="text-slate-400 hover:text-slate-600"
                 >
                   <X className="h-3 w-3" />
@@ -216,17 +238,18 @@ export const AuthFormSelect = forwardRef<HTMLSelectElement, AuthFormSelectProps>
               )}
             </div>
 
-            {/* Options list — scrollable, won't close dropdown */}
+            {/* Options list */}
             <ul
               role="listbox"
               aria-label={label}
               className="max-h-52 overflow-y-auto [scrollbar-width:thin]"
-              // Stop scroll events from bubbling to window (prevents repositioning loop)
               onScroll={(e) => e.stopPropagation()}
+              // Prevent scroll-inside-panel from closing the dropdown on mobile
+              onPointerDown={(e) => e.stopPropagation()}
             >
               {filteredOptions.length === 0 ? (
-                <li className="px-3 py-3 text-center text-xs text-slate-400">
-                  No results for "{search}"
+                <li className="px-3 py-4 text-center text-xs text-slate-400">
+                  No results for &ldquo;{search}&rdquo;
                 </li>
               ) : (
                 filteredOptions.map((opt) => {
@@ -236,14 +259,18 @@ export const AuthFormSelect = forwardRef<HTMLSelectElement, AuthFormSelectProps>
                       key={opt.value}
                       role="option"
                       aria-selected={isActive}
-                      onMouseDown={(e) => {
+                      // Use onPointerDown instead of onMouseDown for mobile support
+                      onPointerDown={(e) => {
+                        // Prevent the document pointerdown handler from seeing this
+                        e.stopPropagation();
+                        // Prevent focus shift which can cause blur/close race on mobile
                         e.preventDefault();
                         handleSelect(opt.value);
                       }}
                       className={`
                         flex cursor-pointer select-none items-center gap-2.5 px-3
                         font-medium transition-colors duration-100
-                        ${dense ? "py-1.5 text-xs" : "py-2 text-sm"}
+                        ${dense ? "py-2 text-xs" : "py-2.5 text-sm"}
                         ${isActive
                           ? "bg-indigo-50 text-indigo-700"
                           : "text-slate-700 hover:bg-slate-50 hover:text-indigo-600"
@@ -256,7 +283,9 @@ export const AuthFormSelect = forwardRef<HTMLSelectElement, AuthFormSelectProps>
                         }`}
                       />
                       <span className="flex-1 truncate">{opt.label}</span>
-                      {isActive && <Check className="h-3.5 w-3.5 shrink-0 text-indigo-500" />}
+                      {isActive && (
+                        <Check className="h-3.5 w-3.5 shrink-0 text-indigo-500" />
+                      )}
                     </li>
                   );
                 })
@@ -279,7 +308,7 @@ export const AuthFormSelect = forwardRef<HTMLSelectElement, AuthFormSelectProps>
           {label}
         </label>
 
-        {/* Hidden native select — RHF registers this */}
+        {/* Hidden native select for RHF */}
         <select
           id={fieldId}
           ref={ref}
@@ -297,14 +326,15 @@ export const AuthFormSelect = forwardRef<HTMLSelectElement, AuthFormSelectProps>
           {children}
         </select>
 
-        {/* Visible trigger button */}
+        {/* Visible trigger */}
         <button
           ref={triggerRef}
           type="button"
           disabled={disabled}
           aria-haspopup="listbox"
           aria-expanded={open}
-          onClick={() => (open ? setOpen(false) : openDropdown())}
+          // Single click handler — safe for both mouse and touch
+          onClick={handleTriggerClick}
           className={`
             flex w-full items-center gap-1.5 rounded-lg border-2 px-2.5
             text-left transition-all duration-150
@@ -326,7 +356,9 @@ export const AuthFormSelect = forwardRef<HTMLSelectElement, AuthFormSelectProps>
           )}
           <span
             className={`flex-1 truncate font-medium ${dense ? "text-sm" : "text-base"} ${
-              isPlaceholder ? "text-[var(--auth-placeholder)]" : "text-[var(--auth-text-input)]"
+              isPlaceholder
+                ? "text-[var(--auth-placeholder)]"
+                : "text-[var(--auth-text-input)]"
             }`}
           >
             {isPlaceholder ? placeholder : selectedLabel}
@@ -339,7 +371,6 @@ export const AuthFormSelect = forwardRef<HTMLSelectElement, AuthFormSelectProps>
           />
         </button>
 
-        {/* Portal — renders outside overflow containers */}
         {createPortal(dropdownPanel, document.body)}
 
         {/* Error */}
