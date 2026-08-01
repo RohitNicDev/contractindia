@@ -760,13 +760,13 @@ const TreeNode = ({
               >
                 <Plus className="h-4 w-4" />
               </button>
-              <button
+              {/* <button
                 onClick={(e) => { e.stopPropagation(); onDelete(node); }}
                 title="Delete"
                 className="flex h-8 w-8 items-center justify-center rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-all"
               >
                 <Trash2 className="h-4 w-4" />
-              </button>
+              </button> */}
             </div>
           ) : (
             <button
@@ -1208,12 +1208,12 @@ const ServiceListing = ({
                   Service Hierarchy
                 </span>
               </div>
-              <div className="flex items-center gap-1 text-[10px] text-slate-400 font-medium">
+              {/* <div className="flex items-center gap-1 text-[10px] text-slate-400 font-medium">
                 <span className="w-2 h-2 rounded-full bg-violet-400" /> L1
                 <span className="w-2 h-2 rounded-full bg-sky-400 ml-2" /> L2
                 <span className="w-2 h-2 rounded-full bg-emerald-400 ml-2" /> L3
                 <span className="w-2 h-2 rounded-full bg-amber-400 ml-2" /> L4+
-              </div>
+              </div> */}
             </div>
 
             <div className="p-3">

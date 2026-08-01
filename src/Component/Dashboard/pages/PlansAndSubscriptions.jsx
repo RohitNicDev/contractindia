@@ -404,7 +404,7 @@ function PaymentModal({ plan, userId, onClose, onSuccess }) {
         key: "rzp_test_TBIngVA6fjYaLH", // Test Key ID
         amount: Number(plan?.Price || 0) * 100, // Amount in paise
         currency: "INR",
-        name: "ContractsIndia",
+        name: "Contracts India",
         description: plan?.PlanName,
         image: "/logo.png",
         handler: async function (response) {

@@ -9,23 +9,23 @@ import {
 import logo from "../assets/IMG/logo_con1.png";
 
 const NAV_ITEMS = [
-  { to: "/dashboard",           label: "Overview",   icon: LayoutDashboard },
-  { to: "/dashboard/tenders",   label: "Tenders",    icon: FileText        },
-  { to: "/dashboard/projects",  label: "Projects",   icon: FolderOpen      },
-  { to: "/dashboard/companies", label: "Companies",  icon: Building2       },
-  { to: "/dashboard/messages",  label: "Messages",   icon: MessageSquare, badge: 3 },
-  { to: "/dashboard/profile",   label: "Profile",    icon: User            },
-  { to: "/dashboard/settings",  label: "Settings",   icon: Settings        },
+  { to: "/dashboard", label: "Overview", icon: LayoutDashboard },
+  { to: "/dashboard/tenders", label: "Tenders", icon: FileText },
+  { to: "/dashboard/projects", label: "Projects", icon: FolderOpen },
+  { to: "/dashboard/companies", label: "Companies", icon: Building2 },
+  { to: "/dashboard/messages", label: "Messages", icon: MessageSquare, badge: 3 },
+  { to: "/dashboard/profile", label: "Profile", icon: User },
+  { to: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
 
 const NAV_GRADIENTS: Record<string, string> = {
-  "/dashboard":           "from-indigo-500 to-violet-500",
-  "/dashboard/tenders":   "from-cyan-500 to-blue-500",
-  "/dashboard/projects":  "from-violet-500 to-purple-500",
+  "/dashboard": "from-indigo-500 to-violet-500",
+  "/dashboard/tenders": "from-cyan-500 to-blue-500",
+  "/dashboard/projects": "from-violet-500 to-purple-500",
   "/dashboard/companies": "from-emerald-500 to-teal-500",
-  "/dashboard/messages":  "from-pink-500 to-rose-500",
-  "/dashboard/profile":   "from-amber-500 to-orange-500",
-  "/dashboard/settings":  "from-slate-400 to-slate-500",
+  "/dashboard/messages": "from-pink-500 to-rose-500",
+  "/dashboard/profile": "from-amber-500 to-orange-500",
+  "/dashboard/settings": "from-slate-400 to-slate-500",
 };
 
 export default function DashboardLayout() {
@@ -93,7 +93,7 @@ export default function DashboardLayout() {
           <div className="relative shrink-0">
             <div className="absolute inset-0 rounded-xl bg-indigo-400/20 blur-md" />
             <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-white shadow-sm border border-indigo-100">
-              <img src={logo} alt="ContractsIndia™" className="h-7 w-7 rounded-lg object-contain" />
+              <img src={logo} alt="Contracts India™" className="h-7 w-7 rounded-lg object-contain" />
             </div>
           </div>
           <AnimatePresence>
@@ -103,7 +103,7 @@ export default function DashboardLayout() {
                 exit={{ opacity: 0, x: -8 }} transition={{ duration: 0.2 }}
                 className="overflow-hidden"
               >
-                <p className="whitespace-nowrap text-sm font-bold text-slate-900">ContractsIndia™</p>
+                <p className="whitespace-nowrap text-sm font-bold text-slate-900">Contracts India™</p>
                 <p className="whitespace-nowrap text-[10px] text-indigo-500/70">Pro Dashboard</p>
               </motion.div>
             )}
@@ -142,9 +142,8 @@ export default function DashboardLayout() {
                     {!active && (
                       <span className="absolute inset-0 rounded-xl bg-transparent transition-colors duration-200 group-hover:bg-slate-50/80" />
                     )}
-                    <span className={`relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-all duration-200 ${
-                      active ? `bg-linear-to-br ${grad} shadow-md` : "bg-slate-100/80 group-hover:bg-slate-100"
-                    }`}>
+                    <span className={`relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-all duration-200 ${active ? `bg-linear-to-br ${grad} shadow-md` : "bg-slate-100/80 group-hover:bg-slate-100"
+                      }`}>
                       <Icon className={`h-3.5 w-3.5 ${active ? "text-white" : "text-slate-500 group-hover:text-slate-700"}`} />
                     </span>
                     <AnimatePresence>

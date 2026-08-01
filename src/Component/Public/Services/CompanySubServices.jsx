@@ -583,11 +583,10 @@ function ContractorCard({ item, idx, onViewDetails, hasActivePlan }) {
         </div>
         {status && (
           <span
-            className={`absolute top-2 right-2 text-[9px] font-black px-2 py-0.5 rounded-lg ${
-              status === "Approved"
+            className={`absolute top-2 right-2 text-[9px] font-black px-2 py-0.5 rounded-lg ${status === "Approved"
                 ? "bg-emerald-500/90 text-white"
                 : "bg-amber-400/90 text-white"
-            }`}
+              }`}
           >
             {status}
           </span>
@@ -606,11 +605,10 @@ function ContractorCard({ item, idx, onViewDetails, hasActivePlan }) {
         <div className="flex gap-2">
           <button
             onClick={() => onViewDetails(item)}
-            className={`flex-1 py-2 rounded-xl text-[11px] font-bold transition-all active:scale-95 ${
-              item.IsActive
+            className={`flex-1 py-2 rounded-xl text-[11px] font-bold transition-all active:scale-95 ${item.IsActive
                 ? "bg-slate-900 hover:bg-indigo-600 text-white"
                 : "bg-amber-500 hover:bg-amber-600 text-white"
-            }`}
+              }`}
           >
             {/* {hasActivePlan ? "View Details" : "Subscribe"} */}
             {item.IsActive == 1 ? "Viewed" : "View Details"}
@@ -779,10 +777,10 @@ function Breadcrumb({ tree, activeId, onSelect }) {
               style={
                 isLast
                   ? {
-                      background: c.softBg,
-                      color: c.softText,
-                      cursor: "default",
-                    }
+                    background: c.softBg,
+                    color: c.softText,
+                    cursor: "default",
+                  }
                   : { color: "#94a3b8" }
               }
             >
@@ -1158,7 +1156,7 @@ const CompanySubServices = () => {
         key: import.meta.env.VITE_RAZORPAY_KEY || "rzp_test_TBIngVA6fjYaLH",
         amount: Number(plan.Price || 0) * 100,
         currency: "INR",
-        name: "ContractsIndia",
+        name: "Contracts India",
         description: plan.PlanName,
         image: "/logo.png",
         handler: async (response) => {
@@ -1306,18 +1304,16 @@ const CompanySubServices = () => {
             {isLoggedIn && (
               <div className="mt-4">
                 <div
-                  className={`rounded-2xl border p-4 transition-all ${
-                    hasActivePlan
+                  className={`rounded-2xl border p-4 transition-all ${hasActivePlan
                       ? "border-violet-100 bg-gradient-to-r from-violet-50 via-white to-white"
                       : "border-amber-200 bg-gradient-to-r from-amber-50 via-white to-white"
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-3 min-w-0">
                       <div
-                        className={`flex h-6 w-6 items-center justify-center rounded-xl ${
-                          hasActivePlan ? "bg-[#492a78]/10" : "bg-amber-100"
-                        }`}
+                        className={`flex h-6 w-6 items-center justify-center rounded-xl ${hasActivePlan ? "bg-[#492a78]/10" : "bg-amber-100"
+                          }`}
                       >
                         {hasActivePlan ? (
                           <Crown className="h-5 w-5 text-[#492a78]" />
@@ -1328,9 +1324,8 @@ const CompanySubServices = () => {
 
                       <div className="min-w-0">
                         <p
-                          className={`text-[12px]   ${
-                            hasActivePlan ? "text-slate-500" : "text-amber-600"
-                          }`}
+                          className={`text-[12px]   ${hasActivePlan ? "text-slate-500" : "text-amber-600"
+                            }`}
                         >
                           {hasActivePlan
                             ? "Active Membership"

@@ -250,7 +250,7 @@ export function RegisterForm() {
           Create account
         </p>
         <h2 className="text-lg font-black tracking-tight text-[var(--auth-heading-display)] lg:text-xl">
-          Join ContractsIndia
+          Join Contracts India
         </h2>
       </header>
 
@@ -287,8 +287,8 @@ export function RegisterForm() {
                 >
                   <span
                     className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${active
-                        ? "bg-indigo-600 text-white"
-                        : "bg-slate-100 text-slate-400"
+                      ? "bg-indigo-600 text-white"
+                      : "bg-slate-100 text-slate-400"
                       }`}
                   >
                     {Number(type.value) === 1 ? (

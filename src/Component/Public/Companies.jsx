@@ -210,7 +210,7 @@ const Companies = () => {
       .trim()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "");
-console.log(selectedCompany,"selectedCompany");
+    console.log(selectedCompany, "selectedCompany");
 
     setDrawerOpen(false);
     navigate(`/service/${slug || "service"}`);
@@ -288,11 +288,11 @@ console.log(selectedCompany,"selectedCompany");
                 y: -8,
                 transition: { duration: 0.25 },
               }}
-              onClick={() => {
-                if (elm?.userId) {
-                  navigate(`/company/${elm.userId}`);
-                }
-              }}
+              // onClick={() => {
+              //   if (elm?.userId) {
+              //     navigate(`/company/${elm.userId}`);
+              //   }
+              // }}
               className="
                 group
                 relative
@@ -395,7 +395,7 @@ console.log(selectedCompany,"selectedCompany");
                 </div> */}
 
                 {/* Footer */}
-                <div className="mt-4 flex items-center justify-between gap-3 border-t border-slate-100 pt-4">
+                {/* <div className="mt-4 flex items-center justify-between gap-3 border-t border-slate-100 pt-4">
                   <span className="flex items-center gap-1 text-xs text-slate-500">
                     <MapPin className="w-3 h-3" />
                     {elm?.loc}
@@ -410,7 +410,7 @@ console.log(selectedCompany,"selectedCompany");
                   >
                     View details
                   </button>
-                </div>
+                </div> */}
               </div>
             </motion.button>
           ))}
@@ -426,21 +426,21 @@ console.log(selectedCompany,"selectedCompany");
       </div>
 
       <Drawer
-       open={drawerOpen}
-  onClose={() => setDrawerOpen(false)}
-  placement="right"
-  width={420}
-  destroyOnClose
-  // ✅ Add these props
-  getContainer={false}        // Renders inside parent, not body
-  mask={true}
-  maskClosable={true}
-  styles={{
-    body: { padding: 0, background: "#f8fafc" },
-    header: { borderBottom: "none", padding: "16px 20px 0" },
-    wrapper: { zIndex: 999 },  // ✅ Lower z-index
-    mask: { zIndex: 998 },     // ✅ Control mask separately
-  }}
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        placement="right"
+        width={420}
+        destroyOnClose
+        // ✅ Add these props
+        getContainer={false}        // Renders inside parent, not body
+        mask={true}
+        maskClosable={true}
+        styles={{
+          body: { padding: 0, background: "#f8fafc" },
+          header: { borderBottom: "none", padding: "16px 20px 0" },
+          wrapper: { zIndex: 999 },  // ✅ Lower z-index
+          mask: { zIndex: 998 },     // ✅ Control mask separately
+        }}
       >
         {selectedCompany ? (
           <div className="space-y-5">

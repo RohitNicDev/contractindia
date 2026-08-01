@@ -9,7 +9,7 @@ import {
   ShieldCheck,
   Award,
   Globe,
-  ArrowRight    
+  ArrowRight
 } from "lucide-react";
 import logo from "../../assets/IMG/logo_con1.png";
 
@@ -56,17 +56,17 @@ const Footer = () => {
           <div className="lg:col-span-4 space-y-8">
             <div className="flex items-center gap-3">
               {/* <div className="h-12 w-12 rounded-2xl bg-linear-to-br from-accent to-primary flex items-center justify-center shadow-lg shadow-accent/20"> */}
-                 <img
-                                src={logo}
-                                alt="Contracts India Logo"
-                                className="rounded-2xl h-9 w-9 sm:h-11 sm:w-11 object-contain 
+              <img
+                src={logo}
+                alt="Contracts India Logo"
+                className="rounded-2xl h-9 w-9 sm:h-11 sm:w-11 object-contain 
                     transition-all duration-300 
                     group-hover:scale-105"
-                              />
-                
+              />
+
               {/* </div> */}
               <div>
-                <h2 className="text-2xl font-black text-white tracking-tight">ContractsIndia™</h2>
+                <h2 className="text-2xl font-black text-white tracking-tight">Contracts India™</h2>
                 <p className="text-[10px] font-bold text-accent uppercase tracking-[0.3em]">Integrated Solution For Construction & Infrastructure</p>
               </div>
             </div>
@@ -135,7 +135,7 @@ const Footer = () => {
             <div className="pt-4 space-y-3">
               <div className="flex items-center gap-2 text-xs text-slate-400">
                 <Mail className="w-3.5 h-3.5 text-accent" />
-                hello@contractsindia.com
+                hello@Contracts India.com
               </div>
               <div className="flex items-center gap-2 text-xs text-slate-400">
                 <Globe className="w-3.5 h-3.5 text-accent" />
@@ -149,7 +149,7 @@ const Footer = () => {
         <div className="border-t border-slate-800/50 pt-10 flex flex-col lg:flex-row items-center justify-between gap-6">
           <div className="flex flex-col items-center lg:items-start gap-1">
             <p className="text-xs text-slate-500">
-              © 2026 ContractsIndia™ Technologies Pvt. Ltd.
+              © 2026 Contracts India™ Technologies Pvt. Ltd.
             </p>
             <p className="text-[10px] text-slate-600 uppercase tracking-tighter">
               Crafted for the future of India's Infrastructure.

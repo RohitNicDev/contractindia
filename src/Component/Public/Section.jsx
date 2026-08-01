@@ -42,7 +42,7 @@ const steps = [
 
 const testimonials = [
   {
-    quote: "ContractsIndia helped us find the right EPC contractor for our ₹80 Cr hospital project. The bidding transparency is world-class.",
+    quote: "Contracts India helped us find the right EPC contractor for our ₹80 Cr hospital project. The bidding transparency is world-class.",
     name: "Rajesh Sharma",
     role: "Asst. Engineer, PWD",
     tags: ["Infrastructure", "Verified"],
@@ -99,7 +99,7 @@ export function HowItWorks() {
           <h2 className="text-3xl md:text-4xl font-black text-white leading-tight">
             How{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-indigo-400">
-              ContractsIndia™
+              Contracts India™
             </span>{" "}
             Works
           </h2>

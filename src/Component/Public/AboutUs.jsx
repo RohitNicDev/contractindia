@@ -70,7 +70,7 @@ const AboutUs = () => {
          
 
           <h2 className="text-4xl md:text-5xl font-black text-[#28354D] leading-tight mt-2 ">
-            ContractsIndia™
+            Contracts India™
           </h2>
 
           <div className="w-16 h-1 bg-[#28354D] mt-3 rounded-full "></div>
@@ -92,7 +92,7 @@ const AboutUs = () => {
                 <img
                   src="https://www.autodesk.com/blogs/construction/wp-content/uploads/2024/04/construction-phase-what-is-it.jpg"
                   className="w-full h-[260px] sm:h-[340px] md:h-[420px] lg:h-[500px] object-cover transition duration-700 group-hover:scale-105"
-                  alt="ContractsIndia™"
+                  alt="Contracts India™"
                 />
               </div>
 
@@ -123,7 +123,7 @@ const AboutUs = () => {
       </span> */}
 
               <h4 className="text-xl sm:text-3xl lg:text-4xl font-black text-[#28354D] leading-tight mt-2">
-                ContractsIndia™
+                Contracts India™
               </h4>
 
               <div className="w-[60px] h-1 bg-[#28354D] rounded-full"></div>
@@ -132,7 +132,7 @@ const AboutUs = () => {
             {/* CONTENT */}
             <div className="space-y-4 text-slate-600 text-sm sm:text-[15px] leading-relaxed">
               <p className="font-medium text-[#28354D]/90 border-l-4 border-blue-500 pl-4 bg-blue-50/50 py-3 rounded-r-xl shadow-sm">
-                ContractsIndia™ provides platform to contractors, architects,
+                Contracts India™ provides platform to contractors, architects,
                 consultants and employers where they can collaborate for
                 tenders, infrastructure projects and construction opportunities
                 across India.
@@ -145,7 +145,7 @@ const AboutUs = () => {
               </p>
 
               <p>
-                ContractsIndia™ maintains one of the largest online databases of
+                Contracts India™ maintains one of the largest online databases of
                 tenders floated by Government Agencies, Departments, PSUs and
                 Private Sector Undertakings.
               </p>
@@ -169,36 +169,36 @@ const AboutUs = () => {
             {/* SPECIALISATIONS */}
           </motion.div>
         </div><div className="mt-16">
-      {/* Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-        <div>
-          <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-blue-600 mb-2">
-            Our Expertise
-          </p>
+          {/* Section Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-blue-600 mb-2">
+                Our Expertise
+              </p>
 
-          <h3 className="text-2xl sm:text-3xl font-black text-[#28354D]">
-            Our Specialisations
-          </h3>
-        </div>
+              <h3 className="text-2xl sm:text-3xl font-black text-[#28354D]">
+                Our Specialisations
+              </h3>
+            </div>
 
-        <div className="hidden sm:block w-24 h-1 bg-gradient-to-r from-blue-500 to-[#28354D] rounded-full"></div>
-      </div>
+            <div className="hidden sm:block w-24 h-1 bg-gradient-to-r from-blue-500 to-[#28354D] rounded-full"></div>
+          </div>
 
-      {/* Chips */}
-      <div className="flex flex-wrap gap-3">
-  {specs.map((item, i) => (
-    <motion.div
-      key={i}
-      whileHover={{ y: -4, scale: 1.03 }}
-      whileTap={{ scale: 0.97 }}
-      className="group relative overflow-hidden rounded-2xl"
-    >
-      {/* Hover Background */}
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-[#28354D] opacity-0 group-hover:opacity-100 transition duration-300 rounded-2xl"></div>
+          {/* Chips */}
+          <div className="flex flex-wrap gap-3">
+            {specs.map((item, i) => (
+              <motion.div
+                key={i}
+                whileHover={{ y: -4, scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="group relative overflow-hidden rounded-2xl"
+              >
+                {/* Hover Background */}
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-[#28354D] opacity-0 group-hover:opacity-100 transition duration-300 rounded-2xl"></div>
 
-      {/* Content */}
-      <div
-        className="
+                {/* Content */}
+                <div
+                  className="
           relative px-5 py-3 
           bg-white border border-slate-200 
           rounded-2xl shadow-sm 
@@ -206,19 +206,19 @@ const AboutUs = () => {
           transition-all duration-300
           select-none
         "
-      >
-        <span className="flex items-center gap-2 text-sm font-bold text-slate-700 group-hover:text-white transition-colors">
-          <span className="w-2 h-2 rounded-full bg-blue-500 group-hover:bg-white"></span>
-          {item}
-        </span>
-      </div>
-    </motion.div>
-  ))}
-</div>
-    </div>
+                >
+                  <span className="flex items-center gap-2 text-sm font-bold text-slate-700 group-hover:text-white transition-colors">
+                    <span className="w-2 h-2 rounded-full bg-blue-500 group-hover:bg-white"></span>
+                    {item}
+                  </span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
       </section>
-      
-      
+
+
 
       {/* 🎯 CORE VALUES (Glass effect) */}
 
@@ -233,7 +233,7 @@ const AboutUs = () => {
             <ValueCard
               icon={<Target size={26} />}
               title="Objective"
-              desc="The primary objective of ContractsIndia™ is to connect contractors, architects, consultants, and employers on a single platform for tenders and projects. It provides verified information and profiles to help organizations choose the best professionals and enable efficient bidding opportunities."
+              desc="The primary objective of Contracts India™ is to connect contractors, architects, consultants, and employers on a single platform for tenders and projects. It provides verified information and profiles to help organizations choose the best professionals and enable efficient bidding opportunities."
             />
 
             <ValueCard

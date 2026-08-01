@@ -20,11 +20,10 @@ function Toggle({ checked, onChange }) {
       type="button"
       onClick={onChange}
       whileTap={{ scale: 0.95 }}
-      className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none ${
-        checked
+      className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none ${checked
           ? "bg-linear-to-r from-indigo-500 to-violet-500 shadow-[0_0_8px_rgba(99,102,241,0.4)]"
           : "bg-slate-200"
-      }`}
+        }`}
     >
       <motion.span
         layout
@@ -73,10 +72,10 @@ export default function SettingsPage() {
         </div>
         <div className="divide-y divide-slate-100/60">
           {[
-            { key: "email",    label: "Email notifications",  sub: "Receive updates via email"         },
-            { key: "sms",      label: "SMS alerts",           sub: "Get SMS for critical updates"      },
-            { key: "messages", label: "Message notifications",sub: "Alerts for new messages"           },
-            { key: "updates",  label: "Product updates",      sub: "News about ContractsIndia features" },
+            { key: "email", label: "Email notifications", sub: "Receive updates via email" },
+            { key: "sms", label: "SMS alerts", sub: "Get SMS for critical updates" },
+            { key: "messages", label: "Message notifications", sub: "Alerts for new messages" },
+            { key: "updates", label: "Product updates", sub: "News about Contracts India features" },
           ].map(({ key, label, sub }) => (
             <div key={key} className="flex items-center justify-between px-5 py-3.5 hover:bg-indigo-50/20 transition-colors">
               <div>
@@ -107,19 +106,18 @@ export default function SettingsPage() {
           <p className="text-xs font-bold uppercase tracking-wide text-slate-400 mb-3">Theme</p>
           <div className="grid grid-cols-3 gap-3">
             {[
-              { value: "light",  label: "Light",  icon: Sun,     grad: "from-amber-400 to-orange-400"  },
-              { value: "dark",   label: "Dark",   icon: Moon,    grad: "from-slate-600 to-slate-700"   },
+              { value: "light", label: "Light", icon: Sun, grad: "from-amber-400 to-orange-400" },
+              { value: "dark", label: "Dark", icon: Moon, grad: "from-slate-600 to-slate-700" },
               { value: "system", label: "System", icon: Monitor, grad: "from-indigo-500 to-violet-500" },
             ].map(({ value, label, icon: Icon, grad }) => (
               <motion.button
                 key={value}
                 onClick={() => setTheme(value)}
                 whileHover={{ y: -1 }} whileTap={{ scale: 0.97 }}
-                className={`flex flex-col items-center gap-2 rounded-xl border-2 p-3.5 text-xs font-semibold transition-all ${
-                  theme === value
+                className={`flex flex-col items-center gap-2 rounded-xl border-2 p-3.5 text-xs font-semibold transition-all ${theme === value
                     ? "border-indigo-300 bg-linear-to-br from-indigo-50 to-violet-50 text-indigo-700 shadow-[0_4px_12px_rgba(99,102,241,0.2)]"
                     : "border-slate-200/80 bg-white/50 text-slate-600 hover:border-indigo-200 hover:bg-indigo-50/40"
-                }`}
+                  }`}
               >
                 <span className={`flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br ${grad} shadow-sm`}>
                   <Icon className="h-4 w-4 text-white" />
@@ -170,9 +168,9 @@ export default function SettingsPage() {
         </div>
         <div className="divide-y divide-slate-100/60">
           {[
-            { label: "Change Password",  sub: "Update your account password",       icon: Lock        },
-            { label: "Two-Factor Auth",  sub: "Add an extra layer of security",     icon: Smartphone  },
-            { label: "Active Sessions",  sub: "Manage devices logged into account", icon: Activity    },
+            { label: "Change Password", sub: "Update your account password", icon: Lock },
+            { label: "Two-Factor Auth", sub: "Add an extra layer of security", icon: Smartphone },
+            { label: "Active Sessions", sub: "Manage devices logged into account", icon: Activity },
           ].map(({ label, sub, icon: Icon }) => (
             <motion.button
               key={label}

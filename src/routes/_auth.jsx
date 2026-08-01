@@ -12,7 +12,7 @@ import logo from "../assets/IMG/logo_con1.png";
 
 const HERO_BY_PATH = {
   "/register": {
-    kicker: "ContractsIndia™",
+    kicker: "Contracts India™",
     title: "Build your",
     highlight: "business profile",
     subtitle:
@@ -148,7 +148,7 @@ export default function AuthLayout() {
             </div>
             <div>
               <h2 className="text-lg font-bold tracking-wide text-slate-900">
-                ContractIndia
+                Contracts India
               </h2>
               <p className="text-xs tracking-wider text-slate-500">
                 Integrated Solution For Construction & Infrastructure

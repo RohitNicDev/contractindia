@@ -104,17 +104,15 @@ function PlanCard({ plan, selected, onSelect }) {
       layout
       whileHover={{ y: -3 }}
       onClick={() => onSelect(plan)}
-      className={`relative rounded-2xl border-2 p-5 cursor-pointer transition-all duration-200 ${
-        isSelected
-          ? `${plan.border} shadow-lg bg-white ring-2 ring-offset-2 ${
-              plan.color === "sky"
-                ? "ring-sky-400"
-                : plan.color === "violet"
-                  ? "ring-violet-500"
-                  : "ring-amber-400"
-            }`
+      className={`relative rounded-2xl border-2 p-5 cursor-pointer transition-all duration-200 ${isSelected
+          ? `${plan.border} shadow-lg bg-white ring-2 ring-offset-2 ${plan.color === "sky"
+            ? "ring-sky-400"
+            : plan.color === "violet"
+              ? "ring-violet-500"
+              : "ring-amber-400"
+          }`
           : "border-slate-200 bg-white hover:border-slate-300"
-      }`}
+        }`}
     >
       {plan.badge && (
         <div
@@ -586,7 +584,7 @@ export default function SubscriptionPlansFlow({
         key: "rzp_test_TBIngVA6fjYaLH",
         amount: Number(plan.Price || 0) * 100,
         currency: "INR",
-        name: "ContractsIndia",
+        name: "Contracts India",
         description: plan.PlanName,
         image: "/logo.png",
         handler: async function (response) {

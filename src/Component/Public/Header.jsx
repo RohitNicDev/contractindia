@@ -186,7 +186,7 @@ const Header = () => {
   };
 
   const handleSignOut = () => {
-       resetAllStores();
+    resetAllStores();
     resetUserStore();
     navigate("/login");
   };
@@ -327,7 +327,7 @@ const Header = () => {
 
             <div className="leading-tight">
               <h1 className="text-xl sm:text-2xl font-black text-[#162646] tracking-tight">
-                ContractsIndia™
+                Contracts India™
               </h1>
 
               <p className="hidden sm:block text-[9px] text-gray-400 font-bold uppercase tracking-wider">
@@ -337,7 +337,7 @@ const Header = () => {
           </div>
 
           {/* Desktop Search */}
-          <div className="hidden lg:flex flex-1 max-w-xl mx-4">
+          {/* <div className="hidden lg:flex flex-1 max-w-xl mx-4">
             <div className="flex w-full bg-gray-100 rounded-xl overflow-hidden border border-transparent focus-within:bg-white focus-within:border-blue-200 focus-within:shadow-sm transition-all">
               <select className="bg-transparent px-3 text-sm outline-none border-r border-gray-200 cursor-pointer">
                 <option value="all">All</option>
@@ -354,7 +354,7 @@ const Header = () => {
                 <Search size={18} />
               </button>
             </div>
-          </div>
+          </div> */}
 
           {/* Right Actions */}
           <div className="flex items-center gap-2 sm:gap-4">
@@ -515,7 +515,7 @@ const Header = () => {
               />
               <div>
                 <p className="text-sm font-bold mb-0 leading-none">
-                  CONTRACTSINDIA
+                  Contracts India
                 </p>
                 <p className="text-[10px] text-white/50">
                   Integrated Solution For Construction &amp; Infrastructure

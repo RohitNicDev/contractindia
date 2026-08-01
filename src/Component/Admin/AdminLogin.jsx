@@ -51,7 +51,7 @@ export default function AdminLogin() {
             <ShieldCheck className="w-8 h-8 text-white" />
           </motion.div>
           <h1 className="text-2xl font-bold text-white tracking-tight">
-            ContractsIndia™{" "}
+            Contracts India™{" "}
             <span style={{ background: "linear-gradient(90deg,#6366f1,#8b5cf6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Admin</span>
           </h1>
           <p className="text-sm mt-1" style={{ color: "rgba(255,255,255,0.45)" }}>Secure administrative access</p>

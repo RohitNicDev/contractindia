@@ -88,7 +88,7 @@ const loadFonts = () => {
     });
 };
 
-const PREVIEW_TEXT = "ContractsIndia™ — Integrated Solution For Construction & Infrastructure";
+const PREVIEW_TEXT = "Contracts India™ — Integrated Solution For Construction & Infrastructure";
 
 const FontSettings = () => {
     const { fontFamily, setFontFamily } = useThemeStore();
