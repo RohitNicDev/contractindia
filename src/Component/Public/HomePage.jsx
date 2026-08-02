@@ -1,7 +1,7 @@
 import ThemeProvider from "../../theme/ThemeProvider";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom"; 
- 
+import { Link } from "react-router-dom";
+
 import HeroSection from "./HeroSection";
 import HomePageLogocarasole from "./HomePageLogocarasole";
 import { HowItWorks, Testimonials } from "./Section";
@@ -52,9 +52,9 @@ const HomePage = () => {
         </motion.div>
 
         {/* Testimonials */}
-        <motion.div {...reveal(0)}>
+        {/* <motion.div {...reveal(0)}>
           <Testimonials />
-        </motion.div>
+        </motion.div> */}
 
         {/* CTA banner */}
         <motion.div {...reveal(0)}>

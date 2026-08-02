@@ -366,7 +366,7 @@ const Companies = () => {
                 </div> */}
 
                 {/* Tags */}
-                <div className="flex flex-wrap gap-1.5 mt-3">
+                {/* <div className="flex flex-wrap gap-1.5 mt-3">
                   {elm?.tags.map((tag, index) => (
                     <span
                       key={index}
@@ -385,7 +385,7 @@ const Companies = () => {
                       {tag}
                     </span>
                   ))}
-                </div>
+                </div> */}
 
                 {/* Contact Info */}
                 {/* <div className="mt-3 space-y-1">

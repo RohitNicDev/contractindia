@@ -65,6 +65,8 @@ const serviceMasterSaveApi = async (payload) =>
   })) ?? {};
 
 const serviceMasterUpdateApi = async (payload) =>
+  // console.log(payload, "payload");
+
   (await ServiceMasterUpdate({
     ServiceID: payload?.ServiceID ?? payload?.serviceID,
     ParentServiceID: payload?.ParentServiceID ?? payload?.parentServiceID ?? 0,

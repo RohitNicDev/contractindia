@@ -8,30 +8,56 @@ import { useQuery } from "@tanstack/react-query";
 const cats = [
   {
     name: "Consulting Services",
-    image:
-      "https://5.imimg.com/data5/SELLER/Default/2021/10/JB/EA/LS/8271659/civil-engineering-consultant-service.jpg",
-    count: "2,840 Companies",
-    link: "/services/consulting",
+    image: "https://5.imimg.com/data5/SELLER/Default/2021/10/JB/EA/LS/8271659/civil-engineering-consultant-service.jpg",
+    count: "2,840 Companies"
   },
   {
-    name: "Contractor Services",
-    image:
-      "https://5.imimg.com/data5/SELLER/Default/2024/7/433106499/MX/HO/RU/57976404/civil-construction-contractor-service.jpg",
-    count: "1,230 Firms",
-    link: "/services/contractor",
+    name: "Contractor  Services",
+    image: "https://5.imimg.com/data5/SELLER/Default/2024/7/433106499/MX/HO/RU/57976404/civil-construction-contractor-service.jpg",
+    count: "1,230 Firms"
   },
   {
     name: "Tender Services",
-    image:
-      "https://5.imimg.com/data5/SELLER/Default/2026/3/588860952/XX/AP/XV/257074973/civil-engineering-services-500x500.jpg",
-    count: "4,200 Designers",
-    link: "/services/tender",
+    image: "https://5.imimg.com/data5/SELLER/Default/2026/3/588860952/XX/AP/XV/257074973/civil-engineering-services-500x500.jpg",
+    count: "4,200 Designers"
+  },
+
+  {
+    name: "Assets Management",
+    image: "https://www.ice.org.uk/media/4uqp5eho/guiding-principles-of-asset-management-realising-a-world-class-infrastructure.jpg",
+    count: "2,600 Firms"
+  },
+  {
+    name: "Legal Contracts Services",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxKIwcO2VCrmiZ-GbLOYc8OwDjYe_y5DEugA&s",
+    count: "1,900 Projects"
+  },
+  {
+    name: "Procurement Services",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbIAl1Kayn3rgdtNTg3qsEXS8JGKFqGVIr6w&s",
+    count: "980 Providers"
+  },
+  {
+    name: "Brand Development Management ",
+    image: "https://cdn.thebrandingjournal.com/wp-content/uploads/2024/02/Branding-Process-The-Branding-Journal-1024x704.png",
+    count: "2,200 Vendors"
+  },
+  {
+    name: "Marketing Management",
+    image: "https://media.geeksforgeeks.org/wp-content/uploads/20240222165724/marketing-management-copy.webp",
+    count: "620 Experts"
+  },
+  {
+    name: "Construction Audit",
+    image: "https://prosoftnet.com/cdn/shop/articles/6-ways-land-surveying-shapes-infrastructure-planning.jpg?v=1705445625",
+    count: "620 Experts"
   },
 ];
 
+
 const serviceCardMeta = {};
 
-const normalizeServiceCard = (service) => {
+const normalizeServiceCard = (service, index) => {
   const name = service.name || service.label || "Service";
   const meta = serviceCardMeta[name];
   const slug = name
@@ -42,8 +68,7 @@ const normalizeServiceCard = (service) => {
   return {
     name,
     image:
-      meta?.image ||
-      "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=900&q=80",
+      meta?.image || cats[index].image,
     count: meta?.count || "Verified professionals",
     link: meta?.link || `service/${service?.value}`,
     id: service.value ?? name,
@@ -163,7 +188,7 @@ const Categories = () => {
 
   const servicesToShow =
     rootServiceList.length > 0
-      ? rootServiceList.map(normalizeServiceCard)
+      ? rootServiceList.map((service, index) => normalizeServiceCard(service, index))
       : cats.slice(0, 8);
 
   return (
@@ -215,10 +240,10 @@ const Categories = () => {
             <Link
               key={elm?.id ?? index}
               to={elm?.link}
-                            onClick={() => {
-              console.log(elm?.link, "elm?.link");
+              onClick={() => {
+                console.log(elm?.link, "elm?.link");
 
-                            }}
+              }}
               className="group relative flex flex-col bg-white rounded-2xl overflow-hidden border border-slate-200/80 hover:border-indigo-300 shadow-sm hover:shadow-2xl transition-all duration-400"
             >
               <motion.div

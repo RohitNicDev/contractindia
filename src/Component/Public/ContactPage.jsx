@@ -141,7 +141,7 @@ const ContactPage = () => {
               address="3/744, Ramkund Gangaram Nagar, Choubey Colony, Raipur – 492001, Chhattisgarh"
             />
 
-            <div className="p-6 rounded-[2rem] bg-linear-to-br from-[#162646] to-[#0f1b34] text-white shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden group">
+            {/* <div className="p-6 rounded-[2rem] bg-linear-to-br from-[#162646] to-[#0f1b34] text-white shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden group">
               <div className="relative z-10">
                 <h3 className="font-bold text-lg mb-1">Need Support?</h3>
                 <p className="text-blue-100 text-sm mb-4">
@@ -155,7 +155,7 @@ const ContactPage = () => {
                 className="absolute -bottom-4 -right-4 text-white/10"
                 size={120}
               />
-            </div>
+            </div> */}
           </motion.div>
         </div>
       </section>
