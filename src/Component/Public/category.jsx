@@ -8,7 +8,8 @@ import { useQuery } from "@tanstack/react-query";
 const cats = [
   {
     name: "Consulting Services",
-    image: "https://5.imimg.com/data5/SELLER/Default/2021/10/JB/EA/LS/8271659/civil-engineering-consultant-service.jpg",
+    image: "https://images.openai.com/static-rsc-4/4WmgF9opKlYB_jLL8xfd8BOR1KaD4rtCTt3Rz5muL56F3PfTC70FXd5e0uhnuSS3x7mmXIEY0j0Uqog-01Smdch6FRcxgPuMrIkO2GCaIYrGaDa2_VeGB0sM1l8mzL32C2xTFulhz9gdwgRSUcEKVceMY6QjF3-VDDfibhPajFk?purpose=inline",
+
     count: "2,840 Companies"
   },
   {
@@ -29,17 +30,17 @@ const cats = [
   },
   {
     name: "Legal Contracts Services",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxKIwcO2VCrmiZ-GbLOYc8OwDjYe_y5DEugA&s",
+    image: "https://5.imimg.com/data5/SELLER/Default/2021/10/JB/EA/LS/8271659/civil-engineering-consultant-service.jpg",
     count: "1,900 Projects"
   },
   {
     name: "Procurement Services",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbIAl1Kayn3rgdtNTg3qsEXS8JGKFqGVIr6w&s",
+    image: "https://images.pexels.com/photos/8532826/pexels-photo-8532826.jpeg",
     count: "980 Providers"
   },
   {
     name: "Brand Development Management ",
-    image: "https://cdn.thebrandingjournal.com/wp-content/uploads/2024/02/Branding-Process-The-Branding-Journal-1024x704.png",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxKIwcO2VCrmiZ-GbLOYc8OwDjYe_y5DEugA&s",
     count: "2,200 Vendors"
   },
   {
