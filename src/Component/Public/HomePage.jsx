@@ -37,9 +37,9 @@ const HomePage = () => {
         </motion.div>
 
         {/* Featured companies */}
-        <motion.div {...reveal(0)}>
+        {/* <motion.div {...reveal(0)}>
           <Companies />
-        </motion.div>
+        </motion.div> */}
 
         {/* Partner logo carousel */}
         <motion.div {...reveal(0)}>
