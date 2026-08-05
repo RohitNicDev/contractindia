@@ -4,11 +4,12 @@ import { motion } from "framer-motion";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { ServiceRootGet } from "../../services/api";
 import { useQuery } from "@tanstack/react-query";
-
+import Consulting_service from "../../assets/IMG/Consulting_service.jpeg";
+import Industrial_labservice from "../../assets/IMG/Industrial_labservice.jpeg";
 const cats = [
   {
     name: "Consulting Services",
-    image: "https://5.imimg.com/data5/SELLER/Default/2021/10/JB/EA/LS/8271659/civil-engineering-consultant-service.jpg",
+    image: Consulting_service,
     count: "2,840 Companies"
   },
   {
