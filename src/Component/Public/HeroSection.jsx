@@ -7,25 +7,38 @@ import {
   PhoneOutlined, EnvironmentOutlined, SafetyCertificateOutlined, ThunderboltOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-
+import Consulting_service from "../../assets/IMG/Consulting_service.jpeg";
+import Industrial_labservice from "../../assets/IMG/Industrial_labservice.jpeg";
 const slides = [
+  // {
+  //   badge: "🏛️ GOVERNMENT TENDERS",
+  //   title: "Win Big Government Contracts",
+  //   desc: "Access 8,400 plus live PWD, NHAI, CPWD and PSU tenders across India.",
+  //   image: "https://www.hoffmannworkcomp.com/wp-content/uploads/why-workers-comp-claims-rise-during-construction-activity-1024x683.jpg",
+  // },
   {
-    badge: "🏛️ GOVERNMENT TENDERS",
-    title: "Win Big Government Contracts",
-    desc: "Access 8,400+ live PWD, NHAI & PSU tenders.",
-    image: "https://www.hoffmannworkcomp.com/wp-content/uploads/why-workers-comp-claims-rise-during-construction-activity-1024x683.jpg",
-  },
-  {
-    badge: "🏗️ VERIFIED CONTRACTORS",
+    badge: "VERIFIED CONTRACTORS",
     title: "Hire Top Civil Experts",
-    desc: "50,000+ verified EPC, PMC & architects.",
+    desc: "Connect with 50,000 plus verified EPC contractors, consultants, architects and engineers.",
     image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&q=80&w=1000",
   },
+  // {
+  //   badge: "🧱 MATERIALS MARKET",
+  //   title: "Source at Best Prices",
+  //   desc: "Buy cement, steel, electrical, plumbing and construction materials directly from trusted suppliers.",
+  //   image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=1000",
+  // },
   {
-    badge: "🧱 MATERIALS MARKET",
-    title: "Source at Best Prices",
-    desc: "Cement, steel & materials direct from suppliers.",
-    image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=1000",
+    badge: "CONSULTING SERVICES",
+    title: "Expert Project Consulting",
+    desc: "Get professional support for DPR, estimation, project planning, approvals, tender documentation and compliance.",
+    image: Consulting_service,
+  },
+  {
+    badge: "INDUSTRIAL LAB SERVICES",
+    title: "Certified Testing and Inspection",
+    desc: "Book NABL accredited laboratories for material testing, quality assurance, soil investigation and structural testing.",
+    image: Industrial_labservice,
   },
 ];
 
@@ -128,15 +141,15 @@ const HeroSection = () => {
   transition={{ duration: 0.8, ease: "easeOut" }}
   className="text-4xl md:text-6xl lg:text-7xl font-black leading-[1.05] tracking-tight"
 >
-India's Largest {" "}
+{/* India's Largest {" "} */}
   <span
     className="bg-clip-text text-transparent"
     style={{ 
       backgroundImage: "linear-gradient(135deg, #f59e0b 0%, #fbbf24 40%, #fde68a 100%)",
       WebkitBackgroundClip: "text" 
     }}
-  >
-    Construction Marketplace
+  >{slides[currentSlide].badge}
+    {/* Construction Marketplace */}
   </span>
   <br />
   {/* <span className="text-white/90">Marketplace</span> */}

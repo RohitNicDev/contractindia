@@ -4,12 +4,12 @@ import { motion } from "framer-motion";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { ServiceRootGet } from "../../services/api";
 import { useQuery } from "@tanstack/react-query";
-
+import Consulting_service from "../../assets/IMG/Consulting_service.jpeg";
+import Industrial_labservice from "../../assets/IMG/Industrial_labservice.jpeg";
 const cats = [
   {
     name: "Consulting Services",
-    image: "https://images.openai.com/static-rsc-4/4WmgF9opKlYB_jLL8xfd8BOR1KaD4rtCTt3Rz5muL56F3PfTC70FXd5e0uhnuSS3x7mmXIEY0j0Uqog-01Smdch6FRcxgPuMrIkO2GCaIYrGaDa2_VeGB0sM1l8mzL32C2xTFulhz9gdwgRSUcEKVceMY6QjF3-VDDfibhPajFk?purpose=inline",
-
+    image: Consulting_service,
     count: "2,840 Companies"
   },
   {
