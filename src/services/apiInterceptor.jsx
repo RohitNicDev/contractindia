@@ -9,7 +9,7 @@ const API_URL =
 
 if (!API_URL) {
   console.warn(
-    "VITE_API_URL is not set. Add it to a root .env.development or .env.production file."
+    "VITE_API_URL is not set. Add it to a root .env.development or .env.production file. Remove any unused src/.env.production to avoid confusing local overrides."
   );
 }
 
