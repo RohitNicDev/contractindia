@@ -8,22 +8,14 @@ import {
   ChevronRight,
   Layout,
   MapPin,
-  Brush,
-  Zap,
-  Users,
-  Shield,
-  Wrench,
-  Building2,
   LogOut,
   LayoutDashboard,
-  User,
-  User2Icon,
   User2,
-  ChevronDownCircle,
 } from "lucide-react";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { NavLink, useNavigate, Link } from "react-router-dom";
 import { Button, Badge, Drawer, Collapse, Dropdown, Avatar } from "antd";
+import { motion, useScroll, useSpring } from "framer-motion";
 import logo from "../../assets/IMG/logo_con1.png";
 import { ServiceMenuGet, ServiceRootGet, UserRegistrationUserIdGet } from "../../services/api";
 import { useQuery } from "@tanstack/react-query";
@@ -31,10 +23,7 @@ import { resetAllStores, useServiceStore, useUserStore } from "../../store/store
 import LogoutPopup from "../common/Logoutpopup";
 const { Panel } = Collapse;
 
-// ─── Mega Menu Data ───────────────────────────────────────────────
-
 // ─── Services Dropdown Menu ──────────────────────────────────────
-
 const DropdownMenu = ({ columns, visible }) => (
   <div
     className={`absolute top-full left-0 bg-white shadow-xl border border-gray-100 rounded-md py-2 w-72 transition-all duration-200 origin-top z-50 ${visible
@@ -46,9 +35,9 @@ const DropdownMenu = ({ columns, visible }) => (
       <div key={col.title} className="relative group/item">
         <Link
           to={col.path || "#"}
-          className="flex items-center justify-between px-4 py-2.5 cursor-pointer transition-colors hover:bg-blue-50 group-hover/item:bg-blue-50 no-underline"
+          className="flex items-center justify-between px-4 py-2 cursor-pointer transition-colors hover:bg-blue-50 group-hover/item:bg-blue-50 no-underline"
         >
-          <span className="text-[13px] font-bold tracking-wide uppercase text-gray-700 group-hover/item:text-blue-600">
+          <span className="text-[12px] font-bold tracking-wide uppercase text-gray-700 group-hover/item:text-blue-600">
             {col.title}
           </span>
           {col.items && col.items.length > 0 && (
@@ -67,7 +56,7 @@ const DropdownMenu = ({ columns, visible }) => (
                 <Link
                   key={typeof item === "string" ? item : item.name}
                   to={typeof item === "string" ? "#" : item.path}
-                  className="block px-4 py-2 text-[13px] font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600 no-underline transition-colors"
+                  className="block px-4 py-2 text-[12px] font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600 no-underline transition-colors"
                 >
                   {typeof item === "string" ? item : item.name}
                 </Link>
@@ -79,6 +68,7 @@ const DropdownMenu = ({ columns, visible }) => (
     ))}
   </div>
 );
+
 const UserRegistrationUserIdGetApi = async (userId) => {
   const response = await UserRegistrationUserIdGet(userId);
   console.log(response, "response");
@@ -94,6 +84,7 @@ const ServiceMenuGetApi = async () => {
   console.log(response, "response");
   return response?.data ?? [];
 };
+
 // ─── Main Header ──────────────────────────────────────────────────
 const Header = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -104,29 +95,32 @@ const Header = () => {
   const [logoutOpen, setLogoutOpen] = useState(false);
   const megaRef = useRef(null);
 
+  // Scroll progress bar (top of viewport -> slim line at header bottom)
+  const { scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 30, mass: 0.4 });
+
   const { loginResponce, resetUserStore } = useUserStore();
   const navigate = useNavigate();
   const user = loginResponce;
-  const userType = loginResponce?.userType;
   const setMenuServices = useServiceStore((state) => state.setMenuServices);
   const setAllServices = useServiceStore((state) => state.setAllServices);
   const allMenuServices = useServiceStore((state) => state.allMenuServices);
   const allServices = useServiceStore((state) => state.allServices);
 
   const auth = loginResponce?.isLoginSuccessful;
-  const { data: rootServiceList = [], isLoading: rootServicesLoading } =
+  const { data: rootServiceList = [] } =
     useQuery({
       queryKey: ["RootServiceApi"],
       queryFn: getRootServiceApi,
       retry: false,
-      staleTime: Infinity, // states rarely change
+      staleTime: Infinity,
     });
-  const { data: ServiceMenuGetList = [], isLoading: ServiceMenuGetsLoading } =
+  const { data: ServiceMenuGetList = [] } =
     useQuery({
       queryKey: ["ServiceMenuGetApi"],
       queryFn: ServiceMenuGetApi,
       retry: false,
-      staleTime: Infinity, // states rarely change
+      staleTime: Infinity,
     });
 
   const areServiceListsEqual = (a, b) => {
@@ -148,15 +142,13 @@ const Header = () => {
     }
   }, [ServiceMenuGetList, rootServiceList, setMenuServices, setAllServices, allMenuServices, allServices]);
 
-  const { data: UserData = [], isLoading: UserDataLoading } = useQuery({
+  const { data: UserData = [] } = useQuery({
     queryKey: ["UserData", loginResponce?.userId],
     queryFn: () => UserRegistrationUserIdGetApi(loginResponce?.userId),
     enabled: !!loginResponce?.userId,
     retry: false,
   });
-  useEffect(() => {
-    console.log(UserData[0]?.Name, "UserData");
-  }, [UserData]);
+
   useEffect(() => {
     const handler = (e) => {
       if (megaRef.current && !megaRef.current.contains(e.target)) {
@@ -166,9 +158,9 @@ const Header = () => {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+
   const goToDashboard = () => {
     const userType = user?.userType;
-    console.log(user, "522139");
     if (userType == 2) {
       navigate("/commercial/dashboard");
       return;
@@ -181,7 +173,6 @@ const Header = () => {
       navigate("/admin/dashboard");
       return;
     }
-    // Fallback route
     navigate("/home");
   };
 
@@ -200,7 +191,6 @@ const Header = () => {
     };
     checkAuthStatus();
 
-    // Listen to storage events for cross-tab updates or custom dispatched events
     window.addEventListener("storage", checkAuthStatus);
     window.addEventListener("auth_changed", checkAuthStatus);
 
@@ -209,16 +199,11 @@ const Header = () => {
       window.removeEventListener("storage", checkAuthStatus);
       window.removeEventListener("auth_changed", checkAuthStatus);
     };
-  }, []);
-
-  // Close mega menu on outside click
+  }, [auth]);
 
   const onSignOut = async () => {
     setLogoutOpen(true);
   };
-  useEffect(() => {
-    console.log(logoutOpen);
-  }, [logoutOpen]);
 
   const dashboarditems = [
     {
@@ -232,10 +217,10 @@ const Header = () => {
       icon: <LogOut size={16} />,
       label: "Logout",
       danger: true,
-
       onClick: onSignOut,
     },
   ];
+
   const serviceColumns = useMemo(
     () =>
       ServiceMenuGetList?.filter(
@@ -260,6 +245,7 @@ const Header = () => {
     { name: "Projects", path: "/projects", isNew: true },
     { name: "Contact Us", path: "/contact" },
   ];
+
   return (
     <header
       className={`sticky top-0 z-50 transition-all duration-500 ${scrolled
@@ -267,109 +253,92 @@ const Header = () => {
         : "bg-white border-b border-gray-100"
         }`}
     >
-      {/* 🌐 TOP BAR */}
-      <div className="bg-[#162646] text-white/90 py-2.5 px-4 sm:px-6 overflow-hidden">
-        <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
-          {/* LEFT */}
-          <div className="flex items-center gap-3 text-[11px] sm:text-[12px] font-medium tracking-wide">
-            <span className="opacity-30">|</span>
+      {/* 🌐 TOP BAR — slim + auto-hides on scroll for a compact header */}
+      <div
+        className={`grid transition-all duration-500 ${scrolled ? "grid-rows-[0fr] opacity-0" : "grid-rows-[1fr] opacity-100"
+          }`}
+      >
+        <div className="overflow-hidden">
+          <div className="bg-[#162646] text-white/90 py-1.5 px-4 sm:px-6">
+            <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center gap-1 md:gap-2">
+              {/* LEFT */}
+              <div className="flex items-center gap-3 text-[10px] sm:text-[11px] font-medium tracking-wide">
+                <span className="flex items-center gap-1 shrink-0">
+                  <Layout size={12} className="text-blue-400" />
+                  Integrated Solution For Construction &amp; Infrastructure
+                </span>
 
-            <span className="flex items-center gap-1 shrink-0">
-              <Layout size={13} className="text-blue-400" />
-              Integrated Solution For Construction &amp; Infrastructure
-            </span>
+                <span className="hidden lg:inline opacity-30">|</span>
 
-            <span className="hidden lg:inline opacity-30">|</span>
+                <span className="hidden lg:flex items-center gap-1 shrink-0">
+                  <MapPin size={12} className="text-blue-400" />
+                  All India Coverage
+                </span>
+              </div>
 
-            <span className="hidden lg:flex items-center gap-1 shrink-0">
-              <MapPin size={13} className="text-blue-400" />
-              All India Coverage
-            </span>
-          </div>
-
-          {/* RIGHT */}
-          {isLoggedIn && (
-            <div className="flex items-center gap-4 text-[11px] sm:text-[12px] font-semibold border-t border-white/10 md:border-none pt-2 md:pt-0 w-full md:w-auto justify-center">
-              {/* <span className="cursor-pointer hover:text-blue-300 transition uppercase tracking-wide">
-              Advertise
-            </span> */}
-
-              <span className="opacity-30">|</span>
-
-              <span className="cursor-pointer hover:text-blue-300 transition  tracking-wide">
-                Welcome
-                {UserData?.length > 0 ? `: ${UserData[0]?.Name}` : ""}
-              </span>
+              {/* RIGHT */}
+              {isLoggedIn && (
+                <div className="flex items-center gap-4 text-[10px] sm:text-[11px] font-semibold border-t border-white/10 md:border-none pt-1.5 md:pt-0 w-full md:w-auto justify-center">
+                  <span className="cursor-pointer hover:text-blue-300 transition tracking-wide">
+                    Welcome
+                    {UserData?.length > 0 ? `: ${UserData[0]?.Name}` : ""}
+                  </span>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
       </div>
 
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between py-3 lg:py-4 gap-4">
+        <div
+          className={`flex items-center justify-between gap-4 transition-all duration-500 ${scrolled ? "py-1.5 lg:py-2" : "py-2 lg:py-2.5"
+            }`}
+        >
           {/* Mobile Menu */}
           <button
-            className="lg:hidden p-2 -ml-2 text-gray-600 active:bg-gray-100 rounded-full transition"
+            className="lg:hidden p-1.5 -ml-2 text-gray-600 active:bg-gray-100 rounded-full transition"
             onClick={() => setIsDrawerOpen(true)}
           >
-            <MenuIcon size={24} />
+            <MenuIcon size={22} />
           </button>
 
           <div
-            className="flex items-center gap-3 cursor-pointer shrink-0"
+            className="flex items-center gap-2.5 cursor-pointer shrink-0"
             onClick={() => navigate("/")}
           >
             <img
               src={logo}
               alt="Contracts India Logo"
-              className="rounded-2xl h-10 w-10 sm:h-12 sm:w-12 object-contain transition-all duration-300"
+              className={`rounded-xl object-contain transition-all duration-500 ${scrolled ? "h-8 w-8 sm:h-9 sm:w-9" : "h-9 w-9 sm:h-10 sm:w-10"
+                }`}
             />
 
             <div className="leading-tight">
-              <h1 className="text-xl sm:text-2xl font-black text-[#162646] tracking-tight">
+              <h1 className="text-lg sm:text-xl font-black text-[#162646] tracking-tight">
                 Contracts India™
               </h1>
 
-              <p className="hidden sm:block text-[9px] text-gray-400 font-bold uppercase tracking-wider">
+              <p className="hidden sm:block text-[8px] text-gray-400 font-bold uppercase tracking-wider">
                 Integrated Solution For Construction &amp; Infrastructure
               </p>
             </div>
           </div>
 
-          {/* Desktop Search */}
-          {/* <div className="hidden lg:flex flex-1 max-w-xl mx-4">
-            <div className="flex w-full bg-gray-100 rounded-xl overflow-hidden border border-transparent focus-within:bg-white focus-within:border-blue-200 focus-within:shadow-sm transition-all">
-              <select className="bg-transparent px-3 text-sm outline-none border-r border-gray-200 cursor-pointer">
-                <option value="all">All</option>
-                <option value="tender">Tenders</option>
-                <option value="contractor">Contractors</option>
-                <option value="material">Materials</option>
-              </select>
-              <input
-                type="text"
-                placeholder="Search tenders, contractors, materials..."
-                className="flex-1 bg-transparent px-4 py-2 text-sm outline-none"
-              />
-              <button className="px-4 bg-[#162646] text-white hover:bg-blue-700 transition flex items-center justify-center">
-                <Search size={18} />
-              </button>
-            </div>
-          </div> */}
-
           {/* Right Actions */}
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-3.5">
             {/* Mobile Search Icon */}
             <button
               className="lg:hidden p-2 text-gray-600"
               onClick={() => setIsSearchOpen(!isSearchOpen)}
             >
-              <Search size={20} />
+              <Search size={19} />
             </button>
 
             {/* Notification - hide on very small screens */}
-            <div className="hidden sm:flex items-center gap-2 sm:gap-4">
+            <div className="hidden sm:flex items-center gap-2 sm:gap-3.5">
               <Badge dot color="blue">
-                <Bell size={20} className="text-gray-500" />
+                <Bell size={19} className="text-gray-500" />
               </Badge>
 
               <div className="flex items-center gap-2">
@@ -377,43 +346,37 @@ const Header = () => {
                   <>
                     <Button
                       type="default"
-                      className="!rounded-lg !h-9 !px-4 !font-semibold border border-[#162646] text-[#162646] hover:!bg-[#162646] hover:!text-white transition"
+                      className="!rounded-lg !h-8 !px-3.5 !font-semibold border border-[#162646] text-[#162646] hover:!bg-[#162646] hover:!text-white transition"
                       onClick={() => navigate("/register")}
                     >
-                      <span className="text-sm">Register</span>
+                      <span className="text-[13px]">Register</span>
                     </Button>
 
                     <Button
                       type="primary"
-                      className="!bg-[#162646] !rounded-lg !h-8 sm:!h-10 !px-3 sm:!px-6 !font-bold flex items-center gap-1 sm:gap-2"
+                      className="!bg-[#162646] !rounded-lg !h-8 sm:!h-9 !px-3 sm:!px-5 !font-bold flex items-center gap-1.5"
                       onClick={() => navigate("/login")}
                     >
-                      <LogIn size={14} />
-                      <span className="text-xs sm:text-sm">Login</span>
+                      <LogIn size={13} />
+                      <span className="text-xs sm:text-[13px]">Login</span>
                     </Button>
                   </>
                 ) : (
-                  <>
-                    <div className="flex items-center gap-3">
-                      <Dropdown
-                        menu={{ items: dashboarditems }}
-                        trigger={["click"]}
-                        placement="bottomRight"
-                      >
-                        <div className="flex items-center gap-1 cursor-pointer">
-                          <Avatar
-                            size={38}
-                            icon={<User2 size={18} />}
-                            className="!bg-[#162646]"
-                          />
-                          {/* <ChevronDownCircle
-                              size={16}
-                              className="text-slate-500"
-                            /> */}
-                        </div>
-                      </Dropdown>
-                    </div>
-                  </>
+                  <div className="flex items-center gap-3">
+                    <Dropdown
+                      menu={{ items: dashboarditems }}
+                      trigger={["click"]}
+                      placement="bottomRight"
+                    >
+                      <div className="flex items-center gap-1 cursor-pointer">
+                        <Avatar
+                          size={34}
+                          icon={<User2 size={16} />}
+                          className="!bg-[#162646]"
+                        />
+                      </div>
+                    </Dropdown>
+                  </div>
                 )}
               </div>
             </div>
@@ -422,15 +385,15 @@ const Header = () => {
 
         {/* Mobile Search */}
         {isSearchOpen && (
-          <div className="lg:hidden pb-4 animate-in fade-in slide-in-from-top-2">
+          <div className="lg:hidden pb-3 animate-in fade-in slide-in-from-top-2">
             <div className="flex bg-gray-100 rounded-lg p-1 border border-gray-200">
               <input
                 type="text"
                 placeholder="Search..."
-                className="flex-1 bg-transparent px-3 py-2 text-sm outline-none"
+                className="flex-1 bg-transparent px-3 py-1.5 text-sm outline-none"
               />
               <button className="p-2 bg-[#162646] text-white rounded-md">
-                <Search size={16} />
+                <Search size={15} />
               </button>
             </div>
           </div>
@@ -444,12 +407,12 @@ const Header = () => {
                 <div
                   key={item.name}
                   ref={megaRef}
-                  className="py-3 relative"
+                  className="py-2 relative"
                   onMouseEnter={() => setMegaOpen(true)}
                   onMouseLeave={() => setMegaOpen(false)}
                 >
                   <button
-                    className={`flex items-center gap-1 px-3 py-1.5 text-sm font-bold rounded-lg transition outline-none ${megaOpen
+                    className={`flex items-center gap-1 px-3 py-1.5 text-[13px] font-bold rounded-lg transition outline-none ${megaOpen
                       ? "text-blue-600 bg-blue-50"
                       : "text-gray-600 hover:text-blue-600 hover:bg-blue-50/50"
                       }`}
@@ -465,28 +428,30 @@ const Header = () => {
               );
             }
             return (
-              <div key={item.name} className="py-3">
+              <div key={item.name} className="py-2">
                 <NavLink
                   to={item.path}
                   className={({ isActive }) =>
-                    `relative px-3 py-1.5 text-sm font-bold no-underline rounded-lg transition ${isActive
+                    `relative px-3 py-1.5 text-[13px] font-bold no-underline rounded-lg transition ${isActive
                       ? "text-blue-600 bg-blue-50"
                       : "text-gray-600 hover:text-blue-600 hover:bg-blue-50/50"
                     }`
                   }
                 >
                   {item.name}
-                  {/* {item.isNew && (
-                    <span className="absolute -top-1 -right-1 text-[8px] bg-blue-600 text-white px-1 rounded-full font-bold">
-                      NEW
-                    </span>
-                  )} */}
                 </NavLink>
               </div>
             );
           })}
         </nav>
       </div>
+
+      {/* Scroll progress line */}
+      <motion.div
+        aria-hidden
+        className="absolute bottom-0 left-0 h-[2px] w-full origin-left bg-gradient-to-r from-amber-400 via-orange-500 to-blue-600"
+        style={{ scaleX: progress }}
+      />
 
       {/* 📱 MOBILE DRAWER */}
       <Drawer
@@ -498,20 +463,20 @@ const Header = () => {
         styles={{ body: { padding: 0 } }}
       >
         <div className="flex flex-col h-full">
-          <div className="bg-[#162646] p-6 text-white">
+          <div className="bg-[#162646] p-5 text-white">
             <div className="flex justify-between items-center mb-4">
               <button
                 onClick={() => setIsDrawerOpen(false)}
                 className="text-white/70 hover:text-white"
               >
-                <X size={24} />
+                <X size={22} />
               </button>
             </div>
             <div className="flex items-center gap-3">
               <img
                 src={logo}
                 alt="Contracts India Logo"
-                className="rounded-2xl h-9 w-9 sm:h-11 sm:w-11 object-contain transition-all duration-300 group-hover:scale-105"
+                className="rounded-xl h-9 w-9 object-contain transition-all duration-300"
               />
               <div>
                 <p className="text-sm font-bold mb-0 leading-none">
@@ -545,7 +510,6 @@ const Header = () => {
                       >
                         {item.columns.map((col) => (
                           <div key={col.title} className="mb-2 ml-1">
-                            {/* Section Title */}
                             {col.items && col.items.length > 0 ? (
                               <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wide mb-1 pl-2">
                                 {col.title}
@@ -560,7 +524,6 @@ const Header = () => {
                               </NavLink>
                             )}
 
-                            {/* Items */}
                             {col.items && col.items.length > 0 && (
                               <div className="flex flex-col gap-0.5 border-l border-gray-100 pl-3">
                                 {col.items.map((sub) => (
@@ -602,11 +565,10 @@ const Header = () => {
             </div>
           </div>
 
-          <div className="p-6 border-t border-gray-100 bg-gray-50">
+          <div className="p-5 border-t border-gray-100 bg-gray-50">
             <div className="flex gap-3">
               {!isLoggedIn ? (
                 <>
-                  {/* Register Button */}
                   <Button
                     block
                     type="default"
@@ -620,7 +582,6 @@ const Header = () => {
                     Register
                   </Button>
 
-                  {/* Login Button */}
                   <Button
                     block
                     type="primary"

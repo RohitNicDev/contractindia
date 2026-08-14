@@ -89,7 +89,7 @@ const Test = () => {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
         viewport={{ once: true }}
-        className="relative overflow-hidden rounded-[40px] border border-sky-100 shadow-xl"
+        className="relative overflow-hidden rounded-[40px] border border-sky-100 "
         style={{
           background:
             "linear-gradient(135deg,#e6f0fa 0%,#f4f9ff 50%,#edf6ff 100%)",
@@ -163,7 +163,7 @@ const Test = () => {
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white border border-sky-200 shadow-sm text-sky-700 text-xs font-bold uppercase tracking-widest mb-8"
+            className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white border border-sky-200  text-sky-700 text-xs font-bold uppercase tracking-widest mb-8"
           >
             <Sparkles className="w-4 h-4 text-amber-500" />
             India's #1 Construction Network
@@ -208,11 +208,11 @@ const Test = () => {
               whileHover={{
                 scale: 1.05,
                 y: -3,
-                boxShadow: "0 15px 40px rgba(37,99,235,.35)",
+                // boxShadow: "0 15px 40px rgba(37,99,235,.35)",
               }}
               whileTap={{ scale: 0.97 }}
               onClick={() => navigate("/register")}
-              className="inline-flex items-center justify-center gap-3 rounded-2xl px-9 py-4 text-white font-bold text-base shadow-xl"
+              className="inline-flex items-center justify-center gap-3 rounded-2xl px-9 py-4 text-white font-bold text-base "
               style={{
                 background:
                   "linear-gradient(135deg,#2563eb 0%,#3b82f6 100%)",

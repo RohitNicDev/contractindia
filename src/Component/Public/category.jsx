@@ -106,7 +106,7 @@ const getRootServiceApi = async () => {
 };
 export function ValueStrip() {
   return (
-    <div className="bg-slate-100 mt-20">
+    <div className="bg-slate-100 mt-10">
       <section className="container mx-auto px-4 -mt-14 relative z-30">
         <div className="grid md:grid-cols-3 gap-5">
           {valueItems.map((item, index) => (

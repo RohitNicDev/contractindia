@@ -5,6 +5,8 @@ import {
   ArrowRight, Zap, CheckCircle, Quote,
 } from "lucide-react";
 
+/* ═══════════════ DATA ═══════════════ */
+
 const steps = [
   {
     n: "01",
@@ -42,69 +44,116 @@ const steps = [
 
 const testimonials = [
   {
-    quote: "Contracts India helped us find the right EPC contractor for our ₹80 Cr hospital project. The bidding transparency is world-class.",
+    quote:
+      "Contracts India helped us find the right EPC contractor for our ₹80 Cr hospital project. The bidding transparency is world-class.",
     name: "Rajesh Sharma",
     role: "Asst. Engineer, PWD",
     tags: ["Infrastructure", "Verified"],
-    img: "https://i.pravatar.cc/150?u=rajesh",
     accent: "#6366f1",
   },
   {
-    quote: "As an interior designer, I got 12 high-intent inquiries in my first month. The lead quality is significantly better than competitors.",
+    quote:
+      "As an interior designer, I got 12 high-intent inquiries in my first month. The lead quality is significantly better than competitors.",
     name: "Priya Mehta",
     role: "Lead Designer, UrbanSpace",
     tags: ["Interior", "Premium"],
-    img: "https://i.pravatar.cc/150?u=priya",
-    accent: "#8b5cf6",
+    accent: "#f59e0b",
   },
   {
-    quote: "We supply TMT steel and found 3 bulk buyers instantly. The digital KYC makes the deal trustable and faster.",
+    quote:
+      "We supply TMT steel and found 3 bulk buyers instantly. The digital KYC makes the deal trustable and faster.",
     name: "Vikram Joshi",
     role: "Sales Head, IndiaSteel Ltd",
     tags: ["Material", "Bulk"],
-    img: "https://i.pravatar.cc/150?u=vikram",
-    accent: "#3b82f6",
+    accent: "#10b981",
   },
 ];
 
+/* ── Initials avatar — pravatar.cc external dependency HATA DI,
+      ab broken image ka koi chance nahi ── */
+const InitialAvatar = ({ name, accent, size = "w-11 h-11", textSize = "text-sm" }) => {
+  const initials = name
+    .split(" ")
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+  return (
+    <div
+      className={`${size} rounded-xl flex items-center justify-center text-white font-black ${textSize} shrink-0 shadow-md`}
+      style={{
+        background: `linear-gradient(135deg, ${accent} 0%, ${accent}cc 100%)`,
+      }}
+    >
+      {initials}
+    </div>
+  );
+};
+
+/* ═══════════════ HOW IT WORKS ═══════════════ */
+
 export function HowItWorks() {
   return (
-    <section className="relative py-24 overflow-hidden" style={{ background: "linear-gradient(135deg, #0d1b2e 0%, #162646 50%, #0d1b2e 100%)" }}>
-
+    <section
+      className="relative py-20 md:py-24 overflow-hidden"
+      style={{
+        background: "linear-gradient(135deg, #0a1628 0%, #162646 50%, #0a1628 100%)",
+      }}
+    >
       {/* Dot grid */}
       <div
-        className="absolute inset-0 opacity-[0.07] pointer-events-none"
-        style={{ backgroundImage: "radial-gradient(rgba(255,255,255,0.8) 1px, transparent 1px)", backgroundSize: "28px 28px" }}
+        className="absolute inset-0 opacity-[0.06] pointer-events-none"
+        style={{
+          backgroundImage:
+            "radial-gradient(rgba(255,255,255,0.8) 1px, transparent 1px)",
+          backgroundSize: "28px 28px",
+        }}
       />
 
       {/* Glow orbs */}
-      <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 65%)" }} />
-      <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 65%)" }} />
+      <div
+        className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(99,102,241,0.16) 0%, transparent 65%)",
+        }}
+      />
+      <div
+        className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 65%)",
+        }}
+      />
 
       <div className="container mx-auto px-4 relative z-10">
-
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center max-w-2xl mx-auto mb-16"
+          className="text-center max-w-2xl mx-auto mb-14 md:mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/8 backdrop-blur border border-white/12 text-slate-300 text-[10px] font-black uppercase tracking-widest mb-5">
-            <Zap className="w-3 h-3 text-amber-400" /> Streamlined Process
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-400/10 border border-amber-400/25 text-amber-300 text-[10px] font-black uppercase tracking-[0.22em] mb-5">
+            <Zap className="w-3 h-3" /> Streamlined Process
           </div>
-          <h2 className="text-3xl md:text-4xl font-black text-white leading-tight">
+          <h2 className="text-3xl md:text-4xl font-black text-white leading-tight tracking-tight">
             How{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-indigo-400">
+            <span
+              className="text-transparent bg-clip-text"
+              style={{
+                backgroundImage:
+                  "linear-gradient(120deg, #fbbf24 0%, #fde68a 55%, #f59e0b 100%)",
+                WebkitBackgroundClip: "text",
+              }}
+            >
               Contracts India™
             </span>{" "}
             Works
           </h2>
-          <p className="text-slate-400 mt-3 text-sm font-medium">
-            From signup to winning projects in 4 simple steps.
+          <p className="text-slate-400 mt-3 text-sm md:text-base font-medium">
+            From signup to winning projects — sirf 4 simple steps me.
           </p>
         </motion.div>
 
@@ -115,8 +164,12 @@ export function HowItWorks() {
               key={s.n}
               initial={{ opacity: 0, y: 28 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.1, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-              viewport={{ once: true }}
+              transition={{
+                delay: idx * 0.1,
+                duration: 0.55,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              viewport={{ once: true, margin: "-40px" }}
               whileHover={{ y: -6, transition: { duration: 0.25 } }}
               className="group relative"
             >
@@ -126,8 +179,10 @@ export function HowItWorks() {
               >
                 {/* Hover glow */}
                 <div
-                  className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none"
-                  style={{ background: `radial-gradient(circle at 30% 30%, ${s.glow} 0%, transparent 60%)` }}
+                  className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                  style={{
+                    background: `radial-gradient(circle at 30% 30%, ${s.glow} 0%, transparent 60%)`,
+                  }}
                 />
 
                 {/* Step number watermark */}
@@ -137,29 +192,35 @@ export function HowItWorks() {
 
                 {/* Icon */}
                 <div
-                  className={`relative z-10 h-12 w-12 rounded-xl bg-gradient-to-br ${s.grad} text-white flex items-center justify-center shadow-lg mb-5 group-hover:scale-110 transition-transform duration-300`}
+                  className={`relative z-10 h-12 w-12 rounded-xl bg-gradient-to-br ${s.grad} text-white flex items-center justify-center mb-5 group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300`}
                   style={{ boxShadow: `0 8px 20px ${s.glow}` }}
                 >
                   {s.icon}
                 </div>
 
-                {/* Title */}
-                <h3 className="relative z-10 text-base font-black text-white mb-2 group-hover:text-indigo-200 transition-colors duration-300">
+                <h3 className="relative z-10 text-base font-black text-white mb-2 group-hover:text-amber-200 transition-colors duration-300">
                   {s.title}
                 </h3>
-
-                {/* Desc */}
                 <p className="relative z-10 text-slate-400 text-xs leading-relaxed">
                   {s.desc}
                 </p>
               </div>
 
-              {/* Connector arrow */}
+              {/* Connector arrow (desktop) */}
               {idx !== steps.length - 1 && (
-                <div className="hidden lg:flex absolute top-1/2 -right-4 -translate-y-1/2 z-20">
-                  <div className="bg-white/8 backdrop-blur rounded-full p-1.5 border border-white/10">
-                    <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-indigo-400 transition-colors" />
-                  </div>
+                <div className="hidden lg:flex absolute top-1/2 -right-[18px] -translate-y-1/2 z-20">
+                  <motion.div
+                    animate={{ x: [0, 4, 0] }}
+                    transition={{
+                      duration: 1.6,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: idx * 0.2,
+                    }}
+                    className="bg-white/10 backdrop-blur rounded-full p-1.5 border border-white/15"
+                  >
+                    <ArrowRight className="w-3.5 h-3.5 text-amber-400" />
+                  </motion.div>
                 </div>
               )}
             </motion.div>
@@ -170,36 +231,57 @@ export function HowItWorks() {
   );
 }
 
+/* ═══════════════ TESTIMONIALS ═══════════════ */
+
 export function Testimonials() {
   return (
-    <section className="relative py-24 bg-white overflow-hidden">
-
+    <section className="relative py-20 md:py-24 bg-white overflow-hidden">
       {/* Background radial accents */}
-      <div className="absolute top-0 right-0 w-[45%] h-[45%] pointer-events-none"
-        style={{ background: "radial-gradient(ellipse at top right, rgba(99,102,241,0.06) 0%, transparent 65%)" }} />
-      <div className="absolute bottom-0 left-0 w-[45%] h-[45%] pointer-events-none"
-        style={{ background: "radial-gradient(ellipse at bottom left, rgba(245,158,11,0.05) 0%, transparent 65%)" }} />
+      <div
+        className="absolute top-0 right-0 w-[45%] h-[45%] pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse at top right, rgba(99,102,241,0.06) 0%, transparent 65%)",
+        }}
+      />
+      <div
+        className="absolute bottom-0 left-0 w-[45%] h-[45%] pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse at bottom left, rgba(245,158,11,0.06) 0%, transparent 65%)",
+        }}
+      />
 
-      <div className="container mx-auto px-6 relative z-10">
-
+      <div className="container mx-auto px-4 md:px-6 relative z-10">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="flex flex-col items-center text-center mb-16 max-w-2xl mx-auto"
+          className="flex flex-col items-center text-center mb-14 md:mb-16 max-w-2xl mx-auto"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-100 text-amber-700 text-[10px] font-black uppercase tracking-widest mb-5">
-            ✦ Industry Voices
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-50 border border-amber-200/70 text-amber-600 text-[10px] font-black uppercase tracking-[0.22em] mb-5">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-70" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-amber-500" />
+            </span>
+            Industry Voices
           </div>
-          <h2 className="text-3xl md:text-4xl font-black text-[#162646] leading-tight">
+          <h2 className="text-3xl md:text-[2.6rem] font-black text-[#162646] leading-[1.1] tracking-tight">
             Trusted by the Industry's{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500">
+            <span
+              className="text-transparent bg-clip-text"
+              style={{
+                backgroundImage:
+                  "linear-gradient(120deg, #f59e0b 0%, #d97706 60%, #b45309 100%)",
+                WebkitBackgroundClip: "text",
+              }}
+            >
               Professionals
             </span>
           </h2>
-          <p className="mt-4 text-slate-500 text-sm font-medium">
+          <p className="mt-4 text-slate-500 text-sm md:text-base font-medium">
             Join 50,000+ businesses growing across India.
           </p>
         </motion.div>
@@ -211,20 +293,26 @@ export function Testimonials() {
               key={t.name}
               initial={{ opacity: 0, y: 28 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.12, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-              viewport={{ once: true }}
+              transition={{
+                delay: idx * 0.12,
+                duration: 0.55,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              viewport={{ once: true, margin: "-40px" }}
               whileHover={{ y: -6, transition: { duration: 0.25 } }}
-              className="group relative bg-white border border-slate-200/80 rounded-2xl p-6 hover:border-indigo-200 hover:shadow-2xl transition-all duration-400 flex flex-col overflow-hidden"
+              className="group relative bg-white border border-slate-200/80 rounded-2xl p-6 hover:border-amber-200 hover:shadow-2xl hover:shadow-amber-900/5 transition-all duration-400 flex flex-col overflow-hidden"
             >
               {/* Hover glow */}
               <div
-                className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none"
-                style={{ background: `radial-gradient(circle at 80% 20%, ${t.accent}12 0%, transparent 60%)` }}
+                className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                style={{
+                  background: `radial-gradient(circle at 80% 20%, ${t.accent}12 0%, transparent 60%)`,
+                }}
               />
 
               {/* Top accent line */}
               <div
-                className="absolute top-0 left-0 right-0 h-[3px] rounded-t-2xl scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-400"
+                className="absolute top-0 left-0 right-0 h-[3px] rounded-t-2xl scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500"
                 style={{ background: `linear-gradient(90deg, ${t.accent}, transparent)` }}
               />
 
@@ -238,10 +326,16 @@ export function Testimonials() {
 
               <div className="flex flex-col h-full relative z-10">
                 {/* Stars */}
-                <div className="flex gap-1 mb-5">
+                <div className="flex items-center gap-1 mb-5">
                   {[1, 2, 3, 4, 5].map((s) => (
-                    <Star key={s} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    <Star
+                      key={s}
+                      className="w-3.5 h-3.5 fill-amber-400 text-amber-400"
+                    />
                   ))}
+                  <span className="ml-1.5 text-[10px] font-black text-slate-400 tracking-wide">
+                    5.0
+                  </span>
                 </div>
 
                 {/* Quote */}
@@ -252,23 +346,31 @@ export function Testimonials() {
                 {/* Tags */}
                 <div className="flex flex-wrap gap-1.5 mb-5">
                   {t.tags.map((tag) => (
-                    <span key={tag} className="text-[10px] font-bold bg-slate-50 border border-slate-100 text-slate-500 px-2.5 py-1 rounded-lg">
+                    <span
+                      key={tag}
+                      className="text-[10px] font-bold bg-slate-50 border border-slate-100 text-slate-500 px-2.5 py-1 rounded-lg"
+                    >
                       {tag}
                     </span>
                   ))}
                 </div>
 
-                {/* User */}
+                {/* User — initials avatar (no external image) */}
                 <div className="flex items-center gap-3 pt-5 border-t border-slate-100">
                   <div className="relative">
-                    <img src={t.img} className="w-11 h-11 rounded-xl object-cover" alt={t.name} />
+                    <InitialAvatar name={t.name} accent={t.accent} />
                     <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 shadow-sm">
                       <CheckCircle className="w-3.5 h-3.5 text-emerald-500 fill-white" />
                     </div>
                   </div>
                   <div>
                     <h4 className="font-bold text-[#162646] text-sm">{t.name}</h4>
-                    <p className="text-[10px] font-bold uppercase tracking-wide" style={{ color: t.accent }}>{t.role}</p>
+                    <p
+                      className="text-[10px] font-bold uppercase tracking-wide"
+                      style={{ color: t.accent }}
+                    >
+                      {t.role}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -282,19 +384,33 @@ export function Testimonials() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.3 }}
           viewport={{ once: true }}
-          className="mt-16 flex flex-col md:flex-row items-center justify-center gap-5 py-6 px-8 border border-slate-100 bg-slate-50/70 rounded-2xl max-w-3xl mx-auto"
+          className="mt-14 flex flex-col md:flex-row items-center justify-center gap-5 py-6 px-8 border border-slate-100 bg-slate-50/70 rounded-2xl max-w-3xl mx-auto"
         >
           <div className="flex -space-x-2.5">
-            {[1, 2, 3].map((i) => (
-              <img key={i} src={`https://i.pravatar.cc/100?img=${i + 20}`} className="w-10 h-10 rounded-full border-2 border-white shadow-sm" alt="" />
+            {[
+              { name: "Amit Patel", accent: "#6366f1" },
+              { name: "Sneha Reddy", accent: "#f59e0b" },
+              { name: "Rahul Verma", accent: "#10b981" },
+            ].map((p) => (
+              <div key={p.name} className="rounded-full ring-2 ring-white shadow-sm">
+                <InitialAvatar
+                  name={p.name}
+                  accent={p.accent}
+                  size="w-10 h-10"
+                  textSize="text-[10px]"
+                />
+              </div>
             ))}
-            <div className="w-10 h-10 rounded-full bg-[#162646] text-white flex items-center justify-center text-[10px] font-bold border-2 border-white shadow-sm">
+            <div className="w-10 h-10 rounded-full bg-[#162646] text-white flex items-center justify-center text-[10px] font-bold ring-2 ring-white shadow-sm">
               +50k
             </div>
           </div>
-          <p className="text-slate-500 text-xs font-semibold">India's fastest growing civil network</p>
-          <button className="flex items-center gap-1.5 text-[#162646] text-xs font-bold hover:text-indigo-600 transition-colors">
-            Read Stories <ArrowRight className="w-3.5 h-3.5" />
+          <p className="text-slate-500 text-xs font-semibold text-center">
+            India's fastest growing construction network
+          </p>
+          <button className="flex items-center gap-1.5 text-[#162646] text-xs font-bold hover:text-amber-600 transition-colors group/btn">
+            Read Stories
+            <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
           </button>
         </motion.div>
       </div>
