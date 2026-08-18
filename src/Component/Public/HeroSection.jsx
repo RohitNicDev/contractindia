@@ -1,17 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  motion,
-  AnimatePresence,
-  useInView,
-  animate,
-} from "framer-motion";
+import { motion, AnimatePresence, useInView, animate } from "framer-motion";
 import { Form, Input, Select, Button, Modal, Row, Col, message } from "antd";
-import {
-  ArrowRight,
-  FileText,
-  FlaskConical,
-  CheckCircle2,
-} from "lucide-react";
+import { ArrowRight, FileText, FlaskConical, CheckCircle2 } from "lucide-react";
 import {
   RocketOutlined,
   BankOutlined,
@@ -25,8 +15,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import Consulting_service from "../../assets/IMG/Consulting_service.jpeg";
 import Industrial_labservice from "../../assets/IMG/Industrial_labservice.jpeg";
-
-
 
 const slides = [
   {
@@ -44,7 +32,7 @@ const slides = [
     desc: "Book NABL accredited laboratories for material testing, quality assurance, soil investigation and structural testing across India.",
     image: Industrial_labservice,
     objectPosition: "center",
-  },// {
+  }, // {
   //   badge: "🏛️ GOVERNMENT TENDERS",
   //   title: "Win Big Government Contracts",
   //   desc: "Access 8,400 plus live PWD, NHAI, CPWD and PSU tenders across India.",
@@ -53,11 +41,12 @@ const slides = [
   {
     badge: "VERIFIED CONTRACTORS",
     title: "Hire Top Civil Experts",
-        accent: "CONTRACTORS",
+    accent: "CONTRACTORS",
 
-      objectPosition: "center",
+    objectPosition: "center",
     desc: "Connect with 50,000 plus verified EPC contractors, consultants, architects and engineers.",
-    image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&q=80&w=1000",
+    image:
+      "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&q=80&w=1000",
   },
   // {
   //   badge: "🧱 MATERIALS MARKET",
@@ -142,7 +131,7 @@ const HeroSection = () => {
       const existing = JSON.parse(localStorage.getItem("companies_v1")) || [];
       localStorage.setItem(
         "companies_v1",
-        JSON.stringify([...existing, { id: Date.now(), ...values }])
+        JSON.stringify([...existing, { id: Date.now(), ...values }]),
       );
       message.success("Company registered successfully");
       companyForm.resetFields();
@@ -155,7 +144,7 @@ const HeroSection = () => {
 
   /* ── Shared text block: badge → title → desc → CTAs → trust → controls ── */
   const renderTextBlock = () => (
-    <div className="max-w-2xl">
+<div className="hidden md:block max-w-2xl scale-[0.75] md:scale-[0.75] lg:scale-100">
       <AnimatePresence mode="wait">
         <motion.div
           key={currentSlide}
@@ -211,7 +200,7 @@ const HeroSection = () => {
         className="mt-6 flex flex-wrap items-center gap-3.5"
       >
         <button
-          onClick={() => navigate('/register')}
+          onClick={() => navigate("/register")}
           className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-xl px-6 py-3 text-sm font-bold text-[#1a1206] transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0"
           style={{
             background: "linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%)",
@@ -234,66 +223,7 @@ const HeroSection = () => {
           Talk to an Expert
         </button>
       </motion.div>
-
-      {/* Trust chips */}
-      {/* <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.65, duration: 0.6 }}
-        className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2.5 border-t border-white/10 pt-4"
-      >
-        {trustChips.map((chip) => (
-          <span
-            key={chip.text}
-            className="flex items-center gap-2 text-[11px] font-semibold text-slate-300"
-          >
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-400/15 text-amber-300">
-              {chip.icon}
-            </span>
-            {chip.text}
-          </span>
-        ))}
-      </motion.div> */}
-
-      {/* Slide progress controls */}
-      {/* {slides.length > 1 && (
-        <div className="mt-5 flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            {slides.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentSlide(i)}
-                aria-label={`Go to slide ${i + 1}`}
-                className="relative h-1 overflow-hidden rounded-full bg-white/15"
-                style={{
-                  width: currentSlide === i ? 46 : 22,
-                  transition: "width 0.4s ease",
-                }}
-              >
-                {currentSlide === i && (
-                  <motion.span
-                    key={`fill-${currentSlide}`}
-                    className="absolute inset-0 origin-left rounded-full bg-gradient-to-r from-amber-400 to-amber-200"
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ duration: SLIDE_DURATION, ease: "linear" }}
-                  />
-                )}
-                {i < currentSlide && (
-                  <span className="absolute inset-0 rounded-full bg-white/40" />
-                )}
-              </button>
-            ))}
-          </div>
-          <span className="text-[11px] font-bold tracking-[0.25em] text-white/50 tabular-nums">
-            {String(currentSlide + 1).padStart(2, "0")}
-            <span className="text-white/25">
-              {" "}
-              / {String(slides.length).padStart(2, "0")}
-            </span>
-          </span>
-        </div>
-      )} */}
+ 
     </div>
   );
 
@@ -343,121 +273,21 @@ const HeroSection = () => {
           {/* ── Desktop: title/desc bottom-left over banner (above stats) ── */}
           <div className="hidden lg:block absolute inset-x-0 bottom-0 z-10">
             <div className="  mx-auto px-6 lg:px-12">
-              <div className="flex items-end justify-end gap-10 pb-28">
+              <div className="flex items-end justify-end gap-10 pb-15 lg:pb-20 2xl:pb-28">
                 {renderTextBlock()}
-
-                {/* Right glass cards (static, desktop only) */}
-                {/* <motion.div
-                  initial={{ opacity: 0, y: 24 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                  className="hidden xl:flex flex-col gap-4 w-[330px] shrink-0"
-                > */}
-                  {/* Card 1 — live tender */}
-                  {/* <div className="rounded-2xl border border-white/10 bg-white/[0.07] p-5 backdrop-blur-xl shadow-2xl shadow-black/30">
-                    <div className="flex items-center justify-between">
-                      <span className="flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] text-emerald-300">
-                        <span className="relative flex h-1.5 w-1.5">
-                          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-70" />
-                          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                        </span>
-                        LIVE TENDER
-                      </span>
-                      <FileText size={15} className="text-white/40" />
-                    </div>
-                    <p className="mt-3 text-sm font-bold text-white">
-                      NHAI — 4-Lane Highway, MP
-                    </p>
-                    <p className="mt-0.5 text-xs text-white/50">
-                      EPC Contract · Est. ₹420 Cr
-                    </p>
-                    <div className="mt-4">
-                      <div className="flex justify-between text-[10px] font-semibold text-white/40">
-                        <span>Bid progress</span>
-                        <span className="text-amber-300">Closes in 2 days</span>
-                      </div>
-                      <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-white/10">
-                        <motion.div
-                          className="h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-300"
-                          initial={{ width: 0 }}
-                          animate={{ width: "72%" }}
-                          transition={{ delay: 1.1, duration: 1.2, ease: "easeOut" }}
-                        />
-                      </div>
-                    </div>
-                  </div> */}
-
-                  {/* Card 2 — lab report */}
-                  {/* <div className="ml-8 rounded-2xl border border-white/10 bg-white/[0.07] p-5 backdrop-blur-xl shadow-2xl shadow-black/30">
-                    <div className="flex items-center gap-3">
-                      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-400/15 text-emerald-300">
-                        <FlaskConical size={18} />
-                      </span>
-                      <div>
-                        <p className="text-sm font-bold text-white">Lab Report Ready</p>
-                        <p className="text-[11px] text-white/50">
-                          Concrete Cube Test — M30
-                        </p>
-                      </div>
-                    </div>
-                    <div className="mt-3.5 flex items-center gap-2">
-                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-400/15 px-2.5 py-1 text-[10px] font-bold text-emerald-300">
-                        <CheckCircle2 size={11} /> PASSED
-                      </span>
-                      <span className="rounded-full border border-white/15 px-2.5 py-1 text-[10px] font-bold tracking-wider text-white/60">
-                        NABL
-                      </span>
-                    </div>
-                  </div> */}
-                {/* </motion.div> */}
               </div>
             </div>
           </div>
         </div>
 
         {/* ── Mobile/tablet: title/desc BELOW the full banner (stacked) ── */}
-        <div className="lg:hidden relative z-10 bg-gradient-to-b from-[#0a1628] to-[#0c1a30]">
-          <div className="container mx-auto px-6 pt-6 pb-2">{renderTextBlock()}</div>
+        <div className="lg:hidden absolute inset-x-0 top-0 z-10">
+          <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 md:px-8 pt-4 sm:pt-6">
+            {renderTextBlock()}
+          </div>
         </div>
-
-        {/* ══ STATS STRIP — text sits directly above this ══ */}
-        {/* <div className="relative z-20 mt-5 lg:-mt-[72px] pb-7 sm:pb-9">
-          <motion.div
-            initial={{ opacity: 0, y: 22 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.85, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="container mx-auto px-6 lg:px-12"
-          >
-            <div className="grid grid-cols-2 lg:grid-cols-4 rounded-2xl border border-white/10 bg-white/[0.06] backdrop-blur-xl shadow-2xl shadow-black/30 lg:divide-x lg:divide-white/10">
-              {stats.map((s) => (
-                <div key={s.label} className="px-4 py-4 sm:py-5 text-center">
-                  <p className="text-2xl sm:text-3xl font-black tracking-tight">
-                    <span
-                      className="bg-clip-text text-transparent"
-                      style={{
-                        backgroundImage:
-                          "linear-gradient(135deg, #fbbf24 0%, #fde68a 100%)",
-                        WebkitBackgroundClip: "text",
-                      }}
-                    >
-                      <Counter
-                        target={s.target}
-                        prefix={s.prefix || ""}
-                        suffix={s.suffix}
-                      />
-                    </span>
-                  </p>
-                  <p className="mt-1 text-[9px] sm:text-[11px] font-bold uppercase tracking-[0.18em] text-white/50">
-                    {s.label}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        </div> */}
       </section>
 
- 
       <style>{`
         .premium-modal .ant-modal-content { border-radius: 20px; overflow: hidden; }
       `}</style>

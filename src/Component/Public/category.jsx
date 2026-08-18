@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { ServiceRootGet } from "../../services/api";
 import { useQuery } from "@tanstack/react-query";
+import assets from "../../assets/IMG/assets.jpg";
 import Consulting_service from "../../assets/IMG/Consulting_service.jpeg";
 import Industrial_labservice from "../../assets/IMG/Industrial_labservice.jpeg";
 const cats = [
@@ -25,7 +26,7 @@ const cats = [
 
   {
     name: "Assets Management",
-    image: "https://www.ice.org.uk/media/4uqp5eho/guiding-principles-of-asset-management-realising-a-world-class-infrastructure.jpg",
+    image: assets,
     count: "2,600 Firms"
   },
   {
@@ -107,7 +108,7 @@ const getRootServiceApi = async () => {
 export function ValueStrip() {
   return (
     <div className="bg-slate-100 mt-10">
-      <section className="container mx-auto px-4 -mt-14 relative z-30">
+      <section className="container mx-auto px-4 -mt-14 pt-5 relative z-30">
         <div className="grid md:grid-cols-3 gap-5">
           {valueItems.map((item, index) => (
             <motion.div
