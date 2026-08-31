@@ -149,14 +149,14 @@ const Footer = () => {
         <div className="border-t border-slate-800/50 pt-10 flex flex-col lg:flex-row items-center justify-between gap-6">
           <div className="flex flex-col items-center lg:items-start gap-1">
             <p className="text-xs text-slate-500">
-              © 2026 Contracts India™ Technologies Pvt. Ltd.
+              © 2026 Contracts India™  
             </p>
-            <p className="text-[10px] text-slate-600 uppercase tracking-tighter">
-              Crafted for the future of India's Infrastructure.
-            </p>
+              {/* <p className="text-[10px] text-slate-600 uppercase tracking-tighter">
+                Crafted for the future of India's Infrastructure.
+              </p> */}
           </div>
 
-          <div className="flex flex-wrap justify-center gap-6">
+          {/* <div className="flex flex-wrap justify-center gap-6">
             <div className="flex items-center gap-2 text-[11px] font-bold text-slate-500">
               <Award className="w-4 h-4 text-amber-500/50" />
               ISO 9001:2015
@@ -169,7 +169,7 @@ const Footer = () => {
               <span className="px-1.5 py-0.5 rounded border border-slate-700 text-[9px]">MSME</span>
               REGISTERED
             </div>
-          </div>
+          </div> */}
 
           <div className="flex gap-6 text-xs font-medium">
             <a href="#" className="hover:text-white transition-colors">Privacy</a>

@@ -193,7 +193,7 @@ const HeroSection = () => {
       </AnimatePresence>
 
       {/* CTAs */}
-      <motion.div
+      {/* <motion.div
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.45, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
@@ -222,7 +222,7 @@ const HeroSection = () => {
         >
           Talk to an Expert
         </button>
-      </motion.div>
+      </motion.div> */}
  
     </div>
   );
