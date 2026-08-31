@@ -110,7 +110,7 @@ export function ValueStrip() {
     <div className="bg-slate-100 mt-10">
       <section className="container mx-auto px-4 -mt-14 pt-5 relative z-30">
         <div className="grid md:grid-cols-3 gap-5">
-          {valueItems.map((item, index) => (
+          {valueItems?.map((item, index) => (
             <motion.div
               key={item.title}
               initial={{ opacity: 0, y: 32 }}
@@ -189,8 +189,8 @@ const Categories = () => {
     });
 
   const servicesToShow =
-    rootServiceList.length > 0
-      ? rootServiceList.map((service, index) => normalizeServiceCard(service, index))
+    rootServiceList?.length > 0
+      ? rootServiceList?.map((service, index) => normalizeServiceCard(service, index))
       : cats.slice(0, 8);
 
   return (

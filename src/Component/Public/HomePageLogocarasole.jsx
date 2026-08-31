@@ -35,7 +35,7 @@ export default function HomePageLogocarasole() {
               ease: "linear",
             }}
           >
-            {duplicatedLogos.map((logo, i) => (
+            {duplicatedLogos?.map((logo, i) => (
               <div
                 key={i}
                 className="

@@ -159,7 +159,7 @@ export function HowItWorks() {
 
         {/* Step cards */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {steps.map((s, idx) => (
+          {steps?.map((s, idx) => (
             <motion.div
               key={s.n}
               initial={{ opacity: 0, y: 28 }}
@@ -207,7 +207,7 @@ export function HowItWorks() {
               </div>
 
               {/* Connector arrow (desktop) */}
-              {idx !== steps.length - 1 && (
+              {idx !== steps?.length - 1 && (
                 <div className="hidden lg:flex absolute top-1/2 -right-[18px] -translate-y-1/2 z-20">
                   <motion.div
                     animate={{ x: [0, 4, 0] }}

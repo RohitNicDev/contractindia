@@ -118,9 +118,9 @@ const HeroSection = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (slides.length < 2) return;
+    if (slides?.length < 2) return;
     const timer = setInterval(() => {
-      setCurrentSlide((p) => (p + 1) % slides.length);
+      setCurrentSlide((p) => (p + 1) % slides?.length);
     }, SLIDE_DURATION * 1000);
     return () => clearInterval(timer);
   }, []);
