@@ -20,6 +20,7 @@ import {
   Eye,
 } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { useUserStore } from "../../../../store/store";
@@ -133,7 +134,7 @@ function ActivateServiceModal({
   onCancel,
   isLoading,
 }) {
-  return (
+  return createPortal(
     <AnimatePresence>
       <div className="fixed inset-0 z-[1001] flex items-center justify-center px-4 py-6">
         <motion.div
@@ -251,7 +252,8 @@ function ActivateServiceModal({
           </div>
         </motion.div>
       </div>
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }
 

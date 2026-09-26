@@ -128,7 +128,7 @@ const findNode = (nodes, id) => {
 
 const findFirstLeaf = (node) => {
   if (!node?.children?.length) return node;
-  return findFirstLeaf(node.children[0]);
+  return findFirstLeaf(node?.children[0]);
 };
 
 const getAncestorIds = (tree, targetId) => {
@@ -148,8 +148,8 @@ const getAncestorIds = (tree, targetId) => {
 };
 
 const subtreeHasActive = (node, activeId) => {
-  if (node.ServiceID === activeId) return true;
-  return (node.children ?? []).some((c) => subtreeHasActive(c, activeId));
+  if (node?.ServiceID === activeId) return true;
+  return (node?.children ?? []).some((c) => subtreeHasActive(c, activeId));
 };
 
 // ─── COLOR PALETTE ────────────────────────────────────────────────────
@@ -653,9 +653,9 @@ function SidebarNode({
   expandedIds,
   toggleExpand,
 }) {
-  const hasKids = node.children?.length > 0;
-  const isActive = node.ServiceID === activeId;
-  const isOpen = expandedIds.has(node.ServiceID);
+  const hasKids = node?.children?.length > 0;
+  const isActive = node?.ServiceID === activeId;
+  const isOpen = expandedIds.has(node?.ServiceID);
   const isAnc = !isActive && subtreeHasActive(node, activeId);
   const c = col(depth);
   const indent = depth * 16;
@@ -665,7 +665,10 @@ function SidebarNode({
   return (
     <div>
       <div
-        onClick={() => onSelect(node.ServiceID)}
+        onClick={() => {
+          onSelect(node?.ServiceID);
+          if (hasKids) toggleExpand(node?.ServiceID);
+        }}
         style={{
           paddingLeft: 12 + indent,
           fontSize: fs,
@@ -688,7 +691,7 @@ function SidebarNode({
 
         {/* Name */}
         <span className="flex-1 line-clamp-2 leading-snug">
-          {node.ServiceName}
+          {node?.ServiceName}
         </span>
 
         {/* Chevron - Click only to toggle */}
@@ -697,7 +700,7 @@ function SidebarNode({
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              toggleExpand(node.ServiceID);
+              toggleExpand(node?.ServiceID);
             }}
             className="flex items-center gap-1 shrink-0 ml-1 hover:bg-white/10 rounded p-0.5 transition-colors"
           >
@@ -717,14 +720,14 @@ function SidebarNode({
       <AnimatePresence initial={false}>
         {hasKids && isOpen && (
           <motion.div
-            key={`children-${node.ServiceID}`}
+            key={`children-${node?.ServiceID}`}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.18 }}
             className="overflow-hidden"
           >
-            {node.children.map((child) => (
+            {node?.children.map((child) => (
               <SidebarNode
                 key={child.ServiceID}
                 node={child}
@@ -767,12 +770,12 @@ function Breadcrumb({ tree, activeId, onSelect }) {
         const isLast = i === path.length - 1;
         const c = col(i);
         return (
-          <span key={node.ServiceID} className="flex items-center gap-1">
+          <span key={node?.ServiceID} className="flex items-center gap-1">
             {i > 0 && (
               <ChevronRight size={11} className="text-slate-300 shrink-0" />
             )}
             <button
-              onClick={() => !isLast && onSelect(node.ServiceID)}
+              onClick={() => !isLast && onSelect(node?.ServiceID)}
               className="text-[11px] font-bold px-2 py-0.5 rounded-lg transition-all"
               style={
                 isLast
@@ -784,7 +787,7 @@ function Breadcrumb({ tree, activeId, onSelect }) {
                   : { color: "#94a3b8" }
               }
             >
-              {node.ServiceName}
+              {node?.ServiceName}
             </button>
           </span>
         );
@@ -1287,7 +1290,7 @@ const CompanySubServices = () => {
                 ) : (
                   tree.map((node) => (
                     <SidebarNode
-                      key={node.ServiceID}
+                      key={node?.ServiceID}
                       node={node}
                       depth={0}
                       activeId={activeId}

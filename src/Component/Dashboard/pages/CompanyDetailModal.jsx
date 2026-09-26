@@ -318,13 +318,13 @@ function TabDocuments({ userId }) {
                   className="flex items-start gap-3 p-3 rounded-xl border border-slate-200 bg-white hover:border-blue-200 transition-colors">
 
                   {/* Thumbnail or icon */}
-                  <div className="w-12 h-12 rounded-lg border border-slate-200 bg-slate-50 flex items-center justify-center shrink-0 overflow-hidden">
+                  {/* <div className="w-12 h-12 rounded-lg border border-slate-200 bg-slate-50 flex items-center justify-center shrink-0 overflow-hidden">
                     {docSrc && !isPdf ? (
                       <img src={docSrc} alt={doc.DocumentName} className="w-full h-full object-cover" />
                     ) : (
                       <FileText className={`w-5 h-5 ${isPdf ? "text-red-400" : "text-slate-400"}`} />
                     )}
-                  </div>
+                  </div> */}
 
                   <div className="min-w-0 flex-1">
                     <p className="text-xs font-bold text-slate-800 truncate">{doc.DocumentSubCategoryName ?? doc.DocumentName ?? "Document"}</p>
