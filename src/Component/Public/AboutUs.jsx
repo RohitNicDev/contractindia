@@ -132,10 +132,11 @@ const AboutUs = () => {
             {/* CONTENT */}
             <div className="space-y-4 text-slate-600 text-sm sm:text-[15px] leading-relaxed">
               <p className="font-medium text-[#28354D]/90 border-l-4 border-blue-500 pl-4 bg-blue-50/50 py-3 rounded-r-xl shadow-sm">
-                Contracts India™ provides platform to contractors, architects,
-                consultants and employers where they can collaborate for
-                tenders, infrastructure projects and construction opportunities
-                across India.
+                M/S PGC Projects working in to the construction field with the
+                brand name as ''Contracts India™'' who provides platform to
+                contractors, architects, consultants and employers where they
+                can collaborate for tenders, infrastructure projects and
+                construction opportunities across India.
               </p>
 
               <p>
@@ -145,8 +146,8 @@ const AboutUs = () => {
               </p>
 
               <p>
-                Contracts India™ maintains one of the largest online databases of
-                tenders floated by Government Agencies, Departments, PSUs and
+                Contracts India™ maintains one of the largest online databases
+                of tenders floated by Government Agencies, Departments, PSUs and
                 Private Sector Undertakings.
               </p>
 
@@ -168,7 +169,8 @@ const AboutUs = () => {
 
             {/* SPECIALISATIONS */}
           </motion.div>
-        </div><div className="mt-16">
+        </div>
+        <div className="mt-16">
           {/* Section Header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
             <div>
@@ -217,8 +219,6 @@ const AboutUs = () => {
           </div>
         </div>
       </section>
-
-
 
       {/* 🎯 CORE VALUES (Glass effect) */}
 
