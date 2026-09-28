@@ -52,9 +52,11 @@ import { toast } from "sonner";
 //   return (await userServicesdetailsGetByservices(serviceId)) ?? [];
 // };
 const fetchContractors = async (serviceId, userId) => {
+  console.log(serviceId,"serviceId");
+  const ServiceId = serviceId ?? 0;
   if (!serviceId) return [];
   return (
-    (await userServicesdetailsGetByParam(`serviceId=${0}&userId=${userId}&userType=1`)) ??
+    (await userServicesdetailsGetByParam(`serviceId=${ServiceId}&userId=${0}&userType=2`)) ??
     []
   );
 };
