@@ -10,7 +10,7 @@ import Industrial_labservice from "../../assets/IMG/Industrial_labservice.jpeg";
 const cats = [
   {
     name: "Consulting Services",
-    image: Consulting_service,
+    image:  assets,
     count: "2,840 Companies"
   },
   {
@@ -26,7 +26,7 @@ const cats = [
 
   {
     name: "Assets Management",
-    image: assets,
+    image: Consulting_service,
     count: "2,600 Firms"
   },
   {

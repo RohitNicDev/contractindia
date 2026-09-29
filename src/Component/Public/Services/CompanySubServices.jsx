@@ -15,7 +15,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { AnimatePresence, motion } from "framer-motion";
 import {
   Building2,
   ChevronRight,
@@ -215,20 +214,13 @@ function PaymentModal({ plan, onConfirm, onCancel, isLoading }) {
   const [isRazorpayReady, setIsRazorpayReady] = useState(!!window.Razorpay);
 
   return (
-    <AnimatePresence>
+    <>
       <div className="fixed inset-0 z-[1001] flex items-center justify-center px-4 py-6">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+        <div
           className="absolute inset-0 bg-slate-950/75 backdrop-blur-sm"
           onClick={onCancel}
         />
-        <motion.div
-          initial={{ opacity: 0, y: 24, scale: 0.96 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 16, scale: 0.96 }}
-          transition={{ duration: 0.22 }}
+        <div
           className="relative w-full max-w-md rounded-3xl bg-white shadow-2xl overflow-hidden"
         >
           {/* Header */}
@@ -306,9 +298,7 @@ function PaymentModal({ plan, onConfirm, onCancel, isLoading }) {
               >
                 Cancel
               </button>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+              <button
                 onClick={onConfirm}
                 disabled={isLoading || !isRazorpayReady}
                 className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold text-sm shadow-lg hover:opacity-90 flex items-center justify-center gap-2 disabled:opacity-50"
@@ -322,12 +312,12 @@ function PaymentModal({ plan, onConfirm, onCancel, isLoading }) {
                     <Crown className="h-4 w-4" /> Proceed to Payment
                   </>
                 )}
-              </motion.button>
+              </button>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
-    </AnimatePresence>
+    </>
   );
 }
 
@@ -336,20 +326,13 @@ function PaymentModal({ plan, onConfirm, onCancel, isLoading }) {
 // ═══════════════════════════════════════════════════════════════════════
 function PlanSelectionModal({ plans, onSelectPlan, onCancel, isLoading }) {
   return (
-    <AnimatePresence>
+    <>
       <div className="fixed inset-0 z-[1000] flex items-center justify-center px-4 py-6">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+        <div
           className="absolute inset-0 bg-slate-950/75 backdrop-blur-sm"
           onClick={onCancel}
         />
-        <motion.div
-          initial={{ opacity: 0, scale: 0.96, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.96 }}
-          transition={{ duration: 0.22 }}
+        <div
           className="relative w-full max-w-2xl rounded-3xl bg-white shadow-2xl overflow-hidden max-h-[80vh] flex flex-col"
         >
           {/* Header */}
@@ -380,10 +363,8 @@ function PlanSelectionModal({ plans, onSelectPlan, onCancel, isLoading }) {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {plans.map((plan) => (
-                  <motion.div
+                  <div
                     key={plan.PlanID}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
                     className="rounded-2xl border-2 border-slate-200 p-5 hover:border-indigo-400 hover:shadow-lg transition-all cursor-pointer group"
                   >
                     <div className="flex items-start justify-between mb-2">
@@ -415,9 +396,7 @@ function PlanSelectionModal({ plans, onSelectPlan, onCancel, isLoading }) {
                       </li>
                     </ul>
 
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
+                    <button
                       onClick={() => onSelectPlan(plan)}
                       disabled={isLoading}
                       className="w-full py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-sm hover:bg-indigo-700 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
@@ -432,15 +411,15 @@ function PlanSelectionModal({ plans, onSelectPlan, onCancel, isLoading }) {
                           <Crown className="w-4 h-4" /> Select Plan
                         </>
                       )}
-                    </motion.button>
-                  </motion.div>
+                    </button>
+                  </div>
                 ))}
               </div>
             )}
           </div>
-        </motion.div>
+        </div>
       </div>
-    </AnimatePresence>
+    </>
   );
 }
 
@@ -470,20 +449,13 @@ function ContractorDetailModal({ item, onClose, canAccess }) {
   ];
 
   return (
-    <AnimatePresence>
+    <>
       <div className="fixed inset-0 z-[1001] flex items-center justify-center px-4 py-6">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+        <div
           className="absolute inset-0 bg-slate-950/75 backdrop-blur-sm"
           onClick={onClose}
         />
-        <motion.div
-          initial={{ opacity: 0, y: 24, scale: 0.96 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 16, scale: 0.96 }}
-          transition={{ duration: 0.22 }}
+        <div
           className="relative w-full max-w-2xl rounded-3xl bg-white shadow-2xl overflow-hidden max-h-[80vh] flex flex-col"
         >
           {/* Header */}
@@ -539,9 +511,9 @@ function ContractorDetailModal({ item, onClose, canAccess }) {
               </a>
             )}
           </div>
-        </motion.div>
+        </div>
       </div>
-    </AnimatePresence>
+    </>
   );
 }
 
@@ -559,12 +531,7 @@ function ContractorCard({ item, idx, onViewDetails, hasActivePlan }) {
   console.log(item, "item");
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.94 }}
-      transition={{ duration: 0.22, delay: Math.min(idx * 0.03, 0.24) }}
+    <div
       className="group bg-white rounded-3xl border border-slate-200/60 hover:border-indigo-300 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-300 overflow-hidden"
     >
       <div className="relative h-36 m-2 rounded-2xl overflow-hidden">
@@ -625,7 +592,7 @@ function ContractorCard({ item, idx, onViewDetails, hasActivePlan }) {
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -719,14 +686,10 @@ function SidebarNode({
       </div>
 
       {/* Children - Only render when open */}
-      <AnimatePresence initial={false}>
+      <>
         {hasKids && isOpen && (
-          <motion.div
+          <div
             key={`children-${node?.ServiceID}`}
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.18 }}
             className="overflow-hidden"
           >
             {node?.children.map((child) => (
@@ -740,9 +703,9 @@ function SidebarNode({
                 toggleExpand={toggleExpand}
               />
             ))}
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
+      </>
     </div>
   );
 }
@@ -1385,14 +1348,13 @@ const CompanySubServices = () => {
             </div>
 
             {/* Contractors Grid */}
-            <motion.div
-              layout
+            <div
               className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4"
             >
               {contractorsLoading ? (
                 [...Array(6)].map((_, i) => <CardSkeleton key={i} />)
               ) : (
-                <AnimatePresence mode="popLayout">
+                <>
                   {filteredContractors?.map((item, idx) => (
                     <ContractorCard
                       key={item?.UserID ?? idx}
@@ -1402,16 +1364,14 @@ const CompanySubServices = () => {
                       hasActivePlan={hasActivePlan}
                     />
                   ))}
-                </AnimatePresence>
+                </>
               )}
-            </motion.div>
+            </div>
 
             {!contractorsLoading &&
               filteredContractors.length === 0 &&
               activeId && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+                <div
                   className="bg-white rounded-[40px] border border-dashed border-slate-200 py-20 text-center mt-4"
                 >
                   <Building2
@@ -1424,7 +1384,7 @@ const CompanySubServices = () => {
                   <p className="text-slate-400 text-sm mt-1">
                     Try a different category
                   </p>
-                </motion.div>
+                </div>
               )}
           </section>
         </div>
@@ -1449,7 +1409,7 @@ const CompanySubServices = () => {
       />
 
       {/* MODALS */}
-      <AnimatePresence mode="wait">
+      <>
         {/* Plan Selection Modal */}
         {showPlanSelection && (
           <PlanSelectionModal
@@ -1481,7 +1441,7 @@ const CompanySubServices = () => {
             canAccess={hasActivePlan}
           />
         )}
-      </AnimatePresence>
+      </>
     </div>
   );
 };
