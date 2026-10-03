@@ -36,6 +36,7 @@ import {
   UserPaymentHistorySave,
 } from "../../../services/api";
 import { toast } from "sonner";
+import { loadRazorpay } from "../../../utils/loadRazorpay";
 
 /* ── helpers ─────────────────────────────────────────────────────────────── */
 const getPlanStyle = (index, planName) => {
@@ -556,6 +557,8 @@ export default function SubscriptionPlansFlow({
     setIsPaymentLoading(true);
 
     try {
+      const Razorpay = await loadRazorpay();
+
       const subPayload = {
         userSubscriptionID: 0,
         userID: userId,
@@ -570,12 +573,6 @@ export default function SubscriptionPlansFlow({
       const subRes = await saveSubscription(subPayload);
       if (!subRes?.status) {
         toast.error(subRes?.message || "Failed to prepare subscription");
-        setIsPaymentLoading(false);
-        return;
-      }
-
-      if (!window.Razorpay) {
-        toast.error("Payment gateway not loaded. Please refresh the page.");
         setIsPaymentLoading(false);
         return;
       }
@@ -636,7 +633,7 @@ export default function SubscriptionPlansFlow({
         },
       };
 
-      const razorpay = new window.Razorpay(options);
+      const razorpay = new Razorpay(options);
       razorpay.open();
     } catch (err) {
       toast.error(err?.message || "Error processing plan selection");

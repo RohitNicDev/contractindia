@@ -44,6 +44,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useServiceStore, useUserStore } from "../../../store/store";
 import { ConfirmModal } from "../../common/ConfirmModal";
 import { toast } from "sonner";
+import { loadRazorpay } from "../../../utils/loadRazorpay";
 
 // ─── API HELPERS ───────────────────────────────────────────────────────
 // const fetchContractors = async (serviceId) => {
@@ -211,7 +212,6 @@ const API_URL =
 // ═══════════════════════════════════════════════════════════════════════
 function PaymentModal({ plan, onConfirm, onCancel, isLoading }) {
   const price = plan?.Price ?? 0;
-  const [isRazorpayReady, setIsRazorpayReady] = useState(!!window.Razorpay);
 
   return (
     <>
@@ -300,7 +300,7 @@ function PaymentModal({ plan, onConfirm, onCancel, isLoading }) {
               </button>
               <button
                 onClick={onConfirm}
-                disabled={isLoading || !isRazorpayReady}
+                disabled={isLoading}
                 className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold text-sm shadow-lg hover:opacity-90 flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 {isLoading ? (
@@ -1098,6 +1098,8 @@ const CompanySubServices = () => {
     setPaymentError(null);
 
     try {
+      const Razorpay = await loadRazorpay();
+
       // Step 1: Create inactive subscription
       const subPayload = {
         userSubscriptionID: 0,
@@ -1116,10 +1118,6 @@ const CompanySubServices = () => {
       }
 
       // Step 2: Initiate Razorpay
-      if (!window.Razorpay) {
-        throw new Error("Payment gateway not loaded");
-      }
-
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY || "rzp_test_TBIngVA6fjYaLH",
         amount: Number(plan.Price || 0) * 100,
@@ -1195,7 +1193,7 @@ const CompanySubServices = () => {
         },
       };
 
-      const razorpay = new window.Razorpay(options);
+      const razorpay = new Razorpay(options);
       razorpay.open();
     } catch (err) {
       console.error("Payment flow error:", err);

@@ -288,11 +288,11 @@ const Companies = () => {
                 y: -8,
                 transition: { duration: 0.25 },
               }}
-              // onClick={() => {
-              //   if (elm?.userId) {
-              //     navigate(`/company/${elm.userId}`);
-              //   }
-              // }}
+              onClick={() => {
+                if (elm?.userId) {
+                  navigate(`/company/${elm.userId}`);
+                }
+              }}
               className="
                 group
                 relative

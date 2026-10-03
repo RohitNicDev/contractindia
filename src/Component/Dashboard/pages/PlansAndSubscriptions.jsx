@@ -32,6 +32,7 @@ import {
   userSubscriptionDetailSave,
 } from "../../../services/api";
 import dayjs from "dayjs";
+import { loadRazorpay } from "../../../utils/loadRazorpay";
 // ─── API helpers ───────────────────────────────────────────────────────────────
 const fetchPlans = async (userType) => {
   const res = await planMasterGetById(`userType=${userType}`);
@@ -392,11 +393,7 @@ function PaymentModal({ plan, userId, onClose, onSuccess }) {
   // ── Initialize Razorpay Payment ────────────────────────────────────────────
   const handleRazorpayPayment = async () => {
     try {
-      // Check if Razorpay script is loaded
-      if (!window.Razorpay) {
-        toast.error("Payment gateway not loaded. Please refresh the page.");
-        return;
-      }
+      const Razorpay = await loadRazorpay();
 
       setStep("processing");
 
@@ -440,7 +437,7 @@ function PaymentModal({ plan, userId, onClose, onSuccess }) {
         },
       };
 
-      const razorpay = new window.Razorpay(options);
+      const razorpay = new Razorpay(options);
       razorpay.open();
     } catch (error) {
       console.error("Razorpay error:", error);

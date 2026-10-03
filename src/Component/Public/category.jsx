@@ -1,7 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Building2,
+  Calculator,
+  ClipboardList,
+  Eye,
+  HardHat,
+} from "lucide-react";
 import { ServiceRootGet } from "../../services/api";
 import { useQuery } from "@tanstack/react-query";
 import assets from "../../assets/IMG/assets.jpg";
@@ -79,21 +87,33 @@ const normalizeServiceCard = (service, index) => {
 
 const valueItems = [
   {
-    emoji: "📋",
+    icon: <ClipboardList className="h-6 w-6 text-white" aria-hidden="true" />,
     title: "Book Consultation",
-    desc: "👁️ No hidden costs · 🧮 Easy EMI",
+    desc: (
+      <>
+        <span className="inline-flex items-center gap-1">
+          <Eye className="h-3.5 w-3.5" aria-hidden="true" />
+          No hidden costs
+        </span>
+        <span aria-hidden="true">·</span>
+        <span className="inline-flex items-center gap-1">
+          <Calculator className="h-3.5 w-3.5" aria-hidden="true" />
+          Easy EMI
+        </span>
+      </>
+    ),
     accent: "#6366f1",
     glow: "rgba(99,102,241,0.25)",
   },
   {
-    emoji: "🏬",
+    icon: <Building2 className="h-6 w-6 text-white" aria-hidden="true" />,
     title: "List Your Company",
     desc: "Reach thousands of project owners & procurement teams across India",
     accent: "#f59e0b",
     glow: "rgba(245,158,11,0.25)",
   },
   {
-    emoji: "👷",
+    icon: <HardHat className="h-6 w-6 text-white" aria-hidden="true" />,
     title: "End to End Construction Solutions",
     desc: "Paints / Waterproofing, Consultants, Cement / Concrete, Safety & Fire Protection",
     accent: "#10b981",
@@ -147,12 +167,12 @@ export function ValueStrip() {
 
               {/* Icon */}
               <div
-                className="relative z-10 h-12 w-12 rounded-xl flex items-center justify-center text-2xl shrink-0 shadow-md group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300"
+                className="relative z-10 h-12 w-12 rounded-xl flex items-center justify-center shrink-0 shadow-md group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300"
                 style={{
                   background: "linear-gradient(135deg, #162646, #1e3a5f)",
                 }}
               >
-                {item.emoji}
+                {item.icon}
               </div>
 
               {/* Content */}
@@ -160,7 +180,7 @@ export function ValueStrip() {
                 <h3 className="font-extrabold text-[#162646] text-sm md:text-base leading-tight group-hover:text-[#6366f1] transition-colors duration-300">
                   {item.title}
                 </h3>
-                <p className="text-xs border-t border-slate-100 pt-2 mt-2 text-slate-500 leading-relaxed font-medium">
+                <p className="text-xs border-t border-slate-100 pt-2 mt-2 text-slate-500 leading-relaxed font-medium flex flex-wrap items-center gap-x-1.5 gap-y-1">
                   {item.desc}
                 </p>
                 <div

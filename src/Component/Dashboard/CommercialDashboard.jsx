@@ -332,8 +332,8 @@ export const Dashboard = (props) => {
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Activity */}
+      {/* <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -374,7 +374,6 @@ export const Dashboard = (props) => {
           </div>
         </motion.div>
 
-        {/* Quick Actions */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -416,9 +415,7 @@ export const Dashboard = (props) => {
           </div>
         </motion.div>
       </div>
-
-      {/* Top Services */}
-      <motion.div
+       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
@@ -494,7 +491,7 @@ export const Dashboard = (props) => {
             </tbody>
           </table>
         </div>
-      </motion.div>
+      </motion.div> */}
 
       {/* Credits Modal */}
       <CreditsModal
