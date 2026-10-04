@@ -61,7 +61,8 @@ body {
 
 /* Ensure modal and overlay work correctly */
 .modal-overlay,
-[role="dialog"] {
+/* Keep dialog semantics separate from modal layout; chat popups are positioned locally. */
+.modal-overlay {
   position: fixed;
   top: 0;
   left: 0;

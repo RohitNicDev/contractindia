@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Header from "../Component/Public/Header";
 import Footer from "../Component/Public/Footer";
+import SupportChatWidget from "../Component/common/SupportChatWidget";
 import ScrollToTop from "../utilitis/ScrollToTop";
 
 export default function PublicLayout() {
@@ -10,6 +11,7 @@ export default function PublicLayout() {
       <ScrollToTop/>
       <Outlet />
       <Footer />
+      <SupportChatWidget />
     </>
   );
 }
