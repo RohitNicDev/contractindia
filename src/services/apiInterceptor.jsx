@@ -62,10 +62,13 @@ api.interceptors.request.use(
 
     // Access Token
     const token = localStorage.getItem("accessToken");
+    // const isPublicServiceMenu = /\/ServiceMaster\/getmenu(?:[?#]|$)/i.test(
+    //   config.url || "",
+    // );
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    // if (token && !isPublicServiceMenu) {
+    //   config.headers.Authorization = `Bearer ${token}`;
+    // }
 
     // Tenant
     const tenantId = localStorage.getItem("tenantId");
@@ -160,28 +163,28 @@ api.interceptors.response.use(
         const refreshToken =
           localStorage.getItem("refreshToken");
 
-        const response = await axios.post(
-          `${API_URL}/Authentication/refresh-token`,
-          {
-            refreshToken,
-          }
-        );
+        // const response = await axios.post(
+        //   `${API_URL}/Authentication/refresh-token`,
+        //   {
+        //     refreshToken,
+        //   }
+        // );
 
-        const newToken =
-          response.data.accessToken;
+        // const newToken =
+        //   response.data.accessToken;
 
-        localStorage.setItem(
-          "accessToken",
-          newToken
-        );
+        // localStorage.setItem(
+        //   "accessToken",
+        //   newToken
+        // );
 
-        api.defaults.headers.common.Authorization =
-          `Bearer ${newToken}`;
+        // api.defaults.headers.common.Authorization =
+        //   `Bearer ${newToken}`;
 
-        processQueue(null, newToken);
+        // processQueue(null, newToken);
 
-        originalRequest.headers.Authorization =
-          `Bearer ${newToken}`;
+        // originalRequest.headers.Authorization =
+        //   `Bearer ${newToken}`;
 
         return api(originalRequest);
       } catch (refreshError) {

@@ -40,7 +40,7 @@ import {
   getUserRegistrationbyParam,
   userServicesdetailsGetByParam,
 } from "../../../services/api";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useServiceStore, useUserStore } from "../../../store/store";
 import { ConfirmModal } from "../../common/ConfirmModal";
 import { toast } from "sonner";
@@ -52,12 +52,13 @@ import { loadRazorpay } from "../../../utils/loadRazorpay";
 //   return (await userServicesdetailsGetByservices(serviceId)) ?? [];
 // };
 const fetchContractors = async (serviceId, userId) => {
-  console.log(serviceId,"serviceId");
+  console.log(serviceId, "serviceId");
   const ServiceId = serviceId ?? 0;
   if (!serviceId) return [];
   return (
-    (await userServicesdetailsGetByParam(`serviceId=${ServiceId}&userId=${0}&userType=2`)) ??
-    []
+    (await userServicesdetailsGetByParam(
+      `serviceId=${ServiceId}&userId=${0}&userType=2`,
+    )) ?? []
   );
 };
 
@@ -220,9 +221,7 @@ function PaymentModal({ plan, onConfirm, onCancel, isLoading }) {
           className="absolute inset-0 bg-slate-950/75 backdrop-blur-sm"
           onClick={onCancel}
         />
-        <div
-          className="relative w-full max-w-md rounded-3xl bg-white shadow-2xl overflow-hidden"
-        >
+        <div className="relative w-full max-w-md rounded-3xl bg-white shadow-2xl overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-br from-indigo-600 to-violet-700 p-6 text-white">
             <div className="flex items-start justify-between">
@@ -332,9 +331,7 @@ function PlanSelectionModal({ plans, onSelectPlan, onCancel, isLoading }) {
           className="absolute inset-0 bg-slate-950/75 backdrop-blur-sm"
           onClick={onCancel}
         />
-        <div
-          className="relative w-full max-w-2xl rounded-3xl bg-white shadow-2xl overflow-hidden max-h-[80vh] flex flex-col"
-        >
+        <div className="relative w-full max-w-2xl rounded-3xl bg-white shadow-2xl overflow-hidden max-h-[80vh] flex flex-col">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-slate-100 sticky top-0 bg-gradient-to-r from-slate-50 to-white">
             <div>
@@ -455,9 +452,7 @@ function ContractorDetailModal({ item, onClose, canAccess }) {
           className="absolute inset-0 bg-slate-950/75 backdrop-blur-sm"
           onClick={onClose}
         />
-        <div
-          className="relative w-full max-w-2xl rounded-3xl bg-white shadow-2xl overflow-hidden max-h-[80vh] flex flex-col"
-        >
+        <div className="relative w-full max-w-2xl rounded-3xl bg-white shadow-2xl overflow-hidden max-h-[80vh] flex flex-col">
           {/* Header */}
           <div className="flex items-start justify-between p-6 border-b border-slate-100 sticky top-0 bg-gradient-to-r from-slate-50 to-white">
             <div>
@@ -531,9 +526,7 @@ function ContractorCard({ item, idx, onViewDetails, hasActivePlan }) {
   console.log(item, "item");
 
   return (
-    <div
-      className="group bg-white rounded-3xl border border-slate-200/60 hover:border-indigo-300 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-300 overflow-hidden"
-    >
+    <div className="group bg-white rounded-3xl border border-slate-200/60 hover:border-indigo-300 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-300 overflow-hidden">
       <div className="relative h-36 m-2 rounded-2xl overflow-hidden">
         <img
           src={imgUrl || FALLBACK_IMAGES[idx % FALLBACK_IMAGES.length]}
@@ -552,10 +545,11 @@ function ContractorCard({ item, idx, onViewDetails, hasActivePlan }) {
         </div>
         {status && (
           <span
-            className={`absolute top-2 right-2 text-[9px] font-black px-2 py-0.5 rounded-lg ${status === "Approved"
+            className={`absolute top-2 right-2 text-[9px] font-black px-2 py-0.5 rounded-lg ${
+              status === "Approved"
                 ? "bg-emerald-500/90 text-white"
                 : "bg-amber-400/90 text-white"
-              }`}
+            }`}
           >
             {status}
           </span>
@@ -574,15 +568,16 @@ function ContractorCard({ item, idx, onViewDetails, hasActivePlan }) {
         <div className="flex gap-2">
           <button
             onClick={() => onViewDetails(item)}
-            className={`flex-1 py-2 rounded-xl text-[11px] font-bold transition-all active:scale-95 ${item.IsActive
+            className={`flex-1 py-2 rounded-xl text-[11px] font-bold transition-all active:scale-95 ${
+              item.IsActive
                 ? "bg-slate-900 hover:bg-indigo-600 text-white"
                 : "bg-amber-500 hover:bg-amber-600 text-white"
-              }`}
+            }`}
           >
             {/* {hasActivePlan ? "View Details" : "Subscribe"} */}
-            {item.IsActive == 1 ? "Viewed" : "View Details"}
+            {item?.IsActive == 1 ? "Viewed" : "View Details"}
           </button>
-          {phone && (
+          {phone && item?.IsActive && (
             <a
               href={`tel:${phone}`}
               className="flex-1 inline-flex items-center justify-center gap-1.5 border border-emerald-200 text-emerald-700 py-2 rounded-xl text-[11px] font-bold hover:bg-emerald-50 transition-all"
@@ -688,10 +683,7 @@ function SidebarNode({
       {/* Children - Only render when open */}
       <>
         {hasKids && isOpen && (
-          <div
-            key={`children-${node?.ServiceID}`}
-            className="overflow-hidden"
-          >
+          <div key={`children-${node?.ServiceID}`} className="overflow-hidden">
             {node?.children.map((child) => (
               <SidebarNode
                 key={child.ServiceID}
@@ -745,10 +737,10 @@ function Breadcrumb({ tree, activeId, onSelect }) {
               style={
                 isLast
                   ? {
-                    background: c.softBg,
-                    color: c.softText,
-                    cursor: "default",
-                  }
+                      background: c.softBg,
+                      color: c.softText,
+                      cursor: "default",
+                    }
                   : { color: "#94a3b8" }
               }
             >
@@ -766,6 +758,7 @@ function Breadcrumb({ tree, activeId, onSelect }) {
 // ═══════════════════════════════════════════════════════════════════════
 const CompanySubServices = () => {
   const { serviceId } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const { loginResponce } = useUserStore();
   const [companyUserID, setCompanyUserID] = useState(0);
@@ -822,12 +815,20 @@ const CompanySubServices = () => {
   });
 
   const tree = useMemo(() => {
-    if (!menuServices?.length) return [];
     const fullTree = buildTree(menuServices);
     if (!serviceId) return fullTree;
     const target = findNode(fullTree, Number(serviceId));
-    return target ? [target] : [];
-  }, [menuServices, serviceId]);
+    return target
+      ? [target]
+      : [
+          {
+            ServiceID: Number(serviceId),
+            ServiceName: location.state?.serviceName || "Services",
+            ParentServiceID: 0,
+            children: [],
+          },
+        ];
+  }, [menuServices, serviceId, location.state]);
 
   const totalNodes = useMemo(() => flattenTree(tree)?.length, [tree]);
 
@@ -897,7 +898,7 @@ const CompanySubServices = () => {
   }, [contractors, activeId, serviceId]);
 
   // ── MUTATIONS ──────────────────────────────────────────────────────
-  const { mutateAsync: saveSubscription, isPending: isSavingSubscription } =
+  const { mutateAsync: saveSubscription, isPending: isSavingSubscription, } =
     useMutation({
       mutationFn: userSubscriptionDetailSave,
     });
@@ -958,8 +959,8 @@ const CompanySubServices = () => {
     const s = menuServices?.find(
       (el) => Number(el.ServiceID ?? el.value) === Number(serviceId),
     );
-    return s?.ServiceName || s?.name || "Services";
-  }, [menuServices, serviceId]);
+    return s?.ServiceName || s?.name || location.state?.serviceName || "Services";
+  }, [menuServices, serviceId, location.state]);
 
   // ── MAIN FLOW: View Details ────────────────────────────────────────
   // Shared logic for actually saving the service + loading registration
@@ -1072,7 +1073,7 @@ const CompanySubServices = () => {
       if (res?.status) {
         toast.success("✓ Plan activated successfully");
         setShowPlanSelection(false);
-        await refetchSubscriptions();
+        await Promise.all([refetchSubscriptions(), refetchCheckValidity()]);
         // Show detail after free plan activation
         setTimeout(() => {
           setDetailItem(detailItem);
@@ -1161,7 +1162,7 @@ const CompanySubServices = () => {
             setSelectedPlanForPayment(null);
             setIsProcessingPayment(false);
 
-            await refetchSubscriptions();
+            await Promise.all([refetchSubscriptions(), refetchCheckValidity()]);
 
             toast.success("🎉 Payment successful! Your plan is now active.");
 
@@ -1251,7 +1252,6 @@ const CompanySubServices = () => {
                     No categories
                   </p>
                 ) : (
-                  
                   tree.map((node) => (
                     <SidebarNode
                       key={node?.ServiceID}
@@ -1271,16 +1271,18 @@ const CompanySubServices = () => {
             {isLoggedIn && (
               <div className="mt-4">
                 <div
-                  className={`rounded-2xl border p-4 transition-all ${hasActivePlan
+                  className={`rounded-2xl border p-4 transition-all ${
+                    hasActivePlan
                       ? "border-violet-100 bg-gradient-to-r from-violet-50 via-white to-white"
                       : "border-amber-200 bg-gradient-to-r from-amber-50 via-white to-white"
-                    }`}
+                  }`}
                 >
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-3 min-w-0">
                       <div
-                        className={`flex h-6 w-6 items-center justify-center rounded-xl ${hasActivePlan ? "bg-[#492a78]/10" : "bg-amber-100"
-                          }`}
+                        className={`flex h-6 w-6 items-center justify-center rounded-xl ${
+                          hasActivePlan ? "bg-[#492a78]/10" : "bg-amber-100"
+                        }`}
                       >
                         {hasActivePlan ? (
                           <Crown className="h-5 w-5 text-[#492a78]" />
@@ -1291,8 +1293,9 @@ const CompanySubServices = () => {
 
                       <div className="min-w-0">
                         <p
-                          className={`text-[12px]   ${hasActivePlan ? "text-slate-500" : "text-amber-600"
-                            }`}
+                          className={`text-[12px]   ${
+                            hasActivePlan ? "text-slate-500" : "text-amber-600"
+                          }`}
                         >
                           {hasActivePlan
                             ? "Active Membership"
@@ -1347,9 +1350,7 @@ const CompanySubServices = () => {
             </div>
 
             {/* Contractors Grid */}
-            <div
-              className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4"
-            >
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
               {contractorsLoading ? (
                 [...Array(6)].map((_, i) => <CardSkeleton key={i} />)
               ) : (
@@ -1370,9 +1371,7 @@ const CompanySubServices = () => {
             {!contractorsLoading &&
               filteredContractors.length === 0 &&
               activeId && (
-                <div
-                  className="bg-white rounded-[40px] border border-dashed border-slate-200 py-20 text-center mt-4"
-                >
+                <div className="bg-white rounded-[40px] border border-dashed border-slate-200 py-20 text-center mt-4">
                   <Building2
                     size={40}
                     className="text-slate-200 mx-auto mb-4"
